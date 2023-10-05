@@ -8,5 +8,6 @@ namespace FFS.Application.Entities.Common
         public virtual T Id { get;set; }
         public virtual DateTime CreatedAt { get; set; }
         public virtual DateTime UpdatedAt { get; set; }
+        public virtual bool IsDelete { get; set; }
     }
 }
