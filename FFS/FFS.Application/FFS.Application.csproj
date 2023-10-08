@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Client\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>
