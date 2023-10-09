@@ -6,7 +6,10 @@ using AutoMapper;
 
 using FFS.Application.Data;
 using FFS.Application.DTOs;
+using FFS.Application.DTOs.Common;
+using FFS.Application.DTOs.Email;
 using FFS.Application.Entities;
+using FFS.Application.Repositories;
 using FFS.Application.Entities.Constant;
 using FFS.Application.Helper;
 
@@ -25,11 +28,13 @@ namespace FFS.Application.Controllers {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
 
-        public AuthenticateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+        public AuthenticateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _db = db;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         [HttpPost]
@@ -177,6 +182,33 @@ namespace FFS.Application.Controllers {
             {
                 await transaction.RollbackAsync();
                 return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpPost("testsendmail")]
+        public async Task<APIResponseModel> TestSendMail(EmailModel emailModel)
+        {
+
+            try
+            {
+                await _emailService.SendEmailAsync(emailModel);
+                return new APIResponseModel()
+                {
+                    Code = 200,
+                    Message = "OK",
+                    IsSucceed = true,
+                    Data = "Send email success"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponseModel()
+                {
+                    Code = 400,
+                    Message = "Error: " + ex.Message,
+                    IsSucceed = false,
+                    Data = ex.ToString(),
+                };
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿namespace FFS.Application.Repositories
 {
-    public class ITokenRepository
+    public interface ITokenRepository
     {
     }
 }
