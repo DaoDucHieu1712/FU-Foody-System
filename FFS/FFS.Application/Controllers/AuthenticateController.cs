@@ -1,4 +1,5 @@
 ﻿using System.Net.Mail;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 
 using AutoMapper;
@@ -12,6 +13,9 @@ using FFS.Application.Repositories;
 using FFS.Application.Entities.Constant;
 using FFS.Application.Helper;
 
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -89,6 +93,38 @@ namespace FFS.Application.Controllers {
                 await transaction.RollbackAsync();
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpGet]
+        public IActionResult GoogleSignIn()
+        {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action(nameof(GoogleSignInCallback))
+            };
+
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GoogleSignInCallback()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (!authenticateResult.Succeeded)
+            {
+                return BadRequest("Failed to sign in with Google.");
+            }
+
+            // Here, you can access user information from authenticateResult.Principal
+            var userId = authenticateResult.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var email = authenticateResult.Principal.FindFirst(ClaimTypes.Email)?.Value;
+
+            // Implement your user registration or authentication logic here
+            // Example: Check if the user exists, create a new user, or issue JWT tokens
+
+            // Redirect or return a response to your client app
+            return Ok(new { UserId = userId, Email = email });
         }
 
         [HttpPost]
