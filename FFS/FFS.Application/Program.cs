@@ -1,5 +1,6 @@
 using FFS.Application.Data;
 using FFS.Application.DTOs;
+using FFS.Application.DTOs.Email;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
@@ -34,6 +35,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+builder.Services.Configure<EmailSettingModel>(configuration.GetSection("MailSettings"));
 #endregion
 
 #region authentication
@@ -65,6 +67,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddTransient(typeof(IRepository<,>), typeof(EntityRepository<,>));
 builder.Services.AddTransient<IAuthRepository, AuthRepository>();
 builder.Services.AddTransient<ITokenRepository, TokenRepository>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 #endregion
 
 #region swagger
