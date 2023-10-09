@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <Folder Include="Client\" />
-    <Folder Include="Helper\" />
   </ItemGroup>
 
 </Project>
