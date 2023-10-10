@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import Location from "./app/(public)/Location";
+import Location from "./app/(auth)/Location";
 
 function App() {
   return (
