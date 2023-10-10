@@ -1,6 +1,9 @@
-﻿namespace FFS.Application.Repositories
+﻿using FFS.Application.DTOs.Auth;
+
+namespace FFS.Application.Repositories
 {
-    public class IAuthRepository
+    public interface IAuthRepository
     {
+        Task StoreRegister(StoreRegisterDTO storeRegisterDTO);
     }
 }

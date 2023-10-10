@@ -1,0 +1,59 @@
+import axios from "axios";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import propTypes from "prop-types";
+
+const UploadImage = ({ onChange, name }) => {
+  const [imageURL, setImageURL] = useState("");
+  const handleUploadImage = async (e) => {
+    const file = e.target.files;
+    if (!file) return;
+    const bodyFormData = new FormData();
+    bodyFormData.append("image", file[0]);
+    const response = await axios({
+      method: "post",
+      url: import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL_UPLOAD_IMAGE,
+      // url: "https://api.imgbb.com/1/upload?key=7eef4b3d48ffb2383bf921eeb1dd5117",
+      data: bodyFormData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    const imageData = response.data.data;
+    if (!imageData) {
+      toast.error("Không thể upload ảnh !");
+      return;
+    }
+    const imageObj = {
+      thumb: imageData.thumb.url,
+      url: imageData.url,
+    };
+    onChange(name, imageObj.thumb);
+    setImageURL(imageObj.thumb);
+  };
+  return (
+    <>
+      <label className="flex items-center justify-center w-full cursor-pointer h-[206px] border boder-gray-200 border-dashed rounded-lg mb-3">
+        {imageURL?.length === 0 ? (
+          <>
+            <input type="file" onChange={handleUploadImage} hidden />
+            <span>Chọn ảnh</span>
+          </>
+        ) : (
+          <img
+            src={imageURL}
+            alt="anh upload"
+            className="w-full w-[230px] h-[206px] object-cover"
+          />
+        )}
+      </label>
+    </>
+  );
+};
+
+UploadImage.propTypes = {
+  name: propTypes.any,
+  onChange: propTypes.any,
+};
+
+export default UploadImage;
