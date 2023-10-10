@@ -5,6 +5,7 @@ import Ring from "../../shared/components/icon/Ring";
 import User from "../../shared/components/icon/User";
 import Logo from "../../shared/components/logo/Logo";
 import StoreTag from "../../shared/components/store/StoreTag";
+import Notification from './Notification';
 
 const Layout = () => {
   return (
@@ -66,7 +67,7 @@ const Layout = () => {
             <div className="flex items-center gap-3">
               <Cart></Cart>
               <Heart></Heart>
-              <Ring></Ring>
+              <Notification></Notification>
               <User></User>
             </div>
           </div>

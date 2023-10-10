@@ -43,7 +43,7 @@ const Login = () => {
 
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center mt-5">
       <div className="w-1/4 p-4 text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 shadow-lg">
         <ul className="flex flex-wrap mb-5 border-b-stone-500">
           {tabs.map((tab) => (

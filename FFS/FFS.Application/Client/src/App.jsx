@@ -1,9 +1,13 @@
 import { Route, Routes } from "react-router-dom";
 import Login from "./app/(public)/Login";
 import Layout from "./app/(auth)/Layout";
+
 import Location from "./app/(public)/Location";
 import StoreRegisterPage from "./app/(public)/StoreRegisterPage";
 import ChangePasswordPage from "./app/(public)/ChangePasswordPage";
+
+import Location from "./app/(auth)/Location";
+
 
 function App() {
   return (
