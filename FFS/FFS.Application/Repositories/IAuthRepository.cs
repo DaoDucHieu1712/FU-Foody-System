@@ -1,6 +1,10 @@
-﻿namespace FFS.Application.Repositories
+﻿using FFS.Application.Entities;
+
+namespace FFS.Application.Repositories
 {
-    public class IAuthRepository
+    public interface IAuthRepository
     {
+        Task<string> GenerateToken(ApplicationUser us);
+        Task<bool> ResetPassword(string email);
     }
 }
