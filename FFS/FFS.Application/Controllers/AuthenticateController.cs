@@ -20,9 +20,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using FFS.Application.Constant;
+
 using FFS.Application.DTOs.Auth;
 
 namespace FFS.Application.Controllers
@@ -33,13 +35,16 @@ namespace FFS.Application.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAuthRepository _authRepository;
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
 
-        public AuthenticateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IEmailService emailService)
+        public AuthenticateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IAuthRepository authRepository, IMapper mapper, IEmailService emailService)
         {
             _db = db;
             _userManager = userManager;
+            _authRepository = authRepository;
+            _mapper = mapper;
             _emailService = emailService;
         }
 
@@ -97,6 +102,20 @@ namespace FFS.Application.Controllers
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> StoreRegister([FromBody] StoreRegisterDTO storeRegisterDTO)
+        {
+            try
+            {
+                await _authRepository.StoreRegister(storeRegisterDTO);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
                 return StatusCode(500, ex.Message);
             }
         }

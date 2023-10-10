@@ -1,4 +1,8 @@
+
+﻿using FFS.Application.DTOs.Auth;
+
 ﻿using FFS.Application.Entities;
+
 
 namespace FFS.Application.Repositories
 {

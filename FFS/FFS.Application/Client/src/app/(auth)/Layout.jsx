@@ -12,7 +12,7 @@ const Layout = () => {
     <>
       <header className="header bg-primary">
         <div className="container mx-auto">
-          <div className="flex items-center justify-between gap-x-2 p-3">
+          <div className="flex items-center justify-between gap-x-2 p-4">
             <div className="logo">
               <svg
                 width="115"
@@ -33,11 +33,12 @@ const Layout = () => {
                 />
               </svg>
             </div>
-            <div className="search p-1 bg-white w-[500px]">
+            <div className="search p-2 bg-white w-[600px]">
               <div className="flex items-center justify-between">
                 <input
                   type="text"
                   className="focus:none border-none outline-none w-full"
+                  placeholder="hôm nay ăn gì ...."
                 />
                 <svg
                   width="20"

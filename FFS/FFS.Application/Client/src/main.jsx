@@ -7,14 +7,17 @@ import { store } from "./store/store.js";
 import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { ThemeProvider } from "@material-tailwind/react";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-        <ToastContainer></ToastContainer>
-      </BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          <App />
+          <ToastContainer></ToastContainer>
+        </BrowserRouter>
+      </ThemeProvider>
     </Provider>
   </React.StrictMode>
 );
