@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -135,5 +136,24 @@ namespace FFS.Application.Repositories.Impls
                 return await Task.FromResult(result);
 
             }
+        public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(changePasswordDTO.Email);
+
+                if (user == null || !await _userManager.CheckPasswordAsync(user, changePasswordDTO.OldPassword))
+                {
+                    throw new Exception("Email hoặc mật khẩu không đúng, vui lòng thử lại !!!");
+                }
+
+                if (changePasswordDTO.ConfirmPassword != changePasswordDTO.NewPassword) throw new Exception("Xin vui lòng kiểm tra lại mật khẩu xác nhận !!");
+                var rs = await _userManager.ChangePasswordAsync(user, changePasswordDTO.OldPassword, changePasswordDTO.NewPassword);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
