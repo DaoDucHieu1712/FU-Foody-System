@@ -6,9 +6,6 @@ import Location from "./app/(public)/Location";
 import StoreRegisterPage from "./app/(public)/StoreRegisterPage";
 import ChangePasswordPage from "./app/(public)/ChangePasswordPage";
 
-import Location from "./app/(auth)/Location";
-
-
 function App() {
   return (
     <>

@@ -1,11 +1,10 @@
 import { Outlet } from "react-router-dom";
 import Cart from "../../shared/components/icon/Cart";
 import Heart from "../../shared/components/icon/Heart";
-import Ring from "../../shared/components/icon/Ring";
 import User from "../../shared/components/icon/User";
 import Logo from "../../shared/components/logo/Logo";
 import StoreTag from "../../shared/components/store/StoreTag";
-import Notification from './Notification';
+import Notification from "./Notification";
 
 const Layout = () => {
   return (

@@ -2,7 +2,7 @@ const Sidebar = () => {
   return (
     <>
       <div className="container mt-8 mb-8 px-12 py-4">
-        <div class="grid grid-cols-[2fr,8fr] gap-12">
+        <div className="grid grid-cols-[2fr,8fr] gap-12">
           <div className="Sidebar">
             <div className="user_infor">
               <div className="flex items-center space-x-4 p-2 mb-5">
@@ -16,39 +16,49 @@ const Sidebar = () => {
                     Gnasche
                   </h4>
                   <span className="text-sm tracking-wide flex items-center space-x-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-</svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-3 h-3"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                      />
+                    </svg>
 
-                    <a href="" class="text-gray-600">
+                    <a href="" className="text-gray-600">
                       Sửa hồ sơ
                     </a>
                   </span>
                 </div>
               </div>
             </div>
-            <ul class="space-y-2 text-sm">
+            <ul className="space-y-2 text-sm">
               <li>
                 <a
                   href="#"
-                  class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 bg-gray-200 focus:shadow-outline"
+                  className="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 bg-gray-200 focus:shadow-outline"
                 >
-                  <span class="text-gray-600">
-                  <svg
-                      class="h-5"
+                  <span className="text-gray-600">
+                    <svg
+                      className="h-5"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                       />
                     </svg>
-
                   </span>
                   <span>Tài khoản của tôi</span>
                 </a>
@@ -56,13 +66,23 @@ const Sidebar = () => {
               <li>
                 <a
                   href="#"
-                  class="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline"
+                  className="flex items-center space-x-3 text-gray-700 p-2 rounded-md font-medium hover:bg-gray-200 focus:bg-gray-200 focus:shadow-outline"
                 >
-                  <span class="text-gray-600">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
-</svg>
-
+                  <span className="text-gray-600">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75"
+                      />
+                    </svg>
                   </span>
                   <span>Đơn mua</span>
                 </a>
@@ -82,7 +102,7 @@ const Sidebar = () => {
                 </p>
                 <hr className="mt-2"></hr>
 
-                <div class="grid grid-cols-[6.5fr,3.5fr]">
+                <div className="grid grid-cols-[6.5fr,3.5fr]">
                   <div className="mt-10 ">
                     {/* <form>
                     <div className="sm:col-span-3">
@@ -373,16 +393,47 @@ const Sidebar = () => {
                                 ))}
                               </select>
 
-                              <label htmlFor="month" className="block text-sm font-medium leading-6 text-gray-900"> Tháng</label>
-                              <select id="month" name="month" className="block w-16 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                {Array.from({ length: 12 }, (_, i) => i + 1 ).map((month) => ( <option key={month} value={month}>{month} </option>
+                              <label
+                                htmlFor="month"
+                                className="block text-sm font-medium leading-6 text-gray-900"
+                              >
+                                {" "}
+                                Tháng
+                              </label>
+                              <select
+                                id="month"
+                                name="month"
+                                className="block w-16 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              >
+                                {Array.from(
+                                  { length: 12 },
+                                  (_, i) => i + 1
+                                ).map((month) => (
+                                  <option key={month} value={month}>
+                                    {month}{" "}
+                                  </option>
                                 ))}
                               </select>
 
-                              <label htmlFor="year" className="block text-sm font-medium leading-6 text-gray-900"> Năm </label>
-                              <select id="year" name="year" className="block w-20 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" >
-                                {Array.from({ length: 44 }, (_, i) => 1980 + i ).map((year) => (
-                                  <option key={year} value={year}>{year}</option>
+                              <label
+                                htmlFor="year"
+                                className="block text-sm font-medium leading-6 text-gray-900"
+                              >
+                                {" "}
+                                Năm{" "}
+                              </label>
+                              <select
+                                id="year"
+                                name="year"
+                                className="block w-20 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              >
+                                {Array.from(
+                                  { length: 44 },
+                                  (_, i) => 1980 + i
+                                ).map((year) => (
+                                  <option key={year} value={year}>
+                                    {year}
+                                  </option>
                                 ))}
                               </select>
                             </div>
