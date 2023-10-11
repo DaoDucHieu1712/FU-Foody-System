@@ -4,7 +4,7 @@ import Layout from "./app/(auth)/Layout";
 
 import StoreRegisterPage from "./app/(public)/StoreRegisterPage";
 import ChangePasswordPage from "./app/(public)/ChangePasswordPage";
-
+import ForgotPasswordPage from "./app/(public)/ForgotPasswordPage";
 import Location from "./app/(auth)/Location";
 
 
@@ -18,6 +18,7 @@ function App() {
           <Route path="/location" element={<Location />} />
           <Route path="/register-store" element={<StoreRegisterPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
+          <Route path="/forgot-pasword" element={<ForgotPasswordPage />} />
         </Route>
       </Routes>
     </>
