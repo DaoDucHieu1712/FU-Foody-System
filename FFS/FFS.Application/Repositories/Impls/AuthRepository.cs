@@ -26,7 +26,6 @@ namespace FFS.Application.Repositories.Impls
 
         public AuthRepository(UserManager<ApplicationUser> userManager, IOptionsMonitor<AppSetting> optionsMonitor, IEmailService emailService, ApplicationDbContext context)
         {
-            _context = context;
             _userManager = userManager;
             _appSettings = optionsMonitor.CurrentValue;
             _emailService = emailService;

@@ -25,8 +25,9 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var locations = await _db.Locations.ToListAsync();
-                return Ok(_mapper.Map<List<LocationDTO>>(locations));
+                var uID = "1";
+                var locations = await _db.Locations.Include(x => x.User).Where(x => x.UserId == uID).ToListAsync();
+                return Ok(locations);
             }
             catch (Exception ex)
             {
@@ -39,11 +40,18 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var newLocation = _mapper.Map<Location>(locationDTO);
-                _db.Locations.Add(newLocation);
+                var newLocation = new Location {
+                    UserId = "1",
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    IsDefault = false,
+                    IsDelete = false,
+                    Address = locationDTO.Address
+                };
+                await _db.Locations.AddAsync(newLocation);
                 await _db.SaveChangesAsync();
 
-                return Ok();
+                return Ok("Thêm thành công");
             }
             catch (Exception ex)
             {
