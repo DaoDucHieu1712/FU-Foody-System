@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 
 
@@ -30,15 +29,7 @@ const Login = () => {
   };
 
   const  handleLoginGoogle = async () => {
-    try {
-    
-        const response = await axios.get('https://localhost:7025/api/Authenticate/GoogleSignIn');
-    
-        console.log('API Response:', response.data);
-    
-      } catch (error) {
-        console.error('Error:', error);
-      }
+    window.location.href = 'https://localhost:7025/api/Authenticate/GoogleSignIn';
   }
 
 

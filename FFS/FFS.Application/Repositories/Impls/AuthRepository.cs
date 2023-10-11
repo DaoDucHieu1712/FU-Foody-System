@@ -23,14 +23,17 @@ namespace FFS.Application.Repositories.Impls
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppSetting _appSettings;
         private readonly IEmailService _emailService;
+        private readonly ApplicationDbContext _context;
 
-        public AuthRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager, AppSetting appSettings, IEmailService emailService)
+        public AuthRepository(UserManager<ApplicationUser> userManager, IOptionsMonitor<AppSetting> optionsMonitor, IEmailService emailService, ApplicationDbContext context)
         {
             _context = context;
             _userManager = userManager;
-            _appSettings = appSettings;
+            _appSettings = optionsMonitor.CurrentValue;
             _emailService = emailService;
+            _context = context;
         }
+
 
         public async Task StoreRegister(StoreRegisterDTO storeRegisterDTO)
         {
@@ -38,8 +41,10 @@ namespace FFS.Application.Repositories.Impls
             try
             {
                 ApplicationUser _user = await _userManager.FindByEmailAsync(storeRegisterDTO.Email);
-                if (_user != null) throw new Exception("Email đã tồn tại , Vui lòng thử lại !");
-                if (storeRegisterDTO.Password != storeRegisterDTO.PasswordConfirm) throw new Exception("Vui lòng kiểm tra lại mật khẩu !");
+                if (_user != null)
+                    throw new Exception("Email đã tồn tại , Vui lòng thử lại !");
+                if (storeRegisterDTO.Password != storeRegisterDTO.PasswordConfirm)
+                    throw new Exception("Vui lòng kiểm tra lại mật khẩu !");
 
                 var NewUser = new ApplicationUser
                 {
@@ -60,7 +65,8 @@ namespace FFS.Application.Repositories.Impls
                     throw new Exception(specificErrors?.Description);
                 }
                 var role_rs = await _userManager.AddToRoleAsync(NewUser, "StoreOwner");
-                if (role_rs.Succeeded == false) throw new Exception("Đã có lỗi xảy ra");
+                if (role_rs.Succeeded == false)
+                    throw new Exception("Đã có lỗi xảy ra");
 
                 var _newuser = _context.ApplicationUsers.FirstOrDefault(x => x.Email == NewUser.Email);
 
@@ -85,7 +91,10 @@ namespace FFS.Application.Repositories.Impls
                 //transaction.RollbackAsync();
                 throw new Exception(ex.Message);
             }
+
         }
+       
+
         public async Task<string> GenerateToken(ApplicationUser us)
             {
                 var jwtTokenHandler = new JwtSecurityTokenHandler();
