@@ -12,6 +12,5 @@ namespace FFS.Application.Repositories
         Task ChangePassword(ChangePasswordDTO changePasswordDTO);
         Task<string> GenerateToken(ApplicationUser us);
         Task<bool> ResetPassword(string email);
-        Task StoreRegister(StoreRegisterDTO storeRegisterDTO);
     }
 }
