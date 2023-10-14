@@ -9,6 +9,7 @@ using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -41,6 +42,9 @@ builder.Services.Configure<EmailSettingModel>(configuration.GetSection("MailSett
 #endregion
 
 #region authentication
+builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("JWT"));
+builder.Services.Configure<EmailSettingModel>(builder.Configuration.GetSection("MailSettings"));
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -79,7 +83,6 @@ builder.Services.AddTransient(typeof(IRepository<,>), typeof(EntityRepository<,>
 builder.Services.AddTransient<IAuthRepository, AuthRepository>();
 builder.Services.AddTransient<ITokenRepository, TokenRepository>();
 builder.Services.AddTransient<IEmailService, EmailService>();
-builder.Services.AddScoped<AppSetting>();
 #endregion
 
 #region swagger
@@ -111,6 +114,31 @@ builder.Services.AddSwaggerGen((option =>
     });
 }));
 #endregion
+//#region JWT
+//builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSettings"));
+//builder.Services.Configure<EmailSettingModel>(builder.Configuration.GetSection("MailSettings"));
+//var secretKey = builder.Configuration["JWT:SecretKey"];
+//var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+//}).AddJwtBearer(options =>
+//{
+//    options.SaveToken = true;
+//    options.RequireHttpsMetadata = false;
+//    options.TokenValidationParameters = new TokenValidationParameters()
+//    {
+//        ValidateIssuer = false,
+//        ValidateAudience = false,
+//        ValidateLifetime = true,
+//        ValidateIssuerSigningKey = true,
+//        IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
+//        ClockSkew = TimeSpan.Zero,
+//    };
+//});
+//#endregion
 
 var app = builder.Build();
 
@@ -123,6 +151,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+
 
 app.UseHttpsRedirection();
 app.UseCors(opt => opt.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
