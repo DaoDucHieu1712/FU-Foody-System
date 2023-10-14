@@ -1,5 +1,6 @@
 using FFS.Application.Data;
 using FFS.Application.DTOs;
+using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Email;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
@@ -78,6 +79,7 @@ builder.Services.AddTransient(typeof(IRepository<,>), typeof(EntityRepository<,>
 builder.Services.AddTransient<IAuthRepository, AuthRepository>();
 builder.Services.AddTransient<ITokenRepository, TokenRepository>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddScoped<AppSetting>();
 #endregion
 
 #region swagger

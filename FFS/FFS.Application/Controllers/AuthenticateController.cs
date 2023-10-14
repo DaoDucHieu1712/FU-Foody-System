@@ -330,7 +330,19 @@ namespace FFS.Application.Controllers
             };
         }
 
-
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
+        {
+            try
+            {
+                await _authRepository.ChangePassword(changePasswordDTO);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         string ExtractUsername(string emailAddress)
         {
