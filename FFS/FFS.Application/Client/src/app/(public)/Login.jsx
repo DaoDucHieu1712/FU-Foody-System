@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 
+
 const Login = () => {
   const tabs = [
     { id: "login", label: "Đăng Nhập" },
@@ -10,6 +11,7 @@ const Login = () => {
   const [activeTab, setActiveTab] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setError] = useState(null);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -22,11 +24,49 @@ const Login = () => {
     setActiveTab(tab);
   };
 
-  const handleLogin = () => {
-    // Xử lý đăng nhập ở đây, ví dụ: gửi email và password đến máy chủ
-    console.log("Email:", email);
-    console.log("Password:", password);
+  // const handleLogin = () => {
+  //   // Xử lý đăng nhập ở đây, ví dụ: gửi email và password đến máy chủ
+  //   console.log("Email:", email);
+  //   console.log("Password:", password);
+  // };
+  const handleLogin = async () => {
+    // Validate email format
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!email.match(emailRegex)) {
+      setError('Vui lòng nhập đúng định dạng email!');
+      return;
+    }
+
+   
+    try {
+      const response = await fetch('https://localhost:7025/api/Authenticate/LoginByEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const token = data.token.result;
+
+        // Save the token to local storage or a secure store
+        localStorage.setItem('token', token);
+  
+        // Redirect to the home page
+        window.location.href = '/'; 
+
+      } else {
+        
+        setError('Email hoặc mật khẩu không hợp lệ !');
+      }
+    } catch (errorMessage) {
+      
+      setError('Có lỗi xảy ra. Vui lòng thử lại !');
+    }
   };
+  
 
   const  handleLoginGoogle = async () => {
     window.location.href = 'https://localhost:7025/api/Authenticate/GoogleSignIn';
@@ -84,6 +124,11 @@ const Login = () => {
               onChange={handlePasswordChange}
               className="w-full border p-2 mb-4 rounded"
             />
+            {errorMessage && (
+              <div className="text-red-600 text-center mt-4">
+                {errorMessage}
+              </div>
+            )}
             <button
               className="bg-primary text-white p-2 rounded w-full mb-8"
               onClick={handleLogin}
