@@ -49,6 +49,25 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPost]
+        public IActionResult LoginByEmail([FromBody] LoginDTO logindto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Lỗi đăng nhập !");
+            }
+
+            var token = _authRepository.Login(logindto.Email, logindto.Password);
+
+            if (token == null)
+            {
+                return Unauthorized("Email hoặc mật khẩu không hợp lệ !");
+            }
+
+            return Ok(new { token });
+        }
+
+
+        [HttpPost]
         public async Task<IActionResult> RegisterShipper(ShipperRegisterDTO shipperRegisterDTO)
         {
             using var transaction = await _db.Database.BeginTransactionAsync();
