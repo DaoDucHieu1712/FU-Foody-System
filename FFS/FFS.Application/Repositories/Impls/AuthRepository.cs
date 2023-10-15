@@ -31,6 +31,7 @@ namespace FFS.Application.Repositories.Impls
             _userManager = userManager;
             _appSettings = optionsMonitor.CurrentValue;
             _emailService = emailService;
+            _context = context;
         }
 
         public async Task<string> Login(string email, string password)
@@ -115,7 +116,6 @@ namespace FFS.Application.Repositories.Impls
             }
 
         }
-       
 
         public async Task<string> GenerateToken(ApplicationUser us)
             {

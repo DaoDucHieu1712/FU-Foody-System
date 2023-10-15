@@ -4,6 +4,5 @@
         public const string SHIPPER = "SHIPPER";
         public const string STOREOWNER = "STOREOWNER";
         public const string ADMIN = "ADMIN";
-
     }
 }
