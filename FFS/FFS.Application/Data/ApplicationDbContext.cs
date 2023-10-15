@@ -101,6 +101,7 @@ namespace FFS.Application.Data
         public virtual DbSet<Wallet> Wallets { get; set; }
         public virtual DbSet<Wishlist> Wishlists { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
+        public virtual DbSet<Report> Reports { get; set; }
 
         public override int SaveChanges()
         {
