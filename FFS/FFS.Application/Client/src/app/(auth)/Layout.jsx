@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Cart from "../../shared/components/icon/Cart";
 import Heart from "../../shared/components/icon/Heart";
-import User from "../../shared/components/icon/User";
+import UserNav from "./UserNav";
 import Logo from "../../shared/components/logo/Logo";
 import StoreTag from "../../shared/components/store/StoreTag";
 import Notification from "./Notification";
@@ -67,7 +67,7 @@ const Layout = () => {
               <Cart></Cart>
               <Heart></Heart>
               <Notification></Notification>
-              <User></User>
+              <UserNav></UserNav>
             </div>
           </div>
         </div>
