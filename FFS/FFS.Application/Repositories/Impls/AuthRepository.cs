@@ -14,6 +14,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Microsoft.EntityFrameworkCore;
+using FFS.Application.Entities.Constant;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -181,6 +183,112 @@ namespace FFS.Application.Repositories.Impls
             }
             catch (Exception ex)
             {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task UserRegister(UserRegisterDTO userRegisterDTO)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                if (!CommonService.IsEmailFPT(userRegisterDTO.email))
+                {
+                    throw new Exception("Email không hợp lệ!");
+                }
+
+                ApplicationUser userExist = await _userManager.FindByEmailAsync(userRegisterDTO.email);
+                if (userExist != null)
+                {
+                    throw new Exception("Email đã tồn tại! Xin vui lòng thử lại");
+                }
+
+                if (!CommonService.IsStrongPassword(userRegisterDTO.password))
+                {
+                    throw new Exception("Mật khẩu phải nhiều hơn 8 kí tư, có chữ in hoa, chữ thường, số và kí tự đặc biệt!");
+                }
+                var user = new ApplicationUser()
+                {
+                    Email = userRegisterDTO.email,
+                    UserName = CommonService.ExtractUsername(userRegisterDTO.email)
+                };
+
+                IdentityResult check = await _userManager.CreateAsync(user, userRegisterDTO.password);
+                if (check.Succeeded == false)
+                {
+                    var specificErrors = check.Errors.FirstOrDefault();
+                    throw new Exception(specificErrors?.Description);
+                }
+                IdentityRole? role = await _context.Roles.FirstOrDefaultAsync(role => role.NormalizedName == Role.USER);
+                if (role == null)
+                {
+                    throw new Exception("Có lỗi xảy ra vui lòng liên hệ Admin!");
+                }
+                IdentityUserRole<string> userRole = new IdentityUserRole<string>
+                {
+                    UserId = user.Id,
+                    RoleId = role.Id
+                };
+                await _context.UserRoles.AddAsync(userRole);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task ShipperRegister(ShipperRegisterDTO shipperRegisterDTO)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                if (!CommonService.IsEmail(shipperRegisterDTO.email))
+                {
+                    throw new Exception("Email không hợp lệ!");
+                }
+
+                ApplicationUser user = await _userManager.FindByEmailAsync(shipperRegisterDTO.email);
+                if (user != null)
+                {
+                    throw new Exception("Email đã tồn tại! Xin vui lòng thử lại");
+                }
+
+                if (!CommonService.IsStrongPassword(shipperRegisterDTO.password))
+                {
+                    throw new Exception("Mật khẩu phải nhiều hơn 8 kí tư, có chữ in hoa, chữ thường, số và kí tự đặc biệt!");
+                }
+                var shipper = new ApplicationUser()
+                {
+                    Email = shipperRegisterDTO.email,
+                    UserName = CommonService.ExtractUsername(shipperRegisterDTO.email)
+                };
+
+                IdentityResult check = await _userManager.CreateAsync(shipper, shipperRegisterDTO.password);
+                if (check.Succeeded == false)
+                {
+                    var specificErrors = check.Errors.FirstOrDefault();
+                    throw new Exception(specificErrors?.Description);
+                }
+                IdentityRole? role = await _context.Roles.FirstOrDefaultAsync(role => role.NormalizedName == Role.SHIPPER);
+                if (role == null)
+                {
+                    throw new Exception("Có lỗi xảy ra vui lòng liên hệ Admin!");
+                }
+                IdentityUserRole<string> userRole = new IdentityUserRole<string>
+                {
+                    UserId = shipper.Id,
+                    RoleId = role.Id
+                };
+                await _context.UserRoles.AddAsync(userRole);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
                 throw new Exception(ex.Message);
             }
         }

@@ -1,5 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
+using FFS.Application.DTOs.Auth;
+
 namespace FFS.Application.Helper
 {
     public static class CommonService
@@ -39,7 +41,6 @@ namespace FFS.Application.Helper
 
             return true;
         }
-
         public static string GeneratePassword(int length)
         {
             const string lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
@@ -71,6 +72,30 @@ namespace FFS.Application.Helper
             }
 
             return new string(password);
+        }
+        public static bool IsEmailFPT(string email)
+        {
+            string pattern = @"^[a-zA-Z0-9._%+-]+@fpt\.edu\.vn$";
+            return Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase);
+        }
+        public static bool IsEmail(string email)
+        {
+            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+            return Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase);
+        }
+
+        public static string ExtractUsername(string emailAddress)
+        {
+            int atIndex = emailAddress.IndexOf("@");
+
+            if (atIndex != -1)
+            {
+                return emailAddress.Substring(0, atIndex);
+            }
+            else
+            {
+                return emailAddress;
+            }
         }
     }
 }
