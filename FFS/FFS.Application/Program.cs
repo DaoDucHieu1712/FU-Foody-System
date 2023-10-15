@@ -83,6 +83,7 @@ builder.Services.AddTransient(typeof(IRepository<,>), typeof(EntityRepository<,>
 builder.Services.AddTransient<IAuthRepository, AuthRepository>();
 builder.Services.AddTransient<ITokenRepository, TokenRepository>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IStoreRepository, StoreRepository>();
 #endregion
 
 #region swagger
