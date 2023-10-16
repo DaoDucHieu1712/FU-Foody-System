@@ -12,10 +12,7 @@ namespace FFS.Application.Entities
         public string Address { get; set; }
         public bool IsDefault { get; set; }
         public string? Description { get; set; }
-<<<<<<< Updated upstream
-=======
         public string Receiver { get; set; }
         public string PhoneNumber { get; set; }
->>>>>>> Stashed changes
     }
 }
