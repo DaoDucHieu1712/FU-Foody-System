@@ -292,5 +292,39 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
+
+        public  async Task<ApplicationUser> Profile(string email)
+        {
+            try
+            {
+                ApplicationUser _user = await _userManager.FindByEmailAsync(email);
+                if (_user == null) throw new Exception("Đã có lỗi bất định xảy ra !");
+                return _user;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task ProfileEdit(string email, UserCommandDTO userCommandDTO)
+        {
+            try
+            {
+                ApplicationUser _user = await _userManager.FindByEmailAsync(email);
+                if (_user == null) throw new Exception("Đã có lỗi bất định xảy ra !");
+                _user.BirthDay = userCommandDTO.BirthDay;
+                _user.FirstName = userCommandDTO.FirstName;
+                _user.LastName = userCommandDTO.LastName;
+                _user.Gender = userCommandDTO.Gender;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
