@@ -46,7 +46,10 @@ namespace FFS.Application.Controllers
                     UpdatedAt = DateTime.Now,
                     IsDefault = false,
                     IsDelete = false,
-                    Address = locationDTO.Address
+                    Address = locationDTO.Address,
+                    Description = locationDTO.Description,
+                    Receiver = locationDTO.Receiver,
+                    PhoneNumber = locationDTO.PhoneNumber
                 };
                 await _db.Locations.AddAsync(newLocation);
                 await _db.SaveChangesAsync();
