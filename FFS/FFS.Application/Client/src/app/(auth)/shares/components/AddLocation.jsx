@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import propTypes from "prop-types";
-import { Dialog, Input, Option, Select, Textarea } from "@material-tailwind/react";
+import { Button, Dialog, Input, Option, Select, Textarea } from "@material-tailwind/react";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
@@ -64,7 +64,7 @@ const AddLocation = ({ reload, wardList }) => {
 
     return (
         <>
-            <p className="h-auto w-40 text-white text-center font-semibold bg-orange-700 cursor-pointer hover:bg-orange-900" onClick={handleOpen}>+ Thêm địa chỉ mới</p>
+            <Button className=" text-white text-center font-bold bg-primary cursor-pointer hover:bg-orange-900" onClick={handleOpen}>+ Thêm địa chỉ mới</Button>
             <Dialog
                 size="md"
                 open={open}

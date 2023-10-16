@@ -71,7 +71,16 @@ namespace FFS.Application.Controllers
                 {
                     return BadRequest();
                 }
-                var updateLocation = _mapper.Map<Location>(locationDTO);
+                var updateLocation = new Location
+                {
+                    UserId = "1",
+                    UpdatedAt = DateTime.Now,
+                    Id = (int)locationDTO.Id,
+                    Address = locationDTO.Address,
+                    Description = locationDTO.Description,
+                    Receiver = locationDTO.Receiver,
+                    PhoneNumber = locationDTO.PhoneNumber
+                };
                 _db.Entry(updateLocation).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return Ok();
