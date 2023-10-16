@@ -46,7 +46,10 @@ namespace FFS.Application.Controllers
                     UpdatedAt = DateTime.Now,
                     IsDefault = false,
                     IsDelete = false,
-                    Address = locationDTO.Address
+                    Address = locationDTO.Address,
+                    Description = locationDTO.Description,
+                    Receiver = locationDTO.Receiver,
+                    PhoneNumber = locationDTO.PhoneNumber
                 };
                 await _db.Locations.AddAsync(newLocation);
                 await _db.SaveChangesAsync();
@@ -68,7 +71,16 @@ namespace FFS.Application.Controllers
                 {
                     return BadRequest();
                 }
-                var updateLocation = _mapper.Map<Location>(locationDTO);
+                var updateLocation = new Location
+                {
+                    UserId = "1",
+                    UpdatedAt = DateTime.Now,
+                    Id = (int)locationDTO.Id,
+                    Address = locationDTO.Address,
+                    Description = locationDTO.Description,
+                    Receiver = locationDTO.Receiver,
+                    PhoneNumber = locationDTO.PhoneNumber
+                };
                 _db.Entry(updateLocation).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return Ok();
@@ -90,6 +102,48 @@ namespace FFS.Application.Controllers
                     return NotFound();
                 }
                 _db.Locations.Remove(location);
+                await _db.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateDefaultLocation(int id, LocationDTO locationDTO)
+        {
+            try
+            {
+                if (id != locationDTO.Id)
+                {
+                    return BadRequest();
+                }
+                var uID = "1";
+                var locations = await _db.Locations.Where(x => x.UserId == uID).ToListAsync();
+                Location locationToUpdate = null;
+                foreach (var item in locations)
+                {
+                    if (item.IsDefault)
+                    {
+                        locationToUpdate = item;
+                        break;
+                    }
+                }
+                if (locationToUpdate != null)
+                {
+                    locationToUpdate.IsDefault = false;
+                    locationToUpdate.UpdatedAt = DateTime.Now;
+                }
+
+                var defaultLocation = await _db.Locations.FirstOrDefaultAsync(x => x.Id == locationDTO.Id);
+                if (defaultLocation != null)
+                {
+                    defaultLocation.IsDefault = true;
+                    defaultLocation.UpdatedAt = DateTime.Now;
+                }
+
                 await _db.SaveChangesAsync();
                 return Ok();
             }

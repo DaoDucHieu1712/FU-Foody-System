@@ -15,5 +15,7 @@ namespace FFS.Application.Repositories
         Task<string> Login(string email, string password);
         Task UserRegister(UserRegisterDTO userRegisterDTO);
         Task ShipperRegister(ShipperRegisterDTO userRegisterDTO);
+        Task<ApplicationUser> Profile(string email);
+        Task ProfileEdit(string email, UserCommandDTO userCommandDTO);
     }
 }
