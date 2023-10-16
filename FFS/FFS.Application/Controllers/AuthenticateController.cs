@@ -16,6 +16,7 @@ using FFS.Application.Constant;
 using FFS.Application.DTOs.Auth;
 using Google.Apis.Auth;
 using FFS.Application.Helper;
+using System.Web;
 
 namespace FFS.Application.Controllers {
     [Route("api/[controller]/[action]")]
@@ -157,7 +158,7 @@ namespace FFS.Application.Controllers {
             if (user != null)
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var resetPasswordLink = Url.Action("ResetPassword", "Authenticate", new { token, email = user.Email }, Request.Scheme);
+                var resetPasswordLink = "http://127.0.0.1:5173/reset-password?token=" + HttpUtility.UrlEncode(token) + "&email=" + HttpUtility.UrlEncode(user.Email);
                 var emailModel = await GetEmailForResetPassword(email, resetPasswordLink);
                 try
                 {
@@ -220,9 +221,9 @@ namespace FFS.Application.Controllers {
                     }
                     return new APIResponseModel()
                     {
-                        Code = 200,
+                        Code = 400,
                         Message = "Error",
-                        IsSucceed = true,
+                        IsSucceed = false,
                         Data = ModelState
                     };
                 }
