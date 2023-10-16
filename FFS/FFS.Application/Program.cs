@@ -71,12 +71,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromMinutes(5));
 #endregion
 
-builder.Services.AddAuthentication().AddGoogle(googleOptions =>
-{
-    googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-    googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-    googleOptions.CallbackPath = "/api/Authenticate/GoogleSignInCallback";
-});
 
 #region repository
 builder.Services.AddTransient(typeof(IRepository<,>), typeof(EntityRepository<,>));

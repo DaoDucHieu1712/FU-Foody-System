@@ -1,36 +1,26 @@
-﻿using System.Net.Mail;
-using System.Security.Claims;
-using System.Text.RegularExpressions;
-
-using AutoMapper;
+﻿using AutoMapper;
 
 using FFS.Application.Data;
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Email;
 using FFS.Application.Entities;
 using FFS.Application.Repositories;
-using FFS.Application.Entities.Constant;
-using FFS.Application.Helper;
 
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using FFS.Application.Constant;
 
 using FFS.Application.DTOs.Auth;
+using Google.Apis.Auth;
+using FFS.Application.Helper;
 
 namespace FFS.Application.Controllers {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class AuthenticateController : ControllerBase
-    {
+    public class AuthenticateController : ControllerBase {
         private readonly ApplicationDbContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthRepository _authRepository;
@@ -64,6 +54,31 @@ namespace FFS.Application.Controllers {
             return Ok(new { token });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> LoginGoogle([FromBody] GoogleRequest googleRequest)
+        {
+            try
+            {
+                var payload = await GoogleJsonWebSignature.ValidateAsync(googleRequest.idToken, new GoogleJsonWebSignature.ValidationSettings());
+                if (!CommonService.IsEmailFPT(payload.Email))
+                {
+                    throw new Exception("Email của bạn không thuộc hệ thống FPT! Vui lòng thử lại!");
+                }
+                var googleId = payload.Subject;
+                UserRegisterDTO user = new UserRegisterDTO()
+                {
+                    email = payload.Email,
+                    Avatar = payload.Picture,
+                };
+
+                var token = _authRepository.LoginWithFptMail(user);
+                return Ok(new { token });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> RegisterShipper(ShipperRegisterDTO shipperRegisterDTO)
@@ -93,19 +108,19 @@ namespace FFS.Application.Controllers {
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> RegisterUser(UserRegisterDTO userRegisterDTO)
-        {
-            try
-            {
-                await _authRepository.UserRegister(userRegisterDTO);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> RegisterUser(UserRegisterDTO userRegisterDTO)
+        //{
+        //    try
+        //    {
+        //        await _authRepository.UserRegister(userRegisterDTO);
+        //        return NoContent();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
         [HttpPost("testsendmail")]
         public async Task<APIResponseModel> TestSendMail(EmailModel emailModel)
         {
@@ -197,13 +212,14 @@ namespace FFS.Application.Controllers {
             if (user != null)
             {
                 var resetPassResult = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
-                if(!resetPassResult.Succeeded)
+                if (!resetPassResult.Succeeded)
                 {
-                    foreach(var error in resetPassResult.Errors)
+                    foreach (var error in resetPassResult.Errors)
                     {
                         ModelState.AddModelError(error.Code, error.Description);
                     }
-                    return new APIResponseModel() {
+                    return new APIResponseModel()
+                    {
                         Code = 200,
                         Message = "Error",
                         IsSucceed = true,
@@ -241,8 +257,6 @@ namespace FFS.Application.Controllers {
             }
         }
 
-       
-
         private async Task<EmailModel> GetEmailForResetPassword(string emailReceive, string resetpasswordLink)
         {
             EmailModel result = new EmailModel();
@@ -272,7 +286,7 @@ namespace FFS.Application.Controllers {
 
 
         [HttpPut]
-        public async Task<IActionResult> Profile(string email, [FromBody]UserCommandDTO userCommandDTO)
+        public async Task<IActionResult> Profile(string email, [FromBody] UserCommandDTO userCommandDTO)
         {
             try
             {
@@ -284,5 +298,7 @@ namespace FFS.Application.Controllers {
                 return StatusCode(500, ex.Message);
             }
         }
+
+        
     }
 }

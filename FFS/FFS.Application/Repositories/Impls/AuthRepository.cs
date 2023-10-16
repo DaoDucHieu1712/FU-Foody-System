@@ -187,57 +187,53 @@ namespace FFS.Application.Repositories.Impls
             }
         }
 
-        public async Task UserRegister(UserRegisterDTO userRegisterDTO)
+        public async Task<string> LoginWithFptMail(UserRegisterDTO userRegisterDTO)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            ApplicationUser userExist = await _userManager.FindByEmailAsync(userRegisterDTO.email);
+            if (userExist != null)
             {
-                if (!CommonService.IsEmailFPT(userRegisterDTO.email))
-                {
-                    throw new Exception("Email không hợp lệ!");
-                }
-
-                ApplicationUser userExist = await _userManager.FindByEmailAsync(userRegisterDTO.email);
-                if (userExist != null)
-                {
-                    throw new Exception("Email đã tồn tại! Xin vui lòng thử lại");
-                }
-
-                if (!CommonService.IsStrongPassword(userRegisterDTO.password))
-                {
-                    throw new Exception("Mật khẩu phải nhiều hơn 8 kí tư, có chữ in hoa, chữ thường, số và kí tự đặc biệt!");
-                }
-                var user = new ApplicationUser()
-                {
-                    Email = userRegisterDTO.email,
-                    UserName = CommonService.ExtractUsername(userRegisterDTO.email)
-                };
-
-                IdentityResult check = await _userManager.CreateAsync(user, userRegisterDTO.password);
-                if (check.Succeeded == false)
-                {
-                    var specificErrors = check.Errors.FirstOrDefault();
-                    throw new Exception(specificErrors?.Description);
-                }
-                IdentityRole? role = await _context.Roles.FirstOrDefaultAsync(role => role.NormalizedName == Role.USER);
-                if (role == null)
-                {
-                    throw new Exception("Có lỗi xảy ra vui lòng liên hệ Admin!");
-                }
-                IdentityUserRole<string> userRole = new IdentityUserRole<string>
-                {
-                    UserId = user.Id,
-                    RoleId = role.Id
-                };
-                await _context.UserRoles.AddAsync(userRole);
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                var token = await GenerateToken(userExist);
+                return token;
             }
-            catch (Exception ex)
+            else
             {
-                await transaction.RollbackAsync();
-                throw new Exception(ex.Message);
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+
+                    var user = new ApplicationUser()
+                    {
+                        Email = userRegisterDTO.email,
+                        UserName = CommonService.ExtractUsername(userRegisterDTO.email),
+                        Avatar = userRegisterDTO.Avatar,
+                    };
+
+                    IdentityResult check = await _userManager.CreateAsync(user, "123456aA@");
+                   
+                    IdentityRole? role = await _context.Roles.FirstOrDefaultAsync(role => role.NormalizedName == Role.USER);
+                    if (role == null)
+                    {
+                        throw new Exception("Có lỗi xảy ra vui lòng liên hệ Admin!");
+                    }
+                    IdentityUserRole<string> userRole = new IdentityUserRole<string>
+                    {
+                        UserId = user.Id,
+                        RoleId = role.Id
+                    };
+                    await _context.UserRoles.AddAsync(userRole);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    var token = await GenerateToken(user);
+                    return token;
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception(ex.Message);
+                }
             }
+            
         }
 
         public async Task ShipperRegister(ShipperRegisterDTO shipperRegisterDTO)

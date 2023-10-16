@@ -24,7 +24,7 @@ const Notification = () => {
 
     //Call api
     axios
-      .get("https://localhost:7025/api/Notification")
+      .get("https://localhost:7025/api/Notification/ListNotification")
       .then((response) => {
         setNotifications(response.data);
       })

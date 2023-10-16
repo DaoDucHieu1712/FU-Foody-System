@@ -1,11 +1,27 @@
-import { useState } from "react";
-
-
+import { useEffect, useState } from "react";
+import { Button, Input } from "@material-tailwind/react";
+import {
+  Tabs,
+  TabsHeader,
+  Tab,
+} from "@material-tailwind/react";
+import GoogleLogin from "@leecheuk/react-google-login";
+import axios from "axios";
+import { gapi } from "gapi-script";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const tabs = [
-    { id: "login", label: "Đăng Nhập" },
-    { id: "register", label: "Đăng Ký" },
+    {
+      label: "Đăng nhập",
+      value: "login",
+      desc: `Đăng nhập`,
+    },
+    {
+      label: "Đăng kí",
+      value: "register",
+      desc: `Đăng kí`,
+    },
   ];
 
   const [activeTab, setActiveTab] = useState("login");
@@ -20,131 +36,135 @@ const Login = () => {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
 
-  // const handleLogin = () => {
-  //   // Xử lý đăng nhập ở đây, ví dụ: gửi email và password đến máy chủ
-  //   console.log("Email:", email);
-  //   console.log("Password:", password);
-  // };
   const handleLogin = async () => {
     // Validate email format
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!email.match(emailRegex)) {
-      setError('Vui lòng nhập đúng định dạng email!');
+      setError("Vui lòng nhập đúng định dạng email!");
       return;
     }
 
-   
     try {
-      const response = await fetch('https://localhost:7025/api/Authenticate/LoginByEmail', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://localhost:7025/api/Authenticate/LoginByEmail",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
         const token = data.token.result;
 
         // Save the token to local storage or a secure store
-        localStorage.setItem('token', token);
-  
-        // Redirect to the home page
-        window.location.href = '/'; 
+        localStorage.setItem("token", token);
 
+        // Redirect to the home page
+        window.location.href = "/";
       } else {
-        
-        setError('Email hoặc mật khẩu không hợp lệ !');
+        setError("Email hoặc mật khẩu không hợp lệ !");
       }
     } catch (errorMessage) {
-      
-      setError('Có lỗi xảy ra. Vui lòng thử lại !');
+      setError("Có lỗi xảy ra. Vui lòng thử lại !");
     }
   };
+
   
+  const responseGoogle = (response) => {
+    console.log(response);
+    const data = {idToken : response.tokenId};
+    axios
+    .post("https://localhost:7025/api/Authenticate/LoginGoogle", data)
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((error) => {
+      toast.error(error.response.data)
+    });
+  };
+  
+  useEffect(() => {
+    function start() {
+      gapi.client.init({
+        clientId: '267743841624-ak3av56ebuurfa5g6ipo135tm3pt5cda.apps.googleusercontent.com',
+        scope: 'email',
+      });
+    }
 
-  const  handleLoginGoogle = async () => {
-    window.location.href = 'https://localhost:7025/api/Authenticate/GoogleSignIn';
-  }
-
+    gapi.load('client:auth2', start);
+  }, []);
 
   return (
     <div className="flex justify-center mt-5">
       <div className="w-1/4 p-4 text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 shadow-lg">
-        <ul className="flex flex-wrap mb-5 border-b-stone-500">
-          {tabs.map((tab) => (
-            <li key={tab.id} className="mr-2">
-              <a
-                href="#"
-                onClick={() => handleTabChange(tab.id)}
-                className={`inline-block p-4 ${
-                  tab.id === activeTab
-                    ? "text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500"
-                    : "border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-                } ${
-                  tab.disabled
-                    ? "cursor-not-allowed text-gray-400 dark:text-gray-500"
-                    : ""
-                }`}
-                aria-current={tab.id === activeTab ? "page" : undefined}
-                disabled={tab.disabled}
+        <Tabs value={activeTab} className="mb-6">
+          <TabsHeader
+            className="rounded-none border-b border-blue-gray-50 bg-transparent p-0"
+            indicatorProps={{
+              className:
+                "bg-transparent border-b-2 border-primary shadow-none rounded-none",
+            }}
+          >
+            {tabs.map(({ label, value }) => (
+              <Tab
+                key={value}
+                value={value}
+                onClick={() => setActiveTab(value)}
+                className={activeTab === value ? "text-primary" : ""}
               >
-                {tab.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+                {label}
+              </Tab>
+            ))}
+          </TabsHeader>
+        </Tabs>
 
         {activeTab === "login" ? (
           <div>
-            <label htmlFor="email" className="block mb-2 font-semibold text-left">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Email"
-              value={email}
-              onChange={handleEmailChange}
-              className="w-full border p-2 mb-4 rounded"
-            />
-            <label htmlFor="password" className="block mb-2 font-semibold text-left">
-              Mật khẩu
-            </label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Mật khẩu"
-              value={password}
-              onChange={handlePasswordChange}
-              className="w-full border p-2 mb-4 rounded"
-            />
+            <div className="mb-4">
+              <Input
+                label="Email"
+                type="email"
+                id="email"
+                value={email}
+                onChange={handleEmailChange}
+                className="w-full border p-2 rounded"
+              />
+            </div>
+            <div className="mb-4">
+              <Input
+                label="Mật khẩu"
+                type="password"
+                id="password"
+                value={password}
+                onChange={handlePasswordChange}
+                className="w-full border p-2 rounded"
+              />
+            </div>
             {errorMessage && (
               <div className="text-red-600 text-center mt-4">
                 {errorMessage}
               </div>
             )}
-            <button
-              className="bg-primary text-white p-2 rounded w-full mb-8"
+            <Button
+              className="bg-primary text-white p-2 rounded w-full mb-8 h-10"
               onClick={handleLogin}
-              
             >
               Đăng nhập
-            </button>
+            </Button>
             <hr></hr>
-            <button className="bg-white text-black p-2 rounded mt-2 w-full border flex justify-center" onClick={handleLoginGoogle}>
-                <p className="pr-2">
-                <i className="fab fa-google"></i>
-                </p>
-              <p>
-              Đăng nhập qua Google 
-              </p>
-            </button>
+             <GoogleLogin
+               clientId="267743841624-ak3av56ebuurfa5g6ipo135tm3pt5cda.apps.googleusercontent.com"
+               buttonText="Đăng nhập bằng Google"
+               onSuccess={responseGoogle}
+               onFailure={responseGoogle}
+               cookiePolicy={"single_host_origin"}
+            ></GoogleLogin>
+            ;
           </div>
         ) : (
           <div>{/* Thêm phần giao diện cho tab "Đăng ký" ở đây */}</div>
