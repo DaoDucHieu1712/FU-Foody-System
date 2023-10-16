@@ -13,7 +13,7 @@ namespace FFS.Application.Repositories
         Task<string> GenerateToken(ApplicationUser us);
         Task<bool> ResetPassword(string email);
         Task<string> Login(string email, string password);
-        Task UserRegister(UserRegisterDTO userRegisterDTO);
+        Task<string> LoginWithFptMail(UserRegisterDTO userRegisterDTO);
         Task ShipperRegister(ShipperRegisterDTO userRegisterDTO);
         Task<ApplicationUser> Profile(string email);
         Task ProfileEdit(string email, UserCommandDTO userCommandDTO);
