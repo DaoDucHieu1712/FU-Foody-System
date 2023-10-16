@@ -6,6 +6,8 @@ import ChangePasswordPage from "./app/(auth)/ChangePasswordPage";
 import ForgotPasswordPage from "./app/(public)/ForgotPasswordPage";
 import Location from "./app/(auth)/Location";
 import ProfilePage from "./app/(auth)/ProfilePage";
+import ResetPasswordPage from "./app/(public)/ResetPassWord";
+
 
 function App() {
   return (
@@ -16,9 +18,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/location" element={<Location />} />
           <Route path="/register-store" element={<StoreRegisterPage />} />
-          <Route path="/change-password" element={<ChangePasswordPage />} />
-          <Route path="/forgot-pasword" element={<ForgotPasswordPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/change-passsword" element={<ChangePasswordPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Route>
       </Routes>
     </>
