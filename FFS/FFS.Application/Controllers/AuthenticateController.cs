@@ -254,5 +254,35 @@ namespace FFS.Application.Controllers {
             result.To = emailTos;
             return await Task.FromResult(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Profile(string email)
+        {
+            try
+            {
+                ApplicationUser user = await _authRepository.Profile(email);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> Profile(string email, [FromBody]UserCommandDTO userCommandDTO)
+        {
+            try
+            {
+                await _authRepository.ProfileEdit(email, userCommandDTO);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

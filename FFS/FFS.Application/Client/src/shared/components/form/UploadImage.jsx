@@ -13,7 +13,6 @@ const UploadImage = ({ onChange, name }) => {
     const response = await axios({
       method: "post",
       url: import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL_UPLOAD_IMAGE,
-      // url: "https://api.imgbb.com/1/upload?key=7eef4b3d48ffb2383bf921eeb1dd5117",
       data: bodyFormData,
       headers: {
         "Content-Type": "multipart/form-data",
@@ -37,7 +36,7 @@ const UploadImage = ({ onChange, name }) => {
         {imageURL?.length === 0 ? (
           <>
             <input type="file" onChange={handleUploadImage} hidden />
-            <span>Chọn ảnh</span>
+            <span className="p-2 border border-gray-700">Chọn ảnh</span>
           </>
         ) : (
           <img

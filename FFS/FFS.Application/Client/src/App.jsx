@@ -1,12 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 import Login from "./app/(public)/Login";
 import Layout from "./app/(auth)/Layout";
-
 import StoreRegisterPage from "./app/(public)/StoreRegisterPage";
-import ChangePasswordPage from "./app/(public)/ChangePasswordPage";
+import ChangePasswordPage from "./app/(auth)/ChangePasswordPage";
 import ForgotPasswordPage from "./app/(public)/ForgotPasswordPage";
 import Location from "./app/(auth)/Location";
-
+import ProfilePage from "./app/(auth)/ProfilePage";
 
 function App() {
   return (
@@ -19,6 +18,7 @@ function App() {
           <Route path="/register-store" element={<StoreRegisterPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route path="/forgot-pasword" element={<ForgotPasswordPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
       </Routes>
     </>
