@@ -3,6 +3,7 @@ import axios from "axios";
 import UpdateLocation from "./shares/components/UpdateLocation";
 import AddLocation from "./shares/components/AddLocation";
 import DeleteLocation from "./shares/components/DeleteLocation";
+import DefaultLocation from "./shares/components/DefaultLocation";
 
 const Location = () => {
 
@@ -33,9 +34,6 @@ const Location = () => {
         reloadList();
     }, []);
 
-    const handleDefaultChange = () => {
-
-    };
 
     return (
         <div className="w-full h-auto">
@@ -57,9 +55,8 @@ const Location = () => {
                         </div>
                         <div >
                             <UpdateLocation item={location} reload={reloadList} wardList={wardList}></UpdateLocation>
-                            {/* {location.isDefault == true ? null : <p className="text-blue-500 font-semibold cursor-pointer hover:underline hover:text-blue-600" onClick={handleDeleteLocation}>Xóa</p>} */}
                             {location.isDefault == true ? null : <DeleteLocation id={location.id} reload={reloadList}></DeleteLocation>}
-                            {location.isDefault == true ? <p className="text-orange-400 text-center font-semibold border-solid border-2 border-orange-400 h-auto w-20 pointer-events-none">Mặc định</p> : <p className="text-gray-400 text-center font-semibold border-solid border-2 border-gray-400 h-auto w-36 cursor-pointer hover:text-gray-600 hover:border-gray-600" onClick={handleDefaultChange}>Thiết lập mặc định</p>}
+                            {location.isDefault == true ? <p className="text-orange-400 text-center font-semibold border-solid border-2 border-orange-400 h-auto w-20 pointer-events-none">Mặc định</p> : <DefaultLocation item={location} reload={reloadList}></DefaultLocation>}
                         </div>
                     </div>
                 ))}
