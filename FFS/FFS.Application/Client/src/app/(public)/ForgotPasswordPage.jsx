@@ -1,70 +1,64 @@
 import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { Input } from "@material-tailwind/react";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!email) {
-      toast.error('Email không được để trống!');
+      toast.error("Email không được để trống!");
       return;
     } else if (!emailRegex.test(email)) {
-      toast.error('Vui lòng nhập đúng định dạng email!');
+      toast.error("Vui lòng nhập đúng định dạng email!");
       return;
     }
-  
+
     try {
       const response = await axios.post(
-        'https://localhost:7025/api/Authenticate/ForgotPassword',
+        "https://localhost:7025/api/Authenticate/ForgotPassword",
         null,
         {
           params: { email: email },
         }
       );
-  
+
       if (response.status === 200) {
         const data = response.data;
         if (data.isSucceed) {
-          toast.success('Yêu cầu đã được gửi thành công, vui lòng kiểm tra email!');
+          toast.success(
+            "Yêu cầu đã được gửi thành công, vui lòng kiểm tra email!"
+          );
         } else {
-          setErrorMessage(data.data);
+          toast.error(data.data);
         }
       } else {
-        toast.error('Đã xảy ra lỗi khi gửi yêu cầu!');
+        toast.error("Đã xảy ra lỗi khi gửi yêu cầu!");
       }
     } catch (error) {
-      console.error('An error occurred:', error);
-      toast.error('Đã xảy ra lỗi khi gửi yêu cầu!');
+      console.error("An error occurred:", error);
+      toast.error("Đã xảy ra lỗi khi gửi yêu cầu!");
     }
   };
-  
+
   return (
     <div className="bg-gray-50">
       <div className="p-2">
         <div className="max-w-md w-full mx-auto mt-8 p-8 bg-white shadow-md rounded-lg">
           <h2 className="mt-6 text-center text-3xl text-gray-600">
-            Quên Mật Khẩu
+            Quên mật khẩu
           </h2>
           <p className="mt-2 text-center text-sm text-gray-400">
             Nhập email để đặt lại mật khẩu
           </p>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-gray-400 text-sm font-bold mb-2">
-                Email
-              </label>
-              <input
-                type="text"
-                className="w-full px-3 py-2 placeholder-gray-400 text-gray-700 border"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Nhập email..."
-              />
+              <div className="w-90">
+                <Input size="lg" label="Email" value={email}
+                onChange={(e) => setEmail(e.target.value)}/>
+              </div>
             </div>
             <div>
               <button
@@ -74,17 +68,6 @@ const ForgotPasswordPage = () => {
                 Gửi mã
               </button>
             </div>
-            {errorMessage && (
-              <div className="text-red-600 text-center mt-4">
-                {errorMessage}
-              </div>
-            )}
-
-            {isSuccess && (
-              <div className="text-green-600 text-center mt-4">
-                Password reset email sent successfully!
-              </div>
-            )}
           </form>
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-600">
