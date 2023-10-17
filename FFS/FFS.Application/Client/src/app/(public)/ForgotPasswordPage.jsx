@@ -18,13 +18,13 @@ const ForgotPasswordPage = () => {
 
     try {
       const response = await axios.post(
-        "https://localhost:7025/api/Authenticate/ForgotPassword",
+        'https://localhost:7025/api/Authenticate/ForgotPassword',
         null,
         {
           params: { email: email },
         }
       );
-
+  
       if (response.status === 200) {
         const data = response.data;
         if (data.isSucceed) {
