@@ -16,8 +16,12 @@ using FFS.Application.Constant;
 using FFS.Application.DTOs.Auth;
 using Google.Apis.Auth;
 using FFS.Application.Helper;
+using System.Web;
+using Microsoft.Extensions.FileSystemGlobbing;
+using System.Diagnostics.Metrics;
 
-namespace FFS.Application.Controllers {
+namespace FFS.Application.Controllers
+{
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class AuthenticateController : ControllerBase {
@@ -157,7 +161,7 @@ namespace FFS.Application.Controllers {
             if (user != null)
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var resetPasswordLink = Url.Action("ResetPassword", "Authenticate", new { token, email = user.Email }, Request.Scheme);
+                var resetPasswordLink = "http://127.0.0.1:5173/reset-password?token=" + HttpUtility.UrlEncode(token) + "&email=" + HttpUtility.UrlEncode(user.Email);
                 var emailModel = await GetEmailForResetPassword(email, resetPasswordLink);
                 try
                 {
@@ -191,18 +195,6 @@ namespace FFS.Application.Controllers {
             };
         }
 
-        [HttpGet("reset-password")]
-        public async Task<APIResponseModel> ResetPassword(string token, string email)
-        {
-            var model = new ResetPasswordDTO { Token = token, Email = email };
-            return new APIResponseModel()
-            {
-                Code = 200,
-                Message = "OK",
-                IsSucceed = true,
-                Data = model
-            };
-        }
         [HttpPost]
         [AllowAnonymous]
         [Route("reset-password")]
@@ -220,9 +212,9 @@ namespace FFS.Application.Controllers {
                     }
                     return new APIResponseModel()
                     {
-                        Code = 200,
-                        Message = "Error",
-                        IsSucceed = true,
+                        Code = 400,
+                        Message = "Token đã hết hạn",
+                        IsSucceed = false,
                         Data = ModelState
                     };
                 }
@@ -237,11 +229,12 @@ namespace FFS.Application.Controllers {
             return new APIResponseModel()
             {
                 Code = 400,
-                Message = "Error: email not found!",
+                Message = "Link invalid",
                 IsSucceed = false,
-                Data = "Email không tồn tại trong hệ thống!",
+                Data = "Link invalid",
             };
         }
+
 
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
@@ -256,6 +249,8 @@ namespace FFS.Application.Controllers {
                 return StatusCode(500, ex.Message);
             }
         }
+
+
 
         private async Task<EmailModel> GetEmailForResetPassword(string emailReceive, string resetpasswordLink)
         {

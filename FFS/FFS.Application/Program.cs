@@ -68,7 +68,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromMinutes(5));
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromMinutes(30));
 #endregion
 
 
