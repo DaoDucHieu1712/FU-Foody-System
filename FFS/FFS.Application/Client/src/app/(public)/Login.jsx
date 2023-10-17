@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { Button, Input } from "@material-tailwind/react";
-import {
-  Tabs,
-  TabsHeader,
-  Tab,
-} from "@material-tailwind/react";
+import { Tabs, TabsHeader, Tab } from "@material-tailwind/react";
 import GoogleLogin from "@leecheuk/react-google-login";
 import axios from "axios";
 import { gapi } from "gapi-script";
 import { toast } from "react-toastify";
+import { FaLock } from 'react-icons/fa';
 
 const Login = () => {
   const tabs = [
@@ -74,29 +71,29 @@ const Login = () => {
     }
   };
 
-  
   const responseGoogle = (response) => {
     console.log(response);
-    const data = {idToken : response.tokenId};
+    const data = { idToken: response.tokenId };
     axios
-    .post("https://localhost:7025/api/Authenticate/LoginGoogle", data)
-    .then((response) => {
-      console.log(response)
-    })
-    .catch((error) => {
-      toast.error(error.response.data)
-    });
+      .post("https://localhost:7025/api/Authenticate/LoginGoogle", data)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        toast.error(error.response.data);
+      });
   };
-  
+
   useEffect(() => {
     function start() {
       gapi.client.init({
-        clientId: '267743841624-ak3av56ebuurfa5g6ipo135tm3pt5cda.apps.googleusercontent.com',
-        scope: 'email',
+        clientId:
+          "267743841624-ak3av56ebuurfa5g6ipo135tm3pt5cda.apps.googleusercontent.com",
+        scope: "email",
       });
     }
 
-    gapi.load('client:auth2', start);
+    gapi.load("client:auth2", start);
   }, []);
 
   return (
@@ -151,20 +148,28 @@ const Login = () => {
               </div>
             )}
             <Button
-              className="bg-primary text-white p-2 rounded w-full mb-8 h-10"
+              className="bg-primary text-white p-2 rounded w-full mb-3 h-10"
               onClick={handleLogin}
             >
               Đăng nhập
             </Button>
-            <hr></hr>
-             <GoogleLogin
-               clientId="267743841624-ak3av56ebuurfa5g6ipo135tm3pt5cda.apps.googleusercontent.com"
-               buttonText="Đăng nhập bằng Google"
-               onSuccess={responseGoogle}
-               onFailure={responseGoogle}
-               cookiePolicy={"single_host_origin"}
+            <div className="flex justify-center">
+      <a
+        href="/forgot-password"
+        className="text-blue-500 mb-4 flex items-center px-4 py-2 rounded-full border border-blue-500 hover:bg-blue-500 hover:text-white transition duration-300"
+      >
+        <FaLock className="mr-2" />
+        <span className="font-medium">Quên mật khẩu</span>
+      </a>
+    </div>
+            <p className="mb-2">hoặc</p>
+            <GoogleLogin
+              clientId="267743841624-ak3av56ebuurfa5g6ipo135tm3pt5cda.apps.googleusercontent.com"
+              buttonText="Đăng nhập bằng Google"
+              onSuccess={responseGoogle}
+              onFailure={responseGoogle}
+              cookiePolicy={"single_host_origin"}
             ></GoogleLogin>
-            ;
           </div>
         ) : (
           <div>{/* Thêm phần giao diện cho tab "Đăng ký" ở đây */}</div>
