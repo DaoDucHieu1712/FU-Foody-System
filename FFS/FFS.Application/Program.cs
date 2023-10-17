@@ -71,7 +71,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromMinutes(30));
 #endregion
 
-
 #region repository
 builder.Services.AddTransient(typeof(IRepository<,>), typeof(EntityRepository<,>));
 builder.Services.AddTransient<IAuthRepository, AuthRepository>();
