@@ -8,7 +8,6 @@ import Location from "./app/(auth)/Location";
 import ProfilePage from "./app/(auth)/ProfilePage";
 import ResetPasswordPage from "./app/(public)/ResetPassWord";
 
-
 function App() {
   return (
     <>

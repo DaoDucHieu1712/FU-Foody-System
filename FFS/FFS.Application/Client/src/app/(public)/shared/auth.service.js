@@ -5,6 +5,10 @@ const AuthServices = {
     const url = "/Authenticate/StoreRegister";
     return axiosConfig.post(url, data);
   },
+  changePassword(data) {
+    const url = "/Authenticate/ChangePassword";
+    return axiosConfig.post(url, data);
+  },
 };
 
 export default AuthServices;
