@@ -7,6 +7,7 @@ export default withMT({
     extend: {
       colors: {
         primary: "#FE5303",
+        borderpri: "#EBEDEE",
       },
     },
   },
