@@ -7,6 +7,7 @@ import ForgotPasswordPage from "./app/(public)/ForgotPasswordPage";
 import Location from "./app/(auth)/Location";
 import ProfilePage from "./app/(auth)/ProfilePage";
 import ResetPasswordPage from "./app/(public)/ResetPassWord";
+import CartPage from "./app/(auth)/CartPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/change-passsword" element={<ChangePasswordPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/cart" element={<CartPage />} />
         </Route>
       </Routes>
     </>
