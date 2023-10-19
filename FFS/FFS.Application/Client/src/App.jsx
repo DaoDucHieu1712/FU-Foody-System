@@ -8,6 +8,7 @@ import Location from "./app/(auth)/Location";
 import ProfilePage from "./app/(auth)/ProfilePage";
 import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
+import StoreProfilePage from "./app/(auth)/StoreProfilePage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/store-profile/:id" element={<StoreProfilePage />} />
         </Route>
       </Routes>
     </>

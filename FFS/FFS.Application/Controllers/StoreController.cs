@@ -27,5 +27,20 @@ namespace FFS.Application.Controllers {
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStore(int id, StoreInforDTO storeInforDTO)
+        {
+            try
+            {
+                StoreInforDTO inforDTO = await _storeRepository.UpdateStore(id, storeInforDTO);
+                return Ok(inforDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
