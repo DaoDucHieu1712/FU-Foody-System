@@ -8,7 +8,9 @@ namespace FFS.Application.Entities
     {
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
-        public ApplicationUser User { get; set; }   
-        public ICollection<Food> Foods { get; set; }
+        public ApplicationUser User { get; set; }
+        public int  FoodId {get;set;}
+        [ForeignKey(nameof(FoodId))]
+        public Food Food { get; set; }
     }
 }
