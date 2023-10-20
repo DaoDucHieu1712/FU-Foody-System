@@ -4,7 +4,9 @@ import Layout from "./app/(auth)/Layout";
 import StoreRegisterPage from "./app/(public)/StoreRegisterPage";
 import ChangePasswordPage from "./app/(auth)/ChangePasswordPage";
 import ForgotPasswordPage from "./app/(public)/ForgotPasswordPage";
+import FoodDetails from "./app/(public)/FoodDetails";
 import Location from "./app/(auth)/Location";
+import Inventory from "./app/(auth)/shares/components/inventory/Inventory";
 import ProfilePage from "./app/(auth)/ProfilePage";
 import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
@@ -22,7 +24,9 @@ function App() {
           <Route path="/change-passsword" element={<ChangePasswordPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/food-details" element={<FoodDetails />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/inventory" element={<Inventory />} />
         </Route>
       </Routes>
     </>
