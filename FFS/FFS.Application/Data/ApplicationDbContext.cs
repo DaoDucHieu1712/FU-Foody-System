@@ -70,6 +70,11 @@ namespace FFS.Application.Data
                 entity.Property(x => x.Id).HasMaxLength(50).IsRequired(true);
             });
 
+            builder.Entity<FoodCombo>()
+              .HasOne(c => c.Store)
+              .WithMany()
+              .OnDelete(DeleteBehavior.ClientNoAction);
+
             builder.Entity<ApplicationRole>()
                 .HasData(
                 new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "Admin", Description = "Admin", NormalizedName = "ADMIN" },
@@ -102,6 +107,7 @@ namespace FFS.Application.Data
         public virtual DbSet<Wishlist> Wishlists { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<Report> Reports { get; set; }
+        public virtual DbSet<FoodCombo> FoodCombos { get; set; }
 
         public override int SaveChanges()
         {
