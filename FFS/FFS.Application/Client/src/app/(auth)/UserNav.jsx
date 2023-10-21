@@ -1,18 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import User from "../../shared/components/icon/User";
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setAccessToken } from "../../redux/auth";
+import CookieService from '../../shared/helper/cookieConfig';
+
 const UserNav = () => {
   
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipRef = useRef(null);
-
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const toggleTooltip = () => {
     setShowTooltip(!showTooltip);
   };
 
   const handleLogout = () => {
     
-    localStorage.removeItem('token'); // Remove the user token
-    window.location.href = '/login'; // Redirect to the login page
+    CookieService.removeToken("ACCESS_TOKEN");// Remove the user token
+    dispatch(setAccessToken(null));
+    navigate('/Login'); // Redirect to the login page
   };
 
   useEffect(() => {

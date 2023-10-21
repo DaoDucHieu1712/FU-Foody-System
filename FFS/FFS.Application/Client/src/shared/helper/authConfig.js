@@ -6,6 +6,8 @@ const objCookies = {
   domain: import.meta.env.VITE_FU_FOODY_COOKIE_DOMAIN,
 };
 
+
+
 export const saveToken = (access_token, refresh_token) => {
   if (access_token && refresh_token) {
     Cookies.set(accessTokenKey, access_token, {
@@ -28,12 +30,31 @@ export const saveToken = (access_token, refresh_token) => {
   }
 };
 
+export const saveTokenv2 = (access_token) => {
+  console.log(access_token);
+    Cookies.set(accessTokenKey, access_token, {
+      ...objCookies,
+   
+    });
+   
+    
+};
+
+
 export const getToken = () => {
   const access_token = Cookies.get(accessTokenKey);
   const refresh_token = Cookies.get(refreshTokenKey);
   return {
     access_token,
     refresh_token,
+  };
+};
+
+export const getTokenv2 = () => {
+  const access_token = Cookies.get(accessTokenKey);
+  
+  return {
+    access_token,
   };
 };
 export const logOut = () => {
