@@ -19,5 +19,7 @@ namespace FFS.Application.Entities
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Category> Categories { get; set; }
         public ICollection<Combo> Combos { get; set; }
+        public ICollection<Food> Foods { get; set; }
+        public ICollection<FoodCombo> FoodCombos { get; set; }
     }
 }

@@ -10,5 +10,6 @@ namespace FFS.Application.Entities
         public int StoreId { get;set; }
         [ForeignKey(nameof(StoreId))]
         public Store Store { get; set; }
+        public ICollection<Food> Foods { get; set;}
     }
 }

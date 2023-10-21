@@ -22,5 +22,6 @@ namespace FFS.Application.Entities
         public ApplicationUser User { get; set; }
         public ICollection<Image>? Images { get; set; }
         public ICollection<React> Reacts { get; set; }
+        public virtual ICollection<Comment> ParentComments { get; set; }
     }
 }
