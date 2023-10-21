@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FFS.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231014103358_AddTableReport")]
-    partial class AddTableReport
+    [Migration("20231021091136_re-init")]
+    partial class reinit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -239,6 +239,7 @@ namespace FFS.Application.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("StoreId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -318,9 +319,6 @@ namespace FFS.Application.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ComboId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -348,20 +346,45 @@ namespace FFS.Application.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("WishlistId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("ComboId");
+                    b.HasIndex("StoreId");
+
+                    b.ToTable("Food");
+                });
+
+            modelBuilder.Entity("FFS.Application.Entities.FoodCombo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FoodId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FoodId");
 
                     b.HasIndex("StoreId");
 
-                    b.HasIndex("WishlistId");
-
-                    b.ToTable("Food");
+                    b.ToTable("FoodCombo");
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Image", b =>
@@ -492,6 +515,14 @@ namespace FFS.Application.Migrations
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Receiver")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -866,6 +897,9 @@ namespace FFS.Application.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("FoodId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -877,6 +911,8 @@ namespace FFS.Application.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FoodId");
 
                     b.HasIndex("UserId");
 
@@ -1036,32 +1072,32 @@ namespace FFS.Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "21a40c99-7e4c-4768-8a3d-f4db8f4c63e2",
-                            ConcurrencyStamp = "b830ba24-d7d9-4c31-a56c-0bc9def5c9b1",
+                            Id = "d6f799c2-4aaa-47a6-b3bb-a78646bcb05a",
+                            ConcurrencyStamp = "12c7241f-857d-4eeb-9ce5-d7c82f98cbd4",
                             Name = "Admin",
                             NormalizedName = "ADMIN",
                             Description = "Admin"
                         },
                         new
                         {
-                            Id = "3fa51a77-ca74-4501-8ae6-972ddbf4f420",
-                            ConcurrencyStamp = "b1f7d074-b381-41d7-bf7b-1b75bd4a3a15",
+                            Id = "9a58032a-0b72-40f7-a05e-e087670ef386",
+                            ConcurrencyStamp = "5f98bb9e-89b9-4f56-b547-8ef373faf662",
                             Name = "StoreOwner",
                             NormalizedName = "STOREOWNER",
                             Description = "StoreOwner"
                         },
                         new
                         {
-                            Id = "5f0cc353-19c1-4f1c-aebd-fa4dfab76ca2",
-                            ConcurrencyStamp = "4b9808f6-9e47-45f1-a7b3-7c0e8fbc4b87",
+                            Id = "6347060e-7515-4f46-99e3-12cdf400d857",
+                            ConcurrencyStamp = "43cfa24d-d290-4cca-a3dd-a8940be4fb34",
                             Name = "Shipper",
                             NormalizedName = "SHIPPER",
                             Description = "Shipper"
                         },
                         new
                         {
-                            Id = "e1d96487-a80a-4c77-ac91-6d149234cf3d",
-                            ConcurrencyStamp = "95559893-6b25-4391-8681-47df122a712c",
+                            Id = "e413f934-f60f-4193-8964-849c789fc4c9",
+                            ConcurrencyStamp = "0a5cb195-768b-4074-8c24-f245ba02354d",
                             Name = "User",
                             NormalizedName = "USER",
                             Description = "User"
@@ -1123,7 +1159,9 @@ namespace FFS.Application.Migrations
 
                     b.HasOne("FFS.Application.Entities.Store", "Store")
                         .WithMany("Comments")
-                        .HasForeignKey("StoreId");
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FFS.Application.Entities.ApplicationUser", "User")
                         .WithMany("Comments")
@@ -1159,9 +1197,24 @@ namespace FFS.Application.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FFS.Application.Entities.Combo", null)
-                        .WithMany("Foods")
-                        .HasForeignKey("ComboId");
+                    b.HasOne("FFS.Application.Entities.Store", "Store")
+                        .WithMany()
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("FFS.Application.Entities.FoodCombo", b =>
+                {
+                    b.HasOne("FFS.Application.Entities.Food", "Food")
+                        .WithMany("FoodCombos")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FFS.Application.Entities.Store", "Store")
                         .WithMany()
@@ -1169,11 +1222,7 @@ namespace FFS.Application.Migrations
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
-                    b.HasOne("FFS.Application.Entities.Wishlist", null)
-                        .WithMany("Foods")
-                        .HasForeignKey("WishlistId");
-
-                    b.Navigation("Category");
+                    b.Navigation("Food");
 
                     b.Navigation("Store");
                 });
@@ -1204,7 +1253,7 @@ namespace FFS.Application.Migrations
                         .IsRequired();
 
                     b.HasOne("FFS.Application.Entities.Store", null)
-                        .WithMany("Inventorys")
+                        .WithMany("Inventories")
                         .HasForeignKey("StoreId1");
 
                     b.Navigation("Food");
@@ -1331,11 +1380,19 @@ namespace FFS.Application.Migrations
 
             modelBuilder.Entity("FFS.Application.Entities.Wishlist", b =>
                 {
+                    b.HasOne("FFS.Application.Entities.Food", "Food")
+                        .WithMany()
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FFS.Application.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Food");
 
                     b.Navigation("User");
                 });
@@ -1404,11 +1461,6 @@ namespace FFS.Application.Migrations
                     b.Navigation("Reacts");
                 });
 
-            modelBuilder.Entity("FFS.Application.Entities.Combo", b =>
-                {
-                    b.Navigation("Foods");
-                });
-
             modelBuilder.Entity("FFS.Application.Entities.Comment", b =>
                 {
                     b.Navigation("Images");
@@ -1419,6 +1471,8 @@ namespace FFS.Application.Migrations
             modelBuilder.Entity("FFS.Application.Entities.Food", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("FoodCombos");
 
                     b.Navigation("OrderDetails");
                 });
@@ -1438,12 +1492,7 @@ namespace FFS.Application.Migrations
 
                     b.Navigation("Discounts");
 
-                    b.Navigation("Inventorys");
-                });
-
-            modelBuilder.Entity("FFS.Application.Entities.Wishlist", b =>
-                {
-                    b.Navigation("Foods");
+                    b.Navigation("Inventories");
                 });
 #pragma warning restore 612, 618
         }

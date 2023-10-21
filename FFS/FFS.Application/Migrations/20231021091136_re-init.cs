@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FFS.Application.Migrations
 {
-    public partial class init : Migration
+    public partial class reinit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,12 +30,12 @@ namespace FFS.Application.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<bool>(type: "bit", nullable: false),
-                    Allow = table.Column<bool>(type: "bit", nullable: false),
-                    BirthDay = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Avatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<bool>(type: "bit", nullable: true),
+                    Allow = table.Column<bool>(type: "bit", nullable: true),
+                    BirthDay = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -73,6 +73,25 @@ namespace FFS.Application.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Payment", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Report",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    TargetId = table.Column<int>(type: "int", nullable: false),
+                    ReportType = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Report", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -284,6 +303,9 @@ namespace FFS.Application.Migrations
                     UserId = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDefault = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Receiver = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDelete = table.Column<bool>(type: "bit", nullable: false)
@@ -340,28 +362,6 @@ namespace FFS.Application.Migrations
                     table.PrimaryKey("PK_Notification", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Notification_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Wishlist",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Wishlist", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Wishlist_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -492,8 +492,6 @@ namespace FFS.Application.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     StoreId = table.Column<int>(type: "int", nullable: false),
-                    ComboId = table.Column<int>(type: "int", nullable: true),
-                    WishlistId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDelete = table.Column<bool>(type: "bit", nullable: false)
@@ -508,19 +506,9 @@ namespace FFS.Application.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Food_Combo_ComboId",
-                        column: x => x.ComboId,
-                        principalTable: "Combo",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Food_Store_StoreId",
                         column: x => x.StoreId,
                         principalTable: "Store",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Food_Wishlist_WishlistId",
-                        column: x => x.WishlistId,
-                        principalTable: "Wishlist",
                         principalColumn: "Id");
                 });
 
@@ -533,7 +521,7 @@ namespace FFS.Application.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rate = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    StoreId = table.Column<int>(type: "int", nullable: true),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
                     FoodId = table.Column<int>(type: "int", nullable: true),
                     ParentCommentId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -561,6 +549,35 @@ namespace FFS.Application.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Comment_Store_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Store",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FoodCombo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StoreId = table.Column<int>(type: "int", nullable: false),
+                    FoodId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FoodCombo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FoodCombo_Food_FoodId",
+                        column: x => x.FoodId,
+                        principalTable: "Food",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FoodCombo_Store_StoreId",
                         column: x => x.StoreId,
                         principalTable: "Store",
                         principalColumn: "Id");
@@ -638,6 +655,35 @@ namespace FFS.Application.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Wishlist",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    FoodId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wishlist", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wishlist_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Wishlist_Food_FoodId",
+                        column: x => x.FoodId,
+                        principalTable: "Food",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Image",
                 columns: table => new
                 {
@@ -700,10 +746,10 @@ namespace FFS.Application.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Description", "Discriminator", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "229019d3-4e88-42ec-9d4c-b834413a7215", "cd3f896a-dd72-415d-a0c9-ab785d1c6679", "Shipper", "ApplicationRole", "Shipper", "SHIPPER" },
-                    { "2e84f51e-8d0b-45f6-9f22-1d3a4556f6cd", "cb41977a-e430-4905-b2f7-df118a866162", "StoreOwner", "ApplicationRole", "StoreOwner", "STOREOWNER" },
-                    { "3a4c795e-3443-4a83-92e5-95c688951184", "5e6b1f6f-de29-4a13-829f-bb7ecc23a165", "Admin", "ApplicationRole", "Admin", "ADMIN" },
-                    { "97146b8f-ba2f-491a-91bb-f60be3b11377", "0c3a85a0-5e62-49e3-b55b-540ab939154b", "User", "ApplicationRole", "User", "USER" }
+                    { "6347060e-7515-4f46-99e3-12cdf400d857", "43cfa24d-d290-4cca-a3dd-a8940be4fb34", "Shipper", "ApplicationRole", "Shipper", "SHIPPER" },
+                    { "9a58032a-0b72-40f7-a05e-e087670ef386", "5f98bb9e-89b9-4f56-b547-8ef373faf662", "StoreOwner", "ApplicationRole", "StoreOwner", "STOREOWNER" },
+                    { "d6f799c2-4aaa-47a6-b3bb-a78646bcb05a", "12c7241f-857d-4eeb-9ce5-d7c82f98cbd4", "Admin", "ApplicationRole", "Admin", "ADMIN" },
+                    { "e413f934-f60f-4193-8964-849c789fc4c9", "0a5cb195-768b-4074-8c24-f245ba02354d", "User", "ApplicationRole", "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -796,19 +842,19 @@ namespace FFS.Application.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Food_ComboId",
-                table: "Food",
-                column: "ComboId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Food_StoreId",
                 table: "Food",
                 column: "StoreId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Food_WishlistId",
-                table: "Food",
-                column: "WishlistId");
+                name: "IX_FoodCombo_FoodId",
+                table: "FoodCombo",
+                column: "FoodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FoodCombo_StoreId",
+                table: "FoodCombo",
+                column: "StoreId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Image_CommentId",
@@ -896,6 +942,11 @@ namespace FFS.Application.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Wishlist_FoodId",
+                table: "Wishlist",
+                column: "FoodId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Wishlist_UserId",
                 table: "Wishlist",
                 column: "UserId");
@@ -922,7 +973,13 @@ namespace FFS.Application.Migrations
                 name: "Chat");
 
             migrationBuilder.DropTable(
+                name: "Combo");
+
+            migrationBuilder.DropTable(
                 name: "Discount");
+
+            migrationBuilder.DropTable(
+                name: "FoodCombo");
 
             migrationBuilder.DropTable(
                 name: "Image");
@@ -949,7 +1006,13 @@ namespace FFS.Application.Migrations
                 name: "React");
 
             migrationBuilder.DropTable(
+                name: "Report");
+
+            migrationBuilder.DropTable(
                 name: "Wallet");
+
+            migrationBuilder.DropTable(
+                name: "Wishlist");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -964,22 +1027,16 @@ namespace FFS.Application.Migrations
                 name: "Payment");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "Food");
 
             migrationBuilder.DropTable(
                 name: "Category");
 
             migrationBuilder.DropTable(
-                name: "Combo");
-
-            migrationBuilder.DropTable(
-                name: "Wishlist");
-
-            migrationBuilder.DropTable(
                 name: "Store");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }

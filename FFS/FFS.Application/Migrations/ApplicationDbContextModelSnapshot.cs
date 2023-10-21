@@ -134,7 +134,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Chat", b =>
@@ -172,7 +172,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("FromUserId");
 
-                    b.ToTable("Chat");
+                    b.ToTable("Chat", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Combo", b =>
@@ -206,7 +206,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Combo");
+                    b.ToTable("Combo", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Comment", b =>
@@ -237,6 +237,7 @@ namespace FFS.Application.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("StoreId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -256,7 +257,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comment", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Discount", b =>
@@ -302,7 +303,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Discount");
+                    b.ToTable("Discount", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Food", b =>
@@ -349,7 +350,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Food");
+                    b.ToTable("Food", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.FoodCombo", b =>
@@ -381,7 +382,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("FoodCombo");
+                    b.ToTable("FoodCombo", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Image", b =>
@@ -412,7 +413,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("CommentId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Image", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Inventory", b =>
@@ -452,7 +453,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId1");
 
-                    b.ToTable("Inventory");
+                    b.ToTable("Inventory", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Level", b =>
@@ -486,7 +487,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Level");
+                    b.ToTable("Level", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Location", b =>
@@ -532,7 +533,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Location");
+                    b.ToTable("Location", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Message", b =>
@@ -564,7 +565,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Message");
+                    b.ToTable("Message", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Notification", b =>
@@ -600,7 +601,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notification");
+                    b.ToTable("Notification", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Order", b =>
@@ -641,7 +642,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Order", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.OrderDetail", b =>
@@ -684,7 +685,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("OrderId1");
 
-                    b.ToTable("OrderDetail");
+                    b.ToTable("OrderDetail", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Payment", b =>
@@ -720,7 +721,7 @@ namespace FFS.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Payment");
+                    b.ToTable("Payment", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.React", b =>
@@ -761,7 +762,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("React");
+                    b.ToTable("React", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Report", b =>
@@ -795,7 +796,7 @@ namespace FFS.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Report");
+                    b.ToTable("Report", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Store", b =>
@@ -847,7 +848,7 @@ namespace FFS.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Store");
+                    b.ToTable("Store", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Wallet", b =>
@@ -880,7 +881,7 @@ namespace FFS.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Wallet");
+                    b.ToTable("Wallet", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Wishlist", b =>
@@ -913,7 +914,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Wishlist");
+                    b.ToTable("Wishlist", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1069,32 +1070,32 @@ namespace FFS.Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "99efe734-8e8f-4349-bf12-4d17daccbdc1",
-                            ConcurrencyStamp = "973a50ca-0ab4-424c-b883-f7cc270a4037",
+                            Id = "d6f799c2-4aaa-47a6-b3bb-a78646bcb05a",
+                            ConcurrencyStamp = "12c7241f-857d-4eeb-9ce5-d7c82f98cbd4",
                             Name = "Admin",
                             NormalizedName = "ADMIN",
                             Description = "Admin"
                         },
                         new
                         {
-                            Id = "2ab9a210-bbb9-4600-beb6-e967f8bcd817",
-                            ConcurrencyStamp = "9a78465d-d3d8-4a1b-a459-1563a860e42c",
+                            Id = "9a58032a-0b72-40f7-a05e-e087670ef386",
+                            ConcurrencyStamp = "5f98bb9e-89b9-4f56-b547-8ef373faf662",
                             Name = "StoreOwner",
                             NormalizedName = "STOREOWNER",
                             Description = "StoreOwner"
                         },
                         new
                         {
-                            Id = "6441d09b-1fec-4c9b-b8eb-51802abd32cf",
-                            ConcurrencyStamp = "ac0dcb28-691d-45fb-ae63-86878d79ce3e",
+                            Id = "6347060e-7515-4f46-99e3-12cdf400d857",
+                            ConcurrencyStamp = "43cfa24d-d290-4cca-a3dd-a8940be4fb34",
                             Name = "Shipper",
                             NormalizedName = "SHIPPER",
                             Description = "Shipper"
                         },
                         new
                         {
-                            Id = "d51efd8d-5ce0-4887-8aed-b635caba805a",
-                            ConcurrencyStamp = "15c4c0f2-578f-4444-8cdc-22f7ad1520f2",
+                            Id = "e413f934-f60f-4193-8964-849c789fc4c9",
+                            ConcurrencyStamp = "0a5cb195-768b-4074-8c24-f245ba02354d",
                             Name = "User",
                             NormalizedName = "USER",
                             Description = "User"
@@ -1156,7 +1157,9 @@ namespace FFS.Application.Migrations
 
                     b.HasOne("FFS.Application.Entities.Store", "Store")
                         .WithMany("Comments")
-                        .HasForeignKey("StoreId");
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FFS.Application.Entities.ApplicationUser", "User")
                         .WithMany("Comments")
@@ -1248,7 +1251,7 @@ namespace FFS.Application.Migrations
                         .IsRequired();
 
                     b.HasOne("FFS.Application.Entities.Store", null)
-                        .WithMany("Inventorys")
+                        .WithMany("Inventories")
                         .HasForeignKey("StoreId1");
 
                     b.Navigation("Food");
@@ -1487,7 +1490,7 @@ namespace FFS.Application.Migrations
 
                     b.Navigation("Discounts");
 
-                    b.Navigation("Inventorys");
+                    b.Navigation("Inventories");
                 });
 #pragma warning restore 612, 618
         }

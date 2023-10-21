@@ -15,7 +15,7 @@ namespace FFS.Application.Entities
         [ForeignKey(nameof(ParentCommentId))]
         public Comment? ParentComment { get; set; }
         [ForeignKey(nameof(StoreId))]
-        public Store? Store { get; set; }
+        public Store Store { get; set; }
         [ForeignKey(nameof(FoodId))]
         public Food? Food { get; set; }
         [ForeignKey(nameof(UserId))]

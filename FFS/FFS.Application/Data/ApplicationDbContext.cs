@@ -69,7 +69,7 @@ namespace FFS.Application.Data
             {
                 entity.Property(x => x.Id).HasMaxLength(50).IsRequired(true);
             });
-
+              
             builder.Entity<FoodCombo>()
               .HasOne(c => c.Store)
               .WithMany()
