@@ -15,7 +15,7 @@ namespace FFS.Application.Entities
         public DateTime TimeStart { get; set; }
         public DateTime TimeEnd { get; set; }
         public ICollection<Discount> Discounts { get; set; }
-        public ICollection<Inventory> Inventorys { get; set; }
+        public ICollection<Inventory> Inventories { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Category> Categories { get; set; }
         public ICollection<Combo> Combos { get; set; }
