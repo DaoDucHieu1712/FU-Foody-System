@@ -5,7 +5,12 @@ import GoogleLogin from "@leecheuk/react-google-login";
 import axios from "axios";
 import { gapi } from "gapi-script";
 import { toast } from "react-toastify";
-import { FaLock } from 'react-icons/fa';
+import { FaLock } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import CookieService from "../../shared/helper/cookieConfig";
+import { setAccessToken } from "../../redux/auth";
+import dayjs from "dayjs";
 
 const Login = () => {
   const tabs = [
@@ -25,6 +30,8 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setError] = useState(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -43,26 +50,31 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "https://localhost:7025/api/Authenticate/LoginByEmail",
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
+          email,
+          password,
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
-        const token = data.token.result;
+      if (response.status === 200) {
+        const token = response.data.token.result;
 
-        // Save the token to local storage or a secure store
-        localStorage.setItem("token", token);
+        // Save the token using Cookies
+        CookieService.saveToken(
+          "ACCESS_TOKEN",
+          token,
+          dayjs()
+            .add(10000 - 300, "second")
+            .toDate()
+        );
+        dispatch(setAccessToken(token));
 
-        // Redirect to the home page
-        window.location.href = "/";
+        
+        toast.success("Đăng nhập thành công !");
+        // Navigate to the home page
+        navigate("/");
       } else {
         setError("Email hoặc mật khẩu không hợp lệ !");
       }
@@ -154,14 +166,14 @@ const Login = () => {
               Đăng nhập
             </Button>
             <div className="flex justify-center">
-      <a
-        href="/forgot-password"
-        className="text-blue-500 mb-4 flex items-center px-4 py-2 rounded-full border border-blue-500 hover:bg-blue-500 hover:text-white transition duration-300"
-      >
-        <FaLock className="mr-2" />
-        <span className="font-medium">Quên mật khẩu</span>
-      </a>
-    </div>
+              <a
+                href="/forgot-password"
+                className="text-blue-500 mb-4 flex items-center px-4 py-2 rounded-full border border-blue-500 hover:bg-blue-500 hover:text-white transition duration-300"
+              >
+                <FaLock className="mr-2" />
+                <span className="font-medium">Quên mật khẩu</span>
+              </a>
+            </div>
             <p className="mb-2">hoặc</p>
             <GoogleLogin
               clientId="267743841624-ak3av56ebuurfa5g6ipo135tm3pt5cda.apps.googleusercontent.com"
