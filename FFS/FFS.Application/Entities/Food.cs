@@ -12,13 +12,13 @@ namespace FFS.Application.Entities
         public decimal Price { get; set; }
         public int CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
         public int StoreId { get; set; }
         [ForeignKey(nameof(StoreId))]   
-        public Store Store { get; set; }
-        public ICollection<Comment> Comments { get; set; }
-        public ICollection<OrderDetail> OrderDetails { get; set; }
-        public ICollection<FoodCombo> FoodCombos { get; set; }
-        public ICollection<Inventory> Inventories { get; set; }
+        public Store? Store { get; set; }
+        public ICollection<Comment>? Comments { get; set; }
+        public ICollection<OrderDetail>? OrderDetails { get; set; }
+        public ICollection<FoodCombo>? FoodCombos { get; set; }
+        public ICollection<Inventory>? Inventories { get; set; }
     }
 }
