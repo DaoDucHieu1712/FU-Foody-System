@@ -70,8 +70,8 @@ const Notification = () => {
 
   return (
     <div className="relative inline-block text-left" ref={tooltipRef}>
-      <div onClick={toggleTooltip}>
-        <Ring className="text-xl cursor-pointer" />
+      <div className="cursor-pointer" onClick={toggleTooltip}>
+        <Ring className="text-xl" />
       </div>
       {showTooltip && (
         <div style={tooltipStyle}>
