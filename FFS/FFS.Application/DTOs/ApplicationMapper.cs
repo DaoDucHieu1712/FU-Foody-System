@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FFS.Application.DTOs.Inventory;
+using FFS.Application.DTOs.Food;
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 
@@ -9,6 +10,7 @@ namespace FFS.Application.DTOs
     {
         public ApplicationMapper() {
             CreateMap<Location, LocationDTO>().ReverseMap();
+            CreateMap<Entities.Food, FoodDTO>().ReverseMap();
             CreateMap<Entities.Store, StoreInforDTO>().ReverseMap();
             CreateMap<CreateInventoryDTO, Entities.Inventory>().ReverseMap();
             CreateMap<Entities.Inventory, InventoryDTO>()

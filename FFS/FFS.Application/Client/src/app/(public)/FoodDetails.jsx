@@ -1,10 +1,10 @@
-import React from "react";
-import { Rating, Typography, IconButton } from "@material-tailwind/react";
+import { Rating, Typography } from "@material-tailwind/react";
 import { useState } from "react";
+import propTypes from "prop-types";
 
-const FoodDetails = () => {
+const FoodDetails = ({ foodData }) => {
   const [value, setValue] = useState(0);
-
+  console.log(foodData);
   const increaseValue = () => {
     setValue(value + 1);
   };
@@ -42,9 +42,8 @@ const FoodDetails = () => {
                 ngày/khi dùng mons sấy trong lò vi sóng 2p cùng 1 BÁT NƯỚC NÓNG
                 để bánh mềm trở lại
               </p>
-           
               <p className="my-2 text-base font-bold flex items-center ">
-                <span variant="outlined" className="rounded-full">
+                <span className="rounded-full">
                   <svg
                     className="w-4 h-4 text-blue-500 dark:text-white"
                     aria-hidden="true"
@@ -63,7 +62,7 @@ const FoodDetails = () => {
                 </span>
                 <span className="text-blue-500">25.000VND</span>
               </p>
-              
+
               <hr></hr>
               <div className="flex items-center space-x-3 mt-3">
                 <div className="h-10 w-28">
@@ -96,7 +95,7 @@ const FoodDetails = () => {
                   >
                     THÊM VÀO GIỎ HÀNG
                     <svg
-                      class="w-4 h-4 text-white ml-1"
+                      className="w-4 h-4 text-white ml-1"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -104,9 +103,9 @@ const FoodDetails = () => {
                     >
                       <path
                         stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        width="2"
                         d="M6 15a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 0h8m-8 0-1-4m9 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-9-4h10l2-7H3m2 7L3 4m0 0-.792-3H1"
                       />
                     </svg>
@@ -115,7 +114,6 @@ const FoodDetails = () => {
               </div>
               <div className="flex items-center space-x-2 mt-3">
                 <div className="h-10 w-28">
-                 
                 </div>
 
                 <div className="">
@@ -123,11 +121,11 @@ const FoodDetails = () => {
                     type="submit"
                     className="flex items-center space-x-2  text-dark focus:ring-4 focus:outline-none font-medium text-sm w-full px-5 py-2.5 text-center"
                   >
-                    
-                    <svg class="w-4 h-4 mr-2 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 19">
-    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4C5.5-1.5-1.5 5.5 4 11l7 7 7-7c5.458-5.458-1.542-12.458-7-7Z"/>
-  </svg>
-  Thêm vào Wishlist
+
+                    <svg className="w-4 h-4 mr-2 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 19">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="2" d="M11 4C5.5-1.5-1.5 5.5 4 11l7 7 7-7c5.458-5.458-1.542-12.458-7-7Z" />
+                    </svg>
+                    Thêm vào Wishlist
                   </button>
                 </div>
               </div>
@@ -137,5 +135,8 @@ const FoodDetails = () => {
       </div>
     </>
   );
+};
+FoodDetails.propTypes = {
+  foodData: propTypes.any.isRequired,
 };
 export default FoodDetails;

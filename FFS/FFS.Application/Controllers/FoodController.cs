@@ -21,6 +21,7 @@ namespace FFS.Application.Controllers
             _mapper = mapper;
         }
 
+
         [HttpGet]
         public IActionResult ListFood()
         {
@@ -42,7 +43,7 @@ namespace FFS.Application.Controllers
             try
             {
                 var foods = _foodRepo.FindById(id, null);
-                return Ok(foods);
+                return Ok(new { data = foods });
             }
             catch (Exception ex)
             {
@@ -57,7 +58,7 @@ namespace FFS.Application.Controllers
             {
                 var newFood = new Food
                 {
-                    CategoryId = 2,
+                    CategoryId = (int)foodDTO.CategoryId,
                     StoreId = 2,
                     FoodName = foodDTO.FoodName,
                     ImageURL = foodDTO.ImageURL,
