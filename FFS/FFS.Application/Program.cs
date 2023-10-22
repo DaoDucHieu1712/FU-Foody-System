@@ -77,6 +77,10 @@ builder.Services.AddTransient<IAuthRepository, AuthRepository>();
 builder.Services.AddTransient<ITokenRepository, TokenRepository>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<IStoreRepository, StoreRepository>();
+builder.Services.AddTransient<IInventoryRepository, InventoryRepository>();
+builder.Services.AddTransient<ILocationRepository, LocationRepository>();
+builder.Services.AddTransient<IFoodRepository, FoodRepository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 #endregion
 
 #region swagger

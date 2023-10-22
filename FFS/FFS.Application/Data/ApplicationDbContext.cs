@@ -35,30 +35,57 @@ namespace FFS.Application.Data
                 .HasForeignKey(p => p.FromUserId)
                 .OnDelete(DeleteBehavior.ClientNoAction);
 
-            builder.Entity<Food>()
-                .HasOne(c => c.Store)
-                .WithMany()
-                .OnDelete(DeleteBehavior.ClientNoAction);
+            //builder.Entity<Food>()
+            //    .HasOne(c => c.Store)
+            //    .WithMany()
+            //    .OnDelete(DeleteBehavior.ClientNoAction);
 
-            builder.Entity<Inventory>()
-                .HasOne(c => c.Store)
-                .WithMany()
-                .OnDelete(DeleteBehavior.ClientNoAction);
+            //builder.Entity<Inventory>()
+            //    .HasOne(c => c.Store)
+            //    .WithMany()
+            //    .OnDelete(DeleteBehavior.ClientNoAction);
 
-            builder.Entity<OrderDetail>()
-               .HasOne(c => c.Order)
-               .WithMany()
-               .OnDelete(DeleteBehavior.ClientNoAction);
+            //builder.Entity<OrderDetail>()
+            //   .HasOne(c => c.Order)
+            //   .WithMany()
+            //   .OnDelete(DeleteBehavior.ClientNoAction);
 
-            builder.Entity<React>()
-               .HasOne(c => c.Comment)
-               .WithMany()
-               .OnDelete(DeleteBehavior.ClientNoAction);
+            //builder.Entity<React>()
+            //   .HasOne(c => c.Comment)
+            //   .WithMany()
+            //   .OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.Entity<Comment>()
                .HasOne(c => c.ParentComment)
                .WithMany()
                .OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<Inventory>().
+                HasOne(c => c.Store).WithMany(c => c.Inventories).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<Inventory>().
+                HasOne(c => c.Food).WithMany(c => c.Inventories).HasForeignKey(c => c.FoodId).OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<OrderDetail>().
+               HasOne(c => c.Order).WithMany(c => c.OrderDetails).HasForeignKey(c => c.OrderId).OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<OrderDetail>().
+               HasOne(c => c.Food).WithMany(c => c.OrderDetails).HasForeignKey(c => c.FoodId).OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<React>().
+               HasOne(c => c.Comment).WithMany(c => c.Reacts).HasForeignKey(c => c.CommentId).OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<React>().
+               HasOne(c => c.User).WithMany(c => c.Reacts).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<Food>().
+             HasOne(c => c.Store).WithMany(c => c.Foods).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<Food>().
+             HasOne(c => c.Category).WithMany(c => c.Foods).HasForeignKey(c => c.CategoryId).OnDelete(DeleteBehavior.ClientNoAction);
+
+            //builder.Entity<Comment>().
+            //HasOne(c => c.ParentComment).WithMany(c => c.ParentComments).HasForeignKey(c => c.ParentCommentId).OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.Entity<ApplicationUser>(entity =>
             {
@@ -70,10 +97,16 @@ namespace FFS.Application.Data
                 entity.Property(x => x.Id).HasMaxLength(50).IsRequired(true);
             });
 
-            builder.Entity<FoodCombo>()
-              .HasOne(c => c.Store)
-              .WithMany()
-              .OnDelete(DeleteBehavior.ClientNoAction);
+            builder.Entity<FoodCombo>().
+              HasOne(c => c.Food).WithMany(c => c.FoodCombos).HasForeignKey(c => c.FoodId).OnDelete(DeleteBehavior.ClientNoAction);
+
+            builder.Entity<FoodCombo>().
+             HasOne(c => c.Store).WithMany(c => c.FoodCombos).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
+
+            //builder.Entity<FoodCombo>()
+            //   .HasOne(c => c.Store)
+            //   .WithMany()
+            //   .OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.Entity<ApplicationRole>()
                 .HasData(

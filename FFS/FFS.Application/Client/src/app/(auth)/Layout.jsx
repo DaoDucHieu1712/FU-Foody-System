@@ -5,8 +5,28 @@ import UserNav from "./UserNav";
 import Logo from "../../shared/components/logo/Logo";
 import StoreTag from "../../shared/components/store/StoreTag";
 import Notification from "./Notification";
+import { useSelector } from 'react-redux';
+import {Suspense} from "react"
 
+export function LazyLoadComponent({ children }) {
+  return (
+    <Suspense 
+      fallback={
+        <div className="!text-white">
+         Loading...
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  )
+}
 const Layout = () => {
+
+ 
+  const accesstoken = useSelector(state => state.auth.accessToken);
+
+
   return (
     <>
       <header className="header bg-primary">
@@ -67,7 +87,14 @@ const Layout = () => {
               <Cart></Cart>
               <Heart></Heart>
               <Notification></Notification>
-              <UserNav></UserNav>
+
+              {accesstoken?<UserNav></UserNav> :
+              <div className="flex items-center gap-3">
+              <a href="/login" className="login-link text-white">Đăng nhập</a>
+              <a href="/" className="logout-link text-white">Đăng ký</a>
+            </div>
+              }
+              
             </div>
           </div>
         </div>
