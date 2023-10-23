@@ -2,11 +2,11 @@ import axiosConfig from "../../../shared/api/axiosConfig";
 
 const AuthServices = {
   storeRegister(data) {
-    const url = "/Authenticate/StoreRegister";
+    const url = "/api/Authenticate/StoreRegister";
     return axiosConfig.post(url, data);
   },
   changePassword(data) {
-    const url = "/Authenticate/ChangePassword";
+    const url = "/api/Authenticate/ChangePassword";
     return axiosConfig.post(url, data);
   },
 };
