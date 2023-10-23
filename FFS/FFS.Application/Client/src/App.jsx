@@ -10,6 +10,7 @@ import Inventory from "./app/(auth)/shares/components/inventory/Inventory";
 import ProfilePage from "./app/(auth)/ProfilePage";
 import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
+import Food from "./app/(store)/Food";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/" element={<>Home Page</>} />
           <Route path="/login" element={<Login />} />
           <Route path="/location" element={<Location />} />
+          <Route path="/food" element={<Food />} />
           <Route path="/register-store" element={<StoreRegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/change-passsword" element={<ChangePasswordPage />} />

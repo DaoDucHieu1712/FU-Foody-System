@@ -2,6 +2,7 @@
 using FFS.Application.Data;
 using FFS.Application.DTOs;
 using FFS.Application.Entities;
+using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,12 @@ namespace FFS.Application.Controllers
     public class LocationController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
+        //private readonly ILocationRepository _locaRepo;
         private readonly IMapper _mapper;
 
         public LocationController(ApplicationDbContext db, IMapper mapper) {
             _db = db;
+            //_locaRepo = locationRepository;
             _mapper = mapper;
         }
 
@@ -27,6 +30,7 @@ namespace FFS.Application.Controllers
             {
                 var uID = "1";
                 var locations = await _db.Locations.Include(x => x.User).Where(x => x.UserId == uID).ToListAsync();
+                //var locations = _locaRepo.GetList(x => x.UserId == uID, x => x.User);
                 return Ok(locations);
             }
             catch (Exception ex)
