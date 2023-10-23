@@ -35,25 +35,8 @@ namespace FFS.Application.Data
                 .HasForeignKey(p => p.FromUserId)
                 .OnDelete(DeleteBehavior.ClientNoAction);
 
-            //builder.Entity<Food>()
-            //    .HasOne(c => c.Store)
-            //    .WithMany()
-            //    .OnDelete(DeleteBehavior.ClientNoAction);
-
-            //builder.Entity<Inventory>()
-            //    .HasOne(c => c.Store)
-            //    .WithMany()
-            //    .OnDelete(DeleteBehavior.ClientNoAction);
-
-            //builder.Entity<OrderDetail>()
-            //   .HasOne(c => c.Order)
-            //   .WithMany()
-            //   .OnDelete(DeleteBehavior.ClientNoAction);
-
-            //builder.Entity<React>()
-            //   .HasOne(c => c.Comment)
-            //   .WithMany()
-            //   .OnDelete(DeleteBehavior.ClientNoAction);
+            builder.Entity<Order>().HasOne(p => p.Customer).WithMany().HasForeignKey(p => p.CustomerId).OnDelete(DeleteBehavior.ClientNoAction);
+            builder.Entity<Order>().HasOne(p => p.Shipper).WithMany().HasForeignKey(p => p.ShipperId).OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.Entity<Comment>()
                .HasOne(c => c.ParentComment)
@@ -141,7 +124,7 @@ namespace FFS.Application.Data
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<Report> Reports { get; set; }
         public virtual DbSet<FoodCombo> FoodCombos { get; set; }
-
+        public virtual DbSet<Post> Posts { get; set; }
         public override int SaveChanges()
         {
             TrackingEntities();

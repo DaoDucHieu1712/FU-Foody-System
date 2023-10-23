@@ -19,5 +19,6 @@ namespace FFS.Application.Entities
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Order> Orders { get;set; }
         public virtual ICollection<Notification> Notifications { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
     }
 }

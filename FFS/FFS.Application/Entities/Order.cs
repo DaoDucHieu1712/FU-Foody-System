@@ -11,10 +11,13 @@ namespace FFS.Application.Entities
         public int StoreId { get; set; }
         [ForeignKey(nameof(StoreId))]
         public Store Store { get; set; }
-        public string UserId { get; set; }
-        [ForeignKey(nameof(UserId))]
-        public ApplicationUser User { get; set; }   
+        public string CustomerId { get; set; }
+        [ForeignKey(nameof(CustomerId))]
+        public ApplicationUser Customer { get; set; }   
         [ForeignKey(nameof(PaymentId))]
+        public string ShipperId { get; set; }
+        [ForeignKey(nameof(ShipperId))]
+        public ApplicationUser Shipper { get; set; }
         public Payment Payment { get; set; }
         public OrderStatus OrderStatus { get;set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }

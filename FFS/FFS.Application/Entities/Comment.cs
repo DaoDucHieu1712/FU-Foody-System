@@ -11,6 +11,7 @@ namespace FFS.Application.Entities
         public string? UserId { get; set; }
         public int? StoreId { get; set; }
         public int? FoodId { get; set; }
+        public int? PostId { get;set; }
         public int ParentCommentId { get; set; }
         [ForeignKey(nameof(ParentCommentId))]
         public Comment? ParentComment { get; set; }
@@ -18,6 +19,8 @@ namespace FFS.Application.Entities
         public Store Store { get; set; }
         [ForeignKey(nameof(FoodId))]
         public Food? Food { get; set; }
+        [ForeignKey(nameof(PostId))]
+        public Post? Post { get; set; }
         [ForeignKey(nameof(UserId))]
         public ApplicationUser User { get; set; }
         public ICollection<Image>? Images { get; set; }
