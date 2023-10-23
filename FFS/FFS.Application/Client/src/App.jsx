@@ -10,6 +10,7 @@ import Inventory from "./app/(auth)/shares/components/inventory/Inventory";
 import ProfilePage from "./app/(auth)/ProfilePage";
 import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
+import StoreProfilePage from "./app/(auth)/StoreProfilePage";
 import Food from "./app/(store)/Food";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/food-details" element={<FoodDetails />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/store-profile/:id" element={<StoreProfilePage />} />
           <Route path="/inventory" element={<Inventory />} />
         </Route>
       </Routes>

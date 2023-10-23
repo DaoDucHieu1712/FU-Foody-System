@@ -63,7 +63,7 @@ const Login = () => {
 
         // Save the token using Cookies
         CookieService.saveToken(
-          "ACCESS_TOKEN",
+          "fu_foody_token",
           token,
           dayjs()
             .add(10000 - 300, "second")
@@ -89,7 +89,26 @@ const Login = () => {
     axios
       .post("https://localhost:7025/api/Authenticate/LoginGoogle", data)
       .then((response) => {
-        console.log(response);
+        if (response.status === 200) {
+          const token = response.data.token.result;
+  
+          // Save the token using Cookies
+          CookieService.saveToken(
+            "fu_foody_token",
+            token,
+            dayjs()
+              .add(10000 - 300, "second")
+              .toDate()
+          );
+          dispatch(setAccessToken(token));
+  
+          
+          toast.success("Đăng nhập thành công !");
+          // Navigate to the home page
+          navigate("/");
+        } else {
+          setError("Email hoặc mật khẩu không hợp lệ !");
+        }
       })
       .catch((error) => {
         toast.error(error.response.data);
