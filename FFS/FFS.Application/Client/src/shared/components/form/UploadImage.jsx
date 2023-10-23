@@ -42,7 +42,7 @@ const UploadImage = ({ onChange, name }) => {
           <img
             src={imageURL}
             alt="anh upload"
-            className="w-full w-[230px] h-[206px] object-cover"
+            className="w-full h-[206px] object-cover"
           />
         )}
       </label>
