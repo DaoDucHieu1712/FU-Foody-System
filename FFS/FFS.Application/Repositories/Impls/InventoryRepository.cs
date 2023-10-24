@@ -34,7 +34,7 @@ namespace FFS.Application.Repositories.Impls
         public PagedList<Inventory> GetInventories(InventoryParameters inventoryParameters)
         {
             var query = FindAll(i => i.StoreId == inventoryParameters.StoreId);
-
+         
             // Filter by food name if specified
             if (!string.IsNullOrEmpty(inventoryParameters.FoodName))
             {
@@ -46,7 +46,7 @@ namespace FFS.Application.Repositories.Impls
 
             // Apply pagination
             var pagedList = PagedList<Inventory>.ToPagedList(
-                query.Include(f=> f.Food).ThenInclude(s=>s.Store),
+                query.Include(f=> f.Food).ThenInclude(c=>c.Category).ThenInclude(s=>s.Store),
                 inventoryParameters.PageNumber,
                 inventoryParameters.PageSize
             );
@@ -54,12 +54,16 @@ namespace FFS.Application.Repositories.Impls
             return pagedList;
         }
 
-        public async Task DeleteInventoryByFoodId(int foodId)
+        public async Task DeleteInventoryByInventoryId(int inventoryId)
         {
-            var inventory = await FindSingle(i => i.FoodId == foodId);
+            var inventory = await FindSingle(i => i.Id == inventoryId);
             if (inventory != null)
             {
                 await Remove(inventory);
+            }
+            else
+            {
+                throw new Exception("Không tìm thấy kho này!");
             }
         }
     }

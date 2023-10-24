@@ -1,22 +1,12 @@
 import { useEffect, useState } from "react";
+import React from "react";
 import axios from "axios";
 import AddInventory from "../inventory/AddInventory";
-import {
-  Card,
-  CardHeader,
-  Input,
-  Typography,
-  Button,
-  CardBody,
-  Chip,
-  CardFooter,
-  Tabs,
-  TabsHeader,
-  Tab,
-  Avatar,
-  IconButton,
-  Tooltip,
+import UpdateInventory from "../inventory/UpdateInventory";
+import DeleteInventory from "../inventory/DeleteInventory";
+import {Card,CardHeader,Input,Typography,Button,CardBody,Chip,CardFooter,Tabs,TabsHeader,Tab,Avatar,IconButton,Tooltip,
 } from "@material-tailwind/react";
+import FormatDateString from "../../../../../shared/components/format/FormatDate";
 
 const TABS = [
   {
@@ -33,27 +23,71 @@ const TABS = [
   },
 ];
 const TABLE_HEAD = [
-  "Id",
+  "Ảnh món ăn",
   "Tên món ăn",
   "Ngày tạo",
   "Ngày chỉnh sửa",
+  "Phân loại",
   "Số lượng",
   "Action",
 ];
+
+
 
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
   const [foodNameFilter, setFoodNameFilter] = useState("");
   const [storeID] = useState(1); // Set the storeID to 1
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchInventory = async () => {
+    try {
+      const response = await axios.get(
+        "https://localhost:7025/api/Inventory/GetInventories",
+        {
+          params: {
+            StoreId: storeID,
+            FoodName: foodNameFilter,
+            PageNumber: pageNumber,
+            PageSize: pageSize,
+          },
+        }
+      );
+      setInventory(response.data);
+      console.log(response);
+      // Extract pagination data from the response headers
+      const paginationHeader = response.headers["x-pagination"];
+      console.log(paginationHeader);
+      if (paginationHeader) {
+        const paginationData = JSON.parse(paginationHeader);
+        setTotalPages(paginationData.TotalPages);
+      }
+    } catch (error) {
+      console.error("Error fetching inventory data:", error);
+    }
+  };
 
   useEffect(() => {
-    // Fetch inventory data from the API
-    fetch(
-      `https://localhost:7025/api/Inventory/GetInventories?StoreId=${storeID}&FoodName=${foodNameFilter}`
-    )
-      .then((response) => response.json())
-      .then((data) => setInventory(data));
-  }, [storeID, foodNameFilter]);
+    fetchInventory();
+  }, [storeID, foodNameFilter, pageNumber, pageSize]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPageNumber(newPage);
+    }
+  };
+
+  // Filter inventory items by foodName
+  const filteredInventory = inventory.filter((item) => {
+    return item.foodName.toLowerCase().includes(foodNameFilter.toLowerCase());
+  });
+
+  const reloadInventory = async () => {
+    await fetchInventory();
+  };
+
   return (
     <>
       <div className="w-full h-auto">
@@ -90,7 +124,6 @@ const Inventory = () => {
               </div>
             </div>
           </CardHeader>
-
           <CardBody className="px-0">
             <table className="mt-4 w-full min-w-max table-auto text-left">
               <thead>
@@ -112,27 +145,33 @@ const Inventory = () => {
                 </tr>
               </thead>
               <tbody>
-                {inventory.map(
+                {filteredInventory.map(
                   (
-                    { foodId, foodName, quantity, createdAt, updatedAt },
+                    { id,
+                      foodId,
+                      imageURL,
+                      foodName,
+                      quantity,
+                      createdAt,
+                      updatedAt,
+                      categoryName,
+                    },
                     index
                   ) => {
-                    const isLast = index === inventory.length - 1;
+                    const isLast = index === filteredInventory.length - 1;
                     const classes = isLast
                       ? "p-4"
                       : "p-4 border-b border-blue-gray-50";
 
                     return (
-                      <tr key={foodId}>
+                      <tr key={id}>
                         <td className={classes}>
                           <div className="flex items-center gap-3">
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-bold"
-                            >
-                              {foodId}
-                            </Typography>
+                            <img
+                              className="h-20 w-20 object-cover object-center"
+                              src={imageURL}
+                              alt="nature image"
+                            />
                           </div>
                         </td>
                         <td className={classes}>
@@ -150,8 +189,9 @@ const Inventory = () => {
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
+                        
                           >
-                            {createdAt}
+                            {FormatDateString(createdAt)}
                           </Typography>
                         </td>
                         <td className={classes}>
@@ -160,7 +200,16 @@ const Inventory = () => {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {updatedAt}
+                            {FormatDateString(updatedAt)}
+                          </Typography>
+                        </td>
+                        <td className={classes}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {categoryName}
                           </Typography>
                         </td>
                         <td className={classes}>
@@ -173,12 +222,13 @@ const Inventory = () => {
                           </Typography>
                         </td>
                         <td className={classes}>
-                          <Tooltip content="Edit Inventory">
-                            <IconButton variant="text">
-                              <i className="fas fa-pencil" />
-                              {/* <PencilIcon className="h-4 w-4" /> */}
-                            </IconButton>
-                          </Tooltip>
+                          <UpdateInventory
+                            foodId={foodId}
+                            foodName={foodName}
+                            quantity={quantity}
+                            reloadInventory={reloadInventory}
+                          />
+                          <DeleteInventory inventoryId={id} reloadInventory={reloadInventory} />
                         </td>
                       </tr>
                     );
@@ -187,34 +237,34 @@ const Inventory = () => {
               </tbody>
             </table>
           </CardBody>
+
           <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-            <Button variant="outlined" size="sm">
+            <Button
+              variant="outlined"
+              size="sm"
+              onClick={() => handlePageChange(pageNumber - 1)}
+            >
               Previous
             </Button>
+
             <div className="flex items-center gap-2">
-              <IconButton variant="outlined" size="sm">
-                1
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                2
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                3
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                ...
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                8
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                9
-              </IconButton>
-              <IconButton variant="text" size="sm">
-                10
-              </IconButton>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <IconButton
+                  key={i}
+                  variant={i + 1 === pageNumber ? "outlined" : "text"}
+                  size="sm"
+                  onClick={() => handlePageChange(i + 1)}
+                >
+                  {i + 1}
+                </IconButton>
+              ))}
             </div>
-            <Button variant="outlined" size="sm">
+
+            <Button
+              variant="outlined"
+              size="sm"
+              onClick={() => handlePageChange(pageNumber + 1)}
+            >
               Next
             </Button>
           </CardFooter>

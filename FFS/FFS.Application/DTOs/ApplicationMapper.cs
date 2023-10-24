@@ -13,7 +13,11 @@ namespace FFS.Application.DTOs
             CreateMap<CreateInventoryDTO, Entities.Inventory>().ReverseMap();
             CreateMap<Entities.Inventory, InventoryDTO>()
                 .ForMember(dest => dest.FoodName,
-                opt => opt.MapFrom(src => src.Food.FoodName));
+                opt => opt.MapFrom(src => src.Food.FoodName))
+                 .ForMember(dest => dest.ImageURL,
+                opt => opt.MapFrom(src => src.Food.ImageURL))
+                 .ForMember(dest => dest.CategoryName,
+                opt => opt.MapFrom(src => src.Food.Category.CategoryName));
                
 
         }

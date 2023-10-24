@@ -57,6 +57,20 @@ namespace FFS.Application.Controllers
 
             return Ok(new { token });
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var userId = User.FindFirst("UserId")?.Value;
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
 
         [HttpPost]
         public async Task<IActionResult> LoginGoogle([FromBody] GoogleRequest googleRequest)
