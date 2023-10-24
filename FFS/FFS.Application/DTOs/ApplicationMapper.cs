@@ -20,8 +20,16 @@ namespace FFS.Application.DTOs
                 opt => opt.MapFrom(src => src.Food.ImageURL))
                  .ForMember(dest => dest.CategoryName,
                 opt => opt.MapFrom(src => src.Food.Category.CategoryName));
-               
-
+            CreateMap<Entities.Food, ExportFoodDTO>()
+                .ForMember(dest => dest.CategoryName,
+                opt => opt.MapFrom(src => src.Category.CategoryName)).ReverseMap();
+            CreateMap<Entities.Inventory, ExportInventoryDTO>()
+               .ForMember(dest => dest.CategoryName,
+               opt => opt.MapFrom(src => src.Food.Category.CategoryName))
+               .ForMember(dest => dest.FoodName,
+               opt => opt.MapFrom(src => src.Food.FoodName))
+                .ForMember(dest => dest.FoodId,
+               opt => opt.MapFrom(src => src.Food.Id));
         }
     }
 }
