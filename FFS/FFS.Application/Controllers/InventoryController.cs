@@ -27,9 +27,22 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var pagedList = _inventoryRepository.GetInventories(inventoryParameters);
+                var Inventories = _inventoryRepository.GetInventories(inventoryParameters);
 
-                return Ok(_mapper.Map<List<InventoryDTO>>(pagedList));
+                var metadata = new
+                {
+                    Inventories.TotalCount,
+                    Inventories.PageSize,
+                    Inventories.CurrentPage,
+                    Inventories.TotalPages,
+                    Inventories.HasNext,
+                    Inventories.HasPrevious
+                };
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+           
+
+
+                return Ok(_mapper.Map<List<InventoryDTO>>(Inventories));
             }
             catch (Exception ex)
             {
@@ -63,6 +76,22 @@ namespace FFS.Application.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{inventoryId}")]
+        public async Task<IActionResult> DeleteInventoryByInventoryId(int inventoryId)
+        {
+            try
+            {
+                // Call the repository method to delete the inventory
+                await _inventoryRepository.DeleteInventoryByInventoryId(inventoryId);
+                return Ok("Inventory deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                // Handle any errors and return an error response
+                return BadRequest($"Error deleting inventory: {ex.Message}");
             }
         }
     }
