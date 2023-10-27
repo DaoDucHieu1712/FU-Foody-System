@@ -1,6 +1,8 @@
 ﻿using FFS.Application.DTOs.Store;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -15,6 +17,7 @@ namespace FFS.Application.Controllers {
             _storeRepository = storeRepository;
         }
 
+        //[Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetStoreInformation(int id)
         {
@@ -69,6 +72,20 @@ namespace FFS.Application.Controllers {
             {
                 StoreInforDTO inforDTO = await _storeRepository.UpdateStore(id, storeInforDTO);
                 return Ok(inforDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> DetailStore(int id)
+        {
+            try
+            {
+                StoreInforDTO storeInforDTO = await _storeRepository.GetDetailStore(id);
+                return Ok(storeInforDTO);
             }
             catch (Exception ex)
             {

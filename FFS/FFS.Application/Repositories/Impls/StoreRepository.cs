@@ -12,17 +12,18 @@ using Microsoft.Extensions.Options;
 
 namespace FFS.Application.Repositories.Impls
 {
-    public class StoreRepository : IStoreRepository
+    public class StoreRepository : EntityRepository<Store, int>, IStoreRepository
     {
 
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public StoreRepository(ApplicationDbContext context, IMapper mapper)
+        public StoreRepository(ApplicationDbContext context, IMapper mapper) : base(context)
         {
             _context = context;
             _mapper = mapper;
         }
+
 
         public async Task<byte[]> ExportFood(int id)
         {
@@ -74,6 +75,27 @@ namespace FFS.Application.Repositories.Impls
                         var content = stream.ToArray();
                         return await Task.FromResult(stream.ToArray());
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<StoreInforDTO> GetDetailStore(int id)
+        {
+            try
+            {
+                Store? stores = await FindById(id, x => x.Foods, x => x.FoodCombos, x => x.Comments, x => x.Discounts, x => x.Categories);
+                if (stores == null)
+                {
+                    throw new Exception("Cửa hàng không tồn tại!");
+                }
+                else
+                {
+                    StoreInforDTO storeInforDTO = _mapper.Map<StoreInforDTO>(stores);
+                    return storeInforDTO;
                 }
             }
             catch (Exception ex)
