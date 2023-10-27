@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office2010.Excel;
+
 using FFS.Application.Data;
 using FFS.Application.DTOs.Common;
+using FFS.Application.DTOs.Food;
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Helper;
@@ -96,6 +99,27 @@ namespace FFS.Application.Repositories.Impls
                 {
                     StoreInforDTO storeInforDTO = _mapper.Map<StoreInforDTO>(stores);
                     return storeInforDTO;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<FoodDTO>> GetFoodByCategory(int idShop, int idCategory)
+        {
+            try
+            {
+                List<Food> foods = await _context.Foods.Where(x => x.StoreId == idShop && x.CategoryId == idCategory).ToListAsync();
+                if (foods.Count == 0)
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    List<FoodDTO> foodDTOs = _mapper.Map<List<FoodDTO>>(foods);
+                    return foodDTOs;
                 }
             }
             catch (Exception ex)

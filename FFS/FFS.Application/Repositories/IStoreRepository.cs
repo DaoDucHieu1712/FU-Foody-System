@@ -1,4 +1,5 @@
-﻿using FFS.Application.DTOs.Store;
+﻿using FFS.Application.DTOs.Food;
+using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 
@@ -9,5 +10,7 @@ namespace FFS.Application.Repositories {
         Task<byte[]> ExportFood(int id);
         Task<byte[]> ExportInventory(int id);
         Task<StoreInforDTO> GetDetailStore(int id);
+        Task<List<FoodDTO>> GetFoodByCategory(int idShop, int idCategory);
+
     }
 }
