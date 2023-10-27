@@ -17,7 +17,7 @@ namespace FFS.Application.Controllers {
             _storeRepository = storeRepository;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetStoreInformation(int id)
         {
