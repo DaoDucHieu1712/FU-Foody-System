@@ -105,7 +105,7 @@ namespace FFS.Application.Controllers
                 {
                     return NotFound();
                 }
-                _db.Locations.Remove(location);
+                location.IsDelete= true;  
                 await _db.SaveChangesAsync();
                 return Ok();
             }

@@ -12,13 +12,14 @@ import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
 import StoreProfilePage from "./app/(auth)/StoreProfilePage";
 import Food from "./app/(store)/Food";
+import HomePage from "./app/(public)/HomePage";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/" element={<>Home Page</>} />
+          <Route path="/" element={<HomePage/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/location" element={<Location />} />
           <Route path="/food" element={<Food />} />

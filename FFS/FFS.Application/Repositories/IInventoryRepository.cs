@@ -1,10 +1,11 @@
 ﻿using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using FFS.Application.Infrastructure.Interfaces;
 
 namespace FFS.Application.Repositories
 {
-    public interface IInventoryRepository
+    public interface IInventoryRepository : IRepository<Inventory,int>
     {
         Task CreateInventory(Inventory inventory);
         Task UpdateInventoryByStoreAndFoodId(int storeId, int foodId, int newQuantity);
