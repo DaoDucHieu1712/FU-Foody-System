@@ -1,3 +1,4 @@
+﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using FFS.Application.Data;
 using FFS.Application.DTOs;
 using FFS.Application.DTOs.Common;
@@ -6,6 +7,7 @@ using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -57,16 +60,24 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = false,
+        //ValidateIssuer = true,
+        //ValidateAudience = true,
+        //ValidateLifetime = false,
+        //ValidateIssuerSigningKey = true,
+        //ValidIssuer = configuration["JWT:Issuer"],
+        //ValidAudience = configuration["JWT:Audience"],
+        //ClockSkew = TimeSpan.Zero,
+        //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:SecretKey"])),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = configuration["JWT:Issuer"],
-        ValidAudience = configuration["JWT:Audience"],
-        ClockSkew = TimeSpan.Zero,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:SecretKey"])),
+        ClockSkew = TimeSpan.Zero,
     };
 });
+builder.Services.AddLogging(configure => configure.AddConsole());
+
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromMinutes(30));
 #endregion
@@ -81,36 +92,38 @@ builder.Services.AddTransient<IInventoryRepository, InventoryRepository>();
 builder.Services.AddTransient<ILocationRepository, LocationRepository>();
 builder.Services.AddTransient<IFoodRepository, FoodRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<IComboRepository, ComboRepository>();
+
 #endregion
 
 #region swagger
-builder.Services.AddSwaggerGen((option =>
+builder.Services.AddSwaggerGen(c =>
 {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Project API", Version = "v1" });
-    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    var securityScheme = new OpenApiSecurityScheme
     {
-        In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
         BearerFormat = "JWT",
-        Scheme = "Bearer"
-    });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+        In = ParameterLocation.Header,
+        Description = "Bearer token for JWT Authorization",
+        Reference = new OpenApiReference
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            new string[]{}
+            Type = ReferenceType.SecurityScheme,
+            Id = JwtBearerDefaults.AuthenticationScheme
         }
-    });
-}));
+    };
+    c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
+
+    var securityRequirement = new OpenApiSecurityRequirement
+                {
+                    {
+                        securityScheme,
+                        new string[] {}
+                    }
+                };
+    c.AddSecurityRequirement(securityRequirement);
+});
 #endregion
 
 var app = builder.Build();
@@ -124,10 +137,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
-
-
 app.UseHttpsRedirection();
 app.UseCors(opt => opt.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 app.UseAuthentication();

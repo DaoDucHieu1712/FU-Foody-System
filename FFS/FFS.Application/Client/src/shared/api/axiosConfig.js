@@ -13,7 +13,6 @@ const instance = axios.create({
 //set Authorization when logged in
 instance.interceptors.request.use(function (config) {
   const token = Cookies.get(accessTokenKey);
-  console.log(token)
   if (token === undefined) {
     config.headers.Authorization = "";
   } else {
