@@ -28,7 +28,7 @@ const FoodDetails = ({ foodData }) => {
           </div>
           <div className="content-food">
             <div className="flex items-center gap-2 font-bold">
-              <Rating value={4} readonly />
+              <Rating value={2} readonly />
               <Typography color="" className="font-medium">
                 4.7 Sao
               </Typography>
@@ -36,6 +36,7 @@ const FoodDetails = ({ foodData }) => {
             <div className="food-name mx-1">
               <h1 className="text-lg font-bold">Sushi Cá Hồi</h1>
               <p className="text-base">Phân loại: Đồ ăn</p>
+              <p className="text-base">Tình trạng: còn hàng</p>
               <p className="text-base">
                 Mô tả: LeCastella chỉ bán bánh tươi trong ngày không chất bảo
                 quản Nếu chưa dùng hết quý khách có thể bảo quản tủ lạnh 2-3
@@ -60,7 +61,7 @@ const FoodDetails = ({ foodData }) => {
                     />
                   </svg>
                 </span>
-                <span className="text-blue-500">25.000VND</span>
+                <span className="text-blue-500">25.000 VND</span>
               </p>
 
               <hr></hr>
@@ -131,6 +132,12 @@ const FoodDetails = ({ foodData }) => {
               </div>
             </div>
           </div>
+        </div>
+        <div className="">
+          Recomment
+        </div>
+        <div className="">
+          Comment
         </div>
       </div>
     </>
