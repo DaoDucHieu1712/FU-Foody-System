@@ -10,8 +10,9 @@ import Inventory from "./app/(auth)/shares/components/inventory/Inventory";
 import ProfilePage from "./app/(auth)/ProfilePage";
 import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
-import StoreProfilePage from "./app/(auth)/StoreProfilePage";
 import Food from "./app/(store)/Food";
+import StoreProfilePage from './app/(store)/StoreProfilePage'
+import StoreDetailPage from "./app/(store)/StoreDetailPage";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/store-profile/:id" element={<StoreProfilePage />} />
           <Route path="/inventory" element={<Inventory />} />
+          <Route path="/store/detail/:id" element={<StoreDetailPage />} />
         </Route>
       </Routes>
     </>

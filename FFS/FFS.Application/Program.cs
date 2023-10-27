@@ -6,6 +6,7 @@ using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -57,12 +59,7 @@ builder.Services.AddAuthentication(options =>
     options.RequireHttpsMetadata = false;
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = false,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = configuration["JWT:Issuer"],
-        ValidAudience = configuration["JWT:Audience"],
         ClockSkew = TimeSpan.Zero,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:SecretKey"])),
     };
@@ -81,6 +78,8 @@ builder.Services.AddTransient<IInventoryRepository, InventoryRepository>();
 builder.Services.AddTransient<ILocationRepository, LocationRepository>();
 builder.Services.AddTransient<IFoodRepository, FoodRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<IComboRepository, ComboRepository>();
+
 #endregion
 
 #region swagger
