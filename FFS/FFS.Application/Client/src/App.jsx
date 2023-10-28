@@ -11,6 +11,7 @@ import ProfilePage from "./app/(auth)/ProfilePage";
 import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
 import Food from "./app/(store)/Food";
+import HomePage from "./app/(public)/HomePage";
 import StoreProfilePage from './app/(store)/StoreProfilePage'
 import StoreDetailPage from "./app/(store)/StoreDetailPage";
 
@@ -19,7 +20,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/" element={<>Home Page</>} />
+          <Route path="/" element={<HomePage/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/location" element={<Location />} />
           <Route path="/food" element={<Food />} />

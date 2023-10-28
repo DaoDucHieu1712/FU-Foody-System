@@ -1,4 +1,5 @@
 ﻿using FFS.Application.Entities.Common;
+using FFS.Application.Entities.Enum;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FFS.Application.Entities
@@ -6,9 +7,9 @@ namespace FFS.Application.Entities
     [Table("Report")]
     public class Report : BaseEntity<int>
     {
-        public int UserId { get; set; }
-        public int TargetId { get; set; }
-        public int ReportType { get; set; }
+        public string UserId { get; set; }
+        public string TargetId { get; set; }
+        public ReportType ReportType { get; set; }
         public string? Description { get; set; }
 
     }

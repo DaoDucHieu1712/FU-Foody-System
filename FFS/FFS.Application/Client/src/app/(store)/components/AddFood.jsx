@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import ErrorText from "../../../shared/components/text/ErrorText";
+import UploadImage from "../../../shared/components/form/UploadImage";
 
 const schema = yup
     .object({
@@ -22,7 +23,10 @@ const schema = yup
         price: yup
             .number()
             .positive("Giá tiền phải lớn hơn 0")
-            .required("Hãy nhập giá món ăn!")
+            .required("Hãy nhập giá món ăn!"),
+        imageURL: yup
+            .string()
+            .required("Hãy thêm ảnh!")
     });
 
 const AddFood = ({ reload }) => {
@@ -60,7 +64,8 @@ const AddFood = ({ reload }) => {
                 foodName: data.name,
                 description: data.description,
                 price: data.price,
-                categoryId: data.category
+                categoryId: data.category,
+                image: data.imageURL
             };
             const response = await axios.post("https://localhost:7025/api/Food/AddFood", newFood);
             if (response.status == 200) {
@@ -82,7 +87,7 @@ const AddFood = ({ reload }) => {
                 handler={handleOpen}
                 className="bg-transparent shadow-none"
             >
-                <form className="form bg-white rounded px-4 py-4 mb-4" onSubmit={handleSubmit(onSubmit)}>
+                <form className="form bg-white rounded px-4 py-4" onSubmit={handleSubmit(onSubmit)}>
                     <p className="font-bold text-2xl text-center mb-4">Thêm món ăn mới</p>
                     <div className="mb-4">
                         <Input className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight"
@@ -111,6 +116,10 @@ const AddFood = ({ reload }) => {
                             <ErrorText text={errors.price.message}></ErrorText>
                         )}
                     </div>
+                    <UploadImage name="imageURL" onChange={setValue}></UploadImage>
+                    {errors.imageURL && (
+                        <ErrorText text={errors.imageURL.message} />
+                    )}
                     <div className="inline-block relative mb-4">
                         <Select
                             className="block appearance-none w-full bg-white px-4 py-2 pr-8 shadow leading-tight focus:outline-none focus:shadow-outline"

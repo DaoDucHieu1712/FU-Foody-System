@@ -4,6 +4,7 @@ using FFS.Application.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FFS.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231028095718_updateComment")]
+    partial class updateComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -368,9 +370,6 @@ namespace FFS.Application.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ComboId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -387,8 +386,6 @@ namespace FFS.Application.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ComboId");
 
                     b.HasIndex("FoodId");
 
@@ -829,16 +826,14 @@ namespace FFS.Application.Migrations
                     b.Property<int>("ReportType")
                         .HasColumnType("int");
 
-                    b.Property<string>("TargetId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1112,6 +1107,40 @@ namespace FFS.Application.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("ApplicationRole");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "ff713312-a03f-4cc5-a223-ef3a303bd37e",
+                            ConcurrencyStamp = "12d8c6ee-da4f-4926-bf1d-511d5819b1d4",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN",
+                            Description = "Admin"
+                        },
+                        new
+                        {
+                            Id = "59ad91a3-56b0-4e4c-a1ec-9dd4e5d23065",
+                            ConcurrencyStamp = "7b9aa8b1-e2ef-4f98-9935-c91e3f47d66b",
+                            Name = "StoreOwner",
+                            NormalizedName = "STOREOWNER",
+                            Description = "StoreOwner"
+                        },
+                        new
+                        {
+                            Id = "24997a3d-21f1-4b60-967d-e1e0d0747c66",
+                            ConcurrencyStamp = "908985f5-4ad7-4770-a252-3822738a9c5e",
+                            Name = "Shipper",
+                            NormalizedName = "SHIPPER",
+                            Description = "Shipper"
+                        },
+                        new
+                        {
+                            Id = "625d0321-7d28-43b2-a21e-deb97f33b7a4",
+                            ConcurrencyStamp = "ade3da91-05d6-4300-881b-a89e6c5d28fe",
+                            Name = "User",
+                            NormalizedName = "USER",
+                            Description = "User"
+                        });
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Category", b =>
@@ -1225,12 +1254,6 @@ namespace FFS.Application.Migrations
 
             modelBuilder.Entity("FFS.Application.Entities.FoodCombo", b =>
                 {
-                    b.HasOne("FFS.Application.Entities.Combo", "Combo")
-                        .WithMany()
-                        .HasForeignKey("ComboId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("FFS.Application.Entities.Food", "Food")
                         .WithMany("FoodCombos")
                         .HasForeignKey("FoodId")
@@ -1242,8 +1265,6 @@ namespace FFS.Application.Migrations
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
-
-                    b.Navigation("Combo");
 
                     b.Navigation("Food");
 

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import ErrorText from "../../../shared/components/text/ErrorText";
+import UploadImage from "../../../shared/components/form/UploadImage";
 
 const schema = yup
     .object({
@@ -22,7 +23,10 @@ const schema = yup
         price: yup
             .number()
             .positive("Giá tiền phải lớn hơn 0")
-            .required("Hãy nhập giá món ăn!")
+            .required("Hãy nhập giá món ăn!"),
+        imageURL: yup
+            .string()
+            .required("Hãy thêm ảnh!")
     });
 
 const UpdateFood = ({ reload, foodData }) => {
@@ -60,7 +64,8 @@ const UpdateFood = ({ reload, foodData }) => {
                 foodName: data.name,
                 description: data.description,
                 price: data.price,
-                categoryId: data.category
+                categoryId: data.category,
+                image: data.imageURL
             };
             const response = await axios.post(`https://localhost:7025/api/Food/UpdateFood/${foodData.id}`, newFood);
             if (response.status == 200) {
@@ -127,6 +132,10 @@ const UpdateFood = ({ reload, foodData }) => {
                             <ErrorText text={errors.price.message}></ErrorText>
                         )}
                     </div>
+                    <UploadImage name="imageURL" onChange={setValue}></UploadImage>
+                    {errors.imageURL && (
+                        <ErrorText text={errors.imageURL.message} />
+                    )}
                     <div className="inline-block relative mb-4">
                         <Select
                             className="block appearance-none w-full bg-white px-4 py-2 pr-8 shadow leading-tight focus:outline-none focus:shadow-outline"
