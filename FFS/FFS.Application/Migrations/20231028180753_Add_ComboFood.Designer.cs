@@ -4,6 +4,7 @@ using FFS.Application.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FFS.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231028180753_Add_ComboFood")]
+    partial class Add_ComboFood
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,6 +223,7 @@ namespace FFS.Application.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -232,7 +235,7 @@ namespace FFS.Application.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ParentCommentId")
+                    b.Property<int>("ParentCommentId")
                         .HasColumnType("int");
 
                     b.Property<int?>("PostId")
@@ -242,12 +245,14 @@ namespace FFS.Application.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("StoreId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
@@ -829,16 +834,14 @@ namespace FFS.Application.Migrations
                     b.Property<int>("ReportType")
                         .HasColumnType("int");
 
-                    b.Property<string>("TargetId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1168,7 +1171,8 @@ namespace FFS.Application.Migrations
                     b.HasOne("FFS.Application.Entities.Comment", "ParentComment")
                         .WithMany()
                         .HasForeignKey("ParentCommentId")
-                        .OnDelete(DeleteBehavior.ClientNoAction);
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
 
                     b.HasOne("FFS.Application.Entities.Post", "Post")
                         .WithMany("Comments")
@@ -1176,11 +1180,15 @@ namespace FFS.Application.Migrations
 
                     b.HasOne("FFS.Application.Entities.Store", "Store")
                         .WithMany("Comments")
-                        .HasForeignKey("StoreId");
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FFS.Application.Entities.ApplicationUser", "User")
                         .WithMany("Comments")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Food");
 
