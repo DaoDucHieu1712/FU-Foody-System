@@ -91,13 +91,13 @@ namespace FFS.Application.Data
             //   .WithMany()
             //   .OnDelete(DeleteBehavior.ClientNoAction);
 
-            builder.Entity<ApplicationRole>()
-                .HasData(
-                new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "Admin", Description = "Admin", NormalizedName = "ADMIN" },
-                new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "StoreOwner", Description = "StoreOwner", NormalizedName = "STOREOWNER" },
-                new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "Shipper", Description = "Shipper", NormalizedName = "SHIPPER" },
-                new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "User", Description = "User", NormalizedName = "USER" }
-                );
+            //builder.Entity<ApplicationRole>()
+            //    .HasData(
+            //    new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "Admin", Description = "Admin", NormalizedName = "ADMIN" },
+            //    new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "StoreOwner", Description = "StoreOwner", NormalizedName = "STOREOWNER" },
+            //    new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "Shipper", Description = "Shipper", NormalizedName = "SHIPPER" },
+            //    new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "User", Description = "User", NormalizedName = "USER" }
+            //    );
 
 
         }
