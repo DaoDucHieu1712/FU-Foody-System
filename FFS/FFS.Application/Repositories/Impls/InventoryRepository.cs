@@ -66,5 +66,11 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception("Không tìm thấy kho này!");
             }
         }
+
+        public async Task<Inventory> GetInventoryByFoodAndStore(int storeId, int foodId)
+        {
+            return await FindSingle(i => i.StoreId == storeId && i.FoodId == foodId);
+        }
+
     }
 }

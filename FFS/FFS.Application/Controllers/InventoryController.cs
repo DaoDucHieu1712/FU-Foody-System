@@ -3,6 +3,7 @@ using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Inventory;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -56,6 +57,12 @@ namespace FFS.Application.Controllers
         {
             try
             {
+                var existingInventory = await _inventoryRepository.GetInventoryByFoodAndStore(inventory.StoreId, inventory.FoodId);
+
+                if (existingInventory != null)
+                {                  
+                    return BadRequest("Món ăn này đã có trong tồn kho !");
+                }
                 await _inventoryRepository.CreateInventory(_mapper.Map<Inventory>(inventory));
                 return Ok();
             }
@@ -92,6 +99,20 @@ namespace FFS.Application.Controllers
             {
                 // Handle any errors and return an error response
                 return BadRequest($"Error deleting inventory: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{storeId}/{foodId}")]
+        public async Task<ActionResult<bool>> CheckExistingInventory(int storeId, int foodId)
+        {
+            try
+            {
+                var existingInventory = await _inventoryRepository.GetInventoryByFoodAndStore(storeId, foodId);
+                return existingInventory != null;
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
