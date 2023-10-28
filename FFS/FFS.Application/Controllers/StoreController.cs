@@ -29,7 +29,7 @@ namespace FFS.Application.Controllers {
             _mapper = mapper;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetStoreInformation(int id)
         {
