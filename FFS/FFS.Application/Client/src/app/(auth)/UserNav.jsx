@@ -17,7 +17,7 @@ const UserNav = () => {
 
   const handleLogout = () => {
     
-    CookieService.removeToken("ACCESS_TOKEN");// Remove the user token
+    CookieService.removeToken("fu_foody_token");// Remove the user token
     dispatch(setAccessToken(null));
     navigate('/Login'); // Redirect to the login page
   };

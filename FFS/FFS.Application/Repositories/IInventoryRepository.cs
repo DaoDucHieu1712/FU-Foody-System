@@ -11,5 +11,6 @@ namespace FFS.Application.Repositories
         Task UpdateInventoryByStoreAndFoodId(int storeId, int foodId, int newQuantity);
         PagedList<Inventory> GetInventories(InventoryParameters inventoryParameters);
         Task DeleteInventoryByInventoryId(int inventoryId);
+        Task<Inventory> GetInventoryByFoodAndStore(int storeId, int foodId);
     }
 }

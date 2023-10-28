@@ -29,7 +29,7 @@ const TABLE_HEAD = [
   "Ngày chỉnh sửa",
   "Phân loại",
   "Số lượng",
-  "Action",
+  "",
 ];
 
 
@@ -95,7 +95,7 @@ const Inventory = () => {
           <p className="px-5 mx-5 mt-2 font-bold text-lg pointer-events-none">
             Tồn kho
           </p>
-          <AddInventory></AddInventory>
+          <AddInventory reloadInventory={reloadInventory}></AddInventory>
         </div>
 
         <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />

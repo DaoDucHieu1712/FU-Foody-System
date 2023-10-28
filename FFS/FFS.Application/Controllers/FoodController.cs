@@ -3,6 +3,7 @@ using FFS.Application.DTOs.Food;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
+using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -110,6 +111,24 @@ namespace FFS.Application.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{storeId}")]
+        public async Task<IActionResult> GetFoodByStoreId(int storeId)
+        {
+            try
+            {
+                var foodList = await _foodRepo.GetFoodListByStoreId(storeId);
+                if (foodList == null || foodList.Count == 0)
+                {
+                    return NotFound();
+                }
+                return Ok(foodList);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
             }
         }
     }
