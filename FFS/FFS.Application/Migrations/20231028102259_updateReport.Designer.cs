@@ -4,6 +4,7 @@ using FFS.Application.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FFS.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231028102259_updateReport")]
+    partial class updateReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -824,16 +826,14 @@ namespace FFS.Application.Migrations
                     b.Property<int>("ReportType")
                         .HasColumnType("int");
 
-                    b.Property<string>("TargetId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1111,32 +1111,32 @@ namespace FFS.Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "968aa216-565f-4c58-85fe-7e4264ee41d1",
-                            ConcurrencyStamp = "2f0d87b5-2467-444a-9d6e-3eae6f762c6d",
+                            Id = "f3f32b0a-b6d1-4c6c-9433-6cbe8b770459",
+                            ConcurrencyStamp = "fee9258d-e64c-4c3a-b66d-4a6f25288bfe",
                             Name = "Admin",
                             NormalizedName = "ADMIN",
                             Description = "Admin"
                         },
                         new
                         {
-                            Id = "a701e3c3-c912-4e30-8761-bdf82df4e1f0",
-                            ConcurrencyStamp = "b7f686d6-bdfb-4b49-a181-2437baabda2e",
+                            Id = "a6a2c4ca-a679-4c79-bc6c-b4b6af690ce2",
+                            ConcurrencyStamp = "126c66ed-1684-4270-8f0d-8ecb1e224e4a",
                             Name = "StoreOwner",
                             NormalizedName = "STOREOWNER",
                             Description = "StoreOwner"
                         },
                         new
                         {
-                            Id = "6ccef452-4cd3-42c9-abbf-98e564274234",
-                            ConcurrencyStamp = "f35dbd95-8e1a-4e58-bf07-1dd337d31c13",
+                            Id = "9b314877-faa5-48b9-8e5b-f70b50c286f2",
+                            ConcurrencyStamp = "e3ca57e0-560a-4f3f-930f-1c38b525c8c0",
                             Name = "Shipper",
                             NormalizedName = "SHIPPER",
                             Description = "Shipper"
                         },
                         new
                         {
-                            Id = "27457fd6-1b87-4763-a34b-457096e07712",
-                            ConcurrencyStamp = "ff3d9dd9-b22f-42e3-8805-e1bf4dd73566",
+                            Id = "4e86400b-e8b9-42e1-b90f-39e995f51cf4",
+                            ConcurrencyStamp = "b987ef4a-80aa-45b4-85a2-e726acab7dea",
                             Name = "User",
                             NormalizedName = "USER",
                             Description = "User"

@@ -21,12 +21,16 @@ namespace FFS.Application.Controllers {
         private readonly IMapper _mapper;
         private readonly IStoreRepository _storeRepository;
         private readonly IFoodRepository _foodRepository;
+        private readonly ICommentRepository _commentRepository;
+        private readonly IReportRepository _reportRepository;
 
-        public StoreController(IStoreRepository storeRepository, IFoodRepository foodRepository, IMapper mapper)
+        public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository, IReportRepository reportRepository)
         {
+            _mapper = mapper;
             _storeRepository = storeRepository;
             _foodRepository = foodRepository;
-            _mapper = mapper;
+            _commentRepository = commentRepository;
+            _reportRepository = reportRepository;
         }
 
         [Authorize]
@@ -132,6 +136,34 @@ namespace FFS.Application.Controllers {
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RatingStore([FromBody] StoreRatingDTO storeRatingDTO)
+        {
+            try
+            {
+                await _commentRepository.CreateComment(_mapper.Map<Comment>(storeRatingDTO));
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ReportStore([FromBody] StoreReportDTO storeReportDTO)
+        {
+            try
+            {
+                await _reportRepository.CreateReport(_mapper.Map<Report>(storeReportDTO));
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

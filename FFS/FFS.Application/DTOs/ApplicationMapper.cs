@@ -30,6 +30,9 @@ namespace FFS.Application.DTOs
                opt => opt.MapFrom(src => src.Food.FoodName))
                 .ForMember(dest => dest.FoodId,
                opt => opt.MapFrom(src => src.Food.Id));
+            CreateMap<StoreRatingDTO, Comment>().ReverseMap();
+            CreateMap<StoreReportDTO, Report>()
+             .ForMember(dest => dest.ReportType, opt => opt.MapFrom(src => 1));
         }
     }
 }
