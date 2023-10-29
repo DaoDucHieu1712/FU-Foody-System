@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import ErrorText from '../../../../shared/components/text/ErrorText';
-import axios from 'axios';
+import axios from "../../../../shared/api/axiosConfig";
 import { toast } from 'react-toastify';
 
 const regexPhoneNumber = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
@@ -46,6 +46,7 @@ const UpdateLocation = ({ item, reload, wardList }) => {
     const trueAddress = item.address.split('-');
 
     const onSubmit = async (data) => {
+        alert("Hello");
         try {
             const newLocation = {
                 id: item.id,
@@ -54,12 +55,18 @@ const UpdateLocation = ({ item, reload, wardList }) => {
                 receiver: data.receiver,
                 phoneNumber: data.phoneNumber
             };
-            const response = await axios.put(`https://localhost:7025/api/Location/UpdateLocation/${item.id}`, newLocation);
-            if (response.status == 200) {
-                toast.success("Cập nhật địa chỉ thành công!");
-                reload();
-                setOpen(false);
-            }
+            axios
+                .put(`/api/Location/UpdateLocation/${item.id}`, newLocation)
+                .then(() => {
+                    toast.success("Cập nhật địa chỉ thành công!");
+                    reload();
+                    setOpen(false);
+                })
+                .catch((error) => {
+                    toast.error("Xóa địa chỉ thất bại!");
+                    setOpen(false);
+                    console.log(error);
+                });
         } catch (error) {
             console.error("Error update location: ", error);
         }
@@ -144,7 +151,7 @@ const UpdateLocation = ({ item, reload, wardList }) => {
                             <ErrorText text={errors.description.message}></ErrorText>
                         )}
                     </div>
-                    <button type="submit" className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center">Submit</button>
+                    <button type="submit" className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center">Cập nhật địa chỉ</button>
                 </form>
             </Dialog>
         </>

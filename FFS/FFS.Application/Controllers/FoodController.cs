@@ -205,6 +205,9 @@ namespace FFS.Application.Controllers
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
         [HttpGet("{storeId}")]
         public async Task<IActionResult> GetFoodByStoreId(int storeId)
         {
