@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../shared/api/axiosConfig";
+import axioss from "axios";
 import UpdateLocation from "./shares/components/UpdateLocation";
 import AddLocation from "./shares/components/AddLocation";
 import DeleteLocation from "./shares/components/DeleteLocation";
@@ -8,15 +9,20 @@ import DefaultLocation from "./shares/components/DefaultLocation";
 const Location = () => {
 
 
-    const wardAPI = axios.get('https://provinces.open-api.vn/api/d/276?depth=2');
+    const wardAPI = axioss.get('https://provinces.open-api.vn/api/d/276?depth=2');
     const [locationList, setLocationList] = useState([]);
     const [wardList, setWardList] = useState([]);
 
     const reloadList = async () => {
         try {
-            const response = await axios.get('https://localhost:7025/api/Location/ListLocation');
-            const locations = response.data || [];
-            setLocationList(locations);
+            axios
+                .get('/api/Location/ListLocation')
+                .then((response) => {
+                    setLocationList(response)
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         } catch (error) {
             console.error("Location: " + error);
         }

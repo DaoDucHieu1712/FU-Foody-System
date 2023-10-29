@@ -12,15 +12,20 @@ const DeleteLocation = ({ id, reload }) => {
 
     const onSubmit = async () => {
         try {
-            const response = await axios.delete(`https://localhost:7025/api/Location/DeleteLocation/${id}`);
-            if (response.status == 200) {
-                toast.success("Xóa địa chỉ thành công!");
-                reload();
-                setOpen(false);
-            }
+            axios
+                .put(`/api/Location/DeleteLocation/${id}`)
+                .then(() => {
+                    toast.success("Xóa địa chỉ thành công!");
+                    reload();
+                    setOpen(false);
+                })
+                .catch((error) => {
+                    toast.error("Xóa địa chỉ thất bại!");
+                    setOpen(false);
+                    console.log(error);
+                });
         } catch (error) {
             console.error("Error update location: ", error);
-            toast.error("Xóa địa chỉ thất bại!");
         }
     }
 

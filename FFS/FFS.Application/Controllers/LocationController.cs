@@ -95,7 +95,7 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> DeleteLocation(int id)
         {
             try
@@ -105,7 +105,7 @@ namespace FFS.Application.Controllers
                 {
                     return NotFound();
                 }
-                location.IsDelete= true;  
+                location.IsDelete= true;
                 await _db.SaveChangesAsync();
                 return Ok();
             }
