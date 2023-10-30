@@ -7,9 +7,7 @@ import { gapi } from "gapi-script";
 import { toast } from "react-toastify";
 import { FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import CookieService from "../../shared/helper/cookieConfig";
-import { setAccessToken } from "../../redux/auth";
 import dayjs from "dayjs";
 
 const Login = () => {
@@ -31,7 +29,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setError] = useState(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -59,6 +56,14 @@ const Login = () => {
           CookieService.saveToken(
             "fu_foody_email",
             res.data.userClient.result.email,
+            dayjs()
+              .add(10000 - 300, "second")
+              .toDate()
+          );
+
+          CookieService.saveToken(
+            "fu_foody_id",
+            res.data.userClient.result.userId,
             dayjs()
               .add(10000 - 300, "second")
               .toDate()
@@ -99,23 +104,42 @@ const Login = () => {
       .post("https://localhost:7025/api/Authenticate/LoginGoogle", data)
       .then((response) => {
         if (response.status === 200) {
-          const token = response.data.token.result;
-
           // Save the token using Cookies
           CookieService.saveToken(
-            "fu_foody_token",
-            token,
+            "fu_foody_email",
+            response.data.userClient.email,
             dayjs()
               .add(10000 - 300, "second")
               .toDate()
           );
-          dispatch(setAccessToken(token));
+
+          CookieService.saveToken(
+            "fu_foody_id",
+            response.data.userClient.userId,
+            dayjs()
+              .add(10000 - 300, "second")
+              .toDate()
+          );
+
+          CookieService.saveToken(
+            "fu_foody_token",
+            response.data.userClient.token,
+            dayjs()
+              .add(10000 - 300, "second")
+              .toDate()
+          );
+
+          CookieService.saveToken(
+            "fu_foody_role",
+            response.data.userClient.role,
+            dayjs()
+              .add(10000 - 300, "second")
+              .toDate()
+          );
 
           toast.success("Đăng nhập thành công !");
           // Navigate to the home page
           navigate("/");
-        } else {
-          setError("Email hoặc mật khẩu không hợp lệ !");
         }
       })
       .catch((error) => {

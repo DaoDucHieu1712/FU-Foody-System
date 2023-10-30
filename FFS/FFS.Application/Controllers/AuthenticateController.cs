@@ -89,8 +89,8 @@ namespace FFS.Application.Controllers
                     Avatar = payload.Picture,
                 };
 
-                var token = _authRepository.LoginWithFptMail(user);
-                return Ok(new { token });
+                var UserClient = await _authRepository.LoginWithFptMail(user);
+                return Ok(new { UserClient });
             }
             catch (Exception ex)
             {
