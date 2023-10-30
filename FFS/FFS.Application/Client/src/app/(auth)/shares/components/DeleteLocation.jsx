@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import propTypes from "prop-types";
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader } from "@material-tailwind/react";
-import axios from 'axios';
+import axios from "../../../../shared/api/axiosConfig";
 import { toast } from 'react-toastify';
 
 
