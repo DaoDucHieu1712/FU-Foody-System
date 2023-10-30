@@ -50,36 +50,45 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(
-        "https://localhost:7025/api/Authenticate/LoginByEmail",
-        {
+      await axios
+        .post("https://localhost:7025/api/Authenticate/LoginByEmail", {
           email,
           password,
-        }
-      );
+        })
+        .then((res) => {
+          CookieService.saveToken(
+            "fu_foody_email",
+            res.data.userClient.result.email,
+            dayjs()
+              .add(10000 - 300, "second")
+              .toDate()
+          );
 
-      if (response.status === 200) {
-        const token = response.data.token.result;
+          CookieService.saveToken(
+            "fu_foody_token",
+            res.data.userClient.result.token,
+            dayjs()
+              .add(10000 - 300, "second")
+              .toDate()
+          );
 
-        // Save the token using Cookies
-        CookieService.saveToken(
-          "fu_foody_token",
-          token,
-          dayjs()
-            .add(10000 - 300, "second")
-            .toDate()
-        );
-        dispatch(setAccessToken(token));
+          CookieService.saveToken(
+            "fu_foody_role",
+            res.data.userClient.result.role,
+            dayjs()
+              .add(10000 - 300, "second")
+              .toDate()
+          );
 
-        
-        toast.success("Đăng nhập thành công !");
-        // Navigate to the home page
-        navigate("/");
-      } else {
-        setError("Email hoặc mật khẩu không hợp lệ !");
-      }
+          toast.success("Đăng nhập thành công !!");
+          navigate("/");
+        })
+        .catch((err) => {
+          toast.error(err.response.data);
+          setError(err.response.data);
+        });
     } catch (errorMessage) {
-      setError("Có lỗi xảy ra. Vui lòng thử lại !");
+      setError("Có lỗi xảy ra. Vui lòng thử lại !" + errorMessage);
     }
   };
 
@@ -91,7 +100,7 @@ const Login = () => {
       .then((response) => {
         if (response.status === 200) {
           const token = response.data.token.result;
-  
+
           // Save the token using Cookies
           CookieService.saveToken(
             "fu_foody_token",
@@ -101,8 +110,7 @@ const Login = () => {
               .toDate()
           );
           dispatch(setAccessToken(token));
-  
-          
+
           toast.success("Đăng nhập thành công !");
           // Navigate to the home page
           navigate("/");
