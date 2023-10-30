@@ -4,6 +4,5 @@ namespace FFS.Application.Infrastructure.Interfaces
 {
     public interface ILocationRepository : IRepository<Location, int>
     {
-
     }
 }
