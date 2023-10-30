@@ -34,28 +34,24 @@ namespace FFS.Application.Repositories.Impls
             _context = context;
         }
 
-        public async Task<string> Login(string email, string password)
+        public async Task<UserClientDTO> Login(string email, string password)
         {
-            // Find the user by email
             var user = await _userManager.FindByEmailAsync(email);
-            // User not found
-            if (user == null)
-            {
-                throw new Exception("Email không tồn tại !");
-            }
 
-            // Verify the password
-            var result = await _userManager.CheckPasswordAsync(user, password);
-            // Password is incorrect
-            if (!result)
+            if (user == null || !await _userManager.CheckPasswordAsync(user, password))
             {
-                throw new Exception("Mật khẩu không đúng !");
+                throw new Exception("Email or Password is wrong !!");
             }
 
             // If the email and password are valid, generate a JWT token
             var token = await GenerateToken(user);
-
-            return token;
+            var roles = await _userManager.GetRolesAsync(user);
+            return new UserClientDTO
+            {
+                Email = user.Email,
+                Role = roles[0],
+                Token = token
+            };
         }
 
         public async Task StoreRegister(StoreRegisterDTO storeRegisterDTO)
@@ -139,7 +135,7 @@ namespace FFS.Application.Repositories.Impls
                 var token = jwtTokenHandler.CreateToken(tokenDecription);
                 string accessToken = jwtTokenHandler.WriteToken(token);
                 return accessToken;
-            }
+            }   
         public async Task<bool> ResetPassword(string email)
             {
                 var user = await _userManager.FindByEmailAsync(email);
