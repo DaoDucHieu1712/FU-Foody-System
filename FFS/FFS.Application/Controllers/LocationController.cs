@@ -23,11 +23,11 @@ namespace FFS.Application.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Location>>> ListLocation(string UId)
+        public async Task<ActionResult<List<Location>>> ListLocation(string email)
         {
             try
             {
-                var locations = await _locaRepo.GetList(x => x.UserId == UId, x => x.User);
+                var locations = await _locaRepo.GetList(x => x.User.Email == email && x.IsDelete == false, x => x.User);
                 return Ok(locations);
             }
             catch (Exception ex)
@@ -42,7 +42,7 @@ namespace FFS.Application.Controllers
             try
             {
                 var locationEntity = _mapper.Map<Location>(locationDTO);
-                var locations = _locaRepo.FindAll(x=>x.UserId == locationDTO.UserId);
+                var locations = _locaRepo.FindAll(x=>x.User.Email == locationDTO.Email);
                 await _locaRepo.Add(locationEntity);
                 return Ok("Thêm thành công");
             }
@@ -72,7 +72,7 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> DeleteLocation(int id)
         {
             try
@@ -82,7 +82,8 @@ namespace FFS.Application.Controllers
                 {
                     return NotFound();
                 }
-                await _locaRepo.Remove(locationDelete);
+                locationDelete.IsDelete= true;
+                await _locaRepo.Update(locationDelete);
                 return Ok("Xóa thành công");
             }
             catch (Exception ex)

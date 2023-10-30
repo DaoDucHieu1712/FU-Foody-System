@@ -134,7 +134,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Chat", b =>
@@ -172,7 +172,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("FromUserId");
 
-                    b.ToTable("Chat");
+                    b.ToTable("Chat", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Combo", b =>
@@ -206,7 +206,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Combo");
+                    b.ToTable("Combo", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Comment", b =>
@@ -221,6 +221,7 @@ namespace FFS.Application.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -232,7 +233,7 @@ namespace FFS.Application.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ParentCommentId")
+                    b.Property<int>("ParentCommentId")
                         .HasColumnType("int");
 
                     b.Property<int?>("PostId")
@@ -242,12 +243,14 @@ namespace FFS.Application.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("StoreId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
@@ -264,7 +267,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comment", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Discount", b =>
@@ -310,7 +313,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Discount");
+                    b.ToTable("Discount", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Food", b =>
@@ -357,7 +360,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Food");
+                    b.ToTable("Food", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.FoodCombo", b =>
@@ -394,7 +397,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("FoodCombo");
+                    b.ToTable("FoodCombo", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Image", b =>
@@ -425,7 +428,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("CommentId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Image", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Inventory", b =>
@@ -460,7 +463,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Inventory");
+                    b.ToTable("Inventory", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Level", b =>
@@ -494,7 +497,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Level");
+                    b.ToTable("Level", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Location", b =>
@@ -540,7 +543,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Location");
+                    b.ToTable("Location", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Message", b =>
@@ -572,7 +575,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Message");
+                    b.ToTable("Message", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Notification", b =>
@@ -608,7 +611,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notification");
+                    b.ToTable("Notification", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Order", b =>
@@ -672,7 +675,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("StoreId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Order", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.OrderDetail", b =>
@@ -710,7 +713,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderDetail");
+                    b.ToTable("OrderDetail", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Payment", b =>
@@ -746,7 +749,7 @@ namespace FFS.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Payment");
+                    b.ToTable("Payment", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Post", b =>
@@ -782,7 +785,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Post");
+                    b.ToTable("Post", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.React", b =>
@@ -818,7 +821,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("React");
+                    b.ToTable("React", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Report", b =>
@@ -841,20 +844,18 @@ namespace FFS.Application.Migrations
                     b.Property<int>("ReportType")
                         .HasColumnType("int");
 
-                    b.Property<string>("TargetId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Report");
+                    b.ToTable("Report", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Store", b =>
@@ -906,7 +907,7 @@ namespace FFS.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Store");
+                    b.ToTable("Store", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Wallet", b =>
@@ -939,7 +940,7 @@ namespace FFS.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Wallet");
+                    b.ToTable("Wallet", (string)null);
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Wishlist", b =>
@@ -972,7 +973,7 @@ namespace FFS.Application.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Wishlist");
+                    b.ToTable("Wishlist", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1180,7 +1181,8 @@ namespace FFS.Application.Migrations
                     b.HasOne("FFS.Application.Entities.Comment", "ParentComment")
                         .WithMany()
                         .HasForeignKey("ParentCommentId")
-                        .OnDelete(DeleteBehavior.ClientNoAction);
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
 
                     b.HasOne("FFS.Application.Entities.Post", "Post")
                         .WithMany("Comments")
@@ -1188,11 +1190,15 @@ namespace FFS.Application.Migrations
 
                     b.HasOne("FFS.Application.Entities.Store", "Store")
                         .WithMany("Comments")
-                        .HasForeignKey("StoreId");
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FFS.Application.Entities.ApplicationUser", "User")
                         .WithMany("Comments")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Food");
 

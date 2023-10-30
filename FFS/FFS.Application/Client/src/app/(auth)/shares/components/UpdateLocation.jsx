@@ -7,6 +7,9 @@ import * as yup from "yup";
 import ErrorText from '../../../../shared/components/text/ErrorText';
 import axios from "../../../../shared/api/axiosConfig";
 import { toast } from 'react-toastify';
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const regexPhoneNumber = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
 const schema = yup
@@ -46,10 +49,11 @@ const UpdateLocation = ({ item, reload, wardList }) => {
     const trueAddress = item.address.split('-');
 
     const onSubmit = async (data) => {
+        var email = cookies.get("fu_foody_email");
         alert("Hello");
         try {
             const newLocation = {
-                id: item.id,
+                email: email,
                 address: data.address + "-" + data.ward + "-Thạch Thất-Hà Nội",
                 description: data.description || null,
                 receiver: data.receiver,

@@ -10,7 +10,9 @@ namespace FFS.Application.DTOs
     public class ApplicationMapper : Profile
     {
         public ApplicationMapper() {
-            CreateMap<Location, LocationDTO>().ReverseMap();
+            CreateMap<Location, LocationDTO>()
+                .ForMember(dest => dest.Email,
+                opt => opt.MapFrom(src => src.User.Email)).ReverseMap();
             CreateMap<Entities.Food, FoodDTO>().ReverseMap();
             CreateMap<Entities.Store, StoreInforDTO>().ReverseMap();
             CreateMap<CreateInventoryDTO, Entities.Inventory>().ReverseMap();

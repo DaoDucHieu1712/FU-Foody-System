@@ -5,7 +5,9 @@ import UpdateLocation from "./shares/components/UpdateLocation";
 import AddLocation from "./shares/components/AddLocation";
 import DeleteLocation from "./shares/components/DeleteLocation";
 import DefaultLocation from "./shares/components/DefaultLocation";
+import Cookies from "universal-cookie";
 
+const cookies = new Cookies();
 const Location = () => {
 
 
@@ -14,19 +16,21 @@ const Location = () => {
     const [wardList, setWardList] = useState([]);
 
     const reloadList = async () => {
+        var email = cookies.get("fu_foody_email");
         try {
-            axios
-                .get('/api/Location/ListLocation')
-                .then((response) => {
-                    setLocationList(response)
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+          axios
+            .get(`/api/Location/ListLocation?email=${email}`)
+            .then((response) => {
+              setLocationList(response); // Make sure to access the response data
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         } catch (error) {
-            console.error("Location: " + error);
+          console.error("Location: " + error);
         }
-    }
+      }
 
     useEffect(() => {
         wardAPI.then(response => {
@@ -50,8 +54,7 @@ const Location = () => {
             <div>
                 <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
                 <p className="px-5 mx-5 mt-2 font-bold text-lg pointer-events-none">Địa chỉ</p>
-                {locationList.map((location) => (
-                    location.isDelete == true ? null :
+                {locationList && locationList.map((location) => (
                         <div key={location.id} className="flex items-center justify-between w-full h-auto px-5 mx-5 py-2 my-2">
                             <div className="pointer-events-none">
                                 <p>{location.receiver} | (+84) {location.phoneNumber}</p>
