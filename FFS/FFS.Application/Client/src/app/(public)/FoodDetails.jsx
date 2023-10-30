@@ -2,6 +2,7 @@ import { Button, IconButton, Rating, Textarea, Tooltip, Typography } from "@mate
 import { useState } from "react";
 import propTypes from "prop-types";
 import ReviewStore from "./components/ReviewStore";
+import ReportStore from "./components/ReportStore";
 
 const FoodDetails = ({ foodData }) => {
   const [value, setValue] = useState(0);
@@ -22,7 +23,7 @@ const FoodDetails = ({ foodData }) => {
         <div className="grid grid-cols-[4fr,6fr] gap-12">
           <div className="Sidebar">
             <img
-              className="h-90 w-full object-cover object-center"
+              className="h-72 w-full object-cover object-center"
               src="https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
               alt="nature image"
             />
@@ -30,14 +31,14 @@ const FoodDetails = ({ foodData }) => {
           <div className="content-food">
             <div className="flex items-center gap-2 font-bold">
               <Rating value={2} readonly />
-              <Typography color="" className="font-medium">
+              <Typography className="font-semibold">
                 4.7 Sao
               </Typography>
             </div>
             <div className="food-name mx-1">
               <h1 className="text-lg font-bold">Sushi Cá Hồi</h1>
               <p className="text-base">Phân loại: Đồ ăn</p>
-              <p className="flex gap-1 text-base">Tình trạng: <p className="text-green-700">còn hàng</p></p>
+              <p className="flex gap-1 text-base">Tình trạng: <p className="text-green-800 font-bold">còn hàng</p><p className="text-red-800 font-bold">hết hàng</p></p>
               <p className="text-base">
                 Mô tả: LeCastella chỉ bán bánh tươi trong ngày không chất bảo
                 quản Nếu chưa dùng hết quý khách có thể bảo quản tủ lạnh 2-3
@@ -599,18 +600,23 @@ const FoodDetails = ({ foodData }) => {
               <img
                 src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
                 alt="image 1"
-                className="h-16 w-16 rounded-full object-cover"
+                className="h-14 w-14 rounded-full object-cover"
               >
               </img>
               <div>
-                <Typography variant="small" className="font-bold">Tung NT</Typography>
+                <div className="flex gap-1">
+                  <Typography variant="small" className="font-bold">Tung NT</Typography>
+                  <Typography variant="small" className="font-medium">- 30 Oct, 2023</Typography>
+                </div>
+                <Typography variant="small" className="font-medium">Cho bố cái địa chỉ</Typography>
               </div>
             </div>
-            <hr className=""/>
+            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
           </div>
         </div>
         {/* END COMMENT */}
         <ReviewStore></ReviewStore>
+        <ReportStore></ReportStore>
       </div>
     </>
   );

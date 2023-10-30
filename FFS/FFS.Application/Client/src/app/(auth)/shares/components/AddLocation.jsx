@@ -57,9 +57,14 @@ const AddLocation = ({ reload, wardList }) => {
                     toast.success("Thêm địa chỉ mới thành công!");
                     reload();
                     setOpen(false);
+                    setValue('ward', null);
+                    setValue('address', null);
+                    setValue('description', null);
+                    setValue('phoneNumber', null);
+                    setValue('receiver', null);
                 })
                 .catch((error) => {
-                    toast.success("Thêm địa chỉ thất bại!");
+                    toast.error("Thêm địa chỉ thất bại!");
                     setOpen(false);
                     console.log(error);
                 });
