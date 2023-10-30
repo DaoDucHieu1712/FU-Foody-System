@@ -3,8 +3,6 @@ using FFS.Application.Entities.Common;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Drawing;
-using System.Reflection.Emit;
 
 namespace FFS.Application.Data
 {
@@ -150,7 +148,7 @@ namespace FFS.Application.Data
                         changedOrAddedItem.CreatedAt = DateTime.Now;
                     }
                     changedOrAddedItem.UpdatedAt = DateTime.Now;
-                    changedOrAddedItem.IsDelete = false;
+                    //changedOrAddedItem.IsDelete = false;
                 }
             }
         }
