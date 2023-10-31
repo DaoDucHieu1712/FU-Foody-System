@@ -5,8 +5,11 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import ErrorText from '../../../../shared/components/text/ErrorText';
-import axios from 'axios';
+import axios from "../../../../shared/api/axiosConfig";
 import { toast } from 'react-toastify';
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const regexPhoneNumber = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
 const schema = yup
@@ -44,19 +47,32 @@ const AddLocation = ({ reload, wardList }) => {
     const handleOpen = () => setOpen((cur) => !cur);
 
     const onSubmit = async (data) => {
+        var email = cookies.get("fu_foody_email");
         try {
             const newLocation = {
+                email: email,
                 address: data.address + "-" + data.ward + "-Thạch Thất-Hà Nội",
                 description: data.description || null,
                 receiver: data.receiver,
                 phoneNumber: data.phoneNumber
             };
-            const response = await axios.post("https://localhost:7025/api/Location/AddLocation", newLocation);
-            if (response.status == 200) {
-                toast.success("Thêm địa chỉ mới thành công!");
-                reload();
-                setOpen(false);
-            }
+            axios
+                .post(`/api/Location/AddLocation`, newLocation)
+                .then(() => {
+                    toast.success("Thêm địa chỉ mới thành công!");
+                    reload();
+                    setOpen(false);
+                    setValue('ward', null);
+                    setValue('address', null);
+                    setValue('description', null);
+                    setValue('phoneNumber', null);
+                    setValue('receiver', null);
+                })
+                .catch((error) => {
+                    toast.error("Thêm địa chỉ thất bại!");
+                    setOpen(false);
+                    console.log(error);
+                });
         } catch (error) {
             console.error("Error add location: ", error);
         }
@@ -132,7 +148,7 @@ const AddLocation = ({ reload, wardList }) => {
                             label="Thông tin ghi chú thêm"
                             {...register("description")}></Textarea>
                     </div>
-                    <button type="submit" className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center">Submit</button>
+                    <button type="submit" className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center">Thêm địa chỉ</button>
                 </form>
             </Dialog>
         </>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import propTypes from "prop-types";
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Tooltip } from "@material-tailwind/react";
-import axios from 'axios';
+import axios from "../../../shared/api/axiosConfig";
 import { toast } from 'react-toastify';
 
 
@@ -12,15 +12,20 @@ const DeleteFood = ({ id, reload }) => {
 
     const onSubmit = async () => {
         try {
-            const response = await axios.delete(`https://localhost:7025/api/Food/DeleteFood/${id}`);
-            if (response.status == 200) {
-                toast.success("Xóa món ăn thành công!");
-                reload();
-                setOpen(false);
-            }
+            axios
+                .put(`/api/Food/DeleteFood/${id}`)
+                .then(() => {
+                    toast.success("Xóa món ăn thành công!");
+                    reload();
+                    setOpen(false);
+                })
+                .catch((error) => {
+                    toast.error("Xóa món ăn thất bại!");
+                    setOpen(false);
+                    console.log(error);
+                });
         } catch (error) {
-            console.error("Error update food: ", error);
-            toast.error("Xóa món ăn thất bại!");
+            console.error("Error delete food: ", error);
         }
     }
 

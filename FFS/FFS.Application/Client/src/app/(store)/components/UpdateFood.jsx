@@ -4,7 +4,7 @@ import * as yup from "yup";
 import propTypes from "prop-types";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 import ErrorText from "../../../shared/components/text/ErrorText";
 import UploadImage from "../../../shared/components/form/UploadImage";
@@ -46,9 +46,15 @@ const UpdateFood = ({ reload, foodData }) => {
 
     const ListCaegory = async () => {
         try {
-            const response = await axios.get('https://localhost:7025/api/Category/ListCategory');
-            const categories = response.data || [];
-            setCategory(categories.data.result);
+            axios
+                .get('/api/Category/ListCategory')
+                .then((response) => {
+                    setCategory(response.data.result);
+                })
+                .catch((error) => {
+                    toast.error("Lấy phân loại thất bại!")
+                    console.log(error);
+                });
         } catch (error) {
             console.error("Category: " + error);
         }
@@ -67,12 +73,18 @@ const UpdateFood = ({ reload, foodData }) => {
                 categoryId: data.category,
                 image: data.imageURL
             };
-            const response = await axios.post(`https://localhost:7025/api/Food/UpdateFood/${foodData.id}`, newFood);
-            if (response.status == 200) {
-                toast.success("Cập nhật món ăn thành công!");
-                reload();
-                setOpen(false);
-            }
+            axios
+                .post(`/api/Food/UpdateFood/${foodData.id}`, newFood)
+                .then(() => {
+                    toast.success("Cập nhật món ăn thành công!");
+                    reload();
+                    setOpen(false);
+                })
+                .catch((error) => {
+                    toast.error("Cập nhật món ăn thất bại!");
+                    setOpen(false);
+                    console.log(error);
+                });
         } catch (error) {
             console.error("Error update food: ", error);
         }
