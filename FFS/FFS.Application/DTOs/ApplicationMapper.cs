@@ -60,6 +60,15 @@ namespace FFS.Application.DTOs
 
             CreateMap<Entities.Order, OrderRequestDTO>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailDTO>().ReverseMap();
+            CreateMap<Image, ImageFoodRatingDTO>().ReverseMap();
+            CreateMap<FoodRatingDTO, Comment>()
+           .ForMember(dest => dest.FoodId, opt => opt.MapFrom(src => src.FoodRatings.Select(fr => fr.FoodId).FirstOrDefault()))
+           .ForMember(dest => dest.Rate, opt => opt.MapFrom(src => src.FoodRatings.Select(fr => fr.Rate).FirstOrDefault()))
+           .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+           .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+           .ForMember(dest => dest.ShipperId, opt => opt.MapFrom(src => src.ShipperId))
+           .ForMember(dest => dest.NoteForShipper, opt => opt.MapFrom(src => src.NoteForShipper))
+           .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
         }
     }
 }
