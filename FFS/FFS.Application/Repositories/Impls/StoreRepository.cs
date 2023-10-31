@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Office2010.Excel;
 
 using FFS.Application.Data;
@@ -149,7 +150,7 @@ namespace FFS.Application.Repositories.Impls
                 }
             }
 
-            public async Task<StoreInforDTO> UpdateStore(int id, StoreInforDTO storeInforDTO)
+        public async Task<StoreInforDTO> UpdateStore(int id, StoreInforDTO storeInforDTO)
             {
                 try
                 {

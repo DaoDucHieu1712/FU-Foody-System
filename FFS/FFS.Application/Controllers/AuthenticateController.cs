@@ -48,14 +48,14 @@ namespace FFS.Application.Controllers
                 return BadRequest("Lỗi đăng nhập !");
             }
 
-            var token = _authRepository.Login(logindto.Email, logindto.Password);
+            var UserClient = _authRepository.Login(logindto.Email, logindto.Password);
 
-            if (token == null)
+            if (UserClient == null)
             {
                 return Unauthorized("Email hoặc mật khẩu không hợp lệ !");
             }
 
-            return Ok(new { token });
+            return Ok(new { UserClient });
         }
         [Authorize]
         [HttpGet]
@@ -89,8 +89,8 @@ namespace FFS.Application.Controllers
                     Avatar = payload.Picture,
                 };
 
-                var token = _authRepository.LoginWithFptMail(user);
-                return Ok(new { token });
+                var UserClient = await _authRepository.LoginWithFptMail(user);
+                return Ok(new { UserClient });
             }
             catch (Exception ex)
             {

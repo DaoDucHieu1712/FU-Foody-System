@@ -1,26 +1,36 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../shared/api/axiosConfig";
+import axioss from "axios";
 import UpdateLocation from "./shares/components/UpdateLocation";
 import AddLocation from "./shares/components/AddLocation";
 import DeleteLocation from "./shares/components/DeleteLocation";
 import DefaultLocation from "./shares/components/DefaultLocation";
+import Cookies from "universal-cookie";
 
+const cookies = new Cookies();
 const Location = () => {
 
 
-    const wardAPI = axios.get('https://provinces.open-api.vn/api/d/276?depth=2');
+    const wardAPI = axioss.get('https://provinces.open-api.vn/api/d/276?depth=2');
     const [locationList, setLocationList] = useState([]);
     const [wardList, setWardList] = useState([]);
 
     const reloadList = async () => {
+        var email = cookies.get("fu_foody_email");
         try {
-            const response = await axios.get('https://localhost:7025/api/Location/ListLocation');
-            const locations = response.data || [];
-            setLocationList(locations);
+          axios
+            .get(`/api/Location/ListLocation?email=${email}`)
+            .then((response) => {
+              setLocationList(response); // Make sure to access the response data
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         } catch (error) {
-            console.error("Location: " + error);
+          console.error("Location: " + error);
         }
-    }
+      }
 
     useEffect(() => {
         wardAPI.then(response => {
@@ -44,8 +54,7 @@ const Location = () => {
             <div>
                 <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
                 <p className="px-5 mx-5 mt-2 font-bold text-lg pointer-events-none">Địa chỉ</p>
-                {locationList.map((location) => (
-                    location.isDelete == true ? null :
+                {locationList && locationList.map((location) => (
                         <div key={location.id} className="flex items-center justify-between w-full h-auto px-5 mx-5 py-2 my-2">
                             <div className="pointer-events-none">
                                 <p>{location.receiver} | (+84) {location.phoneNumber}</p>

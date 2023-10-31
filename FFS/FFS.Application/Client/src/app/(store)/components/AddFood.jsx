@@ -4,7 +4,7 @@ import * as yup from "yup";
 import propTypes from "prop-types";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 import ErrorText from "../../../shared/components/text/ErrorText";
 import UploadImage from "../../../shared/components/form/UploadImage";
@@ -46,9 +46,14 @@ const AddFood = ({ reload }) => {
 
     const ListCaegory = async () => {
         try {
-            const response = await axios.get('https://localhost:7025/api/Category/ListCategory');
-            const categories = response.data || [];
-            setCategory(categories.data.result);
+            axios
+                .get('/api/Category/ListCategory')
+                .then((response) => {
+                    setCategory(response.data.result);
+                })
+                .catch(
+                    toast.error("Lấy phân loại thất bại!")
+                );
         } catch (error) {
             console.error("Category: " + error);
         }
@@ -65,14 +70,19 @@ const AddFood = ({ reload }) => {
                 description: data.description,
                 price: data.price,
                 categoryId: data.category,
-                image: data.imageURL
+                imageURL: data.imageURL
             };
-            const response = await axios.post("https://localhost:7025/api/Food/AddFood", newFood);
-            if (response.status == 200) {
-                toast.success("Thêm món ăn mới thành công!");
-                reload();
-                setOpen(false);
-            }
+            axios
+                .get('/api/Food/AddFood', newFood)
+                .then(() => {
+                    toast.success("Thêm món ăn mới thành công!");
+                    reload();
+                    setOpen(false);
+                })
+                .catch(() => {
+                    toast.error("Thêm món ăn mới thất bại!");
+                    setOpen(false);
+                });
         } catch (error) {
             console.error("Error add location: ", error);
         }
@@ -124,13 +134,16 @@ const AddFood = ({ reload }) => {
                         <Select
                             className="block appearance-none w-full bg-white px-4 py-2 pr-8 shadow leading-tight focus:outline-none focus:shadow-outline"
                             {...register("category")}
-                            onChange={(e) => setValue('category', e)}
+                            onChange={(e) => {
+                                alert(e);
+                                setValue('category', parseInt(e));
+                            }}
                             label='Chọn loại'
                         >
                             {category.map((category) => (
                                 <Option
                                     key={category.id}
-                                    value={category.id}
+                                    value={category.id.toString()}
                                 >
                                     {category.categoryName}
                                 </Option>
