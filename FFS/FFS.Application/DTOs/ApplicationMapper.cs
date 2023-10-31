@@ -3,6 +3,7 @@ using FFS.Application.DTOs.Inventory;
 using FFS.Application.DTOs.Food;
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
+using FFS.Application.DTOs.Post;
 using FFS.Application.DTOs.Order;
 
 namespace FFS.Application.DTOs
@@ -33,6 +34,15 @@ namespace FFS.Application.DTOs
                opt => opt.MapFrom(src => src.Food.FoodName))
                 .ForMember(dest => dest.FoodId,
                opt => opt.MapFrom(src => src.Food.Id));
+
+            CreateMap<CreatePostDTO, Entities.Post>().ReverseMap();
+            CreateMap<Entities.Post, PostDTO>()
+               .ForMember(dest => dest.Avatar,
+               opt => opt.MapFrom(src => src.User.Avatar))
+                .ForMember(dest => dest.Username,
+               opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
+            CreateMap<UpdatePostDTO, Entities.Post>().ReverseMap();
+
             CreateMap<StoreRatingDTO, Comment>().ReverseMap();
             CreateMap<StoreReportDTO, Report>()
              .ForMember(dest => dest.ReportType, opt => opt.MapFrom(src => 1));
