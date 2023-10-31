@@ -11,6 +11,8 @@ namespace FFS.Application.Entities
         public string? UserId { get; set; }
         public int? StoreId { get; set; }
         public int? FoodId { get; set; }
+        public string? ShipperId { get; set; }
+        public string? NoteForShipper { get; set; }
         public int? PostId { get;set; }
         public int? ParentCommentId { get; set; }
         [ForeignKey(nameof(ParentCommentId))]
