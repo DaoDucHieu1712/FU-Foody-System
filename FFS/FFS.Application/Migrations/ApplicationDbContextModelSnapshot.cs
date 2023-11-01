@@ -232,6 +232,9 @@ namespace FFS.Application.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<string>("NoteForShipper")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ParentCommentId")
                         .HasColumnType("int");
 
@@ -240,6 +243,9 @@ namespace FFS.Application.Migrations
 
                     b.Property<int?>("Rate")
                         .HasColumnType("int");
+
+                    b.Property<string>("ShipperId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("StoreId")
                         .HasColumnType("int");
@@ -368,6 +374,9 @@ namespace FFS.Application.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("ComboId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -384,6 +393,8 @@ namespace FFS.Application.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ComboId");
 
                     b.HasIndex("FoodId");
 
@@ -617,6 +628,9 @@ namespace FFS.Application.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("CancelReason")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -627,18 +641,27 @@ namespace FFS.Application.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
-                    b.Property<int>("PaymentId")
+                    b.Property<int?>("PaymentId")
                         .HasColumnType("int");
 
                     b.Property<string>("ShipperId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("StoreId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -1107,40 +1130,6 @@ namespace FFS.Application.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("ApplicationRole");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "968aa216-565f-4c58-85fe-7e4264ee41d1",
-                            ConcurrencyStamp = "2f0d87b5-2467-444a-9d6e-3eae6f762c6d",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN",
-                            Description = "Admin"
-                        },
-                        new
-                        {
-                            Id = "a701e3c3-c912-4e30-8761-bdf82df4e1f0",
-                            ConcurrencyStamp = "b7f686d6-bdfb-4b49-a181-2437baabda2e",
-                            Name = "StoreOwner",
-                            NormalizedName = "STOREOWNER",
-                            Description = "StoreOwner"
-                        },
-                        new
-                        {
-                            Id = "6ccef452-4cd3-42c9-abbf-98e564274234",
-                            ConcurrencyStamp = "f35dbd95-8e1a-4e58-bf07-1dd337d31c13",
-                            Name = "Shipper",
-                            NormalizedName = "SHIPPER",
-                            Description = "Shipper"
-                        },
-                        new
-                        {
-                            Id = "27457fd6-1b87-4763-a34b-457096e07712",
-                            ConcurrencyStamp = "ff3d9dd9-b22f-42e3-8805-e1bf4dd73566",
-                            Name = "User",
-                            NormalizedName = "USER",
-                            Description = "User"
-                        });
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Category", b =>
@@ -1254,6 +1243,12 @@ namespace FFS.Application.Migrations
 
             modelBuilder.Entity("FFS.Application.Entities.FoodCombo", b =>
                 {
+                    b.HasOne("FFS.Application.Entities.Combo", "Combo")
+                        .WithMany()
+                        .HasForeignKey("ComboId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FFS.Application.Entities.Food", "Food")
                         .WithMany("FoodCombos")
                         .HasForeignKey("FoodId")
@@ -1265,6 +1260,8 @@ namespace FFS.Application.Migrations
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
+
+                    b.Navigation("Combo");
 
                     b.Navigation("Food");
 
@@ -1359,15 +1356,12 @@ namespace FFS.Application.Migrations
 
                     b.HasOne("FFS.Application.Entities.Payment", "Payment")
                         .WithMany()
-                        .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PaymentId");
 
                     b.HasOne("FFS.Application.Entities.ApplicationUser", "Shipper")
                         .WithMany()
                         .HasForeignKey("ShipperId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.HasOne("FFS.Application.Entities.Store", "Store")
                         .WithMany()

@@ -13,24 +13,21 @@ namespace FFS.Application.Controllers
     [ApiController]
     public class LocationController : ControllerBase
     {
-        private readonly ApplicationDbContext _db;
-        //private readonly ILocationRepository _locaRepo;
+        private readonly ILocationRepository _locaRepo;
         private readonly IMapper _mapper;
 
-        public LocationController(ApplicationDbContext db, IMapper mapper) {
-            _db = db;
-            //_locaRepo = locationRepository;
+        public LocationController(ILocationRepository locaRepo, IMapper mapper)
+        {
+            _locaRepo = locaRepo;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Location>>> ListLocation()
+        public async Task<ActionResult<List<Location>>> ListLocation(string email)
         {
             try
             {
-                var uID = "1";
-                var locations = await _db.Locations.Include(x => x.User).Where(x => x.UserId == uID).ToListAsync();
-                //var locations = _locaRepo.GetList(x => x.UserId == uID, x => x.User);
+                var locations = await _locaRepo.GetList(x => x.User.Email == email && x.IsDelete == false, x => x.User);
                 return Ok(locations);
             }
             catch (Exception ex)
@@ -40,24 +37,13 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Location>> AddLocation(LocationDTO locationDTO)
+        public async Task<ActionResult<Location>> AddLocation([FromBody] LocationDTO locationDTO)
         {
             try
             {
-                var newLocation = new Location {
-                    UserId = "1",
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                    IsDefault = false,
-                    IsDelete = false,
-                    Address = locationDTO.Address,
-                    Description = locationDTO.Description,
-                    Receiver = locationDTO.Receiver,
-                    PhoneNumber = locationDTO.PhoneNumber
-                };
-                await _db.Locations.AddAsync(newLocation);
-                await _db.SaveChangesAsync();
-
+                var locationEntity = _mapper.Map<Location>(locationDTO);
+                var locations = _locaRepo.FindAll(x=>x.User.Email == locationDTO.Email);
+                await _locaRepo.Add(locationEntity);
                 return Ok("Thêm thành công");
             }
             catch (Exception ex)
@@ -71,43 +57,14 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                if (id != locationDTO.Id)
-                {
-                    return BadRequest();
-                }
-                var updateLocation = new Location
-                {
-                    UserId = "1",
-                    UpdatedAt = DateTime.Now,
-                    Id = (int)locationDTO.Id,
-                    Address = locationDTO.Address,
-                    Description = locationDTO.Description,
-                    Receiver = locationDTO.Receiver,
-                    PhoneNumber = locationDTO.PhoneNumber
-                };
-                _db.Entry(updateLocation).State = EntityState.Modified;
-                await _db.SaveChangesAsync();
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLocation(int id)
-        {
-            try
-            {
-                var location = await _db.Locations.FindAsync(id);
-                if (location == null)
+                var locationUpdate = await _locaRepo.FindById(id, null);
+                if (locationUpdate == null)
                 {
                     return NotFound();
                 }
-                location.IsDelete= true;  
-                await _db.SaveChangesAsync();
-                return Ok();
+                _mapper.Map(locationDTO, locationUpdate);
+                await _locaRepo.Update(locationUpdate);
+                return Ok("Sửa thành công");
             }
             catch (Exception ex)
             {
@@ -116,39 +73,49 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateDefaultLocation(int id, LocationDTO locationDTO)
+        public async Task<IActionResult> DeleteLocation(int id)
         {
             try
             {
-                if (id != locationDTO.Id)
+                var locationDelete = await _locaRepo.FindById(id, null);
+                if (locationDelete == null)
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
-                var uID = "1";
-                var locations = await _db.Locations.Where(x => x.UserId == uID).ToListAsync();
-                Location locationToUpdate = null;
-                foreach (var item in locations)
-                {
-                    if (item.IsDefault)
-                    {
-                        locationToUpdate = item;
-                        break;
-                    }
-                }
-                if (locationToUpdate != null)
-                {
-                    locationToUpdate.IsDefault = false;
-                    locationToUpdate.UpdatedAt = DateTime.Now;
-                }
+                locationDelete.IsDelete= true;
+                await _locaRepo.Update(locationDelete);
+                return Ok("Xóa thành công");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
-                var defaultLocation = await _db.Locations.FirstOrDefaultAsync(x => x.Id == locationDTO.Id);
-                if (defaultLocation != null)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateDefaultLocation(int id, string UId)
+        {
+            try
+            {
+                var locationUpdate = await _locaRepo.FindById(id, null);
+                if (locationUpdate == null)
                 {
-                    defaultLocation.IsDefault = true;
-                    defaultLocation.UpdatedAt = DateTime.Now;
+                    return NotFound();
                 }
+                locationUpdate.IsDefault = true;
+                var locationToUpdate = await _locaRepo.FindSingle(x => x.UserId == UId && x.IsDefault == true);
+                
+                if (locationToUpdate == null)
+                {
+                    await _locaRepo.Update(locationUpdate);
+                    return Ok();
 
-                await _db.SaveChangesAsync();
+                }
+                locationToUpdate.IsDefault = false;
+                locationToUpdate.UpdatedAt = DateTime.Now;
+
+                await _locaRepo.Update(locationUpdate);
+                await _locaRepo.Update(locationToUpdate);
                 return Ok();
             }
             catch (Exception ex)

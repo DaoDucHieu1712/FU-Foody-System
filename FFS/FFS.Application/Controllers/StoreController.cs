@@ -48,7 +48,7 @@ namespace FFS.Application.Controllers {
             }
         }
 
-        [HttpPost("exportfood")]
+        [HttpGet("exportfood")]
         public async Task<IActionResult> ExportFood(int id)
         {
             try
@@ -64,7 +64,7 @@ namespace FFS.Application.Controllers {
             }
         }
 
-        [HttpPost("exportinventory")]
+        [HttpGet("exportinventory")]
         public async Task<IActionResult> ExportInventory(int id)
         {
             try

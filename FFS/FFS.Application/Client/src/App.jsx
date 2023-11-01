@@ -14,6 +14,7 @@ import Food from "./app/(store)/Food";
 import HomePage from "./app/(public)/HomePage";
 import StoreProfilePage from './app/(store)/StoreProfilePage'
 import StoreDetailPage from "./app/(store)/StoreDetailPage";
+import Post from "./app/(public)/Post";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/store-profile/:id" element={<StoreProfilePage />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/store/detail/:id" element={<StoreDetailPage />} />
+          <Route path="/post" element={<Post />} />
         </Route>
       </Routes>
     </>

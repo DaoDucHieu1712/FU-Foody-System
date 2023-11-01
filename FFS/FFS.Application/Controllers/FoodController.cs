@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using FFS.Application.DTOs.Food;
+using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
+
 using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +17,17 @@ namespace FFS.Application.Controllers
     public class FoodController : ControllerBase
     {
         private readonly IFoodRepository _foodRepo;
+        private readonly IComboRepository _comboRepository;
+        private readonly ICommentRepository _commentRepository;
         private readonly IMapper _mapper;
 
-        public FoodController(IFoodRepository foodRepository, IMapper mapper)
+        public FoodController(IFoodRepository foodRepo, IComboRepository comboRepository, ICommentRepository commentRepository, IMapper mapper)
         {
-            _foodRepo = foodRepository;
+            _foodRepo = foodRepo;
+            _comboRepository = comboRepository;
+            _commentRepository = commentRepository;
             _mapper = mapper;
         }
-
 
         [HttpGet]
         public IActionResult ListFood()
@@ -114,6 +119,97 @@ namespace FFS.Application.Controllers
             }
         }
 
+        [HttpGet("{idStore}")]
+        public async Task<IActionResult> GetListCombo(int idStore)
+        {
+            try
+            {
+
+                List<Combo> combos = await _comboRepository.GetList(x => x.StoreId == idStore && x.IsDelete == false);
+                return Ok(combos);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetDetailCombo(int id)
+        {
+            try
+            {
+                Combo combo = await _comboRepository.FindById(id, null);
+                return Ok(combo);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CreateCombo(ComboFoodDTO comboFoodDTO)
+        {
+            try
+            {
+                Combo combo = new Combo()
+                {
+                    Name = comboFoodDTO.Name,
+                    StoreId = comboFoodDTO.StoreId,
+                    Percent = comboFoodDTO.Percent,
+                };
+                _comboRepository.Add(combo);
+
+                _comboRepository.AddComboFood(combo.Id, comboFoodDTO.StoreId, comboFoodDTO.IdFoods);
+
+                return Ok("Tạo thành công Combo!");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCombo(int id, ComboFoodDTO comboFoodDTO)
+        {
+            try
+            {
+
+                Combo combo = new Combo()
+                {
+                    Id = id,
+                    Name = comboFoodDTO.Name,
+                    StoreId = comboFoodDTO.StoreId,
+                    Percent = comboFoodDTO.Percent,
+                };
+                await _comboRepository.Update(combo);
+
+                _comboRepository.UpdateComboFood(combo.Id, comboFoodDTO.StoreId, comboFoodDTO.IdFoods);
+
+                return Ok("Cập nhật thành công Combo!");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> DeleteCombo(int id)
+        {
+            try
+            {
+                _comboRepository.DeleteCombo(id);
+                return Ok("Xóa thành công Combo!");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         [HttpGet("{storeId}")]
         public async Task<IActionResult> GetFoodByStoreId(int storeId)
         {
@@ -129,6 +225,36 @@ namespace FFS.Application.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"Error: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RatingFood([FromBody] FoodRatingDTO foodRatingDTO)
+        {
+            try
+            {
+                if (foodRatingDTO.FoodRatings != null && foodRatingDTO.FoodRatings.Count > 0)
+                {
+                    foreach (var fooditem in foodRatingDTO.FoodRatings)
+                    {
+                        FoodRatingDTO ratingDTO = new FoodRatingDTO
+                        {
+                            UserId = foodRatingDTO.UserId,
+                            FoodRatings = new List<FoodRatingItem> { fooditem },
+                            ShipperId = foodRatingDTO.ShipperId,
+                            NoteForShipper = foodRatingDTO.NoteForShipper,
+                            Content = foodRatingDTO.Content,
+                            Images = foodRatingDTO.Images
+                        };
+
+                        await _commentRepository.CreateComment(_mapper.Map<Comment>(ratingDTO));
+                    }
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
