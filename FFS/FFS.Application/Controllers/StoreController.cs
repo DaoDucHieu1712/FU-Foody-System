@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 
+using DocumentFormat.OpenXml.Office2010.Excel;
+
 using FFS.Application.DTOs.Food;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.DTOs.Store;
@@ -96,11 +98,13 @@ namespace FFS.Application.Controllers {
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> DetailStore(int id)
         {
             try
             {
                 StoreInforDTO storeInforDTO = await _storeRepository.GetDetailStore(id);
+
                 return Ok(storeInforDTO);
             }
             catch (Exception ex)
@@ -108,6 +112,37 @@ namespace FFS.Application.Controllers {
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("{rate}/{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetCommentByStore(int rate, int id)
+        {
+            try
+            {
+                dynamic comment = await _storeRepository.GetCommentByStore(rate, id);
+                return Ok(comment);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetCommentReply(int id)
+        {
+            try
+            {
+                dynamic comment = await _storeRepository.GetCommentReply(id);
+                return Ok(comment);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
 
         [HttpGet("{idShop}/{idCategory}")]
@@ -125,11 +160,22 @@ namespace FFS.Application.Controllers {
         }
 
         [HttpGet]
-        public IActionResult GetFoodByName([FromQuery]string name)
+        public IActionResult GetFoodByName([FromQuery]string? name)
         {
             try
             {
-                List<Food> foods = _foodRepository.FindAll(i => i.FoodName.Contains(name)).ToList();
+                List<Food> foods;
+
+                if (string.IsNullOrEmpty(name))
+                {
+                    // If the name is empty or null, return all items.
+                    foods = _foodRepository.FindAll().ToList();
+                }
+                else
+                {
+                    // If the name is not empty, perform the search.
+                    foods = _foodRepository.FindAll(i => i.FoodName.Contains(name)).ToList();
+                }
                 List<FoodDTO> foodDTOs = _mapper.Map<List<FoodDTO>>(foods);
                 return Ok(foodDTOs);
             }
@@ -145,6 +191,12 @@ namespace FFS.Application.Controllers {
             try
             {
                 await _commentRepository.CreateComment(_mapper.Map<Comment>(storeRatingDTO));
+                if(storeRatingDTO.ParentCommentId != null)
+                {
+                    dynamic comment = await _storeRepository.GetCommentReply(Convert.ToInt32(storeRatingDTO.ParentCommentId));
+                    return Ok(comment);
+                }
+                
                 return Ok();
             }
             catch (Exception ex)
