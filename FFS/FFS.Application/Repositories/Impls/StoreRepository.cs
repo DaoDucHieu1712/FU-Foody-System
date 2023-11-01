@@ -1,6 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Data;
+
+using AutoMapper;
 using ClosedXML.Excel;
+using Dapper;
+
 using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Office2010.Excel;
 
 using FFS.Application.Data;
@@ -91,7 +96,7 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
-                Store? stores = await FindById(id, x => x.Foods, x => x.FoodCombos, x => x.Comments, x => x.Discounts, x => x.Categories);
+                Store? stores = await FindById(id, x => x.Foods, x => x.FoodCombos, x => x.Discounts, x => x.Categories);
                 if (stores == null)
                 {
                     throw new Exception("Cửa hàng không tồn tại!");
@@ -101,6 +106,33 @@ namespace FFS.Application.Repositories.Impls
                     StoreInforDTO storeInforDTO = _mapper.Map<StoreInforDTO>(stores);
                     return storeInforDTO;
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<dynamic> GetCommentByStore(int rate, int id)
+        {
+            try
+            {
+                dynamic returnData = null;
+                var parameters = new DynamicParameters();
+                parameters.Add("storeId", id);
+                parameters.Add("rate", rate);
+
+
+                using (var db = _context.Database.GetDbConnection())
+                {
+                    if (db.State != ConnectionState.Open)
+                    {
+                        db.Open();
+                    }
+
+                    returnData = await db.QueryAsync<dynamic>("GetCommentByStore", parameters, commandType: CommandType.StoredProcedure);
+                }
+                return returnData;
             }
             catch (Exception ex)
             {
@@ -177,5 +209,31 @@ namespace FFS.Application.Repositories.Impls
                     throw new Exception(ex.Message);
                 }
             }
+
+        public async Task<dynamic> GetCommentReply(int id)
+        {
+            try
+            {
+                dynamic returnData = null;
+                var parameters = new DynamicParameters();
+                parameters.Add("commentId", id);
+
+
+                using (var db = _context.Database.GetDbConnection())
+                {
+                    if (db.State != ConnectionState.Open)
+                    {
+                        db.Open();
+                    }
+
+                    returnData = await db.QueryAsync<dynamic>("GetReplyComment", parameters, commandType: CommandType.StoredProcedure);
+                }
+                return returnData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
+}

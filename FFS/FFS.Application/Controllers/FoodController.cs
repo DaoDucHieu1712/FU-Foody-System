@@ -196,7 +196,7 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCombo(int id)
         {
             try
