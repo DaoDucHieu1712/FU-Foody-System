@@ -46,6 +46,7 @@ const StoreDetailPage = () => {
   const handleSearchFood = (e) => {
     const serachTxt = e.target.value;
     setSearchFood(serachTxt);
+    console.log(serachTxt.length);
     try {
       axios
         .get(`/api/Store/GetFoodByName?name=${serachTxt}`)
@@ -58,6 +59,9 @@ const StoreDetailPage = () => {
     } catch (error) {
       console.error("An error occurred", error);
     }
+  };
+  const handleViewComment = () => {
+    window.location = `/store/comment/${id}`;
   };
   return (
     <>
@@ -74,13 +78,26 @@ const StoreDetailPage = () => {
             <div className="col-span-3 flex flex-col">
               <span className="text-base m-4">Quán ăn</span>
               <span className="text-6xl mb-8">{storeData.storeName}</span>
-              <span className="text-base mb-4">{storeData.address}</span>
               <span className="text-base mb-4">
+                <i className="fas fa-map mr-2"></i>
+                {storeData.address}
+              </span>
+              <span className="text-base mb-4">
+                <i className="fal fa-phone mr-2"></i>
                 Liên hệ : {storeData.phoneNumber}
+              </span>
+              <span
+                className="text-base mb-4 text-primary cursor-pointer"
+                onClick={handleViewComment}
+              >
+                Xem thêm lượt đánh giá
               </span>
 
               <div className="flex items-center text-base mb-4">
-                <span>Hoạt động từ</span>
+                <span>
+                  {" "}
+                  <i className="fal fa-clock mr-2"></i>Hoạt động từ
+                </span>
                 <span className="p-3">
                   {storeData.timeStart} : {storeData.timeEnd}
                 </span>

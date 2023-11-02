@@ -21,5 +21,20 @@ namespace FFS.Application.Controllers
             _commentRepository = commentRepository;
             _mapper = mapper;
         }
+
+        [HttpGet("{idStore}")]
+        public IActionResult GetAllCommentByStore(int idStore)
+        {
+            try
+            {
+                List<Comment> comments = _commentRepository.FindAll(x => x.StoreId == idStore).ToList();
+                return Ok(comments);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

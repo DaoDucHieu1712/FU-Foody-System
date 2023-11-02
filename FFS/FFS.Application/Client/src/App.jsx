@@ -12,15 +12,17 @@ import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
 import Food from "./app/(store)/Food";
 import HomePage from "./app/(public)/HomePage";
-import StoreProfilePage from './app/(store)/StoreProfilePage'
+import StoreProfilePage from "./app/(store)/StoreProfilePage";
 import StoreDetailPage from "./app/(store)/StoreDetailPage";
+import Post from "./app/(public)/Post";
+import StoreCommentPage from "./app/(store)/StoreCommentPage";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/" element={<HomePage/>} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/location" element={<Location />} />
           <Route path="/food" element={<Food />} />
@@ -32,8 +34,11 @@ function App() {
           <Route path="/food-details" element={<FoodDetails />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/store-profile/:id" element={<StoreProfilePage />} />
+
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/store/detail/:id" element={<StoreDetailPage />} />
+          <Route path="/post" element={<Post />} />
+          <Route path="/store/comment/:id" element={<StoreCommentPage />} />
         </Route>
       </Routes>
     </>

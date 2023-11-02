@@ -2,6 +2,7 @@
 using FFS.Application.DTOs.Food;
 using FFS.Application.DTOs.Inventory;
 using FFS.Application.DTOs.QueryParametter;
+using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
@@ -20,16 +21,17 @@ namespace FFS.Application.Controllers
     {
         private readonly IFoodRepository _foodRepo;
         private readonly IComboRepository _comboRepository;
+        private readonly ICommentRepository _commentRepository;
         private readonly IMapper _mapper;
 
-        public FoodController(IFoodRepository foodRepository, IComboRepository comboRepository, IMapper mapper)
+        public FoodController(IFoodRepository foodRepo, IComboRepository comboRepository, ICommentRepository commentRepository, IMapper mapper)
         {
-            _foodRepo = foodRepository;
-            _mapper = mapper;
+            _foodRepo = foodRepo;
             _comboRepository = comboRepository;
+            _commentRepository = commentRepository;
+            _mapper = mapper;
         }
-
-
+        
         [HttpGet()]
         public IActionResult ListFood([FromQuery] FoodParameters foodParameters)
         {
@@ -144,8 +146,8 @@ namespace FFS.Application.Controllers
         {
             try
             {
-              
-               List<Combo> combos =await _comboRepository.GetList(x => x.StoreId == idStore && x.IsDelete == false);
+
+                List<Combo> combos = await _comboRepository.GetList(x => x.StoreId == idStore && x.IsDelete == false);
                 return Ok(combos);
             }
             catch (Exception ex)
@@ -216,7 +218,7 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCombo(int id)
         {
             try
@@ -245,6 +247,36 @@ namespace FFS.Application.Controllers
             catch (Exception ex)
             {
                 return BadRequest($"Error: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RatingFood([FromBody] FoodRatingDTO foodRatingDTO)
+        {
+            try
+            {
+                if (foodRatingDTO.FoodRatings != null && foodRatingDTO.FoodRatings.Count > 0)
+                {
+                    foreach (var fooditem in foodRatingDTO.FoodRatings)
+                    {
+                        FoodRatingDTO ratingDTO = new FoodRatingDTO
+                        {
+                            UserId = foodRatingDTO.UserId,
+                            FoodRatings = new List<FoodRatingItem> { fooditem },
+                            ShipperId = foodRatingDTO.ShipperId,
+                            NoteForShipper = foodRatingDTO.NoteForShipper,
+                            Content = foodRatingDTO.Content,
+                            Images = foodRatingDTO.Images
+                        };
+
+                        await _commentRepository.CreateComment(_mapper.Map<Comment>(ratingDTO));
+                    }
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

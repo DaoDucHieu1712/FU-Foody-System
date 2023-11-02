@@ -5,34 +5,25 @@ import UserNav from "./UserNav";
 import Logo from "../../shared/components/logo/Logo";
 import StoreTag from "../../shared/components/store/StoreTag";
 import Notification from "./Notification";
-import { useSelector } from 'react-redux';
-import {Suspense} from "react"
+import { useSelector } from "react-redux";
+import { Suspense } from "react";
 
 export function LazyLoadComponent({ children }) {
   return (
-    <Suspense 
-      fallback={
-        <div className="!text-white">
-         Loading...
-        </div>
-      }
-    >
+    <Suspense fallback={<div className="!text-white">Loading...</div>}>
       {children}
     </Suspense>
-  )
+  );
 }
 const Layout = () => {
-
- 
-  const accesstoken = useSelector(state => state.auth.accessToken);
-
+  const accesstoken = useSelector((state) => state.auth.accessToken);
 
   return (
     <>
       <header className="header bg-primary">
         <div className="container mx-auto">
           <div className="flex items-center justify-between gap-x-2 p-4">
-            <div className="logo">
+            <a href="/" className="logo">
               <svg
                 width="115"
                 height="48"
@@ -51,7 +42,7 @@ const Layout = () => {
                   fill="white"
                 />
               </svg>
-            </div>
+            </a>
             <div className="search p-2 bg-white w-[600px]">
               <div className="flex items-center justify-between">
                 <input
@@ -88,13 +79,18 @@ const Layout = () => {
               <Heart></Heart>
               <Notification></Notification>
 
-              {accesstoken?<UserNav></UserNav> :
-              <div className="flex items-center gap-3">
-              <a href="/login" className="login-link text-white">Đăng nhập</a>
-              <a href="/" className="logout-link text-white">Đăng ký</a>
-            </div>
-              }
-              
+              {accesstoken ? (
+                <UserNav></UserNav>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <a href="/login" className="login-link text-white">
+                    Đăng nhập
+                  </a>
+                  <a href="/" className="logout-link text-white">
+                    Đăng ký
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -10,6 +10,11 @@ namespace FFS.Application.Repositories {
         Task<byte[]> ExportFood(int id);
         Task<byte[]> ExportInventory(int id);
         Task<StoreInforDTO> GetDetailStore(int id);
+        Task<dynamic> GetCommentByStore(int rate, int id);
+        Task<dynamic> GetCommentReply(int id);
+
+
+        
         Task<List<FoodDTO>> GetFoodByCategory(int idShop, int idCategory);
 
     }
