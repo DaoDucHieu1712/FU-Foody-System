@@ -15,32 +15,57 @@ import AddFood from "./components/AddFood";
 import UpdateFood from "./components/UpdateFood";
 import DeleteFood from "./components/DeleteFood";
 import { toast } from "react-toastify";
+import CookieService from "../../shared/helper/cookieConfig";
 
 const TABLE_HEAD = ["Id", "Tên đồ ăn", "Ảnh", "Mô tả", "Loại", ""];
 
 const Food = () => {
   const backgroundColors = ["bg-gray-50", "bg-gray-200"];
   const [foodList, setFoodList] = useState([]);
+  const [foodNameFilter, setFoodNameFilter] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 10;
+  const [totalPages, setTotalPages] = useState(0);
+  const [storeId, setStoreId] = useState(0);
+  const uId = CookieService.getToken("fu_foody_id");
 
   const handleExportExcel = () => {
     const id = 1;
     const fileDownloadUrl = `https://localhost:7025/api/Store/ExportFood/exportfood?id=${id}`;
 
     window.location.href = fileDownloadUrl;
-  }
+  };
 
-  const reloadList = async () => {
+  const GetStoreByUid = async () => {
     try {
-      axios
-        .get("/api/Food/ListFood")
+      await axios
+        .get(`/api/Store/GetStoreByUid?uId=${uId}`)
         .then((response) => {
-          setFoodList(response.data.result);
+          setStoreId(response.id);
+          reloadList();
         })
         .catch((error) => {
           console.log(error);
+        });
+    } catch (error) {
+      console.log("Get Store By Uid error: " + error);
+    }
+  };
+
+  const reloadList = async () => {
+    const dataPost = {
+      uId: uId,
+      FoodName: foodNameFilter,
+      PageNumber: pageNumber,
+      PageSize: pageSize,
+    };
+    try {
+      await axios
+        .post(`/api/Food/ListFood`, dataPost)
+        .then((res) => {
+          setFoodList(res);
+        })
+        .catch((error) => {
           toast.error("Có lỗi xảy ra!");
         });
     } catch (error) {
@@ -50,6 +75,10 @@ const Food = () => {
 
   useEffect(() => {
     reloadList();
+  }, [pageNumber, foodNameFilter]);
+
+  useEffect(() => {
+    GetStoreByUid();
   }, []);
 
   const handlePageChange = (newPage) => {
@@ -73,7 +102,7 @@ const Food = () => {
               >
                 Xuất Excel
               </Button>
-              <AddFood reload={reloadList}></AddFood>
+              <AddFood reload={reloadList} storeId={storeId}></AddFood>
             </div>
             <div className="w-full shrink-0 gap-2 px-2 py-2 md:w-max">
               <div className="w-full md:w-72">
@@ -103,6 +132,8 @@ const Food = () => {
                       />
                     </svg>
                   }
+                  value={foodNameFilter}
+                  onChange={(e) => setFoodNameFilter(e.target.value)}
                 />
               </div>
             </div>
@@ -129,79 +160,93 @@ const Food = () => {
               </tr>
             </thead>
             <tbody>
-              {foodList.map((food, index) => (
-                <tr
-                  key={food.id}
-                  className={backgroundColors[index % backgroundColors.length]}
-                >
-                  <td>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-bold"
-                    >
-                      {food.id}
-                    </Typography>
-                  </td>
-                  <td>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal max-w-xs truncate"
-                    >
-                      {food.foodName}
-                    </Typography>
-                  </td>
-                  <td>
-                    <img
-                      className="font-normal mx-auto"
-                      src={food.imageURL}
-                      alt={food.foodName}
-                      height={100}
-                      width={100}
-                    />
-                  </td>
-                  <td>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal max-w-xs truncate"
-                    >
-                      {food.description}
-                    </Typography>
-                  </td>
-                  <td>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {food.category.categoryName}
-                    </Typography>
-                  </td>
-                  <td>
-                    <div className="h-full flex justify-center items-center">
-                      <Tooltip content="Xem món ăn">
-                        <IconButton variant="text">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="20"
-                            viewBox="0 0 576 512"
-                          >
-                            <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z" />
-                          </svg>
-                        </IconButton>
-                      </Tooltip>
-                      <UpdateFood
-                        reload={reloadList}
-                        foodData={food}
-                      ></UpdateFood>
-                      <DeleteFood reload={reloadList} id={food.id}></DeleteFood>
-                    </div>
+              {foodList ? (
+                foodList.map((food, index) => (
+                  <tr
+                    key={food.id}
+                    className={
+                      backgroundColors[index % backgroundColors.length]
+                    }
+                  >
+                    <td>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-bold"
+                      >
+                        {food.id}
+                      </Typography>
+                    </td>
+                    <td>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal max-w-xs truncate"
+                      >
+                        {food.FoodName}
+                      </Typography>
+                    </td>
+                    <td>
+                      <img
+                        className="font-normal mx-auto"
+                        src={food.ImageURL}
+                        alt={food.FoodName}
+                        height={100}
+                        width={100}
+                      />
+                    </td>
+                    <td>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal max-w-xs truncate"
+                      >
+                        {food.Description}
+                      </Typography>
+                    </td>
+                    <td>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {food.CategoryName}
+                      </Typography>
+                    </td>
+                    <td>
+                      <div className="h-full flex justify-center items-center">
+                        <Tooltip content="Xem món ăn">
+                          <IconButton variant="text">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 576 512"
+                            >
+                              <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z" />
+                            </svg>
+                          </IconButton>
+                        </Tooltip>
+                        <UpdateFood
+                          reload={reloadList}
+                          foodData={food}
+                          storeId={storeId}
+                        ></UpdateFood>
+                        <DeleteFood
+                          reload={reloadList}
+                          id={food.id}
+                        ></DeleteFood>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={TABLE_HEAD.length}>
+                    <p>Chưa có sản phẩm</p>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </CardBody>

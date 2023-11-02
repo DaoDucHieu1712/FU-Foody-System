@@ -16,13 +16,12 @@ namespace FFS.Application.Controllers
             _cateRepo = categoryRepository;
         }
 
-        [HttpGet]
-        public IActionResult ListCategory()
+        [HttpGet("{storeId}")]
+        public IActionResult ListCategoryByStoreId(int storeId)
         {
             try
             {
-                var sId = 2;
-                var categories = _cateRepo.GetList(x => x.StoreId == sId);
+                var categories = _cateRepo.GetList(x => x.StoreId == storeId);
                 return Ok(new { data = categories });
             }
             catch (Exception ex)

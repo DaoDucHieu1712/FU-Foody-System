@@ -12,10 +12,11 @@ import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
 import Food from "./app/(store)/Food";
 import HomePage from "./app/(public)/HomePage";
-import StoreProfilePage from './app/(store)/StoreProfilePage'
+import StoreProfilePage from "./app/(store)/StoreProfilePage";
 import StoreDetailPage from "./app/(store)/StoreDetailPage";
 import Post from "./app/(public)/Post";
 import DetailPost from "./app/(auth)/shares/components/post/DetailPost";
+import StoreCommentPage from "./app/(store)/StoreCommentPage";
 
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/" element={<HomePage/>} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/location" element={<Location />} />
           <Route path="/food" element={<Food />} />
@@ -39,6 +40,7 @@ function App() {
           <Route path="/store/detail/:id" element={<StoreDetailPage />} />
           <Route path="/post" element={<Post />} />
           <Route path="/post-details/:postId" element={<DetailPost />} />
+          <Route path="/store/comment/:id" element={<StoreCommentPage />} />
         </Route>
       </Routes>
     </>
