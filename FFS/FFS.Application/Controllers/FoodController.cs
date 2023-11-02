@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using FFS.Application.DTOs.Food;
+using FFS.Application.DTOs.Inventory;
+using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
@@ -8,6 +10,7 @@ using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace FFS.Application.Controllers
@@ -28,15 +31,29 @@ namespace FFS.Application.Controllers
             _commentRepository = commentRepository;
             _mapper = mapper;
         }
-
-        [HttpGet]
-        public IActionResult ListFood()
+        
+        [HttpGet()]
+        public IActionResult ListFood([FromQuery] FoodParameters foodParameters)
         {
             try
             {
-                var sId = 2;
-                var foods = _foodRepo.GetList(x => x.StoreId == sId, x => x.Category);
-                return Ok(new { data = foods });
+                var foods = _foodRepo.GetFoods(foodParameters);
+                var metadata = new
+                {
+                    foods.TotalCount,
+                    foods.PageSize,
+                    foods.CurrentPage,
+                    foods.TotalPages,
+                    foods.HasNext,
+                    foods.HasPrevious
+                };
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+                var result = new
+                {
+                    Data = _mapper.Map<List<FoodDTO>>(foods),
+                    Metadata = metadata
+                };
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -45,7 +62,7 @@ namespace FFS.Application.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetFoodById(int id)
+        public async Task<IActionResult> GetFoodById(int id)
         {
             try
             {
@@ -59,14 +76,14 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddFood(FoodDTO foodDTO)
+        public async Task<IActionResult> AddFood(FoodDTO foodDTO)
         {
             try
             {
                 var newFood = new Food
                 {
                     CategoryId = (int)foodDTO.CategoryId,
-                    StoreId = 2,
+                    StoreId = (int)foodDTO.StoreId,
                     FoodName = foodDTO.FoodName,
                     ImageURL = foodDTO.ImageURL,
                     Description = foodDTO.Description,
@@ -82,7 +99,7 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateFood(int id, FoodDTO foodDTO)
+        public async Task<IActionResult> UpdateFood(int id, FoodDTO foodDTO)
         {
             try
             {
@@ -100,8 +117,8 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteFood(int id)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> DeleteFood(int id)
         {
             try
             {
@@ -110,7 +127,12 @@ namespace FFS.Application.Controllers
                 {
                     return NotFound();
                 }
-                _foodRepo.Remove(id);
+                Food newFood = new Food
+                {
+                    Id = id,
+                    IsDelete=true
+                };
+                _foodRepo.Update(newFood);
                 return Ok();
             }
             catch (Exception ex)

@@ -56,6 +56,7 @@ const AddLocation = ({ reload, wardList }) => {
                 receiver: data.receiver,
                 phoneNumber: data.phoneNumber
             };
+            console.log(newLocation);
             axios
                 .post(`/api/Location/AddLocation`, newLocation)
                 .then(() => {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import propTypes from "prop-types";
 import { Dialog, Input, Option, Select, Textarea } from "@material-tailwind/react";
 import { useForm } from 'react-hook-form';
@@ -42,7 +42,6 @@ const UpdateLocation = ({ item, reload, wardList }) => {
         resolver: yupResolver(schema),
         mode: "onSubmit",
     });
-
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen((cur) => !cur);
 
@@ -50,7 +49,6 @@ const UpdateLocation = ({ item, reload, wardList }) => {
 
     const onSubmit = async (data) => {
         var email = cookies.get("fu_foody_email");
-        alert("Hello");
         try {
             const newLocation = {
                 email: email,
@@ -75,6 +73,10 @@ const UpdateLocation = ({ item, reload, wardList }) => {
             console.error("Error update location: ", error);
         }
     }
+
+    useEffect(() => {
+        setValue("ward", trueAddress[1]);
+    }, []);
 
     return (
         <>
