@@ -13,7 +13,7 @@ const DeleteLocation = ({ id, reload }) => {
     const onSubmit = async () => {
         try {
             axios
-                .put(`/api/Location/DeleteLocation/${id}`)
+                .delete(`/api/Location/DeleteLocation/${id}`)
                 .then(() => {
                     toast.success("Xóa địa chỉ thành công!");
                     reload();

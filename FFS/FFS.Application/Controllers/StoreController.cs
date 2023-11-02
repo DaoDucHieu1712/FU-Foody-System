@@ -48,6 +48,21 @@ namespace FFS.Application.Controllers {
             }
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> GetStoreByUid(string uId)
+        {
+            try
+            {
+                var StoreByUid = await _storeRepository.FindSingle(x => x.UserId == uId);
+                return Ok(StoreByUid);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("exportfood")]
         public async Task<IActionResult> ExportFood(int id)
         {

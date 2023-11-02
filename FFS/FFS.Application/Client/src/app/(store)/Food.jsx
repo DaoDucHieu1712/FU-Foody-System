@@ -15,15 +15,19 @@ import AddFood from "./components/AddFood";
 import UpdateFood from "./components/UpdateFood";
 import DeleteFood from "./components/DeleteFood";
 import { toast } from "react-toastify";
+import CookieService from "../../shared/helper/cookieConfig";
 
 const TABLE_HEAD = ["Id", "Tên đồ ăn", "Ảnh", "Mô tả", "Loại", ""];
 
 const Food = () => {
   const backgroundColors = ["bg-gray-50", "bg-gray-200"];
   const [foodList, setFoodList] = useState([]);
+  const [foodNameFilter, setFoodNameFilter] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const pageSize = 10;
   const [totalPages, setTotalPages] = useState(1);
+  const [storeId, setStoreId] = useState(0);
+  const uId = CookieService.getToken("fu_foody_id");
 
   const handleExportExcel = () => {
     const id = 1;
@@ -32,17 +36,53 @@ const Food = () => {
     window.location.href = fileDownloadUrl;
   }
 
-  const reloadList = async () => {
+  const GetStoreByUid = async () => {
     try {
-      axios
-        .get("/api/Food/ListFood")
+      await axios
+        .get(`/api/Store/GetStoreByUid?uId=${uId}`)
         .then((response) => {
-          setFoodList(response.data.result);
+          setStoreId(response.id);
         })
         .catch((error) => {
           console.log(error);
-          toast.error("Có lỗi xảy ra!");
-        });
+        })
+    } catch (error) {
+      console.log("Get Store By Uid error: " + error);
+    }
+  };
+
+  const reloadList = async () => {
+    GetStoreByUid();
+    console.log(storeId);
+    try {
+      const response = await axios
+        .get(`/api/Food/ListFood`,
+          {
+            params: {
+              StoreId: storeId,
+              FoodName: foodNameFilter,
+              PageNumber: pageNumber,
+              PageSize: pageSize
+            },
+          })
+        .then((res) => {
+          console.log("res");
+          console.log(res.data);
+          console.log(foodList);
+          setFoodList(res.data);
+          console.log(`List Food: ${foodList}`);
+
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error("Có lỗi xảy ra!")
+        })
+      const paginationHeader = response.headers["x-pagination"];
+      console.log("Header" + paginationHeader);
+      if (paginationHeader) {
+        const paginationData = JSON.parse(paginationHeader);
+        setTotalPages(paginationData.TotalPages);
+      }
     } catch (error) {
       console.log("Food error: " + error);
     }
@@ -50,13 +90,17 @@ const Food = () => {
 
   useEffect(() => {
     reloadList();
-  }, []);
+  }, [storeId, foodNameFilter, pageNumber, pageSize]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPageNumber(newPage);
     }
   };
+
+  const filteredFood = foodList.filter((item) => {
+    return item.foodName.toLowerCase().includes(foodNameFilter.toLowerCase());
+  });
 
   return (
     <div>
@@ -73,7 +117,7 @@ const Food = () => {
               >
                 Xuất Excel
               </Button>
-              <AddFood reload={reloadList}></AddFood>
+              <AddFood reload={reloadList} storeId={storeId}></AddFood>
             </div>
             <div className="w-full shrink-0 gap-2 px-2 py-2 md:w-max">
               <div className="w-full md:w-72">
@@ -103,6 +147,8 @@ const Food = () => {
                       />
                     </svg>
                   }
+                  value={foodNameFilter}
+                  onChange={(e) => setFoodNameFilter(e.target.value)}
                 />
               </div>
             </div>
@@ -129,7 +175,7 @@ const Food = () => {
               </tr>
             </thead>
             <tbody>
-              {foodList.map((food, index) => (
+              {filteredFood.map((food, index) => (
                 <tr
                   key={food.id}
                   className={backgroundColors[index % backgroundColors.length]}

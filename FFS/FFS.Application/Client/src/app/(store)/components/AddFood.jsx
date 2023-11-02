@@ -29,7 +29,7 @@ const schema = yup
             .required("Hãy thêm ảnh!")
     });
 
-const AddFood = ({ reload }) => {
+const AddFood = ({ reload, storeId }) => {
     const {
         register,
         setValue,
@@ -47,13 +47,14 @@ const AddFood = ({ reload }) => {
     const ListCaegory = async () => {
         try {
             axios
-                .get('/api/Category/ListCategory')
+                .get(`/api/Category/ListCategoryByStoreId?storeId=${storeId}`)
                 .then((response) => {
                     setCategory(response.data.result);
                 })
-                .catch(
+                .catch((error) => {
+                    console.log(error);
                     toast.error("Lấy phân loại thất bại!")
-                );
+                });
         } catch (error) {
             console.error("Category: " + error);
         }
@@ -70,10 +71,11 @@ const AddFood = ({ reload }) => {
                 description: data.description,
                 price: data.price,
                 categoryId: data.category,
-                imageURL: data.imageURL
+                imageURL: data.imageURL,
+                storeId: storeId
             };
             axios
-                .get('/api/Food/AddFood', newFood)
+                .post('/api/Food/AddFood', newFood)
                 .then(() => {
                     toast.success("Thêm món ăn mới thành công!");
                     reload();
@@ -135,7 +137,6 @@ const AddFood = ({ reload }) => {
                             className="block appearance-none w-full bg-white px-4 py-2 pr-8 shadow leading-tight focus:outline-none focus:shadow-outline"
                             {...register("category")}
                             onChange={(e) => {
-                                alert(e);
                                 setValue('category', parseInt(e));
                             }}
                             label='Chọn loại'
@@ -161,5 +162,6 @@ const AddFood = ({ reload }) => {
 };
 AddFood.propTypes = {
     reload: propTypes.any.isRequired,
+    storeId: propTypes.any.isRequired
 };
 export default AddFood;
