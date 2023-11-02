@@ -321,10 +321,10 @@ const StoreCommentPage = () => {
                             <i className="fal fa-heart p-1"></i>
                             <p>Thích</p>
                           </div>
-                          <div className="flex justify-center items-center m-2 cursor-pointer">
+                          {/* <div className="flex justify-center items-center m-2 cursor-pointer">
                             <i className="fal fa-comment-alt-dots p-1"></i>
                             <p>Thảo luận</p>
-                          </div>
+                          </div> */}
                           <div
                             className="flex justify-center items-center m-2 cursor-pointer"
                             onClick={() => handleViewMore(comment.Id)}
