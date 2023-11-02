@@ -53,7 +53,6 @@ const Food = () => {
 
   const reloadList = async () => {
     GetStoreByUid();
-    console.log(storeId);
     try {
       const response = await axios
         .get(`/api/Food/ListFood`,
