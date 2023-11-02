@@ -2,7 +2,7 @@
 {
     public class FoodParameters : QueryStringParameters
     {
-        public int StoreId { get; set; }
+        public string uId { get; set; }
         public string? FoodName { get; set; }
     }
 }

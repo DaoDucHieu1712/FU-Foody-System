@@ -7,6 +7,6 @@ namespace FFS.Application.Infrastructure.Interfaces
     public interface IFoodRepository : IRepository<Food, int>
     {
         Task<List<Food>> GetFoodListByStoreId(int storeId);
-        PagedList<Food> GetFoods(FoodParameters foodParameters);
+        dynamic GetFoods(FoodParameters foodParameters);
     }
 }

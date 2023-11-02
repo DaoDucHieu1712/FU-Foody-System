@@ -1,9 +1,14 @@
-﻿using FFS.Application.Data;
+﻿using Dapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using System.Data;
+
+using FFS.Application.Data;
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -23,25 +28,35 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
-        public PagedList<Food> GetFoods(FoodParameters foodParameters)
+        public dynamic GetFoods(FoodParameters foodParameters)
         {
-            var query = FindAll(x => x.StoreId == foodParameters.StoreId && x.IsDelete == false, x => x.Category);
-
-            if (!string.IsNullOrEmpty(foodParameters.FoodName))
+            try
             {
-                var foodNameLower = foodParameters.FoodName.ToLower();
+                dynamic returnData = null;
+                var parameters = new DynamicParameters();
+                parameters.Add("userId", foodParameters.uId);
+                parameters.Add("foodName", foodParameters.FoodName);
+                parameters.Add("pageNumber", foodParameters.PageNumber);
+                parameters.Add("pageSize", foodParameters.PageSize);
 
-                query = query
-                    .Where(i => i.FoodName.ToLower().Contains(foodNameLower));
+                using (var db = _context.Database.GetDbConnection())
+                {
+                    if (db.State != ConnectionState.Open)
+                    {
+                        db.Open();
+                    }
+
+                    returnData = db.Query<dynamic>("GetFoodsByStore", parameters, commandType: CommandType.StoredProcedure);
+                }
+                return returnData;
             }
-            // Apply pagination
-            var pagedList = PagedList<Food>.ToPagedList(
-                query.Include(f => f.Category),
-                foodParameters.PageNumber,
-                foodParameters.PageSize
-            );
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
 
-            return pagedList;
         }
+
+     
     }
 }

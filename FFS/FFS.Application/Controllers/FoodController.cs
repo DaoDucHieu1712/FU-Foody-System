@@ -32,28 +32,14 @@ namespace FFS.Application.Controllers
             _mapper = mapper;
         }
         
-        [HttpGet()]
-        public IActionResult ListFood([FromQuery] FoodParameters foodParameters)
+        [HttpPost]
+        public IActionResult ListFood([FromBody] FoodParameters foodParameters)
         {
             try
             {
                 var foods = _foodRepo.GetFoods(foodParameters);
-                var metadata = new
-                {
-                    foods.TotalCount,
-                    foods.PageSize,
-                    foods.CurrentPage,
-                    foods.TotalPages,
-                    foods.HasNext,
-                    foods.HasPrevious
-                };
-                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-                var result = new
-                {
-                    Data = _mapper.Map<List<FoodDTO>>(foods),
-                    Metadata = metadata
-                };
-                return Ok(result);
+               
+                return Ok(foods);
             }
             catch (Exception ex)
             {
@@ -103,12 +89,18 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                if (id != foodDTO.Id)
+                var food = await _foodRepo.FindById(id, null);
+                if (food == null)
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
-                var updateFood = _mapper.Map<Food>(foodDTO);
-                _foodRepo.Update(updateFood);
+                food.CategoryId = (int)foodDTO.CategoryId;
+                food.Description = foodDTO.Description;
+                food.FoodName = foodDTO.FoodName;
+                food.ImageURL = foodDTO.ImageURL;
+                food.Price = (decimal)foodDTO.Price;
+
+                await _foodRepo.Update(food);
                 return Ok();
             }
             catch (Exception ex)
@@ -117,22 +109,18 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFood(int id)
         {
             try
             {
-                var food = _foodRepo.FindById(id, null);
+                var food = await _foodRepo.FindById(id, null);
                 if (food == null)
                 {
                     return NotFound();
                 }
-                Food newFood = new Food
-                {
-                    Id = id,
-                    IsDelete=true
-                };
-                _foodRepo.Update(newFood);
+                food.IsDelete = true;
+                await _foodRepo.Update(food);
                 return Ok();
             }
             catch (Exception ex)

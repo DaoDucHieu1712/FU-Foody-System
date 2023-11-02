@@ -16,7 +16,7 @@ namespace FFS.Application.Controllers
             _cateRepo = categoryRepository;
         }
 
-        [HttpGet]
+        [HttpGet("{storeId}")]
         public IActionResult ListCategoryByStoreId(int storeId)
         {
             try
