@@ -88,7 +88,7 @@ const AddLocation = ({ reload, wardList }) => {
                 handler={handleOpen}
                 className="bg-transparent shadow-none"
             >
-                <form className="form bg-white rounded px-4 py-4 mb-4" onSubmit={handleSubmit(onSubmit)}>
+                <form className="form bg-white rounded p-4 mb-4" onSubmit={handleSubmit(onSubmit)}>
                     <p className="font-bold text-2xl text-center mb-4">Thêm địa chỉ mới</p>
                     <div className="mb-4">
                         <Input className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight"

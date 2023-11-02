@@ -4,17 +4,18 @@ import axios from "../../../../shared/api/axiosConfig";
 import propTypes from 'prop-types';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const DefaultLocation = ({ item, reload }) => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen((cur) => !cur);
     const onSubmit = async () => {
         try {
-            const newLocation = {
-                userId: item.id.toString(),
-            };
+            var email = cookies.get("fu_foody_email");
             axios
-                .put(`/api/Location/UpdateDefaultLocation/${item.id}?UId=${newLocation}`,)
+                .put(`/api/Location/UpdateDefaultLocation/${item.id}?email=${email}`,)
                 .then(() => {
                     toast.success("Cập nhật mặc định thành công!");
                     reload();

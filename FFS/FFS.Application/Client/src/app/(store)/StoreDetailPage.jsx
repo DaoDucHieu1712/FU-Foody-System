@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
 import { useEffect, useState } from "react";
-import { Button, Input, Spinner } from "@material-tailwind/react";
+import { Button, Input, Spinner, Typography } from "@material-tailwind/react";
 const StoreDetailPage = () => {
   const { id } = useParams();
   const [storeData, setStoreData] = useState(null);
@@ -70,30 +70,30 @@ const StoreDetailPage = () => {
           <div className="grid grid-cols-5 gap-5 mb-10 ">
             <div className="col-span-2">
               <img
-                className="h-50 w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/50"
+                className="h-50 w-full object-cover object-center"
                 src={storeData.avatarURL}
                 alt="nature image"
               />
             </div>
             <div className="col-span-3 flex flex-col">
-              <span className="text-base m-4">Quán ăn</span>
-              <span className="text-6xl mb-8">{storeData.storeName}</span>
-              <span className="text-base mb-4">
-                <i className="fas fa-map mr-2"></i>
+              <span className="text-base ">Quán ăn</span>
+              <Typography variant="h2" className="">{storeData.storeName}</Typography>
+              <span className="text-base my-2">
+                <i className="fas fa-map mr-1"></i>
                 {storeData.address}
               </span>
-              <span className="text-base mb-4">
+              <span className="text-base my-2">
                 <i className="fal fa-phone mr-2"></i>
                 Liên hệ : {storeData.phoneNumber}
               </span>
               <span
-                className="text-base mb-4 text-primary cursor-pointer"
+                className="text-base my-2 text-primary cursor-pointer"
                 onClick={handleViewComment}
               >
                 Xem thêm lượt đánh giá
               </span>
 
-              <div className="flex items-center text-base mb-4">
+              <div className="flex items-center text-base my-2">
                 <span>
                   {" "}
                   <i className="fal fa-clock mr-2"></i>Hoạt động từ

@@ -64,6 +64,7 @@ namespace FFS.Application.Controllers
                 {
                     return NotFound();
                 }
+                locationDTO.IsDefault = locationUpdate.IsDefault;
                 _mapper.Map(locationDTO, locationUpdate);
                 await _locaRepo.Update(locationUpdate);
                 return Ok("Sửa thành công");
@@ -94,7 +95,7 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateDefaultLocation(int id, string UId)
+        public async Task<ActionResult> UpdateDefaultLocation(int id, string email)
         {
             try
             {
@@ -104,8 +105,8 @@ namespace FFS.Application.Controllers
                     return NotFound();
                 }
                 locationUpdate.IsDefault = true;
-                var locationToUpdate = await _locaRepo.FindSingle(x => x.UserId == UId && x.IsDefault == true);
-                
+                var locationToUpdate = await _locaRepo.FindSingle(x => x.User.Email == email && x.IsDefault == true);
+
                 if (locationToUpdate == null)
                 {
                     await _locaRepo.Update(locationUpdate);
