@@ -7,6 +7,7 @@ namespace FFS.Application.Entities
     public class Post : BaseEntity<int>
     {
         public string Title { get; set; }
+        public string? Image { get; set; }
         public string Content { get; set; }
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]

@@ -33,6 +33,23 @@ namespace FFS.Application.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("{postId}")]
+        public async Task<ActionResult<Post>> GetPostByPostId(int postId)
+        {
+            try
+            {
+                var post = await _postRepository.GetPostByPostId(postId);
+                if (post == null)
+                {
+                    return NotFound();
+                }
+                return Ok(_mapper.Map<PostDTO>(post)); 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); 
+            }
+        }
 
         [HttpPost]
         public async Task<ActionResult<Post>> CreatePost([FromBody] CreatePostDTO post)

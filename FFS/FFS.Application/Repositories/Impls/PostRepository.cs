@@ -47,6 +47,19 @@ namespace FFS.Application.Repositories.Impls
             }
         }
 
+        public async Task<Post> GetPostByPostId(int postId)
+        {
+            try
+            {
+                return await FindSingle(p => p.Id == postId, x => x.User, x => x.Comments);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
         public async Task DeletePost(int postId)
         {
             try

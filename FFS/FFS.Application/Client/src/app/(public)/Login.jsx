@@ -3,12 +3,14 @@ import { Button, Input } from "@material-tailwind/react";
 import { Tabs, TabsHeader, Tab } from "@material-tailwind/react";
 import GoogleLogin from "@leecheuk/react-google-login";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 import { gapi } from "gapi-script";
 import { toast } from "react-toastify";
 import { FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import CookieService from "../../shared/helper/cookieConfig";
 import dayjs from "dayjs";
+import { setAccessToken } from "../../redux/auth";
 
 const Login = () => {
   const tabs = [
@@ -29,6 +31,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setError] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -53,6 +56,7 @@ const Login = () => {
           password,
         })
         .then((res) => {
+          const token = res.data.userClient.result.token;
           CookieService.saveToken(
             "fu_foody_email",
             res.data.userClient.result.email,
@@ -84,7 +88,7 @@ const Login = () => {
               .add(10000 - 300, "second")
               .toDate()
           );
-
+          dispatch(setAccessToken(token));
           toast.success("Đăng nhập thành công !!");
           navigate("/");
         })
