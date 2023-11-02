@@ -76,24 +76,24 @@ const StoreDetailPage = () => {
               />
             </div>
             <div className="col-span-3 flex flex-col">
-              <span className="text-base m-4">Quán ăn</span>
-              <Typography variant="" className="font-semibold">{storeData.storeName}</Typography>
-              <span className="text-base mb-4">
-                <i className="fas fa-map mr-2"></i>
+              <span className="text-base ">Quán ăn</span>
+              <Typography variant="h2" className="">{storeData.storeName}</Typography>
+              <span className="text-base my-2">
+                <i className="fas fa-map mr-1"></i>
                 {storeData.address}
               </span>
-              <span className="text-base mb-4">
+              <span className="text-base my-2">
                 <i className="fal fa-phone mr-2"></i>
                 Liên hệ : {storeData.phoneNumber}
               </span>
               <span
-                className="text-base mb-4 text-primary cursor-pointer"
+                className="text-base my-2 text-primary cursor-pointer"
                 onClick={handleViewComment}
               >
                 Xem thêm lượt đánh giá
               </span>
 
-              <div className="flex items-center text-base mb-4">
+              <div className="flex items-center text-base my-2">
                 <span>
                   {" "}
                   <i className="fal fa-clock mr-2"></i>Hoạt động từ
