@@ -110,9 +110,14 @@ const ReviewStore = ({ idUser, idStore }) => {
                 handler={handleOpenThank}
                 className="bg-transparent shadow-none"
             >
-                <div className='bg-white p-1 mb-4 rounded-xl'>
-                    <DialogHeader className='text-green-600'>Đánh giá cửa hàng thành công</DialogHeader>
-                    <DialogBody className='font-semibold text-xl'>
+                <div className='bg-white p-1 mb-4 rounded-xl shadow-lg ring ring-indigo-600/50'>
+                    <DialogHeader className='text-green-600 flex flex-col'>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="text-green-600 w-28 h-28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Đánh giá cửa hàng thành công
+                    </DialogHeader>
+                    <DialogBody className='font-semibold text-xl text-center'>
                         Cảm ơn bạn đã đánh giá cửa hàng
                     </DialogBody>
                     <DialogFooter>

@@ -1,9 +1,9 @@
 import {
   Button,
-  Input,
   Rating,
   Spinner,
   Textarea,
+  Typography,
 } from "@material-tailwind/react";
 import axios from "../../shared/api/axiosConfig";
 import { useEffect, useState } from "react";
@@ -144,18 +144,18 @@ const StoreCommentPage = () => {
     <>
       {storeData ? (
         <div>
-          <div className="grid grid-cols-5 gap-5 mb-10 ">
+          <div className="grid grid-cols-5 gap-10">
             <div className="col-span-2">
               <img
-                className="h-50 w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/50"
+                className="w-full object-cover object-center"
                 src={storeData.avatarURL}
                 alt="nature image"
               />
             </div>
-            <div className="col-span-3 flex flex-col">
-              <span className="text-base m-4">Quán ăn</span>
-              <span className="text-6xl mb-8">{storeData.storeName}</span>
-              <div className="border-b border-t border-gray-500 h-14 grid grid-cols-7">
+            <div className="col-span-3 flex flex-col gap-1">
+              <span className="text-base">Quán ăn</span>
+              <Typography variant="h2">{storeData.storeName}</Typography>
+              <div className="border-b border-t border-gray-200 h-14 grid grid-cols-7">
                 <div className="flex justify-center items-center">
                   <div className="rounded-full bg-primary h-12 w-12 flex justify-center items-center">
                     <span className="h-full flex items-center font-semibold text-white text-2xl">
@@ -200,32 +200,33 @@ const StoreCommentPage = () => {
                   <span className="text-xs text-gray-600">Bình luận</span>
                 </div>
               </div>
-              <span className="text-base mb-4">
-                <i className="fas fa-map mr-2"></i>
+              <span className="text-base">
+                <i className="fas fa-map mr-1"></i>
                 {storeData.address}
               </span>
 
-              <span className="text-base mb-4">
+              <span className="text-base">
                 <i className="fal fa-phone mr-2"></i>
                 Liên hệ : {storeData.phoneNumber}
               </span>
-              <div className="flex items-center text-base mb-4">
+              <div className="flex items-center text-base gap-1">
                 <span>
-                  <i className="fal fa-clock mr-2"></i> Hoạt động từ
+                  <i className="fal fa-clock mr-1"></i> Hoạt động từ:
                 </span>
-                <span className="p-3">
+                <span>
                   {storeData.timeStart} : {storeData.timeEnd}
                 </span>
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-6 border-solid border-t-[1px] border-black pt-3">
+          <hr className="h-px my-4 bg-gray-400 border-0 dark:bg-gray-700"></hr>
+          <div className="grid grid-cols-6">
             <div className="col-span-1">
-              <p className="text-center">Bình Luận({commentList.length})</p>
+              <Typography variant="h6" color="red" className="text-center">Bình Luận({commentList.length})</Typography>
               <ul>
                 <li className="p-1">
                   <Button
-                    className="w-full h-10 bg-white flex justify-center items-center"
+                    className="w-full h-10 bg-white flex justify-center items-center hover:bg-primary"
                     onClick={() => handleSearchByRate(5)}
                   >
                     <Rating value={5} readonly />{" "}
@@ -236,7 +237,7 @@ const StoreCommentPage = () => {
                 </li>
                 <li className="p-1">
                   <Button
-                    className="w-full h-10 bg-white flex justify-center items-center"
+                    className="w-full h-10 bg-white flex justify-center items-center hover:bg-primary"
                     onClick={() => handleSearchByRate(4)}
                   >
                     <Rating value={4} readonly />{" "}
@@ -247,7 +248,7 @@ const StoreCommentPage = () => {
                 </li>
                 <li className="p-1">
                   <Button
-                    className="w-full h-10 bg-white flex justify-center items-center"
+                    className="w-full h-10 bg-white flex justify-center items-center hover:bg-primary"
                     onClick={() => handleSearchByRate(3)}
                   >
                     <Rating value={3} readonly />{" "}
@@ -258,7 +259,7 @@ const StoreCommentPage = () => {
                 </li>
                 <li className="p-1">
                   <Button
-                    className="w-full h-10 bg-white flex justify-center items-center"
+                    className="w-full h-10 bg-white flex justify-center items-center hover:bg-primary"
                     onClick={() => handleSearchByRate(2)}
                   >
                     <Rating value={2} readonly />{" "}
@@ -269,7 +270,7 @@ const StoreCommentPage = () => {
                 </li>
                 <li className="p-1">
                   <Button
-                    className="w-full h-10 bg-white flex justify-center items-center"
+                    className="w-full h-10 bg-white flex justify-center items-center hover:bg-primary"
                     onClick={() => handleSearchByRate(1)}
                   >
                     <Rating value={1} readonly />{" "}

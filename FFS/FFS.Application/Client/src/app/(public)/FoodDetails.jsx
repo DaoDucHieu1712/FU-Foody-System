@@ -3,8 +3,10 @@ import { useState } from "react";
 import propTypes from "prop-types";
 import ReviewStore from "./components/ReviewStore";
 import ReportStore from "./components/ReportStore";
+import { useParams } from "react-router-dom";
 
 const FoodDetails = ({ foodData }) => {
+  const id = useParams();
   const [value, setValue] = useState(0);
   console.log(foodData);
   const increaseValue = () => {

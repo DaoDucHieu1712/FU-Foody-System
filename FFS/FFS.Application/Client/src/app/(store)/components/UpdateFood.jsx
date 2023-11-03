@@ -62,6 +62,7 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
 
   useEffect(() => {
     ListCaegory();
+    setValue("category", foodData.categoryId)
   }, [open]);
 
   const onSubmit = async (data) => {
