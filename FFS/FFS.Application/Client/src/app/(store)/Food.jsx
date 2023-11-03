@@ -16,10 +16,12 @@ import UpdateFood from "./components/UpdateFood";
 import DeleteFood from "./components/DeleteFood";
 import { toast } from "react-toastify";
 import CookieService from "../../shared/helper/cookieConfig";
+import { useNavigate } from "react-router-dom";
 
 const TABLE_HEAD = ["Id", "Tên đồ ăn", "Ảnh", "Mô tả", "Loại", ""];
 
 const Food = () => {
+  const navigate = useNavigate();
   const backgroundColors = ["bg-gray-50", "bg-gray-200"];
   const [foodList, setFoodList] = useState([]);
   const [foodNameFilter, setFoodNameFilter] = useState("");
@@ -67,6 +69,7 @@ const Food = () => {
         })
         .catch((error) => {
           toast.error("Có lỗi xảy ra!");
+          console.log(error);
         });
     } catch (error) {
       console.log("Food error: " + error);
@@ -216,7 +219,7 @@ const Food = () => {
                     <td>
                       <div className="h-full flex justify-center items-center">
                         <Tooltip content="Xem món ăn">
-                          <IconButton variant="text">
+                          <IconButton variant="text" onClick={() => navigate(`/food-details/${food.id}`)}>
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               width="20"
