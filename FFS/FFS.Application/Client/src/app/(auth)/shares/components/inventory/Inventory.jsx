@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import React from "react";
-import axios from "axios";
+import axios from "../../../../../shared/api/axiosConfig";
 import AddInventory from "../inventory/AddInventory";
 import UpdateInventory from "../inventory/UpdateInventory";
 import DeleteInventory from "../inventory/DeleteInventory";
@@ -45,7 +45,7 @@ const Inventory = () => {
   const fetchInventory = async () => {
     try {
       const response = await axios.get(
-        "https://localhost:7025/api/Inventory/GetInventories",
+        "/api/Inventory/GetInventories",
         {
           params: {
             StoreId: storeID,
@@ -55,7 +55,7 @@ const Inventory = () => {
           },
         }
       );
-      setInventory(response.data);
+      setInventory(response);
       console.log(response);
       // Extract pagination data from the response headers
       const paginationHeader = response.headers["x-pagination"];

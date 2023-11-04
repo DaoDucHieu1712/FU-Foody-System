@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, IconButton,Typography } from "@material-tailwind/react";
-import axios from "axios";
+import axios from "../../../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 
 const DeleteInventory = ({ inventoryId, reloadInventory }) => {
@@ -11,7 +11,7 @@ const DeleteInventory = ({ inventoryId, reloadInventory }) => {
   const handleDelete = async () => {
     try {
       // Send a DELETE request to the API to delete the inventory item by inventoryId
-      await axios.delete(`https://localhost:7025/api/Inventory/DeleteInventoryByInventoryId/${inventoryId}`);
+      await axios.delete(`/api/Inventory/DeleteInventoryByInventoryId/${inventoryId}`);
       toast.success("Xóa món ăn khỏi kho thành công!");
       // Close the dialog after a successful delete
       handleOpen();
