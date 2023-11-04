@@ -6,19 +6,19 @@ import {
   DialogFooter,
   Input,
   Typography,
+  MenuItem,
 } from "@material-tailwind/react";
+import React, { forwardRef } from 'react';
 import Editor from "./Editor";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import propTypes from "prop-types";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import axios from "../../../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 import ErrorText from "../../../../../shared/components/text/ErrorText";
-import UploadImage from "../../../../../shared/components/form/UploadImage";
 import CookieService from "../../../../../shared/helper/cookieConfig";
-
+import UpdateImage from "../../../../../shared/components/form/UpdateImage";
 
 const schema = yup.object({
   title: yup.string().required("Hãy viết tiêu đề của bạn!"),
@@ -26,11 +26,10 @@ const schema = yup.object({
   image: yup.string().required("Hãy thêm ảnh!"),
 });
 
-
-const AddPost = ({reloadPost}) => {
+const UpdatePost = forwardRef(({ post, reloadPost }, ref) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
-  const [editorContent, setEditorContent] = useState("")
+  const [editorContent, setEditorContent] = useState(post.content);
   const userId = CookieService.getToken("fu_foody_id");
   const {
     register,
@@ -41,30 +40,36 @@ const AddPost = ({reloadPost}) => {
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
-
-
   const handleEditorChange = (content) => {
     setEditorContent(content); 
   };
+  useEffect(() => {
+    setValue("title", post.title);
+    setEditorContent(post.content);
+  }, [post]);
+
+
   const onSubmit = async (data) => {
     try {
-      const newPost = {
+      const updatePost = {
+        id: post.id,
         title: data.title,
         content: editorContent,
         image: data.image,
         userId: userId,
-        
       };
-      
+
       axios
-        .post("/api/Post/CreatePost", newPost)
+        .put(`/api/Post/UpdatePost/${post.id}`, updatePost)
         .then(() => {
-          toast.success("Thêm bài viết mới thành công!");
+          toast.success("Chỉnh sửa bài viết thành công!");
           reloadPost();
+          console.log(updatePost);
           setOpen(false);
         })
         .catch(() => {
-          toast.error("Thêm bài viết mới thất bại!");
+          toast.error("Chỉnh sửa bài viết thất bại!");
+          console.log(updatePost);
           setOpen(false);
         });
     } catch (error) {
@@ -74,18 +79,13 @@ const AddPost = ({reloadPost}) => {
 
   return (
     <>
-      <button
-        onClick={handleOpen}
-        className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-      >
-        + Thêm bài viết mới
-      </button>
+     <MenuItem onClick={handleOpen}>Chỉnh sửa bài viết</MenuItem>
       <Dialog open={open} size="lg" handler={handleOpen}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex items-center justify-between">
             <DialogHeader className="flex flex-col items-start">
               <Typography className="mb-1" variant="h4">
-                Đăng bài viết
+                Chỉnh sửa bài viết
               </Typography>
             </DialogHeader>
             <svg
@@ -108,29 +108,41 @@ const AddPost = ({reloadPost}) => {
               <Input
                 label="Tiêu đề của bạn"
                 type="text"
-                {...register("title")}
+                defaultValue={post.title}
+                {...register("title")}               
                 className="rounded-none"
               />
-               {errors.title && <ErrorText text={errors.title.message}></ErrorText>}
+              {errors.title && (
+                <ErrorText text={errors.title.message}></ErrorText>
+              )}
             </div>
             <Editor value={editorContent} onChange={handleEditorChange} />
             {errors.content && (
               <ErrorText text={errors.content.message}></ErrorText>
             )}
-            <UploadImage name="image" onChange={setValue}></UploadImage>
+            <UpdateImage
+            name="image"
+            onChange={setValue}
+            url={post.image}
+          ></UpdateImage>
           </DialogBody>
           <DialogFooter className="space-x-2">
             <Button variant="text" color="deep-orange" onClick={handleOpen}>
               cancel
             </Button>
-            <Button className="rounded-none" variant="gradient" color="deep-orange" type="submit">
-              TẠO MỚI
+            <Button
+              className="rounded-none"
+              variant="gradient"
+              color="deep-orange"
+              type="submit"
+            >
+              Cập nhật
             </Button>
           </DialogFooter>
         </form>
       </Dialog>
     </>
   );
-};
+});
 
-export default AddPost;
+export default UpdatePost;

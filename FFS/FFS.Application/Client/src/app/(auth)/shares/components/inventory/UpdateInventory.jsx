@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../../../../shared/api/axiosConfig";
 import React from "react";
 import { toast } from "react-toastify";
 
@@ -45,7 +45,7 @@ const UpdateInventory = ({ foodName, quantity, foodId, reloadInventory }) => {
 
       // Send the update request with the entered quantity
       await axios.put(
-        `https://localhost:7025/api/Inventory/UpdateInventoryByStoreAndFoodId/update/${storeId}/${foodId}/${data.quantity}`
+        `/api/Inventory/UpdateInventoryByStoreAndFoodId/update/${storeId}/${foodId}/${data.quantity}`
       );
       toast.success("Cập nhật kho thành công!");
       // Close the dialog after a successful update

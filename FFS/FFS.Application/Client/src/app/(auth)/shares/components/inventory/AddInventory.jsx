@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../../../../shared/api/axiosConfig";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useForm, Controller } from "react-hook-form";
@@ -44,9 +44,9 @@ const AddInventory = ({ reloadInventory }) => {
     // Fetch the list of food items by StoreId when the component is mounted
     const storeId = 1; // Replace with the actual StoreId
     axios
-      .get(`https://localhost:7025/api/Food/GetFoodByStoreId/${storeId}`)
+      .get(`/api/Food/GetFoodByStoreId/${storeId}`)
       .then((response) => {
-        setFoodList(response.data);
+        setFoodList(response);
       })
       .catch((error) => {
         console.error("Error fetching food items: " + error);
@@ -58,15 +58,15 @@ const AddInventory = ({ reloadInventory }) => {
       // Check if the selected food item already exists in the inventory
       const storeId = 1; // Replace with the actual StoreId
       const response = await axios.get(
-        `https://localhost:7025/api/Inventory/CheckExistingInventory/${storeId}/${data.selectedFood}`
+        `/api/Inventory/CheckExistingInventory/${storeId}/${data.selectedFood}`
       );
 
-      if (response.data) {
+      if (response) {
         alert("Món ăn này đã tồn tại trong kho !");
       } else {
         // Proceed with creating the new inventory entry
         await axios.post(
-          `https://localhost:7025/api/Inventory/CreateInventory`,
+          `/api/Inventory/CreateInventory`,
           {
             storeId: storeId,
             foodId: data.selectedFood,
