@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "../../../../../styles/editor.css";
@@ -36,9 +35,7 @@ const Editor = ({ value, onChange }) => {
     "font"
   ];
 
-  const handleEditorChange = (content) => {
-    onChange(content);
-  };
+
 
   return (
     <ReactQuill
@@ -46,7 +43,7 @@ const Editor = ({ value, onChange }) => {
       modules={modules}
       formats={formats}
       value={value}
-      onChange={handleEditorChange}
+      onChange={onChange}
       
     />
   );

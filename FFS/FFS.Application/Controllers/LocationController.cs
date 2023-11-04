@@ -15,13 +15,11 @@ namespace FFS.Application.Controllers
     {
         private readonly ILocationRepository _locaRepo;
         private readonly IMapper _mapper;
-        private readonly ApplicationDbContext _context;
 
-        public LocationController(ILocationRepository locaRepo, IMapper mapper, ApplicationDbContext context)
+        public LocationController(ILocationRepository locaRepo, IMapper mapper)
         {
             _locaRepo = locaRepo;
             _mapper = mapper;
-            _context = context;
         }
 
         [HttpGet]
@@ -75,17 +73,18 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> DeleteLocation(int id)
         {
             try
             {
-                var locationDelete = await _locaRepo.FindSingle(x => x.Id == id);
+                var locationDelete = await _locaRepo.FindById(id, null);
                 if (locationDelete == null)
                 {
                     return NotFound();
                 }
-                await _locaRepo.Remove(locationDelete);
+                locationDelete.IsDelete= true;
+                await _locaRepo.Update(locationDelete);
                 return Ok("Xóa thành công");
             }
             catch (Exception ex)

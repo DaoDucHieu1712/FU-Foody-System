@@ -52,8 +52,22 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var foods = _foodRepo.FindById(id, null);
+                var foods = _foodRepo.FindSingle(x => x.Id == id, x => x.Category);
                 return Ok(new { data = foods });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        
+        [HttpGet("{cateId}")]
+        public async Task<IActionResult> GetFoodByCategoryid(int cateId)
+        {
+            try
+            {
+                var foods = _foodRepo.FindAll(x => x.CategoryId == cateId);
+                return Ok(foods);
             }
             catch (Exception ex)
             {
@@ -243,23 +257,7 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                if (foodRatingDTO.FoodRatings != null && foodRatingDTO.FoodRatings.Count > 0)
-                {
-                    foreach (var fooditem in foodRatingDTO.FoodRatings)
-                    {
-                        FoodRatingDTO ratingDTO = new FoodRatingDTO
-                        {
-                            UserId = foodRatingDTO.UserId,
-                            FoodRatings = new List<FoodRatingItem> { fooditem },
-                            ShipperId = foodRatingDTO.ShipperId,
-                            NoteForShipper = foodRatingDTO.NoteForShipper,
-                            Content = foodRatingDTO.Content,
-                            Images = foodRatingDTO.Images
-                        };
-
-                        await _commentRepository.CreateComment(_mapper.Map<Comment>(ratingDTO));
-                    }
-                }
+                await _commentRepository.CreateComment(_mapper.Map<Comment>(foodRatingDTO));
                 return Ok();
             }
             catch (Exception ex)
@@ -267,5 +265,6 @@ namespace FFS.Application.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
     }
 }

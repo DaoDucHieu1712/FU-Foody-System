@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+
 using FFS.Application.DTOs.Inventory;
 using FFS.Application.DTOs.Food;
 using FFS.Application.DTOs.Store;
@@ -10,7 +10,8 @@ namespace FFS.Application.DTOs
 {
     public class ApplicationMapper : Profile
     {
-        public ApplicationMapper() {
+        public ApplicationMapper()
+        {
             CreateMap<Location, LocationDTO>()
                 .ForMember(dest => dest.Email,
                 opt => opt.MapFrom(src => src.User.Email)).ReverseMap();
@@ -43,9 +44,15 @@ namespace FFS.Application.DTOs
                opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
             CreateMap<UpdatePostDTO, Entities.Post>().ReverseMap();
 
-            CreateMap<StoreRatingDTO, Comment>().ReverseMap();
-            CreateMap<StoreReportDTO, Report>()
-             .ForMember(dest => dest.ReportType, opt => opt.MapFrom(src => 1));
+            CreateMap<Comment, StoreRatingDTO>()
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+            .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.StoreId))
+            .ForMember(dest => dest.Rate, opt => opt.MapFrom(src => src.Rate))
+            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+            .ForMember(dest => dest.ShipperId, opt => opt.MapFrom(src => src.ShipperId))
+            .ForMember(dest => dest.NoteForShipper, opt => opt.MapFrom(src => src.NoteForShipper)).ReverseMap();
+            CreateMap<ReportDTO, Report>().ReverseMap();
+             
 
             CreateMap<Entities.Order, OrderDTO>()
                 .ForMember(dest => dest.CustomerName,
@@ -58,6 +65,7 @@ namespace FFS.Application.DTOs
 
             
             CreateMap<Image, ImageFoodRatingDTO>().ReverseMap();
+
             CreateMap<FoodRatingDTO, Comment>()
            .ForMember(dest => dest.FoodId, opt => opt.MapFrom(src => src.FoodRatings.Select(fr => fr.FoodId).FirstOrDefault()))
            .ForMember(dest => dest.Rate, opt => opt.MapFrom(src => src.FoodRatings.Select(fr => fr.Rate).FirstOrDefault()))
@@ -66,6 +74,13 @@ namespace FFS.Application.DTOs
            .ForMember(dest => dest.ShipperId, opt => opt.MapFrom(src => src.ShipperId))
            .ForMember(dest => dest.NoteForShipper, opt => opt.MapFrom(src => src.NoteForShipper))
            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
+
+            CreateMap<Comment, FoodRatingDTO>()
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+            .ForMember(dest => dest.FoodId, opt => opt.MapFrom(src => src.FoodId))
+            .ForMember(dest => dest.Rate, opt => opt.MapFrom(src => src.Rate))
+            .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images)).ReverseMap();
 
             OrderMapper();
         }

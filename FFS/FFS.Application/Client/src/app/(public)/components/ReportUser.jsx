@@ -3,11 +3,9 @@ import { useState } from "react";
 import axios from "../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 import propTypes from "prop-types";
-import { FaExclamationCircle } from "react-icons/fa";
 
 
-
-const ReportStore = ({ uId, sId }) => {
+const ReportUser = ({ uId, sId }) => {
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen((cur) => !cur);
@@ -74,9 +72,7 @@ const ReportStore = ({ uId, sId }) => {
 
     return (
         <>
-            <Typography className="text-orange-900 font-semibold cursor-pointer hover:underline hover:text-orange-700" onClick={handleOpen}> <span className="flex items-center">
-            <FaExclamationCircle className="ml-2" />Báo cáo
-        </span></Typography>
+            <Typography className="text-orange-900 font-semibold cursor-pointer hover:underline hover:text-orange-700" onClick={handleOpen}>Báo cáo</Typography>
             <Dialog
                 size="md"
                 open={open}
@@ -84,12 +80,11 @@ const ReportStore = ({ uId, sId }) => {
                 className="bg-transparent shadow-none"
             >
                 <div className="bg-white rounded px-4 py-4">
-                    <Typography variant="h5" color="black">Báo cáo cửa hàng</Typography>
+                    <Typography variant="h5" color="black">Báo cáo người dùng</Typography>
                     <div className="flex flex-col">
-                        <Checkbox label="Chưa nhận được đơn hàng" value="Chưa nhận được đơn hàng" onChange={handleCheckboxChange} />
-                        <Checkbox label="Đơn hàng giao thiếu/ giao nhầm" value="Đơn hàng giao thiếu/ giao nhầm" onChange={handleCheckboxChange} />
-                        <Checkbox label="Đơn hàng không đúng với mô tả" value="Đơn hàng không đúng với mô tả" onChange={handleCheckboxChange} />
-                        <Checkbox label="Đơn hàng không đảm bảo vệ sinh" value="Đơn hàng không đảm bảo vệ sinh" onChange={handleCheckboxChange} />
+                        <Checkbox label="Người dùng xúc phạm ngôn từ" value="Người dùng xúc phạm ngôn từ" onChange={handleCheckboxChange} />
+                        <Checkbox label="Người dùng không nghe máy, nhận hàng" value="Người dùng không nghe máy, nhận hàng" onChange={handleCheckboxChange} />
+                        <Checkbox label="Người dùng review sai sự thật" value="Người dùng review sai sự thật" onChange={handleCheckboxChange} />
                         <Checkbox
                             label="Lý do khác"
                             value="Ly do khac"
@@ -111,9 +106,9 @@ const ReportStore = ({ uId, sId }) => {
     );
 };
 
-ReportStore.propTypes = {
+ReportUser.propTypes = {
     uId: propTypes.any.isRequired,
     sId: propTypes.any.isRequired
 };
 
-export default ReportStore;
+export default ReportUser;

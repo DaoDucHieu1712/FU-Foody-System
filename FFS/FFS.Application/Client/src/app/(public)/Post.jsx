@@ -15,10 +15,13 @@ import React from "react";
 import AddPost from "../(auth)/shares/components/post/AddPost";
 import axiosConfig from "../../shared/api/axiosConfig";
 import { useNavigate  } from "react-router-dom";
+import LastestPost from "./components/LastestPost";
+import PopularFood from "./components/PopularFood";
 
 const Post = () => {
   const [active, setActive] = React.useState(1);
   const [posts, setPosts] = React.useState([]);
+ 
   let navigate = useNavigate();
 
   const handleReadMoreClick = (postId) => {
@@ -44,7 +47,7 @@ const Post = () => {
     setActive(active - 1);
   };
 
-  useEffect(() => {
+  const fetchPostList = () => {
     axiosConfig
       .get("/api/Post/GetListPosts")
       .then((response) => {
@@ -53,116 +56,25 @@ const Post = () => {
       .catch((error) => {
         console.error("Error fetching posts: ", error);
       });
+  };
+ 
+  useEffect(() => {
+    fetchPostList()
   }, []);
+
+  const reloadPost =  () => {
+    fetchPostList();
+ };
 
   return (
     <>
       <div className="container mt-8 p-11">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-14">
           {/* Column 1 */}
-          <div className="md:col-span-1">
-            <div className="Blog_newest border p-4">
-              <h1 className="text-lg font-bold uppercase">Blog mới nhất</h1>
-              <div className="flex mb-4 mt-4">
-                {/* Image */}
-                <div className="w-1/3">
-                  <img
-                    src="https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
-                    className="w-full h-auto"
-                  />
-                </div>
-                {/* Title and Timestamp */}
-                <div className="w-2/3 px-4">
-                  <h2 className="text-sm font-bold">
-                    Top 5 món ăn truyền thống đốn tim gen Z
-                  </h2>
-                  <p className="text-sm text-gray-500">12 Nov, 2023</p>
-                </div>
-              </div>
-              <div className="flex mb-4">
-                {/* Image */}
-                <div className="w-1/3">
-                  <img
-                    src="https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
-                    className="w-full h-auto"
-                  />
-                </div>
-                {/* Title and Timestamp */}
-                <div className="w-2/3 px-4">
-                  <h2 className="text-sm font-bold">
-                    Top 5 món ăn truyền thống đốn tim gen Z
-                  </h2>
-                  <p className="text-sm text-gray-500">12 Nov, 2023</p>
-                </div>
-              </div>
-              <div className="flex mb-4">
-                {/* Image */}
-                <div className="w-1/3">
-                  <img
-                    src="https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
-                    className="w-full h-auto"
-                  />
-                </div>
-                {/* Title and Timestamp */}
-                <div className="w-2/3 px-4">
-                  <h2 className="text-sm font-bold">
-                    Top 5 món ăn truyền thống đốn tim gen Z
-                  </h2>
-                  <p className="text-sm text-gray-500">12 Nov, 2023</p>
-                </div>
-              </div>
-            </div>
-            <div className="food_newest border p-4 mt-6">
-              <h1 className="text-lg font-bold uppercase">Món ăn yêu thích</h1>
-              <div className="flex mb-4 mt-4">
-                {/* Image */}
-                <div className="w-1/3">
-                  <img
-                    src="https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
-                    className="w-full h-auto"
-                  />
-                </div>
-                {/* Title and Timestamp */}
-                <div className="w-2/3 px-4">
-                  <h2 className="text-sm font-bold">
-                    Top 5 món ăn truyền thống đốn tim gen Z
-                  </h2>
-                  <p className="text-sm text-gray-500">12 Nov, 2023</p>
-                </div>
-              </div>
-              <div className="flex mb-4">
-                {/* Image */}
-                <div className="w-1/3">
-                  <img
-                    src="https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
-                    className="w-full h-auto"
-                  />
-                </div>
-                {/* Title and Timestamp */}
-                <div className="w-2/3 px-4">
-                  <h2 className="text-sm font-bold">
-                    Top 5 món ăn truyền thống đốn tim gen Z
-                  </h2>
-                  <p className="text-sm text-gray-500">12 Nov, 2023</p>
-                </div>
-              </div>
-              <div className="flex mb-4">
-                {/* Image */}
-                <div className="w-1/3">
-                  <img
-                    src="https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
-                    className="w-full h-auto"
-                  />
-                </div>
-                {/* Title and Timestamp */}
-                <div className="w-2/3 px-4">
-                  <h2 className="text-sm font-bold">
-                    Top 5 món ăn truyền thống đốn tim gen Z
-                  </h2>
-                  <p className="text-sm text-gray-500">12 Nov, 2023</p>
-                </div>
-              </div>
-            </div>
+          <div className="md:col-span-1 sticky top-0 h-screen">
+           
+            <LastestPost></LastestPost>
+            <PopularFood></PopularFood>
           </div>
           {/* Column 2 */}
           <div className="md:col-span-2 ">
@@ -180,7 +92,7 @@ const Post = () => {
                   <Option>Cũ nhất</Option>
                 </Select> */}
 
-                <AddPost></AddPost>
+                <AddPost reloadPost={reloadPost}></AddPost>
               </div>
             </div>
             <div className="list_post mt-8">
@@ -224,7 +136,7 @@ const Post = () => {
                           overflow: "hidden",
                         }}
                       >
-                        {post.content}
+                        <div dangerouslySetInnerHTML={{ __html: post.content }}></div>
                       </Typography>
                     </CardBody>
                     <CardFooter className="pt-0">
@@ -254,59 +166,7 @@ const Post = () => {
                   </Card>
                 ))}
               </div>
-              {/* <div className="grid grid-cols-2 gap-4">
-                {posts.map((post) => (
-                  <Card
-                    key={post.id}
-                    className="w-96 border rounded-none shadow-none"
-                  >
-                    <CardHeader
-                      floated={false}
-                      className="rounded-none mt-5 mx-5"
-                    >
-                      <img
-                        src={post.image}
-                        alt="card-image"
-                        className="h-230 w-full object-cover object-center"
-                      
-                      />
-                    </CardHeader>
-                    <CardBody>
-                      <Typography
-                        variant="h5"
-                        color="blue-gray"
-                        className="mb-2"
-                      >
-                        {post.title}
-                      </Typography>
-                      <Typography>{post.createdAt}</Typography>
-                    </CardBody>
-                    <CardFooter className="pt-0">
-                      <Button
-                        variant="outlined"
-                        className="uppercase rounded-none flex items-center gap-1"
-                        color="deep-orange"
-                      >
-                        Đọc Thêm
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          className="w-4 h-4"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                          />
-                        </svg>
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div> */}
+              
               <div className="flex items-center justify-center gap-4 mt-7">
                 <Button
                   variant="text"
