@@ -15,11 +15,13 @@ namespace FFS.Application.Controllers
     {
         private readonly ILocationRepository _locaRepo;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
 
-        public LocationController(ILocationRepository locaRepo, IMapper mapper)
+        public LocationController(ILocationRepository locaRepo, IMapper mapper, ApplicationDbContext context)
         {
             _locaRepo = locaRepo;
             _mapper = mapper;
+            _context = context;
         }
 
         [HttpGet]
@@ -62,6 +64,7 @@ namespace FFS.Application.Controllers
                 {
                     return NotFound();
                 }
+                locationDTO.IsDefault = locationUpdate.IsDefault;
                 _mapper.Map(locationDTO, locationUpdate);
                 await _locaRepo.Update(locationUpdate);
                 return Ok("Sửa thành công");
@@ -72,18 +75,17 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLocation(int id)
         {
             try
             {
-                var locationDelete = await _locaRepo.FindById(id, null);
+                var locationDelete = await _locaRepo.FindSingle(x => x.Id == id);
                 if (locationDelete == null)
                 {
                     return NotFound();
                 }
-                locationDelete.IsDelete= true;
-                await _locaRepo.Update(locationDelete);
+                await _locaRepo.Remove(locationDelete);
                 return Ok("Xóa thành công");
             }
             catch (Exception ex)
@@ -93,7 +95,7 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateDefaultLocation(int id, string UId)
+        public async Task<ActionResult> UpdateDefaultLocation(int id, string email)
         {
             try
             {
@@ -103,8 +105,8 @@ namespace FFS.Application.Controllers
                     return NotFound();
                 }
                 locationUpdate.IsDefault = true;
-                var locationToUpdate = await _locaRepo.FindSingle(x => x.UserId == UId && x.IsDefault == true);
-                
+                var locationToUpdate = await _locaRepo.FindSingle(x => x.User.Email == email && x.IsDefault == true);
+
                 if (locationToUpdate == null)
                 {
                     await _locaRepo.Update(locationUpdate);

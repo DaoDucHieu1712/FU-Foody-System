@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using FFS.Application.DTOs.Food;
+using FFS.Application.DTOs.Inventory;
+using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
@@ -8,6 +10,7 @@ using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace FFS.Application.Controllers
@@ -28,15 +31,15 @@ namespace FFS.Application.Controllers
             _commentRepository = commentRepository;
             _mapper = mapper;
         }
-
-        [HttpGet]
-        public IActionResult ListFood()
+        
+        [HttpPost]
+        public IActionResult ListFood([FromBody] FoodParameters foodParameters)
         {
             try
             {
-                var sId = 2;
-                var foods = _foodRepo.GetList(x => x.StoreId == sId, x => x.Category);
-                return Ok(new { data = foods });
+                var foods = _foodRepo.GetFoods(foodParameters);
+               
+                return Ok(foods);
             }
             catch (Exception ex)
             {
@@ -45,7 +48,7 @@ namespace FFS.Application.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetFoodById(int id)
+        public async Task<IActionResult> GetFoodById(int id)
         {
             try
             {
@@ -59,14 +62,14 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddFood(FoodDTO foodDTO)
+        public async Task<IActionResult> AddFood(FoodDTO foodDTO)
         {
             try
             {
                 var newFood = new Food
                 {
                     CategoryId = (int)foodDTO.CategoryId,
-                    StoreId = 2,
+                    StoreId = (int)foodDTO.StoreId,
                     FoodName = foodDTO.FoodName,
                     ImageURL = foodDTO.ImageURL,
                     Description = foodDTO.Description,
@@ -82,16 +85,22 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateFood(int id, FoodDTO foodDTO)
+        public async Task<IActionResult> UpdateFood(int id, FoodDTO foodDTO)
         {
             try
             {
-                if (id != foodDTO.Id)
+                var food = await _foodRepo.FindById(id, null);
+                if (food == null)
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
-                var updateFood = _mapper.Map<Food>(foodDTO);
-                _foodRepo.Update(updateFood);
+                food.CategoryId = (int)foodDTO.CategoryId;
+                food.Description = foodDTO.Description;
+                food.FoodName = foodDTO.FoodName;
+                food.ImageURL = foodDTO.ImageURL;
+                food.Price = (decimal)foodDTO.Price;
+
+                await _foodRepo.Update(food);
                 return Ok();
             }
             catch (Exception ex)
@@ -101,16 +110,17 @@ namespace FFS.Application.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteFood(int id)
+        public async Task<IActionResult> DeleteFood(int id)
         {
             try
             {
-                var food = _foodRepo.FindById(id, null);
+                var food = await _foodRepo.FindById(id, null);
                 if (food == null)
                 {
                     return NotFound();
                 }
-                _foodRepo.Remove(id);
+                food.IsDelete = true;
+                await _foodRepo.Update(food);
                 return Ok();
             }
             catch (Exception ex)
@@ -196,7 +206,7 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCombo(int id)
         {
             try
