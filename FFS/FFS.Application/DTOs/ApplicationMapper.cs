@@ -48,8 +48,6 @@ namespace FFS.Application.DTOs
              .ForMember(dest => dest.ReportType, opt => opt.MapFrom(src => 1));
 
             CreateMap<Entities.Order, OrderDTO>()
-                .ForMember(dest => dest.StoreName,
-                opt => opt.MapFrom(src => src.Store.StoreName))
                 .ForMember(dest => dest.CustomerName,
                 opt => opt.MapFrom(src => src.Customer.FirstName + " " + src.Customer.LastName))
                 .ForMember(dest => dest.PhoneNumber,
@@ -58,8 +56,7 @@ namespace FFS.Application.DTOs
                 opt => opt.MapFrom(src => src.Shipper.FirstName + " " + src.Shipper.LastName))
                 .ReverseMap();
 
-            CreateMap<Entities.Order, OrderRequestDTO>().ReverseMap();
-            CreateMap<OrderDetail, OrderDetailDTO>().ReverseMap();
+            
             CreateMap<Image, ImageFoodRatingDTO>().ReverseMap();
             CreateMap<FoodRatingDTO, Comment>()
            .ForMember(dest => dest.FoodId, opt => opt.MapFrom(src => src.FoodRatings.Select(fr => fr.FoodId).FirstOrDefault()))
@@ -69,6 +66,23 @@ namespace FFS.Application.DTOs
            .ForMember(dest => dest.ShipperId, opt => opt.MapFrom(src => src.ShipperId))
            .ForMember(dest => dest.NoteForShipper, opt => opt.MapFrom(src => src.NoteForShipper))
            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
+
+            OrderMapper();
+        }
+
+        public void OrderMapper()
+        {
+            CreateMap<Entities.Order, OrderRequestDTO>().ReverseMap();
+            CreateMap<Entities.Order, OrderResponseDTO>()
+                .ForMember(dest => dest.CustomerName ,opt => opt.MapFrom(src => src.Customer.UserName))
+                .ForMember(dest => dest.ShipperName ,opt => opt.MapFrom(src => src.Shipper.FirstName + " " + src.Shipper.LastName))
+                .ReverseMap();
+            CreateMap<OrderDetail, OrderDetailResponseDTO>()
+                .ForMember(dest => dest.FoodName, opt => opt.MapFrom(src => src.Food.FoodName))
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Food.ImageURL))
+                .ForMember(dest => dest.StoreName, opt => opt.MapFrom(src => src.Store.StoreName))
+                .ReverseMap();
+            CreateMap<OrderDetail, OrderDetailDTO>().ReverseMap();
         }
     }
 }

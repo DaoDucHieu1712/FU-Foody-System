@@ -8,9 +8,6 @@ namespace FFS.Application.Entities
     public class Order : BaseEntity<int>
     {
         public int? PaymentId { get; set; }
-        public int StoreId { get; set; }
-        [ForeignKey(nameof(StoreId))]
-        public Store Store { get; set; }
         public string CustomerId { get; set; }
         [ForeignKey(nameof(CustomerId))]
         public ApplicationUser Customer { get; set; }   

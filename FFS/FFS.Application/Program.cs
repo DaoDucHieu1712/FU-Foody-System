@@ -96,6 +96,8 @@ builder.Services.AddTransient<IComboRepository, ComboRepository>();
 builder.Services.AddTransient<IPostRepository, PostRepository>();
 builder.Services.AddTransient<ICommentRepository, CommentRepository>();
 builder.Services.AddTransient<IReportRepository, ReportRepository>();
+builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+builder.Services.AddTransient<IOrderDetailRepository, OrderDetailRepository>();
 
 
 #endregion
