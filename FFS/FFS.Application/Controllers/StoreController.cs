@@ -24,15 +24,13 @@ namespace FFS.Application.Controllers {
         private readonly IStoreRepository _storeRepository;
         private readonly IFoodRepository _foodRepository;
         private readonly ICommentRepository _commentRepository;
-        private readonly IReportRepository _reportRepository;
 
-        public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository, IReportRepository reportRepository)
+        public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository)
         {
             _mapper = mapper;
             _storeRepository = storeRepository;
             _foodRepository = foodRepository;
             _commentRepository = commentRepository;
-            _reportRepository = reportRepository;
         }
 
         [Authorize]
@@ -113,7 +111,6 @@ namespace FFS.Application.Controllers {
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<IActionResult> DetailStore(int id)
         {
             try
@@ -220,19 +217,7 @@ namespace FFS.Application.Controllers {
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ReportStore([FromBody] StoreReportDTO storeReportDTO)
-        {
-            try
-            {
-                await _reportRepository.CreateReport(_mapper.Map<Report>(storeReportDTO));
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+       
 
     }
 }

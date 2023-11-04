@@ -2,6 +2,14 @@ import { useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
 import { useEffect, useState } from "react";
 import { Button, Input, Spinner, Typography } from "@material-tailwind/react";
+import ReportStore from "../(public)/components/ReportStore";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+const uId = cookies.get("fu_foody_id");
+console.log("uid = ", uId);
+
+
 const StoreDetailPage = () => {
   const { id } = useParams();
   const backgroundColors = ["bg-gray-50", "bg-gray-200"];
@@ -77,8 +85,14 @@ const StoreDetailPage = () => {
               />
             </div>
             <div className="col-span-3 flex flex-col gap-1">
-              <span className="text-base ">Quán ăn</span>
-              <Typography variant="h2">{storeData.storeName}</Typography>
+              <div className="flex items-center space-x-10">
+                <span className="text-base">Quán ăn</span>
+               
+                {(uId !== undefined && uId !== null) ? <ReportStore uId={uId} sId={storeData.userId} /> : null}
+              </div>
+              <Typography variant="h2" className="">
+                  {storeData.storeName}
+                </Typography>
               <span className="text-base">
                 <i className="fas fa-map mr-1"></i>
                 {storeData.address}
@@ -163,7 +177,12 @@ const StoreDetailPage = () => {
                 <div className="border-solid border-t-[1px] border-gray-400">
                   <ul>
                     {foodList.map((item, index) => (
-                      <li className={`p-2 ${backgroundColors[index % backgroundColors.length]}`} key={item.id}>
+                      <li
+                        className={`p-2 ${
+                          backgroundColors[index % backgroundColors.length]
+                        }`}
+                        key={item.id}
+                      >
                         <div className="border-collapse grid grid-cols-6 gap-5">
                           <div className="col-span-2">
                             <img
@@ -172,13 +191,22 @@ const StoreDetailPage = () => {
                             />
                           </div>
                           <div className="col-span-3">
-                            <Typography variant="h6">{item.foodName}</Typography>
-                            <Typography variant="paragraph" className="py-2">{item.description}</Typography>
+                            <Typography variant="h6">
+                              {item.foodName}
+                            </Typography>
+                            <Typography variant="paragraph" className="py-2">
+                              {item.description}
+                            </Typography>
                           </div>
                           <div className="col-span-1">
-                            <Typography variant="paragraph" className="relative w-fit">
+                            <Typography
+                              variant="paragraph"
+                              className="relative w-fit"
+                            >
                               {item.price},000
-                              <span className="absolute font-normal top-0 -right-2 text-xs">đ</span>
+                              <span className="absolute font-normal top-0 -right-2 text-xs">
+                                đ
+                              </span>
                             </Typography>
                             <Button size="sm" className="bg-primary">
                               <svg

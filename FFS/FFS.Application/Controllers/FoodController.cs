@@ -257,23 +257,7 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                if (foodRatingDTO.FoodRatings != null && foodRatingDTO.FoodRatings.Count > 0)
-                {
-                    foreach (var fooditem in foodRatingDTO.FoodRatings)
-                    {
-                        FoodRatingDTO ratingDTO = new FoodRatingDTO
-                        {
-                            UserId = foodRatingDTO.UserId,
-                            FoodRatings = new List<FoodRatingItem> { fooditem },
-                            ShipperId = foodRatingDTO.ShipperId,
-                            NoteForShipper = foodRatingDTO.NoteForShipper,
-                            Content = foodRatingDTO.Content,
-                            Images = foodRatingDTO.Images
-                        };
-
-                        await _commentRepository.CreateComment(_mapper.Map<Comment>(ratingDTO));
-                    }
-                }
+                await _commentRepository.CreateComment(_mapper.Map<Comment>(foodRatingDTO));
                 return Ok();
             }
             catch (Exception ex)
@@ -281,5 +265,6 @@ namespace FFS.Application.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
     }
 }
