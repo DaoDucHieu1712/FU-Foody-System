@@ -9,6 +9,9 @@ namespace FFS.Application.Entities
         public int OrderId { get; set; }
         [ForeignKey(nameof(OrderId))]
         public Order Order { get; set; }
+        public int StoreId { get; set; }
+        [ForeignKey(nameof(StoreId))]
+        public Store Store { get; set; }
         public int FoodId { get; set; }
         [ForeignKey(nameof(FoodId))]
         public Food Food { get; set; }
