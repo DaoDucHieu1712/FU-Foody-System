@@ -12,21 +12,21 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import React from "react";
-import AddPost from "../(auth)/shares/components/post/AddPost";
+import AddPost from "../(auth)/shared/components/post/AddPost";
 import axiosConfig from "../../shared/api/axiosConfig";
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LastestPost from "./components/LastestPost";
 import PopularFood from "./components/PopularFood";
 
 const Post = () => {
   const [active, setActive] = React.useState(1);
   const [posts, setPosts] = React.useState([]);
- 
+
   let navigate = useNavigate();
 
   const handleReadMoreClick = (postId) => {
     navigate(`/post-details/${postId}`);
-  }
+  };
 
   const getItemProps = (index) => ({
     variant: active === index ? "filled" : "text",
@@ -57,14 +57,14 @@ const Post = () => {
         console.error("Error fetching posts: ", error);
       });
   };
- 
+
   useEffect(() => {
-    fetchPostList()
+    fetchPostList();
   }, []);
 
-  const reloadPost =  () => {
+  const reloadPost = () => {
     fetchPostList();
- };
+  };
 
   return (
     <>
@@ -72,7 +72,6 @@ const Post = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-14">
           {/* Column 1 */}
           <div className="md:col-span-1 sticky top-0 h-screen">
-           
             <LastestPost></LastestPost>
             <PopularFood></PopularFood>
           </div>
@@ -136,7 +135,9 @@ const Post = () => {
                           overflow: "hidden",
                         }}
                       >
-                        <div dangerouslySetInnerHTML={{ __html: post.content }}></div>
+                        <div
+                          dangerouslySetInnerHTML={{ __html: post.content }}
+                        ></div>
                       </Typography>
                     </CardBody>
                     <CardFooter className="pt-0">
@@ -166,7 +167,7 @@ const Post = () => {
                   </Card>
                 ))}
               </div>
-              
+
               <div className="flex items-center justify-center gap-4 mt-7">
                 <Button
                   variant="text"
