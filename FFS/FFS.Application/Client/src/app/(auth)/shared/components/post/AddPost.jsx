@@ -1,24 +1,22 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Button,
   Dialog,
-  DialogHeader,
   DialogBody,
   DialogFooter,
+  DialogHeader,
   Input,
   Typography,
 } from "@material-tailwind/react";
-import Editor from "./Editor";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import propTypes from "prop-types";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import axios from "../../../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
-import ErrorText from "../../../../../shared/components/text/ErrorText";
+import * as yup from "yup";
+import axios from "../../../../../shared/api/axiosConfig";
 import UploadImage from "../../../../../shared/components/form/UploadImage";
+import ErrorText from "../../../../../shared/components/text/ErrorText";
 import CookieService from "../../../../../shared/helper/cookieConfig";
-
+import Editor from "./Editor";
 
 const schema = yup.object({
   title: yup.string().required("Hãy viết tiêu đề của bạn!"),
@@ -26,11 +24,10 @@ const schema = yup.object({
   image: yup.string().required("Hãy thêm ảnh!"),
 });
 
-
-const AddPost = ({reloadPost}) => {
+const AddPost = ({ reloadPost }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
-  const [editorContent, setEditorContent] = useState("")
+  const [editorContent, setEditorContent] = useState("");
   const userId = CookieService.getToken("fu_foody_id");
   const {
     register,
@@ -42,9 +39,8 @@ const AddPost = ({reloadPost}) => {
     mode: "onSubmit",
   });
 
-
   const handleEditorChange = (content) => {
-    setEditorContent(content); 
+    setEditorContent(content);
   };
   const onSubmit = async (data) => {
     try {
@@ -53,9 +49,8 @@ const AddPost = ({reloadPost}) => {
         content: editorContent,
         image: data.image,
         userId: userId,
-        
       };
-      
+
       axios
         .post("/api/Post/CreatePost", newPost)
         .then(() => {
@@ -111,7 +106,9 @@ const AddPost = ({reloadPost}) => {
                 {...register("title")}
                 className="rounded-none"
               />
-               {errors.title && <ErrorText text={errors.title.message}></ErrorText>}
+              {errors.title && (
+                <ErrorText text={errors.title.message}></ErrorText>
+              )}
             </div>
             <Editor value={editorContent} onChange={handleEditorChange} />
             {errors.content && (
@@ -123,7 +120,12 @@ const AddPost = ({reloadPost}) => {
             <Button variant="text" color="deep-orange" onClick={handleOpen}>
               cancel
             </Button>
-            <Button className="rounded-none" variant="gradient" color="deep-orange" type="submit">
+            <Button
+              className="rounded-none"
+              variant="gradient"
+              color="deep-orange"
+              type="submit"
+            >
               TẠO MỚI
             </Button>
           </DialogFooter>

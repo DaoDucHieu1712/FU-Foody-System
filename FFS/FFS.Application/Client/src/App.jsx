@@ -6,7 +6,7 @@ import ChangePasswordPage from "./app/(auth)/ChangePasswordPage";
 import ForgotPasswordPage from "./app/(public)/ForgotPasswordPage";
 import FoodDetails from "./app/(public)/FoodDetails";
 import Location from "./app/(auth)/Location";
-import Inventory from "./app/(auth)/shares/components/inventory/Inventory";
+import Inventory from "./app/(auth)/shared/components/inventory/Inventory";
 import ProfilePage from "./app/(auth)/ProfilePage";
 import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
@@ -15,9 +15,8 @@ import HomePage from "./app/(public)/HomePage";
 import StoreProfilePage from "./app/(store)/StoreProfilePage";
 import StoreDetailPage from "./app/(store)/StoreDetailPage";
 import Post from "./app/(public)/Post";
-import DetailPost from "./app/(auth)/shares/components/post/DetailPost";
+import DetailPost from "./app/(auth)/shared/components/post/DetailPost";
 import StoreCommentPage from "./app/(store)/StoreCommentPage";
-
 
 function App() {
   return (
