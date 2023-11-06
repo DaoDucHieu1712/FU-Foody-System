@@ -52,8 +52,22 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var foods = _foodRepo.FindById(id, null);
+                var foods = _foodRepo.FindSingle(x => x.Id == id, x => x.Category);
                 return Ok(new { data = foods });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        
+        [HttpGet("{cateId}")]
+        public async Task<IActionResult> GetFoodByCategoryid(int cateId)
+        {
+            try
+            {
+                var foods = _foodRepo.FindAll(x => x.CategoryId == cateId);
+                return Ok(foods);
             }
             catch (Exception ex)
             {

@@ -88,6 +88,7 @@ const DetailPost = () => {
                   <span className="font-medium">{post.username}</span>
                 </div>
                 <div className="flex items-center space-x-2">
+
                   <SocialIcon></SocialIcon>
                   <Menu>
                     <MenuHandler>
@@ -108,6 +109,8 @@ const DetailPost = () => {
                       <MenuItem>Xóa bài viết</MenuItem>
                     </MenuList>
                   </Menu>
+
+
                 </div>
               </div>
               {/* {Content-Blog} */}
