@@ -5,6 +5,7 @@ using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.DTOs.Post;
 using FFS.Application.DTOs.Order;
+using AutoMapper;
 
 namespace FFS.Application.DTOs
 {
@@ -36,6 +37,8 @@ namespace FFS.Application.DTOs
                 .ForMember(dest => dest.FoodId,
                opt => opt.MapFrom(src => src.Food.Id));
 
+           
+
             CreateMap<CreatePostDTO, Entities.Post>().ReverseMap();
             CreateMap<Entities.Post, PostDTO>()
                .ForMember(dest => dest.Avatar,
@@ -43,6 +46,9 @@ namespace FFS.Application.DTOs
                 .ForMember(dest => dest.Username,
                opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
             CreateMap<UpdatePostDTO, Entities.Post>().ReverseMap();
+
+            CreateMap<Entities.ReactPost, ReactPostDTO>();
+              
 
             CreateMap<Comment, StoreRatingDTO>()
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
@@ -64,7 +70,7 @@ namespace FFS.Application.DTOs
                 .ReverseMap();
 
             
-            CreateMap<Image, ImageFoodRatingDTO>().ReverseMap();
+            CreateMap<Image, ImageCommentDTO>().ReverseMap();
 
            // CreateMap<FoodRatingDTO, Comment>()
            //.ForMember(dest => dest.FoodId, opt => opt.MapFrom(src => src.FoodRatings.Select(fr => fr.FoodId).FirstOrDefault()))
@@ -81,6 +87,11 @@ namespace FFS.Application.DTOs
             .ForMember(dest => dest.Rate, opt => opt.MapFrom(src => src.Rate))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
             .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images)).ReverseMap();
+
+            CreateMap<Discount, DiscountDTO>()
+                .ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.Expired<DateTime.Now)).ReverseMap();
+            CreateMap<Comment, CommentPostDTO>().ReverseMap();
+
 
             OrderMapper();
         }

@@ -2,7 +2,9 @@
 using FFS.Application.DTOs.Post;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
+using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +15,13 @@ namespace FFS.Application.Controllers
     public class PostController : ControllerBase
     {
         private readonly IPostRepository _postRepository;
+        private readonly IReactPostRepository _reactPostRepository;
         private readonly IMapper _mapper;
 
-        public PostController(IPostRepository postRepository, IMapper mapper)
+        public PostController(IPostRepository postRepository, IReactPostRepository reactPostRepository, IMapper mapper)
         {
             _postRepository = postRepository;
+            _reactPostRepository = reactPostRepository;
             _mapper = mapper;
         }
 
@@ -37,6 +41,10 @@ namespace FFS.Application.Controllers
                     posts.HasPrevious
                 };
                 var entityPost = _mapper.Map<List<PostDTO>>(posts);
+				foreach (var postDTO in entityPost)
+                {
+                    postDTO.LikeNumber = postDTO.ReactPosts.Where(x=>x.IsLike==true).Count();
+                }
 
                 return Ok(new {entityPost, metadata});
             }
@@ -55,7 +63,10 @@ namespace FFS.Application.Controllers
                 {
                     return NotFound();
                 }
-                return Ok(_mapper.Map<PostDTO>(post)); 
+                var postDTO = _mapper.Map<PostDTO>(post);
+              
+                    postDTO.LikeNumber = postDTO.ReactPosts.Where(x => x.IsLike == true).Count();
+                return Ok(postDTO);
             }
             catch (Exception ex)
             {
@@ -110,6 +121,36 @@ namespace FFS.Application.Controllers
 
                 await _postRepository.DeletePost(id);
                 return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> ReactPost([FromBody] ReactPostDTO reactPostDTO)
+        {
+            try
+            {
+                var reactPost = await _reactPostRepository.FindSingle(x=>x.PostId == reactPostDTO.PostId && x.UserId == reactPostDTO.UserId);
+                if (reactPost == null)
+                {
+                    _reactPostRepository?.Add(new ReactPost
+                    {
+                        PostId = reactPostDTO.PostId,
+                        UserId = reactPostDTO.UserId,
+                        IsLike = true,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                        IsDelete = false
+                    });
+                }
+                else {
+                    reactPost.IsLike = !reactPost.IsLike;
+
+                    _reactPostRepository?.Update(reactPost);
+                }
+                return Ok();
             }
             catch (Exception ex)
             {
