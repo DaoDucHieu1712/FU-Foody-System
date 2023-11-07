@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FFS.Application.DTOs.Post;
+using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -21,12 +22,23 @@ namespace FFS.Application.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Post>>> GetListPosts()
+        public IActionResult GetListPosts([FromQuery] PostParameters postParameters)
         {
             try
             {
-                var posts = await _postRepository.GetListPosts();
-                return Ok(_mapper.Map<List<PostDTO>>(posts));
+                var posts =  _postRepository.GetListPosts(postParameters);
+                var metadata = new
+                {
+                    posts.TotalCount,
+                    posts.PageSize,
+                    posts.CurrentPage,
+                    posts.TotalPages,
+                    posts.HasNext,
+                    posts.HasPrevious
+                };
+                var entityPost = _mapper.Map<List<PostDTO>>(posts);
+
+                return Ok(new {entityPost, metadata});
             }
             catch (Exception ex)
             {
