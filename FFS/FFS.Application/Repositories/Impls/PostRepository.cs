@@ -53,7 +53,7 @@ namespace FFS.Application.Repositories.Impls
                     query = query.OrderBy(p => p.CreatedAt);
                 }
                 var pagedList = PagedList<Post>.ToPagedList(
-                query.Include(f => f.User).ThenInclude(c => c.Comments).ThenInclude(r => r.ReactPosts),
+                query.Include(f => f.User).ThenInclude(c => c.Comments).Include(r => r.ReactPosts),
                 postParameters.PageNumber,
                 postParameters.PageSize);
 
