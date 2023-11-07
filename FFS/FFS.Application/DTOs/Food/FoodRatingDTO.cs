@@ -8,6 +8,6 @@ namespace FFS.Application.DTOs.Food
         public int? FoodId { get; set; }
         public int? Rate { get; set; }
         public string? Content { get; set; }
-        public ICollection<ImageFoodRatingDTO>? Images { get; set; }
+        public ICollection<ImageCommentDTO>? Images { get; set; }
     }
 }

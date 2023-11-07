@@ -1,6 +1,6 @@
 ﻿namespace FFS.Application.DTOs.Food
 {
-    public class ImageFoodRatingDTO
+    public class ImageCommentDTO
     {
         public string URL { get; set; }
         public int CommentId { get; set; }

@@ -83,6 +83,8 @@ namespace FFS.Application.Data
 
             builder.Entity<FoodCombo>().
              HasOne(c => c.Store).WithMany(c => c.FoodCombos).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
+            builder.Entity<ReactPost>().
+             HasOne(c => c.Post).WithMany(c => c.ReactPosts).HasForeignKey(c => c.PostId).OnDelete(DeleteBehavior.ClientNoAction);
 
             //builder.Entity<FoodCombo>()
             //   .HasOne(c => c.Store)
@@ -116,6 +118,7 @@ namespace FFS.Application.Data
         public virtual DbSet<OrderDetail> OrderDetails { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<React> Reacts { get; set; }
+        public virtual DbSet<ReactPost> ReactPosts { get; set; }
         public virtual DbSet<Store> Stores { get; set; }
         public virtual DbSet<Wallet> Wallets { get; set; }
         public virtual DbSet<Wishlist> Wishlists { get; set; }
