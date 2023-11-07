@@ -1,7 +1,10 @@
-﻿using FFS.Application.DTOs.Order;
+﻿using AutoMapper;
+using FFS.Application.DTOs.Order;
+using FFS.Application.Entities;
 using FFS.Application.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FFS.Application.Controllers
 {
@@ -10,10 +13,14 @@ namespace FFS.Application.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IMapper _mapper;
 
-        public OrderController(IOrderRepository orderRepository)
+        public OrderController(IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMapper mapper)
         {
             _orderRepository = orderRepository;
+            _orderDetailRepository = orderDetailRepository;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -43,5 +50,58 @@ namespace FFS.Application.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> MyOrder(string id)
+        {
+            try
+            {
+                var list = await _orderRepository.FindAll(x => x.CustomerId == id).Include(x => x.Customer).Include(x => x.Shipper).ToListAsync();
+                return Ok(_mapper.Map<List<OrderResponseDTO>>(list));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderWithStore(int id)
+        {
+            try
+            {   
+                List<Order> orders = new List<Order>();
+                var oddts = await _orderDetailRepository.FindAll(x => x.StoreId == id)
+                    .GroupBy(x => new {x.StoreId, x.OrderId})
+                    .Select(x => new {orderId = x.Key.OrderId})
+                    .ToListAsync();
+
+                foreach (var item in oddts)
+                {
+                    var od = await _orderRepository.FindSingle(x => x.Id == item.orderId, x=> x.Customer, x => x.Shipper);
+                    orders.Add(od);
+                }
+                return Ok(_mapper.Map<List<OrderResponseDTO>>(orders));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderDetail(int id)
+        {
+            try
+            {
+                var orderItems = await _orderDetailRepository.FindAll(x => x.OrderId == id, x => x.Food, x => x.Store).ToListAsync();
+                return Ok(_mapper.Map<List<OrderDetailResponseDTO>>(orderItems));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

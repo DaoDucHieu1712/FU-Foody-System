@@ -2,10 +2,11 @@
 
 namespace FFS.Application.DTOs.Store
 {
-    public class StoreReportDTO
+    public class ReportDTO
     {
-        public int UserId { get; set; }
-        public int TargetId { get; set; }
+        public string UserId { get; set; }
+        public string TargetId { get; set; }
+        public ReportType ReportType { get; set; }
         public string? Description { get; set; }
     }
 }

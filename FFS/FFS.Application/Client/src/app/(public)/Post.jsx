@@ -12,7 +12,7 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import React from "react";
-import AddPost from "../(auth)/shares/components/post/AddPost";
+import AddPost from "../(auth)/shared/components/post/AddPost";
 import axiosConfig from "../../shared/api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import LastestPost from "./components/LastestPost";
@@ -23,11 +23,14 @@ import ArrowLeft from "../../shared/components/icon/ArrowLeft";
 const Post = () => {
   const [active, setActive] = React.useState(1);
   const [posts, setPosts] = React.useState([]);
+<<<<<<< HEAD
   const [postTitle, setPostTitle] = useState("");
   const [orderBy, setOrderBy] = useState("newest");
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(4);
   const [totalPages, setTotalPages] = useState(1);
+=======
+>>>>>>> 426079159afc6722ca2d28cfd44d28c59e3e3d0e
 
   let navigate = useNavigate();
 
@@ -71,6 +74,7 @@ const Post = () => {
         console.error("Error fetching posts: ", error);
       });
   };
+<<<<<<< HEAD
 
   useEffect(() => {
     fetchPostList();
@@ -78,6 +82,15 @@ const Post = () => {
 
   const reloadPost = () => {
     fetchPostList();
+=======
+
+  useEffect(() => {
+    fetchPostList();
+  }, []);
+
+  const reloadPost = () => {
+    fetchPostList();
+>>>>>>> 426079159afc6722ca2d28cfd44d28c59e3e3d0e
   };
 
   return (

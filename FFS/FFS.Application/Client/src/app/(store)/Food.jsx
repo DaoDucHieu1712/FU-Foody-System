@@ -91,7 +91,7 @@ const Food = () => {
   };
 
   return (
-    <div>
+    <>
       <Card className="h-full w-full px-2 py-2">
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
@@ -219,7 +219,10 @@ const Food = () => {
                     <td>
                       <div className="h-full flex justify-center items-center">
                         <Tooltip content="Xem món ăn">
-                          <IconButton variant="text" onClick={() => navigate(`/food-details/${food.id}`)}>
+                          <IconButton
+                            variant="text"
+                            onClick={() => navigate(`/food-details/${food.id}`)}
+                          >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               width="20"
@@ -282,7 +285,7 @@ const Food = () => {
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </>
   );
 };
 

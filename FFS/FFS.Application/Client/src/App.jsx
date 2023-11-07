@@ -6,7 +6,7 @@ import ChangePasswordPage from "./app/(auth)/ChangePasswordPage";
 import ForgotPasswordPage from "./app/(public)/ForgotPasswordPage";
 import FoodDetails from "./app/(public)/FoodDetails";
 import Location from "./app/(auth)/Location";
-import Inventory from "./app/(auth)/shares/components/inventory/Inventory";
+import Inventory from "./app/(auth)/shared/components/inventory/Inventory";
 import ProfilePage from "./app/(auth)/ProfilePage";
 import ResetPasswordPage from "./app/(public)/ResetPassWord";
 import CartPage from "./app/(auth)/CartPage";
@@ -15,9 +15,9 @@ import HomePage from "./app/(public)/HomePage";
 import StoreProfilePage from "./app/(store)/StoreProfilePage";
 import StoreDetailPage from "./app/(store)/StoreDetailPage";
 import Post from "./app/(public)/Post";
-import DetailPost from "./app/(auth)/shares/components/post/DetailPost";
+import DetailPost from "./app/(auth)/shared/components/post/DetailPost";
 import StoreCommentPage from "./app/(store)/StoreCommentPage";
-
+import StoreLayout from "./app/(store)/StoreLayout";
 
 function App() {
   return (
@@ -27,7 +27,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/location" element={<Location />} />
-          <Route path="/food" element={<Food />} />
+          {/* <Route path="/food" element={<Food />} /> */}
           <Route path="/register-store" element={<StoreRegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/change-passsword" element={<ChangePasswordPage />} />
@@ -41,6 +41,9 @@ function App() {
           <Route path="/post" element={<Post />} />
           <Route path="/post-details/:postId" element={<DetailPost />} />
           <Route path="/store/comment/:id" element={<StoreCommentPage />} />
+        </Route>
+        <Route element={<StoreLayout></StoreLayout>}>
+          <Route path="/food" element={<Food />} />
         </Route>
       </Routes>
     </>
