@@ -17,6 +17,7 @@ import StoreDetailPage from "./app/(store)/StoreDetailPage";
 import Post from "./app/(public)/Post";
 import DetailPost from "./app/(auth)/shared/components/post/DetailPost";
 import StoreCommentPage from "./app/(store)/StoreCommentPage";
+import StoreLayout from "./app/(store)/StoreLayout";
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/location" element={<Location />} />
-          <Route path="/food" element={<Food />} />
+          {/* <Route path="/food" element={<Food />} /> */}
           <Route path="/register-store" element={<StoreRegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/change-passsword" element={<ChangePasswordPage />} />
@@ -40,6 +41,9 @@ function App() {
           <Route path="/post" element={<Post />} />
           <Route path="/post-details/:postId" element={<DetailPost />} />
           <Route path="/store/comment/:id" element={<StoreCommentPage />} />
+        </Route>
+        <Route element={<StoreLayout></StoreLayout>}>
+          <Route path="/food" element={<Food />} />
         </Route>
       </Routes>
     </>

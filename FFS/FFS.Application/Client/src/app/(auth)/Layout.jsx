@@ -1,12 +1,11 @@
+import { Suspense, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
+import Cookies from "universal-cookie";
 import Cart from "../../shared/components/icon/Cart";
 import Heart from "../../shared/components/icon/Heart";
-import UserNav from "./UserNav";
 import Logo from "../../shared/components/logo/Logo";
 import StoreTag from "../../shared/components/store/StoreTag";
 import Notification from "./Notification";
-import { useSelector } from "react-redux";
-import { Suspense } from "react";
 
 export function LazyLoadComponent({ children }) {
   return (
@@ -15,8 +14,16 @@ export function LazyLoadComponent({ children }) {
     </Suspense>
   );
 }
+
+const cookies = new Cookies();
+
 const Layout = () => {
-  const accesstoken = useSelector((state) => state.auth.accessToken);
+  const [username, setUsername] = useState();
+
+  useEffect(() => {
+    var email = cookies.get("fu_foody_email");
+    setUsername(email);
+  });
 
   return (
     <>
@@ -79,8 +86,10 @@ const Layout = () => {
               <Heart></Heart>
               <Notification></Notification>
 
-              {accesstoken ? (
-                <UserNav></UserNav>
+              {username ? (
+                <>
+                  <p className="text-white">{username}</p>
+                </>
               ) : (
                 <div className="flex items-center gap-3">
                   <a href="/login" className="login-link text-white">
