@@ -109,8 +109,6 @@ const DetailPost = () => {
                       <MenuItem>Xóa bài viết</MenuItem>
                     </MenuList>
                   </Menu>
-
-
                 </div>
               </div>
               {/* {Content-Blog} */}
