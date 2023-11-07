@@ -50,7 +50,7 @@ const DeleteInventory = ({ inventoryId, reloadInventory }) => {
           </svg>
         </div>
         <DialogBody>
-          <p className="text-sm">
+          <p className="text-sm text-black">
             Bạn có chắc chắn muốn xóa món ăn khỏi kho không?
           </p>
         </DialogBody>
