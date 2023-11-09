@@ -98,6 +98,7 @@ builder.Services.AddTransient<ICommentRepository, CommentRepository>();
 builder.Services.AddTransient<IReportRepository, ReportRepository>();
 builder.Services.AddTransient<IOrderRepository, OrderRepository>();
 builder.Services.AddTransient<IOrderDetailRepository, OrderDetailRepository>();
+builder.Services.AddTransient<IWishlistRepository, WishlistRepository>();
 
 
 #endregion
