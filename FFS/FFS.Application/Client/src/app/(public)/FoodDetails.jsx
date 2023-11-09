@@ -2,6 +2,7 @@ import { Button, IconButton, Rating, Spinner, Textarea, Tooltip, Typography } fr
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
+import ReviewFood from "./components/ReviewFood";
 
 const FoodDetails = () => {
   const { id } = useParams();
@@ -345,6 +346,7 @@ const FoodDetails = () => {
               </div>
             </div>
             {/* END COMMENT */}
+            <ReviewFood></ReviewFood>
           </div>
         ) : (
           <Spinner></Spinner>

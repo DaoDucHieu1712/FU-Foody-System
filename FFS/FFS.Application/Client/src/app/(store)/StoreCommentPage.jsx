@@ -327,10 +327,12 @@ const StoreCommentPage = () => {
                             <p>Thảo luận</p>
                           </div> */}
                           <div
-                            className="flex justify-center items-center m-2 cursor-pointer"
-                            onClick={() => handleViewMore(comment.Id)}
+                            className="flex justify-center items-center m-2 cursor-pointer hover:text-orange-900"
+                            onClick={() => {
+                              handleViewMore(comment.Id);
+                            }}
                           >
-                            <i className="fal fa-angle-double-right fa-rotate-90 p-1"></i>
+                            <i className="fal fa-angle-double-down p-1"></i>
                             <p>Xem bình luận</p>
                           </div>
                         </div>
