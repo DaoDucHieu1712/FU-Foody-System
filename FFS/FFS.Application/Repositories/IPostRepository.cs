@@ -1,11 +1,13 @@
-﻿using FFS.Application.Entities;
+﻿using FFS.Application.DTOs.Common;
+using FFS.Application.DTOs.QueryParametter;
+using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 
 namespace FFS.Application.Repositories
 {
     public interface IPostRepository : IRepository<Post, int>
     {
-        Task<List<Post>> GetListPosts();
+       PagedList<Post> GetListPosts(PostParameters postParameters);
         Task<Post> GetPostByPostId(int postId);
         Task<Post> CreatePost(Post post);
         Task<Post> UpdatePost(Post updatedPost);

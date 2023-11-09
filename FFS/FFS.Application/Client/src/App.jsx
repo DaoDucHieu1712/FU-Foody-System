@@ -21,6 +21,12 @@ import StoreLayout from "./app/(store)/StoreLayout";
 import MyOrder from "./app/(auth)/MyOrder";
 import Discount from "./app/(store)/Discount";
 import FoodList from "./app/(public)/FoodList";
+import Wishlist from "./app/(public)/Wishlist";
+import AdminLayout from "./app/(admin)/AdminLayoutPage";
+import ReportPage from "./app/(admin)/ReportPage";
+import DashboardPage from "./app/(admin)/DashboardPage";
+import AccountManagePage from "./app/(admin)/AccountManagePage";
+import RequestAccountPage from "./app/(admin)/RequestAccountPage";
 
 function App() {
   return (
@@ -47,9 +53,19 @@ function App() {
           <Route path="/my-order" element={<MyOrder />} />
           <Route path="/discount" element={<Discount />} />
           <Route path="/food-list" element={<FoodList />} />
+          <Route path="/wishlist" element={<Wishlist />} />
         </Route>
         <Route element={<StoreLayout></StoreLayout>}>
           <Route path="/food" element={<Food />} />
+        </Route>
+        <Route element={<AdminLayout></AdminLayout>}>
+          <Route path="/admin/report" element={<ReportPage />} />
+          <Route path="/admin/dashboard" element={<DashboardPage />} />
+          <Route path="/admin/manage-acoount" element={<AccountManagePage />} />
+          <Route
+            path="/admin/request-account"
+            element={<RequestAccountPage />}
+          />
         </Route>
       </Routes>
     </>

@@ -1,5 +1,8 @@
 ﻿using FFS.Application.Data;
+using FFS.Application.DTOs.Common;
+using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -9,11 +12,52 @@ namespace FFS.Application.Repositories.Impls
         {
             
         }
-        public async Task<List<Post>> GetListPosts()
+        public PagedList<Post> GetListPosts(PostParameters postParameters)
         {
+            //var query = FindAll(i => i.StoreId == inventoryParameters.StoreId);
+
+            //// Filter by food name if specified
+            //if (!string.IsNullOrEmpty(inventoryParameters.FoodName))
+            //{
+            //    var foodNameLower = inventoryParameters.FoodName.ToLower();
+
+            //    query = query
+            //        .Where(i => i.Food.FoodName.ToLower().Contains(foodNameLower));
+            //}
+
+            //// Apply pagination
+            //var pagedList = PagedList<Inventory>.ToPagedList(
+            //    query.Include(f => f.Food).ThenInclude(c => c.Category).ThenInclude(s => s.Store),
+            //    inventoryParameters.PageNumber,
+            //    inventoryParameters.PageSize
+            //);
+
+            //return pagedList;
             try
             {
-                return await GetList(p => !p.IsDelete, x => x.User, x => x.Comments);
+                IQueryable<Post> query = FindAll();
+
+                // Apply filtering by title (if provided)
+                if (!string.IsNullOrEmpty(postParameters.PostTitle))
+                {
+                    query = query.Where(p => p.Title.Contains(postParameters.PostTitle));
+                }
+
+                // Apply ordering (newest or oldest)
+                if (string.Equals(postParameters.OrderBy, "newest", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = query.OrderByDescending(p => p.CreatedAt);
+                }
+                else if (string.Equals(postParameters.OrderBy, "oldest", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = query.OrderBy(p => p.CreatedAt);
+                }
+                var pagedList = PagedList<Post>.ToPagedList(
+                query.Include(f => f.User).ThenInclude(c => c.Comments).Include(r => r.ReactPosts),
+                postParameters.PageNumber,
+                postParameters.PageSize);
+
+                return pagedList;
             }
             catch (Exception ex)
             {
@@ -25,6 +69,7 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
+                post.CreatedAt = DateTime.Now;
                 await Add(post);
                 return post;
             }
@@ -38,6 +83,7 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
+                updatedPost.UpdatedAt = DateTime.Now;
                 await Update(updatedPost);
                 return updatedPost;
             }
@@ -51,7 +97,7 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
-                return await FindSingle(p => p.Id == postId, x => x.User, x => x.Comments);
+                return await FindSingle(p => p.Id == postId, x => x.User, x => x.Comments, x=> x.ReactPosts);
             }
             catch (Exception ex)
             {

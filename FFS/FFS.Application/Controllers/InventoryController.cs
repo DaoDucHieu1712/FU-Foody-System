@@ -39,11 +39,15 @@ namespace FFS.Application.Controllers
                     Inventories.HasNext,
                     Inventories.HasPrevious
                 };
-                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-           
+               
+                var entityInventory = _mapper.Map<List<InventoryDTO>>(Inventories);
 
-
-                return Ok(_mapper.Map<List<InventoryDTO>>(Inventories));
+                return Ok(
+                new
+                {
+                    entityInventory,
+                    metadata
+                });
             }
             catch (Exception ex)
             {
