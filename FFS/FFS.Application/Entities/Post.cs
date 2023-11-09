@@ -13,5 +13,6 @@ namespace FFS.Application.Entities
         [ForeignKey(nameof(UserId))]
         public ApplicationUser User { get; set; }
         public ICollection<Comment> Comments { get; set; }
+        public ICollection<ReactPost>? ReactPosts { get; set; }
     }
 }

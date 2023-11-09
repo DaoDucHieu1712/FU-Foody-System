@@ -53,7 +53,7 @@ namespace FFS.Application.Repositories.Impls
                     query = query.OrderBy(p => p.CreatedAt);
                 }
                 var pagedList = PagedList<Post>.ToPagedList(
-                query.Include(f => f.User).ThenInclude(c => c.Comments),
+                query.Include(f => f.User).ThenInclude(c => c.Comments).Include(r => r.ReactPosts),
                 postParameters.PageNumber,
                 postParameters.PageSize);
 
@@ -97,7 +97,7 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
-                return await FindSingle(p => p.Id == postId, x => x.User, x => x.Comments);
+                return await FindSingle(p => p.Id == postId, x => x.User, x => x.Comments, x=> x.ReactPosts);
             }
             catch (Exception ex)
             {
