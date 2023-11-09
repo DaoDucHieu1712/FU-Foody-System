@@ -18,13 +18,15 @@ import Post from "./app/(public)/Post";
 import DetailPost from "./app/(auth)/shared/components/post/DetailPost";
 import StoreCommentPage from "./app/(store)/StoreCommentPage";
 import StoreLayout from "./app/(store)/StoreLayout";
+import MyOrder from "./app/(auth)/MyOrder";
+import Discount from "./app/(store)/Discount";
+import FoodList from "./app/(public)/FoodList";
 import Wishlist from "./app/(public)/Wishlist";
 import AdminLayout from "./app/(admin)/AdminLayoutPage";
 import ReportPage from "./app/(admin)/ReportPage";
 import DashboardPage from "./app/(admin)/DashboardPage";
 import AccountManagePage from "./app/(admin)/AccountManagePage";
 import RequestAccountPage from "./app/(admin)/RequestAccountPage";
-
 
 function App() {
   return (
@@ -48,6 +50,9 @@ function App() {
           <Route path="/post" element={<Post />} />
           <Route path="/post-details/:postId" element={<DetailPost />} />
           <Route path="/store/comment/:id" element={<StoreCommentPage />} />
+          <Route path="/my-order" element={<MyOrder />} />
+          <Route path="/discount" element={<Discount />} />
+          <Route path="/food-list" element={<FoodList />} />
           <Route path="/wishlist" element={<Wishlist />} />
         </Route>
         <Route element={<StoreLayout></StoreLayout>}>

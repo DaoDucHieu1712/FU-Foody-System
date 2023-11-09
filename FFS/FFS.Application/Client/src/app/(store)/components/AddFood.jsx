@@ -42,7 +42,7 @@ const AddFood = ({ reload, storeId }) => {
   const [category, setCategory] = useState([]);
   const handleOpen = () => setOpen((cur) => !cur);
 
-  const ListCaegory = async () => {
+  const ListCategory = async () => {
     try {
       axios
         .get("/api/Category/ListCategoryByStoreId/" + storeId)
@@ -59,7 +59,7 @@ const AddFood = ({ reload, storeId }) => {
   };
 
   useEffect(() => {
-    ListCaegory();
+    ListCategory();
   }, [open]);
 
   const onSubmit = async (data) => {
@@ -163,7 +163,7 @@ const AddFood = ({ reload, storeId }) => {
             type="submit"
             className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center"
           >
-            Submit
+            Thêm
           </button>
         </form>
       </Dialog>

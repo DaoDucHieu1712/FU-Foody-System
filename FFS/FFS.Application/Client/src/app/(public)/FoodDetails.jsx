@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
+import ReviewFood from "./components/ReviewFood";
 import CookieService from "../../shared/helper/cookieConfig";
 import { toast } from "react-toastify";
 
@@ -449,6 +450,8 @@ const FoodDetails = () => {
               {/* END SUB COMMENT */}
               <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
             </div>
+            {/* END COMMENT */}
+            <ReviewFood></ReviewFood>
           </div>
           {/* END COMMENT */}
         </div>

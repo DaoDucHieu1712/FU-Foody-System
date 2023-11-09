@@ -65,6 +65,7 @@ const Food = () => {
       await axios
         .post(`/api/Food/ListFood`, dataPost)
         .then((res) => {
+          console.log(res);
           setFoodList(res);
         })
         .catch((error) => {
@@ -142,7 +143,7 @@ const Food = () => {
             </div>
           </div>
         </CardHeader>
-        <CardBody className="px-0">
+        <CardBody className="px-1">
           <table className="w-full min-w-max table-auto text-center">
             <thead>
               <tr>

@@ -56,7 +56,7 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var list = await _orderRepository.FindAll(x => x.CustomerId == id).Include(x => x.Customer).Include(x => x.Shipper).ToListAsync();
+                var list = await _orderRepository.FindAll(x => x.CustomerId == id && x.IsDelete == false).Include(x => x.Customer).Include(x => x.Shipper).ToListAsync();
                 return Ok(_mapper.Map<List<OrderResponseDTO>>(list));
             }
             catch (Exception ex)
