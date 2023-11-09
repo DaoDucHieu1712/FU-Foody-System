@@ -1,38 +1,39 @@
 import React, { useState } from "react";
 import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, IconButton,Typography } from "@material-tailwind/react";
-import axios from "../../../../../shared/api/axiosConfig";
+import axios from "../../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 
-const DeleteInventory = ({ inventoryId, reloadInventory }) => {
+const RemoveWishlist = ({ wishlistId, reloadWishlist }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(!open);
 
   const handleDelete = async () => {
     try {
-      // Send a DELETE request to the API to delete the inventory item by inventoryId
-      await axios.delete(`/api/Inventory/DeleteInventoryByInventoryId/${inventoryId}`);
-      toast.success("Xóa món ăn khỏi kho thành công!");
+      
+      await axios.delete(`/api/Wishlist/RemoveFromWishlist/${wishlistId}`);
+      toast.success("Xóa yêu thích món ăn thành công!");
       // Close the dialog after a successful delete
       handleOpen();
       // Reload the inventory list
-      reloadInventory();
+      reloadWishlist();
     } catch (error) {
-      toast.error("Lỗi xảy ra khi xóa món ăn khỏi kho:", error);
+      toast.error("Lỗi xảy ra khi xóa yêu thích món ăn:", error);
     }
   };
 
   return (
     <>
-      <IconButton variant="text" onClick={handleOpen}>
+    <button onClick={handleOpen} class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 border text-gray-900 hover:opacity-75  active:opacity-[0.85] block w-full rounded-none px-0 border-orange-100" type="button">Xóa</button>
+      {/* <IconButton variant="text" onClick={handleOpen}>
         <i className="fas fa-trash" />
-      </IconButton>
+      </IconButton> */}
 
       <Dialog open={open} size="sm" handler={handleOpen}>
         <div className="flex items-center justify-between">
           <DialogHeader className="flex flex-col items-start">
             <Typography className="mb-1" variant="h4">
-              Xác nhận xóa món ăn khỏi kho
+              Xác nhận xóa yêu thích món ăn 
             </Typography>
           </DialogHeader>
           <svg
@@ -51,7 +52,7 @@ const DeleteInventory = ({ inventoryId, reloadInventory }) => {
         </div>
         <DialogBody>
           <p className="text-sm text-black">
-            Bạn có chắc chắn muốn xóa món ăn khỏi kho không?
+            Bạn có chắc chắn muốn xóa yêu thích món ăn này không?
           </p>
         </DialogBody>
         <DialogFooter className="space-x-2">
@@ -67,4 +68,4 @@ const DeleteInventory = ({ inventoryId, reloadInventory }) => {
   );
 };
 
-export default DeleteInventory;
+export default RemoveWishlist;

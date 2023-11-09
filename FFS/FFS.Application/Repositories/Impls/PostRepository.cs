@@ -69,6 +69,7 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
+                post.CreatedAt = DateTime.Now;
                 await Add(post);
                 return post;
             }
@@ -82,6 +83,7 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
+                updatedPost.UpdatedAt = DateTime.Now;
                 await Update(updatedPost);
                 return updatedPost;
             }
