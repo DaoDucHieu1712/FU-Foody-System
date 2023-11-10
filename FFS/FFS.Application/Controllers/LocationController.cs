@@ -42,7 +42,7 @@ namespace FFS.Application.Controllers
             try
             {
                 var locationEntity = _mapper.Map<Location>(locationDTO);
-                var locations = _locaRepo.FindAll(x=>x.User.Email == locationDTO.Email);
+                var locations = _locaRepo.FindAll(x => x.User.Email == locationDTO.Email);
                 await _locaRepo.Add(locationEntity);
                 return Ok("Thêm thành công");
             }
@@ -73,22 +73,20 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLocation(int id)
         {
             try
             {
-                var locationDelete = await _locaRepo.FindById(id, null);
+                var locationDelete = await _locaRepo.FindSingle(x => x.Id == id);
                 if (locationDelete == null)
                 {
                     return NotFound();
                 }
-                locationDelete.IsDelete= true;
-                await _locaRepo.Update(locationDelete);
+                await _locaRepo.Remove(locationDelete);
                 return Ok("Xóa thành công");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) { 
                 return StatusCode(500, ex.Message);
             }
         }

@@ -9,6 +9,10 @@ import axios from "../../shared/api/axiosConfig";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CookieService from "../../shared/helper/cookieConfig";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+const uId = cookies.get("fu_foody_id");
 
 const StoreCommentPage = () => {
   const { id } = useParams();
@@ -154,6 +158,7 @@ const StoreCommentPage = () => {
             </div>
             <div className="col-span-3 flex flex-col gap-1">
               <span className="text-base">Quán ăn</span>
+              {(uId !== undefined && uId !== null) ? <ReportStore uId={uId} sId={storeData.userId} /> : null}
               <Typography variant="h2">{storeData.storeName}</Typography>
               <div className="border-b border-t border-gray-200 h-14 grid grid-cols-7">
                 <div className="flex justify-center items-center">
@@ -327,10 +332,12 @@ const StoreCommentPage = () => {
                             <p>Thảo luận</p>
                           </div> */}
                           <div
-                            className="flex justify-center items-center m-2 cursor-pointer"
-                            onClick={() => handleViewMore(comment.Id)}
+                            className="flex justify-center items-center m-2 cursor-pointer hover:text-orange-900"
+                            onClick={() => {
+                              handleViewMore(comment.Id);
+                            }}
                           >
-                            <i className="fal fa-angle-double-right fa-rotate-90 p-1"></i>
+                            <i className="fal fa-angle-double-down p-1"></i>
                             <p>Xem bình luận</p>
                           </div>
                         </div>

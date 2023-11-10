@@ -116,7 +116,7 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
           className="form bg-white rounded px-4 py-4 mb-4"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <p className="font-bold text-2xl text-center mb-4">Thêm món ăn mới</p>
+          <p className="font-bold text-2xl text-center mb-4">Cập nhật món ăn</p>
           <div className="mb-4">
             <Input
               className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight"
@@ -179,7 +179,7 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
             type="submit"
             className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center"
           >
-            Submit
+            Cập nhật
           </button>
         </form>
       </Dialog>

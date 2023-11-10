@@ -16,8 +16,8 @@ const StoreLayout = () => {
     setEmail(cookies.get("fu_foody_email"));
   }, []);
   return (
-    <>
-      <div className="p-3 flex flex-col gap-y-12  h-[100vh] shadow-md w-[300px] fixed bg-primary">
+    <div className="">
+      <div className="p-3 flex flex-col gap-y-12 h-[100vh] shadow-md w-[20vw] bg-primary">
         <div className="flex items-center justify-center border-b pb-8 border-gray-300">
           <a href="/store/manager" className="logo">
             <svg
@@ -40,7 +40,7 @@ const StoreLayout = () => {
             </svg>
           </a>
         </div>
-        <div className="list flex flex-col justify-center items-center gap-y-10 text-lg font-medium text-white">
+        <div className="list flex flex-col justify-center items-center gap-y-10 text-md font-medium text-white">
           {navigations.map((item) => {
             return (
               <NavLink key={item.href} to={item.href} className="uppercase">
@@ -64,11 +64,11 @@ const StoreLayout = () => {
             {email}
           </p>
         </div>
-        <div className="mt-10">
+        <div>
           <Outlet></Outlet>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 

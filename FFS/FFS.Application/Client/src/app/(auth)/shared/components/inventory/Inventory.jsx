@@ -4,9 +4,23 @@ import axios from "../../../../../shared/api/axiosConfig";
 import AddInventory from "../inventory/AddInventory";
 import UpdateInventory from "../inventory/UpdateInventory";
 import DeleteInventory from "../inventory/DeleteInventory";
-import {Card,CardHeader,Input,Typography,Button,CardBody,Chip,CardFooter,Tabs,TabsHeader,Tab,Avatar,IconButton,Tooltip,
+
+import {
+  Card,
+  CardHeader,
+  Input,
+  Typography,
+  Button,
+  CardBody,
+  CardFooter,
+  Tabs,
+  TabsHeader,
+  Tab,
+  IconButton,
 } from "@material-tailwind/react";
 import FormatDateString from "../../../../../shared/components/format/FormatDate";
+import ArrowRight from "../../../../../shared/components/icon/ArrowRight";
+import ArrowLeft from "../../../../../shared/components/icon/ArrowLeft";
 
 const TABS = [
   {
@@ -32,38 +46,50 @@ const TABLE_HEAD = [
   "",
 ];
 
-
-
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
   const [foodNameFilter, setFoodNameFilter] = useState("");
   const [storeID] = useState(1); // Set the storeID to 1
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(4);
   const [totalPages, setTotalPages] = useState(1);
+  const [active, setActive] = React.useState(1);
+
+  const getItemProps = (index) => ({
+    variant: active === index ? "filled" : "text",
+    onClick: () => {
+      setActive(index);
+      setPageNumber(index); 
+    },
+    className: `rounded-full ${active === index ? "bg-primary" : ""}`,
+  });
+
+  const next = () => {
+    if (active < totalPages) {
+      setActive(active + 1);
+      setPageNumber(pageNumber + 1);
+    }
+  };
+
+  const prev = () => {
+    if (active > 1) {
+      setActive(active - 1);
+      setPageNumber(pageNumber - 1); 
+    }
+  };
 
   const fetchInventory = async () => {
     try {
-      const response = await axios.get(
-        "/api/Inventory/GetInventories",
-        {
-          params: {
-            StoreId: storeID,
-            FoodName: foodNameFilter,
-            PageNumber: pageNumber,
-            PageSize: pageSize,
-          },
-        }
-      );
-      setInventory(response);
-      console.log(response);
-      // Extract pagination data from the response headers
-      const paginationHeader = response.headers["x-pagination"];
-      console.log(paginationHeader);
-      if (paginationHeader) {
-        const paginationData = JSON.parse(paginationHeader);
-        setTotalPages(paginationData.TotalPages);
-      }
+      const response = await axios.get("/api/Inventory/GetInventories", {
+        params: {
+          StoreId: storeID,
+          FoodName: foodNameFilter,
+          PageNumber: pageNumber,
+          PageSize: pageSize,
+        },
+      });
+      setInventory(response.entityInventory);
+      setTotalPages(response.metadata.totalPages);
     } catch (error) {
       console.error("Error fetching inventory data:", error);
     }
@@ -72,17 +98,6 @@ const Inventory = () => {
   useEffect(() => {
     fetchInventory();
   }, [storeID, foodNameFilter, pageNumber, pageSize]);
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPageNumber(newPage);
-    }
-  };
-
-  // Filter inventory items by foodName
-  const filteredInventory = inventory.filter((item) => {
-    return item.foodName.toLowerCase().includes(foodNameFilter.toLowerCase());
-  });
 
   const reloadInventory = async () => {
     await fetchInventory();
@@ -101,30 +116,27 @@ const Inventory = () => {
         <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
       </div>
 
-      <div>
-        <Card className="h-full w-full">
-          <CardHeader floated={false} shadow={false} className="rounded-none">
-            <div className="flex flex-col items-center justify-between gap-4 md:flex-row mt-3">
-              <Tabs value="all" className="w-full md:w-max">
-                <TabsHeader>
-                  {TABS.map(({ label, value }) => (
-                    <Tab key={value} value={value}>
-                      &nbsp;&nbsp;{label}&nbsp;&nbsp;
-                    </Tab>
-                  ))}
-                </TabsHeader>
-              </Tabs>
-              <div className="w-full md:w-72">
-                <Input
-                  label="Tên món ăn"
-                  icon={<i className="fas fa-search" />}
-                  value={foodNameFilter}
-                  onChange={(e) => setFoodNameFilter(e.target.value)}
-                />
-              </div>
+      <Card className="h-full w-full" shadow={false} floated={false}>
+        <CardHeader floated={false} shadow={false} className="rounded-none">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row mt-3">
+            <div className="ExportExcel">
+              <button className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                Export Excel
+              </button>
             </div>
-          </CardHeader>
-          <CardBody className="px-0">
+
+            <div className="w-full md:w-72">
+              <Input
+                label="Tên món ăn"
+                icon={<i className="fas fa-search" />}
+                value={foodNameFilter}
+                onChange={(e) => setFoodNameFilter(e.target.value)}
+              />
+            </div>
+          </div>
+        </CardHeader>
+        <CardBody className="p-0 mt-3">
+          
             <table className="mt-4 w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
@@ -135,7 +147,7 @@ const Inventory = () => {
                     >
                       <Typography
                         variant="small"
-                        color="blue-gray"
+                        color="black"
                         className="font-normal leading-none opacity-70"
                       >
                         {head}
@@ -145,9 +157,10 @@ const Inventory = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredInventory.map(
+                {inventory.map(
                   (
-                    { id,
+                    {
+                      id,
                       foodId,
                       imageURL,
                       foodName,
@@ -158,7 +171,7 @@ const Inventory = () => {
                     },
                     index
                   ) => {
-                    const isLast = index === filteredInventory.length - 1;
+                    const isLast = index === inventory.length - 1;
                     const classes = isLast
                       ? "p-4"
                       : "p-4 border-b border-blue-gray-50";
@@ -189,7 +202,6 @@ const Inventory = () => {
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
-                        
                           >
                             {FormatDateString(createdAt)}
                           </Typography>
@@ -228,7 +240,10 @@ const Inventory = () => {
                             quantity={quantity}
                             reloadInventory={reloadInventory}
                           />
-                          <DeleteInventory inventoryId={id} reloadInventory={reloadInventory} />
+                          <DeleteInventory
+                            inventoryId={id}
+                            reloadInventory={reloadInventory}
+                          />
                         </td>
                       </tr>
                     );
@@ -236,40 +251,35 @@ const Inventory = () => {
                 )}
               </tbody>
             </table>
-          </CardBody>
+        
+        </CardBody>
 
-          <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-            <Button
-              variant="outlined"
-              size="sm"
-              onClick={() => handlePageChange(pageNumber - 1)}
-            >
-              Previous
-            </Button>
-
-            <div className="flex items-center gap-2">
-              {Array.from({ length: totalPages }, (_, i) => (
-                <IconButton
-                  key={i}
-                  variant={i + 1 === pageNumber ? "outlined" : "text"}
-                  size="sm"
-                  onClick={() => handlePageChange(i + 1)}
-                >
-                  {i + 1}
-                </IconButton>
-              ))}
-            </div>
-
-            <Button
-              variant="outlined"
-              size="sm"
-              onClick={() => handlePageChange(pageNumber + 1)}
-            >
-              Next
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
+        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+          <Button
+            variant="text"
+            className="flex items-center gap-2 rounded-full"
+            onClick={prev}
+            disabled={active === 1}
+          >
+            <ArrowLeft /> Previous
+          </Button>
+          <div className="flex items-center gap-2">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <IconButton key={index + 1} {...getItemProps(index + 1)}>
+                {index + 1}
+              </IconButton>
+            ))}
+          </div>
+          <Button
+            variant="text"
+            className="flex items-center gap-2 rounded-full"
+            onClick={next}
+            disabled={active === totalPages}
+          >
+            Next <ArrowRight />
+          </Button>
+        </CardFooter>
+      </Card>
     </>
   );
 };

@@ -1,6 +1,9 @@
 import { Button, Carousel, IconButton, Rating, Tooltip, Typography } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+    const navigate = useNavigate();
+
     return (
         <div>
             {/* Carousel */}
@@ -174,7 +177,7 @@ const HomePage = () => {
                         <p className="px-5">Kết thúc</p>
 
                     </div>
-                    <a href="#" className="flex gap-2 items-center font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                    <p onClick={() => navigate(`/food-list`)} className="flex gap-2 items-center font-medium text-blue-600 dark:text-blue-500 cursor-pointer hover:underline">
                         Xem tất cả
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -186,7 +189,7 @@ const HomePage = () => {
                                 d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128z"
                             />
                         </svg>
-                    </a>
+                    </p>
                 </div>
                 <div className="grid grid-flow-row-dense grid-cols-4 lg:grid-rows-2 lg:grid-cols-5">
                     <div className="inline-flex px-1 pt-1 pb-2 border-solid border-2 col-span-4 lg:inline lg:row-span-2 lg:col-span-1">

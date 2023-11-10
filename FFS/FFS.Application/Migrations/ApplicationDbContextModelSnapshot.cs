@@ -802,7 +802,8 @@ namespace FFS.Application.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CommentId")
+                    b.Property<int?>("CommentId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -828,6 +829,43 @@ namespace FFS.Application.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("React");
+                });
+
+            modelBuilder.Entity("FFS.Application.Entities.ReactPost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLike")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("PostId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ReactPosts");
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Report", b =>
@@ -1430,6 +1468,25 @@ namespace FFS.Application.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FFS.Application.Entities.ReactPost", b =>
+                {
+                    b.HasOne("FFS.Application.Entities.Post", "Post")
+                        .WithMany("ReactPosts")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("FFS.Application.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FFS.Application.Entities.Wishlist", b =>
                 {
                     b.HasOne("FFS.Application.Entities.Food", "Food")
@@ -1548,6 +1605,8 @@ namespace FFS.Application.Migrations
             modelBuilder.Entity("FFS.Application.Entities.Post", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("ReactPosts");
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Store", b =>

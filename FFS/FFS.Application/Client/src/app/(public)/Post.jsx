@@ -17,10 +17,18 @@ import axiosConfig from "../../shared/api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import LastestPost from "./components/LastestPost";
 import PopularFood from "./components/PopularFood";
+import ArrowRight from "../../shared/components/icon/ArrowRight";
+import ArrowLeft from "../../shared/components/icon/ArrowLeft";
 
 const Post = () => {
   const [active, setActive] = React.useState(1);
   const [posts, setPosts] = React.useState([]);
+  const [postTitle, setPostTitle] = useState("");
+  const [orderBy, setOrderBy] = useState("newest");
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(4);
+  const [totalPages, setTotalPages] = useState(1);
+
 
   let navigate = useNavigate();
 
@@ -30,41 +38,51 @@ const Post = () => {
 
   const getItemProps = (index) => ({
     variant: active === index ? "filled" : "text",
-    color: "gray",
-    onClick: () => setActive(index),
-    className: "rounded-full",
+    onClick: () => {
+      setActive(index);
+      setPageNumber(index);
+    },
+    className: `rounded-full ${active === index ? "bg-primary" : ""}`,
   });
 
   const next = () => {
-    if (active === 5) return;
-
-    setActive(active + 1);
+    if (active < totalPages) {
+      setActive(active + 1);
+      setPageNumber(pageNumber + 1);
+    }
   };
 
   const prev = () => {
-    if (active === 1) return;
-
-    setActive(active - 1);
+    if (active > 1) {
+      setActive(active - 1);
+      setPageNumber(pageNumber - 1);
+    }
   };
 
   const fetchPostList = () => {
     axiosConfig
-      .get("/api/Post/GetListPosts")
+      .get(
+        `/api/Post/GetListPosts?PostTitle=${postTitle}&OrderBy=${orderBy}&PageNumber=${pageNumber}&PageSize=${pageSize}`
+      )
       .then((response) => {
-        setPosts(response);
+        setPosts(response.entityPost);
+        setTotalPages(response.metadata.totalPages);
       })
       .catch((error) => {
         console.error("Error fetching posts: ", error);
       });
   };
 
+
   useEffect(() => {
     fetchPostList();
-  }, []);
+  }, [postTitle, orderBy, pageNumber, pageSize]);
 
   const reloadPost = () => {
     fetchPostList();
-  };
+
+  }
+ 
 
   return (
     <>
@@ -80,18 +98,30 @@ const Post = () => {
             <div className="flex items-center justify-between">
               <div className="w-72">
                 <Input
-                  label="Tìm kiếm"
+                  labelProps={{
+                    className: "hidden",
+                  }} 
+                  className="rounded-none border border-gray-700 bg-white text-gray-900  placeholder:text-gray-500 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10 "
                   icon={<i className="fas fa-search" />}
-                  className="rounded-none focus:rounded-none"
+                  placeholder="Tìm kiếm"
+                  value={postTitle}
+                  onChange={(e) => setPostTitle(e.target.value)}
                 />
               </div>
               <div className="sort_blog">
-                {/* <Select label="Bộ lọc" className="rounded-none">
-                  <Option>Phổ biến nhất</Option>
-                  <Option>Cũ nhất</Option>
-                </Select> */}
+                <Select
+                  labelProps={{
+                    className: "hidden",
+                  }} 
+                  className="rounded-none border border-gray-400 bg-white text-gray-900  placeholder:text-gray-500 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10 "
+                  value={orderBy}
+                  onChange={(value) => setOrderBy(value)}
+                >
+                  <Option value="newest">Mới nhất</Option>
+                  <Option value="oldest">Cũ nhất</Option>
+                </Select>
 
-                <AddPost reloadPost={reloadPost}></AddPost>
+                {/* <AddPost reloadPost={reloadPost}></AddPost> */}
               </div>
             </div>
             <div className="list_post mt-8">
@@ -175,24 +205,22 @@ const Post = () => {
                   onClick={prev}
                   disabled={active === 1}
                 >
-                  {/* <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" />  */}
-                  Previous
+                  <ArrowLeft /> Previous
                 </Button>
                 <div className="flex items-center gap-2">
-                  <IconButton {...getItemProps(1)}>1</IconButton>
-                  <IconButton {...getItemProps(2)}>2</IconButton>
-                  <IconButton {...getItemProps(3)}>3</IconButton>
-                  <IconButton {...getItemProps(4)}>4</IconButton>
-                  <IconButton {...getItemProps(5)}>5</IconButton>
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <IconButton key={index + 1} {...getItemProps(index + 1)}>
+                      {index + 1}
+                    </IconButton>
+                  ))}
                 </div>
                 <Button
                   variant="text"
                   className="flex items-center gap-2 rounded-full"
                   onClick={next}
-                  disabled={active === 5}
+                  disabled={active === totalPages}
                 >
-                  Next
-                  {/* <ArrowRightIcon strokeWidth={2} className="h-4 w-4" /> */}
+                  Next <ArrowRight />
                 </Button>
               </div>
             </div>

@@ -66,7 +66,7 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var foods = _foodRepo.FindAll(x => x.CategoryId == cateId);
+                var foods = _foodRepo.FindAll(x => x.CategoryId == cateId && x.IsDelete == false);
                 return Ok(foods);
             }
             catch (Exception ex)
