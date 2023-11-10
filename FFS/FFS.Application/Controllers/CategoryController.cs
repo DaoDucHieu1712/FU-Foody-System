@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FFS.Application.DTOs.Category;
+using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,20 +11,65 @@ namespace FFS.Application.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository _cateRepo;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IMapper _mapper;
 
-        public CategoryController(ICategoryRepository categoryRepository)
+        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper)
         {
-            _cateRepo = categoryRepository;
+            _categoryRepository = categoryRepository;
+            _mapper = mapper;
         }
 
         [HttpGet("{storeId}")]
-        public IActionResult ListCategoryByStoreId(int storeId)
+        public async Task<IActionResult> ListCategoryByStoreId(int storeId)
         {
             try
             {
-                var categories = _cateRepo.GetList(x => x.StoreId == storeId);
+                var categories = _categoryRepository.GetList(x => x.StoreId == storeId);
                 return Ok(new { data = categories });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CategoryRequestDTO categoryRequestDTO)
+        {
+            try
+            {
+                await _categoryRepository.Add(_mapper.Map<Category>(categoryRequestDTO));
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, CategoryRequestDTO categoryRequestDTO)
+        {
+            try
+            {
+                categoryRequestDTO.Id = id;
+                await _categoryRepository.Update(_mapper.Map<Category>(categoryRequestDTO));
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _categoryRepository.Remove(id);
+                return NoContent();
             }
             catch (Exception ex)
             {

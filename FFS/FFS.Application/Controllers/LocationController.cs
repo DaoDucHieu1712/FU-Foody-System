@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FFS.Application.Data;
-using FFS.Application.DTOs;
+using FFS.Application.DTOs.Location;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;

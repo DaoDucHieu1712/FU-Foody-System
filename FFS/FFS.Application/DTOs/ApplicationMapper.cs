@@ -5,7 +5,8 @@ using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.DTOs.Post;
 using FFS.Application.DTOs.Order;
-using AutoMapper;
+using FFS.Application.DTOs.Location;
+using FFS.Application.DTOs.Category;
 
 
 namespace FFS.Application.DTOs
@@ -14,7 +15,7 @@ namespace FFS.Application.DTOs
     {
         public ApplicationMapper()
         {
-            CreateMap<Location, LocationDTO>()
+            CreateMap<Entities.Location, LocationDTO>()
                 .ForMember(dest => dest.Email,
                 opt => opt.MapFrom(src => src.User.Email)).ReverseMap();
             CreateMap<Entities.Food, FoodDTO>().ReverseMap();
@@ -99,6 +100,7 @@ namespace FFS.Application.DTOs
 
 
             OrderMapper();
+            CategoryMapper();
         }
 
         public void OrderMapper()
@@ -114,6 +116,12 @@ namespace FFS.Application.DTOs
                 .ForMember(dest => dest.StoreName, opt => opt.MapFrom(src => src.Store.StoreName))
                 .ReverseMap();
             CreateMap<OrderDetail, OrderDetailDTO>().ReverseMap();
+        }
+
+        public void CategoryMapper()
+        {
+            CreateMap<Entities.Category, CategoryResponseDTO>().ReverseMap();
+            CreateMap<Entities.Category, CategoryRequestDTO>().ReverseMap();
         }
     }
 }
