@@ -1,4 +1,4 @@
-﻿namespace FFS.Application.DTOs
+﻿namespace FFS.Application.DTOs.Location
 {
     public class LocationDTO
     {
