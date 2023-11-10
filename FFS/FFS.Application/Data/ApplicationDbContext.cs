@@ -72,33 +72,21 @@ namespace FFS.Application.Data
             {
                 entity.Property(x => x.Id).HasMaxLength(50).IsRequired(true);
             });
-
             builder.Entity<ApplicationRole>(entity =>
             {
                 entity.Property(x => x.Id).HasMaxLength(50).IsRequired(true);
             });
-
             builder.Entity<FoodCombo>().
               HasOne(c => c.Food).WithMany(c => c.FoodCombos).HasForeignKey(c => c.FoodId).OnDelete(DeleteBehavior.ClientNoAction);
-
             builder.Entity<FoodCombo>().
              HasOne(c => c.Store).WithMany(c => c.FoodCombos).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
             builder.Entity<ReactPost>().
              HasOne(c => c.Post).WithMany(c => c.ReactPosts).HasForeignKey(c => c.PostId).OnDelete(DeleteBehavior.ClientNoAction);
+            builder.Entity<FlashSale>().
+             HasOne(c => c.Food).WithMany(c => c.FlashSales).HasForeignKey(c => c.FoodId).OnDelete(DeleteBehavior.ClientNoAction);
 
-            //builder.Entity<FoodCombo>()
-            //   .HasOne(c => c.Store)
-            //   .WithMany()
-            //   .OnDelete(DeleteBehavior.ClientNoAction);
-
-            //builder.Entity<ApplicationRole>()
-            //    .HasData(
-            //    new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "Admin", Description = "Admin", NormalizedName = "ADMIN" },
-            //    new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "StoreOwner", Description = "StoreOwner", NormalizedName = "STOREOWNER" },
-            //    new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "Shipper", Description = "Shipper", NormalizedName = "SHIPPER" },
-            //    new ApplicationRole { Id = Guid.NewGuid().ToString(), Name = "User", Description = "User", NormalizedName = "USER" }
-            //    );
-
+            builder.Entity<FlashSale>().
+             HasOne(c => c.Store).WithMany(c => c.FlashSales).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
 
         }
 
@@ -126,6 +114,8 @@ namespace FFS.Application.Data
         public virtual DbSet<Report> Reports { get; set; }
         public virtual DbSet<FoodCombo> FoodCombos { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
+
+        public virtual DbSet<FlashSale> FlashSales { get; set; }
         public override int SaveChanges()
         {
             TrackingEntities();
