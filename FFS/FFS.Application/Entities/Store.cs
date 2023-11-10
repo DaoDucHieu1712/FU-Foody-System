@@ -21,5 +21,6 @@ namespace FFS.Application.Entities
         public ICollection<Combo> Combos { get; set; }
         public ICollection<Food> Foods { get; set; }
         public ICollection<FoodCombo> FoodCombos { get; set; }
+        public ICollection<FlashSale>? FlashSales { get; set; }
     }
 }

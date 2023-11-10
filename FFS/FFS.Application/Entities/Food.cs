@@ -20,5 +20,6 @@ namespace FFS.Application.Entities
         public ICollection<OrderDetail>? OrderDetails { get; set; }
         public ICollection<FoodCombo>? FoodCombos { get; set; }
         public ICollection<Inventory>? Inventories { get; set; }
+        public ICollection<FlashSale>? FlashSales { get; set; }
     }
 }
