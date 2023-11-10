@@ -65,7 +65,6 @@ const Food = () => {
       await axios
         .post(`/api/Food/ListFood`, dataPost)
         .then((res) => {
-          console.log(res);
           setFoodList(res);
         })
         .catch((error) => {

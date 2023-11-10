@@ -4,16 +4,17 @@ import axios from "../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 import propTypes from "prop-types";
 import { FaExclamationCircle } from "react-icons/fa";
+import CheckLogin from "./CheckLogin";
 
 
 
 const ReportStore = ({ uId, sId }) => {
 
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen((cur) => !cur);
     const [selectedReasons, setSelectedReasons] = useState([]);
     const [otherReason, setOtherReason] = useState('');
     const [isOtherReasonChecked, setIsOtherReasonChecked] = useState(false);
+    const [isLogged, setIsLogged] = useState(true);
 
     const handleCheckboxChange = (event) => {
         const value = event.target.value;
@@ -21,6 +22,19 @@ const ReportStore = ({ uId, sId }) => {
             setSelectedReasons([...selectedReasons, value]);
         } else {
             setSelectedReasons(selectedReasons.filter(reason => reason !== value));
+        }
+    };
+
+
+    const handleOpen = () => {
+        if (uId != null || uId != undefined) {
+            setOpen((cur) => !cur)
+            setIsLogged(true);
+        } else {
+            setIsLogged((cur) => !cur);
+            setTimeout(() => {
+                setIsLogged(true);
+            }, 5000);
         }
     };
 
@@ -75,8 +89,9 @@ const ReportStore = ({ uId, sId }) => {
     return (
         <>
             <Typography className="text-orange-900 font-semibold cursor-pointer hover:underline hover:text-orange-700" onClick={handleOpen}> <span className="flex items-center">
-            <FaExclamationCircle className="ml-2" />Báo cáo
-        </span></Typography>
+                <FaExclamationCircle className="ml-2" />Báo cáo
+            </span></Typography>
+            {isLogged ? null : <CheckLogin></CheckLogin>}
             <Dialog
                 size="md"
                 open={open}

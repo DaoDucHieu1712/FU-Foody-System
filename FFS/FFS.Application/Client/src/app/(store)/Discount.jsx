@@ -17,7 +17,7 @@ import AddDiscount from "./components/Discount/AddDiscount";
 import UpdateDiscount from "./components/Discount/UpdateDiscount";
 import DeleteDiscount from "./components/Discount/DeleteDiscount";
 
-const TABLE_HEAD = ["Id", "Mã ưu đãi", "Phần trăm giảm giá (%)", "Áp dụng với đơn hàng", "Số lượng", "Ngày hết hạn", ""];
+const TABLE_HEAD = ["Mã ưu đãi", "Phần trăm giảm giá (%)", "Áp dụng với đơn hàng (nghìn VND)", "Số lượng", "Ngày hết hạn", ""];
 
 const Discount = () => {
     const backgroundColors = ["bg-gray-50", "bg-gray-200"];
@@ -35,7 +35,6 @@ const Discount = () => {
                 .get(`/api/Store/GetStoreByUid?uId=${uId}`)
                 .then((response) => {
                     setStoreId(response.id);
-                    reloadList();
                 })
                 .catch((error) => {
                     console.log(error);
@@ -46,18 +45,13 @@ const Discount = () => {
     };
 
     const reloadList = async () => {
-        const dataPost = {
-            uId: uId,
-            DiscountName: discountFilter,
-            PageNumber: pageNumber,
-            PageSize: pageSize,
-        };
         try {
             await axios
-                .get(`/api/Discount/ListDiscountByStore`, dataPost)
+                .get(`/api/Discount/ListDiscoutByStore?StoreId=${storeId}&CodeName=${discountFilter}&PageNumber=${pageNumber}&PageSize=${pageSize}`)
                 .then((res) => {
                     console.log(res);
-                    setDiscountList(res);
+                    setDiscountList(res.discounts);
+                    setTotalPages(res.metadata.totalPages);
                 })
                 .catch((error) => {
                     toast.error("Có lỗi xảy ra!");
@@ -70,7 +64,7 @@ const Discount = () => {
 
     useEffect(() => {
         reloadList();
-    }, [pageNumber, discountFilter]);
+    }, [storeId, pageNumber, discountFilter]);
 
     useEffect(() => {
         GetStoreByUid();
@@ -160,9 +154,9 @@ const Discount = () => {
                                             <Typography
                                                 variant="small"
                                                 color="blue-gray"
-                                                className="font-bold"
+                                                className="font-normal max-w-xs truncate"
                                             >
-                                                {discount.id}
+                                                {discount.code}
                                             </Typography>
                                         </td>
                                         <td>
@@ -171,7 +165,7 @@ const Discount = () => {
                                                 color="blue-gray"
                                                 className="font-normal max-w-xs truncate"
                                             >
-                                                {discount.code}
+                                                {discount.percent}
                                             </Typography>
                                         </td>
                                         <td>
@@ -205,7 +199,7 @@ const Discount = () => {
                                             <div className="h-full flex justify-center items-center">
                                                 <UpdateDiscount
                                                     reload={reloadList}
-                                                    foodData={discount}
+                                                    discountData={discount}
                                                     storeId={storeId}
                                                 ></UpdateDiscount>
                                                 <DeleteDiscount
