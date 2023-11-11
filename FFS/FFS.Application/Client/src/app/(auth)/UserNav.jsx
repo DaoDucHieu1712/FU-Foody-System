@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import { setAccessToken } from "../../redux/auth";
 import CookieService from "../../shared/helper/cookieConfig";
 import axios from "../../shared/api/axiosConfig";
-import ProfilePage from "./ProfilePage";
 
 
 const UserNav = () => {
@@ -47,17 +46,17 @@ const UserNav = () => {
 
     fetchUserInfo();
   }, []);
-
   const handleProfileClick = () => {
-    navigate("/profile");
+    navigate("/profile", { state: { userInfo } });
   };
+
 
   //css
   // Inline styles for the tooltip and triangle
   const tooltipStyle = {
     position: "absolute",
-    top: "130%",
-    left: "-120%",
+    top: "134%",
+    left: "-110%",
     transform: "translateX(-50%)",
     width: "160px",
     backgroundColor: "#fff",
@@ -72,8 +71,8 @@ const UserNav = () => {
   const triangleStyle = {
     content: "",
     position: "absolute",
-    top: "-19px",
-    left: "85%",
+    top: "-18px",
+    left: "82%",
     transform: "translateX(-50%)",
     borderWidth: "10px",
     borderStyle: "solid",
@@ -82,44 +81,62 @@ const UserNav = () => {
   //
 
   return (
-    <div className="relative inline-block text-left" ref={tooltipRef}>
-      <div onClick={toggleTooltip}>
-        <User className="text-xl cursor-pointer" />
+    <>
+      <div className="relative inline-block text-left" ref={tooltipRef}>
+        <div onClick={toggleTooltip}>
+          {/* <User className="text-xl cursor-pointer" /> */}
 
-        {/* {userInfo && (
-          <div className="flex items-center space-x-1">
+          {userInfo && (
             <img
-              className="w-9 h-9 rounded-full"
+              className="w-8 h-8 rounded-full"
               src={userInfo.avatar}
               alt="Avatar"
             />
-            <span className="font-sm text-white">{userInfo.userName}</span>
-            
-          </div>
-          
-        )} */}
-      </div>
-      {showTooltip && (
-        <div style={tooltipStyle}>
-          <div style={triangleStyle} />
-
-          <ul className="">
-            <li className="text-base cursor-pointer hover:bg-gray-100 px-3 py-1.5">
-              Tài Khoản Của Tôi
-            </li>
-            <li className="text-base cursor-pointer hover:bg-gray-100 px-3 py-1.5">
-              Đơn Mua
-            </li>
-            <li
-              onClick={handleLogout}
-              className="text-base cursor-pointer hover:bg-gray-100 px-3 py-1.5"
-            >
-              Đăng Xuất
-            </li>
-          </ul>
+          )}
         </div>
-      )}
-    </div>
+        {showTooltip && (
+          <div
+            style={tooltipStyle}
+            className="divide-y divide-gray-100 rounded-lg shadow"
+          >
+            <div style={triangleStyle} />
+            <div className="px-4 py-2 text-sm text-gray-900 dark:text-white">
+              <div>
+                {userInfo.firstName} {userInfo.lastName}
+              </div>
+              <div class="font-medium truncate">{userInfo.email}</div>
+            </div>
+            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+              <li>
+                <a
+                  onClick={handleProfileClick}
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                >
+                  Tài khoản của tôi
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Đơn Mua
+                </a>
+              </li>
+              <li>
+                <a
+                  onClick={handleLogout}
+                  
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+                >
+                  Đăng Xuất
+                </a>
+              </li>
+            </ul>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

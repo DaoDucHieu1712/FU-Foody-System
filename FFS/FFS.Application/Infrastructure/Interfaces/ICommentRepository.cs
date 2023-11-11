@@ -5,6 +5,7 @@ namespace FFS.Application.Infrastructure.Interfaces
 {
     public interface ICommentRepository : IRepository<Comment, int>
     {
-        Task CreateComment(Comment comment);
+        Task RatingStore(Comment comment);
+        Task RatingFood(Comment comment);
     }
 }

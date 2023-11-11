@@ -6,8 +6,11 @@ import Heart from "../../shared/components/icon/Heart";
 import Logo from "../../shared/components/logo/Logo";
 import StoreTag from "../../shared/components/store/StoreTag";
 import Notification from "./Notification";
+import { useSelector } from "react-redux";
+import UserNav from "./UserNav";
 import { useDispatch } from "react-redux";
 import { cartActions } from "./shared/cartSlice";
+
 
 export function LazyLoadComponent({ children }) {
   return (
@@ -17,15 +20,10 @@ export function LazyLoadComponent({ children }) {
   );
 }
 
-const cookies = new Cookies();
 
 const Layout = () => {
-  const [username, setUsername] = useState();
-
-  useEffect(() => {
-    var email = cookies.get("fu_foody_email");
-    setUsername(email);
-  });
+  
+  const accesstoken = useSelector(state => state.auth.accessToken);
 
   return (
     <>
@@ -88,10 +86,11 @@ const Layout = () => {
               <Heart></Heart>
               <Notification></Notification>
 
-              {username ? (
-                <>
-                  <p className="text-white">{username}</p>
-                </>
+              {accesstoken ? (
+                // <>
+                //   <p className="text-white">{username}</p>
+                <UserNav></UserNav>
+                // </>
               ) : (
                 <div className="flex items-center gap-3">
                   <a href="/login" className="login-link text-white">

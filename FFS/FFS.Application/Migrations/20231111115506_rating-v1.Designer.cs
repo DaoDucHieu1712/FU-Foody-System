@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FFS.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231111055519_updatefoodtable")]
-    partial class updatefoodtable
+    [Migration("20231111115506_rating-v1")]
+    partial class ratingv1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -394,10 +394,16 @@ namespace FFS.Application.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<double>("RateAverage")
-                        .HasColumnType("float");
+                    b.Property<decimal>("RateAverage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RatingCount")
+                        .HasColumnType("int");
 
                     b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalRate")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -980,6 +986,12 @@ namespace FFS.Application.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("RateAverage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RatingCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("StoreName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -989,6 +1001,9 @@ namespace FFS.Application.Migrations
 
                     b.Property<DateTime>("TimeStart")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("TotalRate")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");

@@ -392,10 +392,16 @@ namespace FFS.Application.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<double>("RateAverage")
-                        .HasColumnType("float");
+                    b.Property<decimal>("RateAverage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RatingCount")
+                        .HasColumnType("int");
 
                     b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalRate")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -978,6 +984,12 @@ namespace FFS.Application.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("RateAverage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RatingCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("StoreName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -987,6 +999,9 @@ namespace FFS.Application.Migrations
 
                     b.Property<DateTime>("TimeStart")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("TotalRate")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");

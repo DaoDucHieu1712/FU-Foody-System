@@ -10,7 +10,9 @@ namespace FFS.Application.Entities
         public string ImageURL { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
-        public double RateAverage { get; set; } = 0;
+        public decimal RateAverage { get; set; } = 0;
+        public int TotalRate { get; set; } = 0;
+        public int RatingCount { get; set; } = 0;
         public int CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
         public Category? Category { get; set; }
