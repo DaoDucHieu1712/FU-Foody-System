@@ -1,8 +1,82 @@
-import { Button, Card, Input, Typography } from "@material-tailwind/react";
+import {
+  Button,
+  Card,
+  Input,
+  Option,
+  Select,
+  Textarea,
+  Typography,
+} from "@material-tailwind/react";
 import DeleteIcon from "../../shared/components/icon/DeleteIcon";
+import propTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
+import CartService from "./shared/cart.service";
+import Cookies from "universal-cookie";
+import { useEffect, useState } from "react";
+import LocationService from "./shared/location.service";
+import { cartActions } from "./shared/cartSlice";
+import CartItem from "./shared/components/cart/CartItem";
+import { toast } from "react-toastify";
+
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
+const cookies = new Cookies();
+
 const CartPage = () => {
+  const cart = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+  const [locations, setLocations] = useState([]);
+  const [location, setLocation] = useState("");
+  const [phone, setPhone] = useState("");
+  const [note, setNote] = useState("");
+
+  const getLocations = async () => {
+    const email = cookies.get("fu_foody_email");
+    await LocationService.getAll(email).then((res) => {
+      setLocations(res);
+    });
+  };
+
+  useEffect(() => {
+    dispatch(cartActions.getCartTotal());
+    getLocations();
+  }, [cart]);
+
+  const CheckoutHandler = async () => {
+    await CartService.CreateOrder({
+      customerId: cookies.get("fu_foody_id"),
+      location: location,
+      phoneNumer: phone,
+      note: note,
+      totalPrice: cart.totalPrice,
+      orderStatus: 1,
+    })
+      .then(async (res) => {
+        console.log(res);
+
+        var items = cart.list.map((item) => {
+          return {
+            orderId: res.id,
+            storeId: item.storeId,
+            foodId: item.foodId,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+          };
+        });
+        await CartService.AddOrderItem(items)
+          .then((res) => {
+            console.log(res);
+            toast.success("Đặt hàng thành công");
+          })
+          .catch((err) => {
+            console.log(err.response.data);
+          });
+      })
+      .catch(() => {
+        toast.error("Đã có lỗi xảy ra, vui lòng đặt lại !");
+      });
+  };
+
   return (
     <>
       <div className="grid grid-cols-3 my-10 gap-x-3">
@@ -32,112 +106,40 @@ const CartPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="p-4 border-b border-blue-gray-50 flex items-center gap-x-2">
-                      <DeleteIcon></DeleteIcon>
-                      <img
-                        src="https://images.unsplash.com/photo-1697186216555-572c0c5374ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0fHx8ZW58MHx8fHx8&auto=format&fit=crop&w=500&q=60"
-                        alt=""
-                        className="w-[70px]"
-                      />
-                      <span>Cơm tấm</span>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      500,000 đ
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <div className="flex items-center justify-between border p-2">
-                        <span className="text-gray-500 text-3xl font-medium cursor-pointer">
-                          -
-                        </span>
-                        <p>3</p>
-                        <span className="text-3xl font-medium cursor-pointer">
-                          +
-                        </span>
-                      </div>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      1,500,000 đ
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="p-4 border-b border-blue-gray-50 flex items-center gap-x-2">
-                      <DeleteIcon></DeleteIcon>
-                      <img
-                        src="https://images.unsplash.com/photo-1697186216555-572c0c5374ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0fHx8ZW58MHx8fHx8&auto=format&fit=crop&w=500&q=60"
-                        alt=""
-                        className="w-[70px]"
-                      />
-                      <span>Cơm tấm</span>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      500,000 đ
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <div className="flex items-center justify-between border p-2">
-                        <span className="text-gray-500 text-3xl font-medium cursor-pointer">
-                          -
-                        </span>
-                        <p>3</p>
-                        <span className="text-3xl font-medium cursor-pointer">
-                          +
-                        </span>
-                      </div>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      1,500,000 đ
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="p-4 border-b border-blue-gray-50 flex items-center gap-x-2">
-                      <DeleteIcon></DeleteIcon>
-                      <img
-                        src="https://images.unsplash.com/photo-1697186216555-572c0c5374ac?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0fHx8ZW58MHx8fHx8&auto=format&fit=crop&w=500&q=60"
-                        alt=""
-                        className="w-[70px]"
-                      />
-                      <span>Cơm tấm</span>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      500,000 đ
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      <div className="flex items-center justify-between border p-2">
-                        <span className="text-gray-500 text-3xl font-medium cursor-pointer">
-                          -
-                        </span>
-                        <p>3</p>
-                        <span className="text-3xl font-medium cursor-pointer">
-                          +
-                        </span>
-                      </div>
-                    </td>
-                    <td className="p-4 border-b border-blue-gray-50">
-                      1,500,000 đ
-                    </td>
-                  </tr>
+                  {cart?.list?.map((item) => (
+                    <CartItem key={item.foodId} item={item}></CartItem>
+                  ))}
                 </tbody>
               </table>
             </Card>
           </div>
-          <div className="p-3 flex justify-between">
-            <Button
-              variant="outlined"
-              className="border-blue-500 font-medium text-blue-500 rounded-none border-[2px]"
-            >
-              {" "}
-              Mua hàng típ{" "}
-            </Button>
-            <Button
-              variant="outlined"
-              className="border-blue-500 font-medium text-blue-500 rounded-none border-[2px]"
-            >
-              {" "}
-              CẬP NHẬT{" "}
-            </Button>
-          </div>
         </div>
         <div className="flex flex-col gap-y-5">
+          <div className="border-borderpri border pb-5 rounded-lg">
+            <div className="p-3 border-b border-borderpri">
+              <h1 className="font-medium">Thông tin khác</h1>
+            </div>
+            <div className="p-3 flex flex-col gap-y-3">
+              <Input
+                label="Số điện thoại"
+                type="number"
+                onChange={(e) => setPhone(e.target.value)}
+              ></Input>
+              <Select
+                label="Địa chỉ"
+                onChange={(e) => setLocation(e.target.value)}
+              >
+                {locations.map((item) => {
+                  return <Option key={item.id}>{item.address}</Option>;
+                })}
+              </Select>
+              <Textarea
+                label="Ghi chú"
+                className="h-[185px]"
+                onChange={(e) => setNote(e.target.value)}
+              />
+            </div>
+          </div>
           <div className="border-borderpri border pb-5 rounded-lg">
             <div className="heading">
               <h1 className="text-2xl p-3">Thanh toán giỏ hàng</h1>
@@ -147,7 +149,7 @@ const CartPage = () => {
                 <p className="font-medium text-lg text-gray-500">
                   Tổng đơn hàng
                 </p>
-                <span>$105.0</span>
+                <span>{cart.totalPrice} đ</span>
               </div>
               <div className="flex justify-between">
                 <p className="font-medium text-lg text-gray-500">Phí ship</p>
@@ -155,17 +157,20 @@ const CartPage = () => {
               </div>
               <div className="flex justify-between">
                 <p className="font-medium text-lg text-gray-500">Giảm giá</p>
-                <span>$5.0</span>
+                <span>chưa có thông tin</span>
               </div>
             </div>
             <div className="p-3 flex justify-between">
               <p className="font-medium text-lg ">Tổng</p>
-              <span>$15.0</span>
+              <span>{cart.totalPrice} đ</span>
             </div>
             <div className="p-3 w-full">
-              <Button className="bg-primary w-full">Đến Thanh toán</Button>
+              <Button className="bg-primary w-full" onClick={CheckoutHandler}>
+                Thanh toán
+              </Button>
             </div>
           </div>
+
           <div className="border-borderpri border pb-5 rounded-lg">
             <div className="p-3 border-b border-borderpri">
               <h1 className="font-medium">Mã Giảm giá</h1>
