@@ -11,10 +11,29 @@ namespace FFS.Application.Repositories.Impls
         {
         }
 
-        public async Task CreateComment(Comment comment)
+        public async Task RatingStore(Comment comment)
         {
             await Add(comment);
-
+            var store = _context.Stores.FirstOrDefault(x => x.Id == comment.StoreId);
+            if (store != null)
+            {
+                store.RatingCount += 1;
+                store.TotalRate += comment.Rate ?? 0;
+                store.RateAverage = (decimal)Math.Round((double)store.TotalRate / (double)store.RatingCount, 1);
+            }
+            await _context.SaveChangesAsync();
+        }
+        public async Task RatingFood(Comment comment)
+        {
+            await Add(comment);
+            var food = _context.Foods.FirstOrDefault(x => x.Id == comment.FoodId);
+            if (food != null)
+            {
+                food.RatingCount += 1;
+                food.TotalRate += comment.Rate ?? 0;
+                food.RateAverage = (decimal)Math.Round((double)food.TotalRate / (double)food.RatingCount, 1);
+            }
+            await _context.SaveChangesAsync();
         }
     }
 }

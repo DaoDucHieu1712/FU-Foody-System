@@ -202,7 +202,7 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                await _commentRepository.CreateComment(_mapper.Map<Comment>(storeRatingDTO));
+                await _commentRepository.RatingStore(_mapper.Map<Comment>(storeRatingDTO));
                 if(storeRatingDTO.ParentCommentId != null)
                 {
                     dynamic comment = await _storeRepository.GetCommentReply(Convert.ToInt32(storeRatingDTO.ParentCommentId));
