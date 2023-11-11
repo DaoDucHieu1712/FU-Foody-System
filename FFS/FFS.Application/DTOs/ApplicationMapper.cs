@@ -59,7 +59,7 @@ namespace FFS.Application.DTOs
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
             .ForMember(dest => dest.ShipperId, opt => opt.MapFrom(src => src.ShipperId))
             .ForMember(dest => dest.NoteForShipper, opt => opt.MapFrom(src => src.NoteForShipper)).ReverseMap();
-            CreateMap<ReportDTO, Report>().ReverseMap();
+            CreateMap<ReportDTO, Entities.Report>().ReverseMap();
 
 
             CreateMap<Entities.Order, OrderDTO>()
@@ -88,11 +88,13 @@ namespace FFS.Application.DTOs
             //.ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
 
             CreateMap<Comment, FoodRatingDTO>()
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.FoodId, opt => opt.MapFrom(src => src.FoodId))
             .ForMember(dest => dest.Rate, opt => opt.MapFrom(src => src.Rate))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
             .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images)).ReverseMap();
+
+            CreateMap<Entities.Food, AllFoodDTO>().ReverseMap();
 
             CreateMap<Discount, DiscountDTO>()
                 .ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.Expired<DateTime.Now)).ReverseMap();
