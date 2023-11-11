@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Input } from "@material-tailwind/react";
 import { Tabs, TabsHeader, Tab } from "@material-tailwind/react";
 import GoogleLogin from "@leecheuk/react-google-login";
-import axios from "axios";
+import axios from "../../shared/api/axiosConfig";
 import { useDispatch } from "react-redux";
 import { gapi } from "gapi-script";
 import { toast } from "react-toastify";
@@ -51,15 +51,15 @@ const Login = () => {
 
     try {
       await axios
-        .post("https://localhost:7025/api/Authenticate/LoginByEmail", {
+        .post("/api/Authenticate/LoginByEmail", {
           email,
           password,
         })
         .then((res) => {
-          const token = res.data.userClient.result.token;
+          const token = res.userClient.result.token;
           CookieService.saveToken(
             "fu_foody_email",
-            res.data.userClient.result.email,
+            res.userClient.result.email,
             dayjs()
               .add(10000 - 300, "second")
               .toDate()
@@ -67,7 +67,7 @@ const Login = () => {
 
           CookieService.saveToken(
             "fu_foody_id",
-            res.data.userClient.result.userId,
+            res.userClient.result.userId,
             dayjs()
               .add(10000 - 300, "second")
               .toDate()
@@ -75,7 +75,7 @@ const Login = () => {
 
           CookieService.saveToken(
             "fu_foody_token",
-            res.data.userClient.result.token,
+            res.userClient.result.token,
             dayjs()
               .add(10000 - 300, "second")
               .toDate()
@@ -83,7 +83,7 @@ const Login = () => {
 
           CookieService.saveToken(
             "fu_foody_role",
-            res.data.userClient.result.role,
+            res.userClient.result.role,
             dayjs()
               .add(10000 - 300, "second")
               .toDate()
@@ -93,8 +93,8 @@ const Login = () => {
           navigate("/");
         })
         .catch((err) => {
-          toast.error(err.response.data);
-          setError(err.response.data);
+          toast.error(err.response);
+          setError(err.response);
         });
     } catch (errorMessage) {
       setError("Có lỗi xảy ra. Vui lòng thử lại !" + errorMessage);
@@ -105,13 +105,13 @@ const Login = () => {
     console.log(response);
     const data = { idToken: response.tokenId };
     axios
-      .post("https://localhost:7025/api/Authenticate/LoginGoogle", data)
+      .post("/api/Authenticate/LoginGoogle", data)
       .then((response) => {
         if (response.status === 200) {
           // Save the token using Cookies
           CookieService.saveToken(
             "fu_foody_email",
-            response.data.userClient.email,
+            response.userClient.email,
             dayjs()
               .add(10000 - 300, "second")
               .toDate()
@@ -119,7 +119,7 @@ const Login = () => {
 
           CookieService.saveToken(
             "fu_foody_id",
-            response.data.userClient.userId,
+            response.userClient.userId,
             dayjs()
               .add(10000 - 300, "second")
               .toDate()
@@ -127,7 +127,7 @@ const Login = () => {
 
           CookieService.saveToken(
             "fu_foody_token",
-            response.data.userClient.token,
+            response.userClient.token,
             dayjs()
               .add(10000 - 300, "second")
               .toDate()
@@ -135,7 +135,7 @@ const Login = () => {
 
           CookieService.saveToken(
             "fu_foody_role",
-            response.data.userClient.role,
+            response.userClient.role,
             dayjs()
               .add(10000 - 300, "second")
               .toDate()

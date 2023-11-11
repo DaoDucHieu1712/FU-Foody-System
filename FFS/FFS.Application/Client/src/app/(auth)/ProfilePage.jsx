@@ -1,18 +1,23 @@
 import { Button, Input, Radio } from "@material-tailwind/react";
 import UploadImage from "../../shared/components/form/UploadImage";
+import { useLocation } from "react-router-dom";
+import FormatDateString from "../../shared/components/format/FormatDate";
 
 const ProfilePage = () => {
+  const location = useLocation();
+  const userInfo = location.state?.userInfo;
   return (
     <>
+    {userInfo && (
       <div className="grid grid-cols-5 my-12 gap-4 p-8">
         <div className="flex flex-col col-span-1">
           <div className="flex gap-x-3 items-center p-3 border-b border-gray-300">
             <img
-              src="https://images.unsplash.com/photo-1697081544011-e472e6a19cc8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1fHx8ZW58MHx8fHx8&auto=format&fit=crop&w=500&q=60"
+              src={userInfo.avatar}
               alt=""
               className="rounded-full w-[50px] h-[50px]"
             />
-            <span className="text-center font-medium">dao duc hieu</span>
+            <span className="text-center font-medium">{userInfo.firstName} {userInfo.lastName} </span>
           </div>
 
           <div className="mt-3">
@@ -56,19 +61,19 @@ const ProfilePage = () => {
                 <span className="font-semibold text-gray-500 ">
                   Tên đăng nhập
                 </span>
-                <p className="col-span-2">username</p>
+                <p className="col-span-2">{userInfo.userName}</p>
               </div>
               <div className="grid grid-cols-3">
                 <span className="font-semibold text-gray-500">Tên</span>
                 <div className="flex w-full col-span-2 gap-x-3">
-                  <Input label="First Name" />
-                  <Input label="Last Name" />
+                  <Input label="First Name" value={userInfo.firstName} />
+                  <Input label="Last Name" value={userInfo.lastName} />
                 </div>
               </div>
               <div className="grid grid-cols-3">
                 <span className="font-semibold text-gray-500 ">Email</span>
                 <p className="col-span-2">
-                  user@gmail.com{" "}
+                {userInfo.email}{" "}
                   <a href="#" className="text-blue-500">
                     Thay đổi
                   </a>
@@ -79,7 +84,7 @@ const ProfilePage = () => {
                   Số điện thoại
                 </span>
                 <p className="col-span-2">
-                  0123456789{" "}
+                {userInfo.phoneNumber}{" "}
                   <a href="#" className="text-blue-500">
                     Thay đổi
                   </a>
@@ -88,8 +93,18 @@ const ProfilePage = () => {
               <div className="grid grid-cols-3">
                 <span className="font-semibold text-gray-500">Giới tính</span>
                 <div className="flex gap-10 col-span-2">
-                  <Radio name="gender" label="Nam" defaultChecked />
-                  <Radio name="gender" label="Nữ" />
+                <Radio
+                      name="gender"
+                      label="Nam"
+                      defaultChecked={userInfo.gender === true}
+                     
+                    />
+                    <Radio
+                      name="gender"
+                      label="Nữ"
+                      defaultChecked={userInfo.gender === false}
+                     
+                    />
                 </div>
               </div>
               <div className="grid grid-cols-3">
@@ -98,6 +113,7 @@ const ProfilePage = () => {
                   type="datetime-local"
                   className="col-span-2 w-full"
                   label="Ngày sinh"
+                  value={userInfo.birthDay}
                 />
               </div>
               <div className="grid grid-cols-3 mt-4">
@@ -107,9 +123,11 @@ const ProfilePage = () => {
           </div>
         </div>
         <div className="flex flex-col col-span-1">
-          <UploadImage></UploadImage>
+          <UploadImage 
+           ></UploadImage>
         </div>
       </div>
+        )}
     </>
   );
 };
