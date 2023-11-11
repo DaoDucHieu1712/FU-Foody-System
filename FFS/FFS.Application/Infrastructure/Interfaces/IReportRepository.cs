@@ -1,4 +1,5 @@
-﻿using FFS.Application.Entities;
+﻿using FFS.Application.DTOs.QueryParametter;
+using FFS.Application.Entities;
 
 namespace FFS.Application.Infrastructure.Interfaces
 {
@@ -6,5 +7,7 @@ namespace FFS.Application.Infrastructure.Interfaces
     {
         Task CreateReport(Report report);
         Task<byte[]> ExportReport();
+        IEnumerable<dynamic> GetReports(ReportParameters reportParameters);
+        int CountGetReports(ReportParameters reportParameters);
     }
 }
