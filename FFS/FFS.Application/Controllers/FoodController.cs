@@ -265,7 +265,7 @@ namespace FFS.Application.Controllers
                 {
                     await _wishlistRepository.AddToWishlist(foodRatingDTO.UserId, foodRatingDTO.FoodId);
                 }
-                await _commentRepository.CreateComment(_mapper.Map<Comment>(foodRatingDTO));
+                await _commentRepository.RatingFood(_mapper.Map<Comment>(foodRatingDTO));
                 return Ok();
             }
             catch (Exception ex)
