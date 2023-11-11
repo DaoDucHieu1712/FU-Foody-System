@@ -8,5 +8,7 @@ namespace FFS.Application.Infrastructure.Interfaces
     {
         Task<List<Food>> GetFoodListByStoreId(int storeId);
         dynamic GetFoods(FoodParameters foodParameters);
+
+        PagedList<Food> GetAllFoods(AllFoodParameters allFoodParameters);
     }
 }

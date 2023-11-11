@@ -46,6 +46,8 @@ const TABLE_HEAD = [
   "",
 ];
 
+
+
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
   const [foodNameFilter, setFoodNameFilter] = useState("");
@@ -77,7 +79,12 @@ const Inventory = () => {
       setPageNumber(pageNumber - 1); 
     }
   };
-
+  const handleExportExcel = () => {
+    const fileDownloadUrl = `https://localhost:7025/api/Store/ExportInventory/exportinventory?id=${storeID}`;
+  
+    window.location.href = fileDownloadUrl;
+  };
+  
   const fetchInventory = async () => {
     try {
       const response = await axios.get("/api/Inventory/GetInventories", {
@@ -120,8 +127,8 @@ const Inventory = () => {
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row mt-3">
             <div className="ExportExcel">
-              <button className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                Export Excel
+              <button className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center" onClick={handleExportExcel}>
+                Xuất Excel
               </button>
             </div>
 

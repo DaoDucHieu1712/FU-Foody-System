@@ -39,7 +39,7 @@ namespace FFS.Application.Repositories.Impls
             try
             {
                 List<Food> foodsOfStore = await _context.Foods
-                    .Where(x => x.StoreId == id)
+                    .Where(x => x.StoreId == id && x.IsDelete == false)
                     .Include(x => x.Category)
                     .ToListAsync();
 
@@ -68,7 +68,7 @@ namespace FFS.Application.Repositories.Impls
             try
             {
                 List<Inventory> inventoriesOfStore = await _context.Inventories
-                    .Where(x => x.StoreId == id)
+                    .Where(x => x.StoreId == id && x.IsDelete == false)
                     .Include(x => x.Food).ThenInclude(a => a.Category)
                     .ToListAsync();
 

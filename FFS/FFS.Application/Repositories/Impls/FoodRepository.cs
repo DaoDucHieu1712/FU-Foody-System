@@ -9,6 +9,7 @@ using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using DocumentFormat.OpenXml.Wordprocessing;
+using FFS.Application.Entities.Enum;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -56,7 +57,79 @@ namespace FFS.Application.Repositories.Impls
             }
 
         }
+        public PagedList<Food> GetAllFoods(AllFoodParameters allFoodParameters)
+        {
+            var query = _context.Foods.Include(x => x.Category).Include(x => x.OrderDetails).AsQueryable();
 
-     
+            if (!string.IsNullOrEmpty(allFoodParameters.CatId.ToString()))
+            {
+                query = query.Where(f => f.CategoryId == allFoodParameters.CatId);
+            }
+            SearchByProductAndCategoryName(ref query, allFoodParameters.Search);
+            SearchByPriceRange(ref query, allFoodParameters.PriceMin, allFoodParameters.PriceMax);
+            if (!string.IsNullOrEmpty(allFoodParameters.FilterFood.ToString()))
+            {
+                switch (allFoodParameters.FilterFood)
+                {
+                    case FilterFood.Flashsale:
+                        break;
+                    case FilterFood.Bestseller:
+                        FilterByBestSeller(ref query);
+                        break;
+                    case FilterFood.TopRated:
+                        FilterByTopRated(ref query);
+                        break;
+                    case FilterFood.LatestProduct:
+                        FilterByLatestProduct(ref query);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            //Apply pagination
+            var pagedList = PagedList<Food>.ToPagedList(
+                query,
+                allFoodParameters.PageNumber,
+                allFoodParameters.PageSize
+            );
+
+            return pagedList;
+        }
+        private void SearchByProductAndCategoryName(ref IQueryable<Food> foods, string search)
+        {
+            if (!foods.Any() || string.IsNullOrWhiteSpace(search))
+                return;
+            foods = foods.Where(o => o.Category.CategoryName.ToLower().Contains(search.Trim().ToLower()) || o.FoodName.ToLower().Contains(search.Trim().ToLower()));
+        }
+        private void SearchByPriceRange(ref IQueryable<Food> foods, decimal? minPrice, decimal? maxPrice)
+        {
+            if (!foods.Any())
+                return;
+            foods = foods
+                .Where(o => o.Price >= minPrice && o.Price <= maxPrice);
+        }
+        private void FilterByTopRated(ref IQueryable<Food> foods)
+        {
+            if (!foods.Any())
+                return;
+            foods = foods.OrderByDescending(x => x.RateAverage);
+            ;
+        }
+        private void FilterByLatestProduct(ref IQueryable<Food> foods)
+        {
+            if (!foods.Any())
+                return;
+            foods = foods.OrderByDescending(x => x.CreatedAt);
+            ;
+        }
+        private void FilterByBestSeller(ref IQueryable<Food> foods)
+        {
+            if (!foods.Any())
+                return;
+            foods = foods
+         .OrderByDescending(x => x.OrderDetails.Sum(od => od.Quantity));
+            ;
+        }
     }
 }

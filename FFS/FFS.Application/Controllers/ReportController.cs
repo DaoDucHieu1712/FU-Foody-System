@@ -33,5 +33,21 @@ namespace FFS.Application.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("exportreport")]
+        public async Task<IActionResult> ExportReport()
+        {
+            try
+            {
+                var data = await _reportRepository.ExportReport();
+                string uniqueFileName = "ThongKe_BaoCao_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+
+                return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", uniqueFileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

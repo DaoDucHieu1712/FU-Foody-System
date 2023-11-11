@@ -31,12 +31,7 @@ const Food = () => {
   const [storeId, setStoreId] = useState(0);
   const uId = CookieService.getToken("fu_foody_id");
 
-  const handleExportExcel = () => {
-    const id = 1;
-    const fileDownloadUrl = `https://localhost:7025/api/Store/ExportFood/exportfood?id=${id}`;
-
-    window.location.href = fileDownloadUrl;
-  };
+  
 
   const GetStoreByUid = async () => {
     try {
@@ -53,7 +48,11 @@ const Food = () => {
       console.log("Get Store By Uid error: " + error);
     }
   };
+  const handleExportExcel = () => {
+    const fileDownloadUrl = `https://localhost:7025/api/Store/ExportFood/exportfood?id=${storeId}`;
 
+    window.location.href = fileDownloadUrl;
+  };
   const reloadList = async () => {
     const dataPost = {
       uId: uId,
