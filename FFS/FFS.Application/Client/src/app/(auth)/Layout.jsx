@@ -6,6 +6,8 @@ import Heart from "../../shared/components/icon/Heart";
 import Logo from "../../shared/components/logo/Logo";
 import StoreTag from "../../shared/components/store/StoreTag";
 import Notification from "./Notification";
+import { useDispatch } from "react-redux";
+import { cartActions } from "./shared/cartSlice";
 
 export function LazyLoadComponent({ children }) {
   return (

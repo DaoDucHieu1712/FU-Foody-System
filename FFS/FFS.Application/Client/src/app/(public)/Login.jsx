@@ -90,7 +90,7 @@ const Login = () => {
           );
           dispatch(setAccessToken(token));
           toast.success("Đăng nhập thành công !!");
-          navigate("/");
+          window.location.href = "/";
         })
         .catch((err) => {
           toast.error(err.response.data);
@@ -143,7 +143,7 @@ const Login = () => {
 
           toast.success("Đăng nhập thành công !");
           // Navigate to the home page
-          navigate("/");
+          window.location.href = "/";
         }
       })
       .catch((error) => {
