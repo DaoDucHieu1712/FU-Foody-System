@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using FFS.Application.DTOs.Report;
 using FFS.Application.DTOs.Store;
 
 namespace FFS.Application.Helper
@@ -49,6 +50,34 @@ namespace FFS.Application.Helper
                 worksheet.Cell(currentRow, 3).Value = inventory.FoodId;
                 worksheet.Cell(currentRow, 4).Value = inventory.CategoryName;
                 worksheet.Cell(currentRow, 5).Value = inventory.quantity;
+
+            }
+            // Auto-fit columns after adding data
+            worksheet.Columns().AdjustToContents();
+            return workbook;
+        }
+
+        public static XLWorkbook ExportReport(List<ExportReportDTO> lstReports, XLWorkbook workbook)
+        {
+            var worksheet = workbook.Worksheets.Add("Báo cáo");
+            worksheet.Cell(1, 1).Value = "Bảng Thống Kê";
+            worksheet.Cell(2, 1).Value = "Danh sách báo cáo";
+            var currentRow = 3;
+            worksheet.Cell(currentRow, 1).Value = "Mã báo cáo";
+            worksheet.Cell(currentRow, 1).Value = "Loại báo cáo";
+            worksheet.Cell(currentRow, 2).Value = "Người báo cáo";
+            worksheet.Cell(currentRow, 3).Value = "Người nhận báo cáo";
+            worksheet.Cell(currentRow, 4).Value = "Nội dung";
+            worksheet.Cell(currentRow, 5).Value = "Thời gian tạo";
+            foreach (var report in lstReports)
+            {
+                currentRow++;
+                worksheet.Cell(currentRow, 1).Value = report.Id;
+                worksheet.Cell(currentRow, 2).Value = report.ReportType;
+                worksheet.Cell(currentRow, 3).Value = report.FromEmail;
+                worksheet.Cell(currentRow, 4).Value = report.TargetEmail;
+                worksheet.Cell(currentRow, 5).Value = report.Desciption;
+                worksheet.Cell(currentRow, 6).Value = report.ReportTime;
 
             }
             // Auto-fit columns after adding data

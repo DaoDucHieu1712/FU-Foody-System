@@ -88,6 +88,8 @@ namespace FFS.Application.Controllers
                 {
                     return NotFound();
                 }
+                discountDTO.Id = id;
+                discountDTO.StoreId = discountUpdate.StoreId;
                 _mapper.Map(discountDTO, discountUpdate);
                 await _discountRepository.Update(discountUpdate);
                 return Ok("Sửa thành công");

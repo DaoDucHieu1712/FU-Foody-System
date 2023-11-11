@@ -4,8 +4,8 @@ namespace FFS.Application.DTOs.Food
 {
     public class FoodRatingDTO
     {
-        public string? Email { get; set; }
-        public int? FoodId { get; set; }
+        public string UserId { get; set; }
+        public int FoodId { get; set; }
         public int? Rate { get; set; }
         public string? Content { get; set; }
         public ICollection<ImageCommentDTO>? Images { get; set; }

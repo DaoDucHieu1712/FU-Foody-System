@@ -12,9 +12,6 @@ namespace FFS.Application.Repositories {
         Task<StoreInforDTO> GetDetailStore(int id);
         Task<dynamic> GetCommentByStore(int rate, int id);
         Task<dynamic> GetCommentReply(int id);
-
-
-        
         Task<List<FoodDTO>> GetFoodByCategory(int idShop, int idCategory);
 
     }

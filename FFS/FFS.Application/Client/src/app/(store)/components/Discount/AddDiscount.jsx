@@ -17,7 +17,7 @@ const schema = yup.object({
     percent: yup.number().max(100, "Giá trị tối đa là 100%!").typeError("Hãy nhập phần trăm giảm giá!").positive("Giá trị phải lớn hơn 0").required("Hãy nhập phần trăm giảm giá!"),
     price: yup.number().positive("Giá trị phải lớn hơn 0").typeError("Hãy nhập giá trị đơn hàng tối thiếu!").required("Hãy nhập giá trị đơn hàng tối thiếu!"),
     quantity: yup.number().positive("Giá trị phải lớn hơn 0").typeError("Hãy nhập số lượng!").required("Hãy nhập số lượng!"),
-    date: yup.date().min(new Date(), 'Thời gian hết hạn phải lớn hơn thời gian hiện tại').required("Hãy nhập ngày hết hạn")
+    date: yup.date().typeError("Hãy nhập ngày hết hạn!").min(new Date(), 'Thời gian hết hạn phải lớn hơn thời gian hiện tại').required("Hãy nhập ngày hết hạn")
 });
 
 const AddDiscount = ({ reload, storeId }) => {
@@ -91,7 +91,7 @@ const AddDiscount = ({ reload, storeId }) => {
                         <Input
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             type="number"
-                            label="Phần trăm giảm giá"
+                            label="Phần trăm giảm giá (%)"
                             {...register("percent")}
                         ></Input>
                         {errors.percent && (
@@ -102,7 +102,7 @@ const AddDiscount = ({ reload, storeId }) => {
                         <Input
                             className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight"
                             type="number"
-                            label="Giá trị đơn hàng"
+                            label="Áp dụng giá trị đơn hàng (nghìn VND)"
                             {...register("price")}
                         ></Input>
                         {errors.price && (
