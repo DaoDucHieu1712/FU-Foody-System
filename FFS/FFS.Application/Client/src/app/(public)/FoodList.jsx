@@ -40,7 +40,7 @@ const FoodList = () => {
             axios
                 .get("/api/Category/ListCategoryByStoreId/" + storeId)
                 .then((response) => {
-                    setCategory(response.data.result);
+                    // setCategory(response.data.result);
                     setCategory([{ id: "", categoryName: 'All' }, ...response.data.result]);
                 })
                 .catch((error) => {
@@ -79,18 +79,14 @@ const FoodList = () => {
                 <Typography variant="h6">DANH MỤC</Typography>
                 {category ?
                     category.map((category) => (
-                        <label key={category.id}>
-                            <input
-                                type="radio"
-                                name="category"
-                                value={category.id}
-                                checked={selectedCategory === category.id}
-                                onChange={handleFoodListByCategory}
-                            />
-                            {category.name}
-                        </label>
+                        <Radio
+                            key={category.id}
+                            label={category.categoryName}
+                            checked={selectedCategory === category.id}
+                            onChange={handleFoodListByCategory}
+                        />
                     ))
-                    : <Spinner></Spinner>}
+                : <Spinner></Spinner>}
                 <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
                 <Typography variant="h6">GIÁ CẢ</Typography>
                 <div className="flex gap-2 justify-center items-center">
@@ -111,38 +107,38 @@ const FoodList = () => {
                 </div>
                 <div>
                     <Radio
+                        label="Tất cả"
                         checked={priceRange === 'all'}
                         onChange={() => handlePriceRangeChange('all', 0, 0)}
                     />
-                    <label>Tất cả</label>
                 </div>
                 <div>
                     <Radio
+                        label="Dưới 35.000đ"
                         checked={priceRange === 'range1'}
                         onChange={() => handlePriceRangeChange('range1', 0, 35)}
                     />
-                    <label>Dưới 35.000đ</label>
                 </div>
                 <div>
                     <Radio
+                        label="35.000đ - 50.000đ"
                         checked={priceRange === 'range2'}
                         onChange={() => handlePriceRangeChange('range2', 35, 50)}
                     />
-                    <label>35.000đ - 50.000đ</label>
                 </div>
                 <div>
                     <Radio
+                        label="50.000đ - 100.000đ"
                         checked={priceRange === 'range3'}
                         onChange={() => handlePriceRangeChange('range3', 50, 100)}
                     />
-                    <label>50.000đ - 100.000đ</label>
                 </div>
                 <div>
                     <Radio
+                        label="Trên 100.000đ"
                         checked={priceRange === 'range4'}
                         onChange={() => handlePriceRangeChange('range4', 100, 999)}
                     />
-                    <label>Trên 100.000đ</label>
                 </div>
             </div>
             <div className="w-full">

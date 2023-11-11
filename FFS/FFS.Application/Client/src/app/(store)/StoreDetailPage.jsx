@@ -107,9 +107,11 @@ const StoreDetailPage = () => {
               <div className="flex items-center space-x-10">
                 <span className="text-base">Quán ăn</span>
 
+
                 {uId !== undefined && uId !== null ? (
                   <ReportStore uId={uId} sId={storeData.userId} />
                 ) : null}
+
               </div>
               <Typography variant="h2" className="">
                 {storeData.storeName}
@@ -199,9 +201,8 @@ const StoreDetailPage = () => {
                   <ul>
                     {foodList.map((item, index) => (
                       <li
-                        className={`p-2 ${
-                          backgroundColors[index % backgroundColors.length]
-                        }`}
+                        className={`p-2 ${backgroundColors[index % backgroundColors.length]
+                          }`}
                         key={item.id}
                       >
                         <div className="border-collapse grid grid-cols-6 gap-5">
