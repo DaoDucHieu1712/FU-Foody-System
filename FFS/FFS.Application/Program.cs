@@ -38,6 +38,8 @@ var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").B
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
  options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddSingleton<DapperContext>();
+
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -101,7 +103,7 @@ builder.Services.AddTransient<IOrderDetailRepository, OrderDetailRepository>();
 builder.Services.AddTransient<IWishlistRepository, WishlistRepository>();
 builder.Services.AddTransient<IDiscountRepository, DiscountRepository>();
 builder.Services.AddTransient<IReactPostRepository, ReactPostRepository>();
-
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 
 #endregion

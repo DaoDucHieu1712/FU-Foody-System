@@ -3,18 +3,45 @@ using DocumentFormat.OpenXml.Office2010.Excel;
 using FFS.Application.Data;
 using FFS.Application.DTOs.Report;
 using FFS.Application.DTOs.Store;
+using Dapper;
+using System.Data;
+
+using FFS.Application.Data;
+using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Entities.Enum;
 using FFS.Application.Helper;
 using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace FFS.Application.Repositories.Impls
-{
-    public class ReportRepository : EntityRepository<Report, int>, IReportRepository
-    {
+using Org.BouncyCastle.Pqc.Crypto.Frodo;
+
+namespace FFS.Application.Repositories.Impls {
+    public class ReportRepository : EntityRepository<Report, int>, IReportRepository {
         public ReportRepository(ApplicationDbContext context) : base(context)
         {
+        }
+
+        public int CountGetReports(ReportParameters reportParameters)
+        {
+            try
+            {
+                dynamic returnData = null;
+                var parameters = new DynamicParameters();
+                //parameters.Add("userId", reportParameters.uId);
+                parameters.Add("usernameReport", reportParameters.UsernameReport);
+                parameters.Add("description", reportParameters.Description);
+
+                using var db = _context.Database.GetDbConnection();
+
+                returnData = db.QuerySingle<int>("CountGetReports", parameters, commandType: CommandType.StoredProcedure);
+
+                return returnData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task CreateReport(Report report)
@@ -55,7 +82,6 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
-
         string GetReportTypeString(ReportType reportType)
         {
             switch (reportType)
@@ -70,5 +96,31 @@ namespace FFS.Application.Repositories.Impls
                     return "Unknown"; // Handle unexpected values if necessary
             }
         }
+
+
+        public IEnumerable<dynamic> GetReports(ReportParameters reportParameters)
+        {
+            try
+            {
+                dynamic returnData = null;
+                var parameters = new DynamicParameters();
+                //parameters.Add("userId", reportParameters.uId);
+                parameters.Add("usernameReport", reportParameters.UsernameReport);
+                parameters.Add("description", reportParameters.Description);
+                parameters.Add("pageNumber", reportParameters.PageNumber);
+                parameters.Add("pageSize", reportParameters.PageSize);
+
+                using var db = _context.Database.GetDbConnection();
+
+                returnData = db.Query<dynamic>("GetReports", parameters, commandType: CommandType.StoredProcedure);
+                db.Close();
+                return returnData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
     }
 }
