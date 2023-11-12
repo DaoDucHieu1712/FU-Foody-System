@@ -7,7 +7,6 @@ namespace FFS.Application.Repositories {
         IEnumerable<dynamic> GetUsers(UserParameters userParameters);
         int CountGetUsers(UserParameters userParameters);
         IEnumerable<dynamic> GetRoles();
-
-
+        Task<byte[]> ExportUser();
     }
 }

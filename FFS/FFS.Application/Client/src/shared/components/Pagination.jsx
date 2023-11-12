@@ -29,7 +29,7 @@ const Pagination = ({ totalPage, handleClick, currentPage }) => {
         onClick={prev}
         disabled={currentPage == 1}
       >
-        <ArrowLeft strokeWidth={2} className="h-4 w-4" /> Previous
+        <ArrowLeft strokeWidth={2} className="h-4 w-4" /> 
       </Button>
       <div className="flex items-center gap-2">
         {pageNumbers.map((page) => (
@@ -49,7 +49,6 @@ const Pagination = ({ totalPage, handleClick, currentPage }) => {
         onClick={next}
         disabled={currentPage == totalPage}
       >
-        Next
         <ArrowRight strokeWidth={2} className="h-4 w-4" />
       </Button>
     </div>

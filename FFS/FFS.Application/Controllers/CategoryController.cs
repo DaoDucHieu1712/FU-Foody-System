@@ -76,5 +76,20 @@ namespace FFS.Application.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ListTop5PopularCategory()
+        {
+            try
+            {
+                var categories = await _categoryRepository.Top5PopularCategories();
+                var categoriesDTO = _mapper.Map<List<CategoryPopularDTO>>(categories);
+                return Ok(categoriesDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

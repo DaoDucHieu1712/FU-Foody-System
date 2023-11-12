@@ -6,14 +6,23 @@ using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using ClosedXML.Excel;
+using FFS.Application.DTOs.Report;
+using FFS.Application.Helper;
+using FFS.Application.Entities.Constant;
+using System.Drawing;
+using FFS.Application.DTOs.User;
+using DocumentFormat.OpenXml.Spreadsheet;
 
-namespace FFS.Application.Repositories.Impls {
-    public class UserRepository : IUserRepository {
+namespace FFS.Application.Repositories.Impls
+{
+    public class UserRepository : IUserRepository
+    {
 
-         private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly DapperContext _dapperContext;
 
-        
+
         public UserRepository(ApplicationDbContext context, DapperContext dapperContext)
         {
             _context = context;
@@ -36,6 +45,57 @@ namespace FFS.Application.Repositories.Impls {
                 returnData = db.QuerySingle<int>("CountGetUsers", parameters, commandType: CommandType.StoredProcedure);
                 db.Close();
                 return returnData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<byte[]> ExportUser()
+        {
+            try
+            {
+                var usersWithRoles = await _context.Users
+    .Join(
+        _context.UserRoles,
+        user => user.Id,
+        userRole => userRole.UserId,
+        (user, userRole) => new
+        {
+            User = user,
+            RoleId = userRole.RoleId
+        }
+    ).Join(_context.Roles,
+        user => user.RoleId,
+        role => role.Id,
+        (user, role) => new
+        {
+             User = user, RoleName = role.Name
+        }
+    )
+    .ToListAsync();
+
+                var Users = usersWithRoles
+                    .Select((item, index) => new UserExportDTO
+                    {
+                        Number = index + 1,
+                        Username = item.User.User.UserName,
+                        Email = item.User.User.Email,
+                        Role = item.RoleName
+                    })
+                    .ToList();
+                using (var workbook = new XLWorkbook())
+                {
+                    ExcelConfiguration.ExportUser(Users, workbook);
+
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+                        var content = stream.ToArray();
+                        return await Task.FromResult(stream.ToArray());
+                    }
+                }
             }
             catch (Exception ex)
             {
