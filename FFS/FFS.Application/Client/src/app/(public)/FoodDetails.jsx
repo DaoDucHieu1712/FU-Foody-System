@@ -23,7 +23,7 @@ const FoodDetails = () => {
   const [categoryId, setCategoryId] = useState(0);
   const [openComment, setOpenComment] = useState(false);
   const [api1Completed, setApi1Completed] = useState(false);
-  
+
 
   const increaseValue = () => {
     setValue(value + 1);
@@ -61,9 +61,7 @@ const FoodDetails = () => {
       await axios
         .get(`/api/Food/GetFoodByCategoryid/${categoryId}`)
         .then((response) => {
-          console.log(`response: ${response}`);
           setFoodList(response);
-          console.log(`foodList: ${foodList}`);
         })
         .catch((error) => {
           console.log(error);
@@ -75,16 +73,16 @@ const FoodDetails = () => {
 
   const addToWishlist = async () => {
     try {
-      
+
       const userId = CookieService.getToken("fu_foody_id");
       const foodId = id;
 
       await axios.post(`/api/Wishlist/AddToWishlist?userId=${userId}&foodId=${foodId}`)
-      .then((response) => {
-        toast.success("Thêm vào wishlist thành công !")
-      }).catch((error) => {
-        toast.error("Món ăn này đã có trong wishlist");
-      });
+        .then(() => {
+          toast.success("Thêm vào wishlist thành công !")
+        }).catch(() => {
+          toast.error("Món ăn này đã có trong wishlist");
+        });
 
     } catch (error) {
       console.error("An error occurred while adding to the wishlist: ", error);
@@ -118,9 +116,9 @@ const FoodDetails = () => {
               />
             </div>
             <div className="content-food">
-              <div className="flex items-center gap-2 font-bold">
-                <Rating value={2} readonly />
-                <Typography className="font-semibold">4.7 Sao</Typography>
+              <div className="flex items-center gap-2 font-bold pointer-events-none">
+                <Rating value={Math.round(foodData.rateAverage)} readonly />
+                <Typography className="font-semibold">{foodData.rateAverage} Sao</Typography>
               </div>
               <div className="food-name mx-1">
                 <Typography variant="h2">{foodData.foodName}</Typography>
@@ -128,7 +126,7 @@ const FoodDetails = () => {
                   Phân loại: {foodData.category.categoryName}
                 </p>
                 <p className="flex gap-1 text-base">
-                  Tình trạng:{" "}
+                  Tình trạng: {}
                   <p className="text-green-800 font-bold">còn hàng</p>
                   <p className="text-red-800 font-bold">hết hàng</p>
                 </p>
@@ -213,7 +211,6 @@ const FoodDetails = () => {
                       type="button"
                       className="flex items-center space-x-2  text-dark  font-medium text-sm w-full px-5 py-2.5 text-center"
                     >
-                     
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"

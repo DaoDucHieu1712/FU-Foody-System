@@ -31,7 +31,7 @@ const Food = () => {
   const [storeId, setStoreId] = useState(0);
   const uId = CookieService.getToken("fu_foody_id");
 
-  
+
 
   const GetStoreByUid = async () => {
     try {
