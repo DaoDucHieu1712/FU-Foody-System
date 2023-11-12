@@ -92,5 +92,35 @@ namespace FFS.Application.Controllers {
                 throw;
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> ExportReport()
+        {
+            try
+            {
+                var data = await _reportRepository.ExportReport();
+                string uniqueFileName = "ThongKe_BaoCao_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+
+                return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", uniqueFileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ExportUser()
+        {
+            try
+            {
+                var data = await _userRepository.ExportUser();
+                string uniqueFileName = "ThongKe_NguoiDung_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+
+                return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", uniqueFileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

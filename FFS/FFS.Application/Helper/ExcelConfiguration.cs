@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using FFS.Application.DTOs.Report;
 using FFS.Application.DTOs.Store;
+using FFS.Application.DTOs.User;
 
 namespace FFS.Application.Helper
 {
@@ -12,11 +13,11 @@ namespace FFS.Application.Helper
             worksheet.Cell(1, 1).Value = "Bảng Thống Kê";
             worksheet.Cell(2, 1).Value = "Danh sách món ăn";
             var currentRow = 3;
-            worksheet.Cell(currentRow, 1).Value = "Mã món ăn";
-            worksheet.Cell(currentRow, 2).Value = "Tên món";
-            worksheet.Cell(currentRow, 3).Value = "Mô tả";
-            worksheet.Cell(currentRow, 4).Value = "Giá";
-            worksheet.Cell(currentRow, 5).Value = "Loại món ăn";
+            worksheet.Cell(currentRow, 1).Value = "MÃ MÓN ĂN";
+            worksheet.Cell(currentRow, 2).Value = "TÊN MÓN";
+            worksheet.Cell(currentRow, 3).Value = "MÔ TẢ";
+            worksheet.Cell(currentRow, 4).Value = "GIÁ";
+            worksheet.Cell(currentRow, 5).Value = "LOẠI MÓN ĂN";
             foreach (var Food in listFoods)
             {
                 currentRow++;
@@ -37,11 +38,11 @@ namespace FFS.Application.Helper
             worksheet.Cell(1, 1).Value = "Bảng Thống Kê";
             worksheet.Cell(2, 1).Value = "Danh sách món ăn trong kho";
             var currentRow = 3;
-            worksheet.Cell(currentRow, 1).Value = "Mã kho";
-            worksheet.Cell(currentRow, 2).Value = "Tên món ăn";
-            worksheet.Cell(currentRow, 3).Value = "Mã món ăn";
-            worksheet.Cell(currentRow, 4).Value = "Loại món ăn";
-            worksheet.Cell(currentRow, 5).Value = "Số lượng trong kho";
+            worksheet.Cell(currentRow, 1).Value = "MÃ KHO";
+            worksheet.Cell(currentRow, 2).Value = "TÊN MÓN ĂN";
+            worksheet.Cell(currentRow, 3).Value = "MÃ MÓN ĂN";
+            worksheet.Cell(currentRow, 4).Value = "LOẠI MÓN ĂN";
+            worksheet.Cell(currentRow, 5).Value = "SỐ LƯỢNG TRONG KHO";
             foreach (var inventory in listInventories)
             {
                 currentRow++;
@@ -63,12 +64,12 @@ namespace FFS.Application.Helper
             worksheet.Cell(1, 1).Value = "Bảng Thống Kê";
             worksheet.Cell(2, 1).Value = "Danh sách báo cáo";
             var currentRow = 3;
-            worksheet.Cell(currentRow, 1).Value = "Mã báo cáo";
-            worksheet.Cell(currentRow, 1).Value = "Loại báo cáo";
-            worksheet.Cell(currentRow, 2).Value = "Người báo cáo";
-            worksheet.Cell(currentRow, 3).Value = "Người nhận báo cáo";
-            worksheet.Cell(currentRow, 4).Value = "Nội dung";
-            worksheet.Cell(currentRow, 5).Value = "Thời gian tạo";
+            worksheet.Cell(currentRow, 1).Value = "MÃ BÁO CÁO";
+            worksheet.Cell(currentRow, 2).Value = "LOẠI BÁO CÁO";
+            worksheet.Cell(currentRow, 3).Value = "NGƯỜI BÁO CÁO";
+            worksheet.Cell(currentRow, 4).Value = "NGƯỜI NHẬN BÁO CÁO";
+            worksheet.Cell(currentRow, 5).Value = "NỘI DUNG";
+            worksheet.Cell(currentRow, 6).Value = "THỜI GIAN TẠO";
             foreach (var report in lstReports)
             {
                 currentRow++;
@@ -79,6 +80,28 @@ namespace FFS.Application.Helper
                 worksheet.Cell(currentRow, 5).Value = report.Desciption;
                 worksheet.Cell(currentRow, 6).Value = report.ReportTime;
 
+            }
+            // Auto-fit columns after adding data
+            worksheet.Columns().AdjustToContents();
+            return workbook;
+        }
+        public static XLWorkbook ExportUser(List<UserExportDTO> lstUsers, XLWorkbook workbook)
+        {
+            var worksheet = workbook.Worksheets.Add("Người dùng");
+            worksheet.Cell(1, 1).Value = "Bảng Thống Kê";
+            worksheet.Cell(2, 1).Value = "Danh sách người dùng";
+            var currentRow = 3;
+            worksheet.Cell(currentRow, 1).Value = "STT";
+            worksheet.Cell(currentRow, 2).Value = "USERNAME";
+            worksheet.Cell(currentRow, 3).Value = "EMAIL";
+            worksheet.Cell(currentRow, 4).Value = "ROLE";
+            foreach (var user in lstUsers)
+            {
+                currentRow++;
+                worksheet.Cell(currentRow, 1).Value = user.Number;
+                worksheet.Cell(currentRow, 2).Value = user.Username;
+                worksheet.Cell(currentRow, 3).Value = user.Email;
+                worksheet.Cell(currentRow, 4).Value = user.Role;
             }
             // Auto-fit columns after adding data
             worksheet.Columns().AdjustToContents();

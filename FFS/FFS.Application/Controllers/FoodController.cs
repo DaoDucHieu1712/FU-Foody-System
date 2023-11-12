@@ -54,8 +54,12 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var foods = _foodRepo.FindSingle(x => x.Id == id, x => x.Category);
-                return Ok(new { data = foods });
+                var food = _foodRepo.GetFoodById(id);
+                if(food == null)
+                {
+                    return NotFound();
+                }
+                return Ok(new { data = food });
             }
             catch (Exception ex)
             {
