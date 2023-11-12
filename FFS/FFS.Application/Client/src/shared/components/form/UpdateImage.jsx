@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import propTypes from "prop-types";
 
+
 const UpdateImage = ({ onChange, name, url }) => {
   const [imageURL, setImageURL] = useState(url);
   const handleUploadImage = async (e) => {
@@ -32,8 +33,13 @@ const UpdateImage = ({ onChange, name, url }) => {
   };
   return (
     <>
-      <label className="flex flex-col items-center justify-center w-full cursor-pointer border boder-gray-200 border-dashed rounded-lg mb-3">
-        <img src={imageURL} alt="anh upload" className="object-cover" />
+      <label className="flex flex-col items-center justify-center w-full cursor-pointer border boder-gray-200 border-dashed rounded-lg px-0 py-6">
+      <img
+      className="h-40 w-40 rounded-full object-cover object-center"
+      src={imageURL}
+      alt="anh upload"
+    />
+        {/* <img src={imageURL} alt="anh upload" className="object-cover"/> */}
         <input type="file" onChange={handleUploadImage} hidden />
         <span className="p-2 border border-gray-700 mt-5">Thay ảnh</span>
       </label>
