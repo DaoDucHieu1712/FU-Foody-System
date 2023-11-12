@@ -5,10 +5,11 @@ import { useDispatch } from "react-redux";
 import { setAccessToken } from "../../redux/auth";
 import CookieService from "../../shared/helper/cookieConfig";
 import axios from "../../shared/api/axiosConfig";
-
+import { useSelector } from "react-redux";
 
 const UserNav = () => {
-  const [userInfo, setUserInfo] = useState(null);
+  const userInfo = useSelector((state) => state.auth.userProfile);
+  console.log("userinfor", userInfo);
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipRef = useRef(null);
   const navigate = useNavigate();
@@ -33,23 +34,10 @@ const UserNav = () => {
 
     //Skien nhap chuột vào cửa sổ
     window.addEventListener("click", handleClickOutside);
-
-    const fetchUserInfo = async () => {
-      try {
-        const response = await axios.get("/api/Authenticate/GetCurrentUser");
-        setUserInfo(response);
-        console.log(response);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserInfo();
-  }, []);
+  });
   const handleProfileClick = () => {
-    navigate("/profile", { state: { userInfo } });
+    navigate("/profile");
   };
-
 
   //css
   // Inline styles for the tooltip and triangle
@@ -104,7 +92,7 @@ const UserNav = () => {
               <div>
                 {userInfo.firstName} {userInfo.lastName}
               </div>
-              <div class="font-medium truncate">{userInfo.email}</div>
+              <div className="font-medium truncate">{userInfo.email}</div>
             </div>
             <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
               <li>
@@ -126,7 +114,6 @@ const UserNav = () => {
               <li>
                 <a
                   onClick={handleLogout}
-                  
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
                 >
                   Đăng Xuất

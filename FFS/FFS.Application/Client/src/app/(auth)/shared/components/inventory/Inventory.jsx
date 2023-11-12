@@ -21,6 +21,7 @@ import {
 import FormatDateString from "../../../../../shared/components/format/FormatDate";
 import ArrowRight from "../../../../../shared/components/icon/ArrowRight";
 import ArrowLeft from "../../../../../shared/components/icon/ArrowLeft";
+import CookieService from "../../../../../shared/helper/cookieConfig";
 
 const TABS = [
   {
@@ -47,11 +48,12 @@ const TABLE_HEAD = [
 ];
 
 
+const uId = CookieService.getToken("fu_foody_id");
 
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
   const [foodNameFilter, setFoodNameFilter] = useState("");
-  const [storeID] = useState(1); // Set the storeID to 1
+  const [storeID, setStoreID] = useState(1); // Set the storeID to 1
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(4);
   const [totalPages, setTotalPages] = useState(1);
@@ -61,7 +63,7 @@ const Inventory = () => {
     variant: active === index ? "filled" : "text",
     onClick: () => {
       setActive(index);
-      setPageNumber(index); 
+      setPageNumber(index);
     },
     className: `rounded-full ${active === index ? "bg-primary" : ""}`,
   });
@@ -76,15 +78,15 @@ const Inventory = () => {
   const prev = () => {
     if (active > 1) {
       setActive(active - 1);
-      setPageNumber(pageNumber - 1); 
+      setPageNumber(pageNumber - 1);
     }
   };
   const handleExportExcel = () => {
     const fileDownloadUrl = `https://localhost:7025/api/Store/ExportInventory/exportinventory?id=${storeID}`;
-  
+
     window.location.href = fileDownloadUrl;
   };
-  
+
   const fetchInventory = async () => {
     try {
       const response = await axios.get("/api/Inventory/GetInventories", {
@@ -102,9 +104,28 @@ const Inventory = () => {
     }
   };
 
+  const GetStoreByUid = async () => {
+    try {
+      await axios
+        .get(`/api/Store/GetStoreByUid?uId=${uId}`)
+        .then((response) => {
+          setStoreID(response.id);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log("Get Store By Uid error: " + error);
+    }
+  };
+
   useEffect(() => {
     fetchInventory();
   }, [storeID, foodNameFilter, pageNumber, pageSize]);
+
+  useEffect(() => {
+    GetStoreByUid();
+  }, []);
 
   const reloadInventory = async () => {
     await fetchInventory();
@@ -117,7 +138,7 @@ const Inventory = () => {
           <p className="px-5 mx-5 mt-2 font-bold text-lg pointer-events-none">
             Tồn kho
           </p>
-          <AddInventory reloadInventory={reloadInventory}></AddInventory>
+          <AddInventory storeId={storeID} reloadInventory={reloadInventory}></AddInventory>
         </div>
 
         <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
@@ -143,122 +164,122 @@ const Inventory = () => {
           </div>
         </CardHeader>
         <CardBody className="p-0 mt-3">
-          
-            <table className="mt-4 w-full min-w-max table-auto text-left">
-              <thead>
-                <tr>
-                  {TABLE_HEAD.map((head) => (
-                    <th
-                      key={head}
-                      className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+
+          <table className="mt-4 w-full min-w-max table-auto text-left">
+            <thead>
+              <tr>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+                  >
+                    <Typography
+                      variant="small"
+                      color="black"
+                      className="font-normal leading-none opacity-70"
                     >
-                      <Typography
-                        variant="small"
-                        color="black"
-                        className="font-normal leading-none opacity-70"
-                      >
-                        {head}
-                      </Typography>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {inventory.map(
-                  (
-                    {
-                      id,
-                      foodId,
-                      imageURL,
-                      foodName,
-                      quantity,
-                      createdAt,
-                      updatedAt,
-                      categoryName,
-                    },
-                    index
-                  ) => {
-                    const isLast = index === inventory.length - 1;
-                    const classes = isLast
-                      ? "p-4"
-                      : "p-4 border-b border-blue-gray-50";
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {inventory.map(
+                (
+                  {
+                    id,
+                    foodId,
+                    imageURL,
+                    foodName,
+                    quantity,
+                    createdAt,
+                    updatedAt,
+                    categoryName,
+                  },
+                  index
+                ) => {
+                  const isLast = index === inventory.length - 1;
+                  const classes = isLast
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
 
-                    return (
-                      <tr key={id}>
-                        <td className={classes}>
-                          <div className="flex items-center gap-3">
-                            <img
-                              className="h-20 w-20 object-cover object-center"
-                              src={imageURL}
-                              alt="nature image"
-                            />
-                          </div>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {foodName}
-                          </Typography>
-                        </td>
+                  return (
+                    <tr key={id}>
+                      <td className={classes}>
+                        <div className="flex items-center gap-3">
+                          <img
+                            className="h-20 w-20 object-cover object-center"
+                            src={imageURL}
+                            alt="nature image"
+                          />
+                        </div>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {foodName}
+                        </Typography>
+                      </td>
 
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {FormatDateString(createdAt)}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {FormatDateString(updatedAt)}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {categoryName}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {quantity}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <UpdateInventory
-                            foodId={foodId}
-                            foodName={foodName}
-                            quantity={quantity}
-                            reloadInventory={reloadInventory}
-                          />
-                          <DeleteInventory
-                            inventoryId={id}
-                            reloadInventory={reloadInventory}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  }
-                )}
-              </tbody>
-            </table>
-        
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {FormatDateString(createdAt)}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {FormatDateString(updatedAt)}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {categoryName}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {quantity}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <UpdateInventory
+                          foodId={foodId}
+                          foodName={foodName}
+                          quantity={quantity}
+                          reloadInventory={reloadInventory}
+                        />
+                        <DeleteInventory
+                          inventoryId={id}
+                          reloadInventory={reloadInventory}
+                        />
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
+            </tbody>
+          </table>
+
         </CardBody>
 
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
