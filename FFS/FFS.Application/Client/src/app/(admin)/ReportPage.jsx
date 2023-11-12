@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Pagination from "../../shared/components/Pagination";
-import { Input } from "@material-tailwind/react";
+import { Input, Typography, Button } from "@material-tailwind/react";
 import axios from "../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 const ReportPage = () => {
@@ -10,6 +10,12 @@ const ReportPage = () => {
     description: "",
     usernameReport: "",
   });
+
+  const handleExportExcel = () => {
+    const fileDownloadUrl = `https://localhost:7025/api/Admin/ExportReport`;
+
+    window.location.href = fileDownloadUrl;
+  };
 
   const [reportList, setReportList] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
@@ -68,6 +74,20 @@ const ReportPage = () => {
   return (
     <>
       <div className="relative overflow-x-auto">
+        <div className="mb-4 flex flex-col gap-8 md:flex-row md:items-center">
+          <Typography variant="h4" color="blue-gray">
+            Danh sách báo cáo
+          </Typography>
+          <div className="flex gap-5">
+            <Button
+              className=" text-white text-center font-bold bg-primary cursor-pointer hover:bg-orange-900"
+              onClick={handleExportExcel}
+            >
+              Xuất Excel
+            </Button>
+          </div>
+        </div>
+
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>

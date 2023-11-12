@@ -10,5 +10,7 @@ namespace FFS.Application.Infrastructure.Interfaces
         dynamic GetFoods(FoodParameters foodParameters);
 
         PagedList<Food> GetAllFoods(AllFoodParameters allFoodParameters);
+
+        Task<Food> GetFoodById(int id);
     }
 }
