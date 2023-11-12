@@ -17,10 +17,11 @@ using Org.BouncyCastle.Asn1.Ocsp;
 using Microsoft.EntityFrameworkCore;
 using FFS.Application.Entities.Constant;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace FFS.Application.Repositories.Impls
 {
-    public class AuthRepository : IAuthRepository
+    public class AuthRepository :  IAuthRepository
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -309,6 +310,9 @@ namespace FFS.Application.Repositories.Impls
                 _user.FirstName = userCommandDTO.FirstName;
                 _user.LastName = userCommandDTO.LastName;
                 _user.Gender = userCommandDTO.Gender;
+                _user.Avatar = userCommandDTO.Avatar;
+                _context.Entry(_user).State = EntityState.Modified;
+                await _userManager.UpdateAsync(_user);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

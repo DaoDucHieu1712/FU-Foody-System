@@ -27,6 +27,7 @@ const Layout = () => {
   //   setUsername(email);
   // });
   const accesstoken = useSelector(state => state.auth.accessToken);
+  console.log("Layout",accesstoken)
 
   return (
     <>

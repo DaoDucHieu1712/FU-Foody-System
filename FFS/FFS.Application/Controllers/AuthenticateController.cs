@@ -300,7 +300,7 @@ namespace FFS.Application.Controllers
             try
             {
                 await _authRepository.ProfileEdit(email, userCommandDTO);
-                return NoContent();
+                return Ok("update thanh cong");
             }
             catch (Exception ex)
             {
