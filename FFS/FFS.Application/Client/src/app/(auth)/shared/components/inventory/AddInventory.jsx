@@ -27,11 +27,10 @@ const schema = yup.object({
     .typeError("Hãy nhập số lượng !"),
 });
 
-const AddInventory = ({ reloadInventory }) => {
+const AddInventory = ({ storeId, reloadInventory }) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(!open);
   const [foodList, setFoodList] = useState([]);
-
   const {
     control, // Use control from react-hook-form
     handleSubmit,
@@ -41,8 +40,6 @@ const AddInventory = ({ reloadInventory }) => {
   });
 
   useEffect(() => {
-    // Fetch the list of food items by StoreId when the component is mounted
-    const storeId = 1; // Replace with the actual StoreId
     axios
       .get(`/api/Food/GetFoodByStoreId/${storeId}`)
       .then((response) => {
@@ -55,8 +52,6 @@ const AddInventory = ({ reloadInventory }) => {
 
   const onSubmit = async (data) => {
     try {
-      // Check if the selected food item already exists in the inventory
-      const storeId = 1; // Replace with the actual StoreId
       const response = await axios.get(
         `/api/Inventory/CheckExistingInventory/${storeId}/${data.selectedFood}`
       );
@@ -166,6 +161,7 @@ const AddInventory = ({ reloadInventory }) => {
 
 AddInventory.propTypes = {
   reloadInventory: propTypes.any.isRequired,
+  storeId: propTypes.any.isRequired,
 };
 
 export default AddInventory;

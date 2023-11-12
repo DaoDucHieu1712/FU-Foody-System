@@ -107,10 +107,7 @@ const StoreDetailPage = () => {
               <div className="flex items-center space-x-10">
                 <span className="text-base">Quán ăn</span>
 
-
-                {uId !== undefined && uId !== null ? (
-                  <ReportStore uId={uId} sId={storeData.userId} />
-                ) : null}
+                <ReportStore uId={uId} sId={storeData.userId} />
 
               </div>
               <Typography variant="h2" className="">
