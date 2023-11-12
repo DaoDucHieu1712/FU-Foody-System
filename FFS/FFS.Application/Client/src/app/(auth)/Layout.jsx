@@ -8,6 +8,9 @@ import StoreTag from "../../shared/components/store/StoreTag";
 import Notification from "./Notification";
 import { useSelector } from "react-redux";
 import UserNav from "./UserNav";
+import { useDispatch } from "react-redux";
+import { cartActions } from "./shared/cartSlice";
+
 
 export function LazyLoadComponent({ children }) {
   return (
@@ -17,15 +20,9 @@ export function LazyLoadComponent({ children }) {
   );
 }
 
-// const cookies = new Cookies();
 
 const Layout = () => {
-  // const [username, setUsername] = useState();
-
-  // useEffect(() => {
-  //   var email = cookies.get("fu_foody_email");
-  //   setUsername(email);
-  // });
+  
   const accesstoken = useSelector(state => state.auth.accessToken);
   console.log("Layout",accesstoken)
 

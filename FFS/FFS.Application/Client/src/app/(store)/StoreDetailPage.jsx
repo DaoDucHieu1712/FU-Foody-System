@@ -4,18 +4,35 @@ import { useEffect, useState } from "react";
 import { Button, Input, Spinner, Typography } from "@material-tailwind/react";
 import ReportStore from "../(public)/components/ReportStore";
 import Cookies from "universal-cookie";
+import { useDispatch } from "react-redux";
+import { cartActions } from "../(auth)/shared/cartSlice";
 
 const cookies = new Cookies();
 const uId = cookies.get("fu_foody_id");
 console.log("uid = ", uId);
-
+const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 
 const StoreDetailPage = () => {
   const { id } = useParams();
-  const backgroundColors = ["bg-gray-50", "bg-gray-200"];
   const [storeData, setStoreData] = useState(null);
   const [foodList, setFoodList] = useState([]);
   const [searchFood, setSearchFood] = useState("");
+
+  const dispatch = useDispatch();
+
+  const handleAddToCart = (cartItem) => {
+    console.log(cartItem);
+    console.log("ok");
+    const item = {
+      foodId: cartItem.id,
+      foodName: cartItem.foodName,
+      storeId: id,
+      img: cartItem.imageURL,
+      price: cartItem.price,
+      quantity: 1,
+    };
+    dispatch(cartActions.addToCart(item));
+  };
 
   const GetStoreInformation = async () => {
     try {
@@ -32,6 +49,7 @@ const StoreDetailPage = () => {
       console.error("An error occurred", error);
     }
   };
+
   useEffect(() => {
     GetStoreInformation();
   }, [id]);
@@ -72,6 +90,7 @@ const StoreDetailPage = () => {
   const handleViewComment = () => {
     window.location = `/store/comment/${id}`;
   };
+
   return (
     <>
       {storeData ? (
@@ -87,12 +106,16 @@ const StoreDetailPage = () => {
             <div className="col-span-3 flex flex-col gap-1">
               <div className="flex items-center space-x-10">
                 <span className="text-base">Quán ăn</span>
-               
-                {(uId !== undefined && uId !== null) ? <ReportStore uId={uId} sId={storeData.userId} /> : null}
+
+
+                {uId !== undefined && uId !== null ? (
+                  <ReportStore uId={uId} sId={storeData.userId} />
+                ) : null}
+
               </div>
               <Typography variant="h2" className="">
-                  {storeData.storeName}
-                </Typography>
+                {storeData.storeName}
+              </Typography>
               <span className="text-base">
                 <i className="fas fa-map mr-1"></i>
                 {storeData.address}
@@ -178,9 +201,8 @@ const StoreDetailPage = () => {
                   <ul>
                     {foodList.map((item, index) => (
                       <li
-                        className={`p-2 ${
-                          backgroundColors[index % backgroundColors.length]
-                        }`}
+                        className={`p-2 ${backgroundColors[index % backgroundColors.length]
+                          }`}
                         key={item.id}
                       >
                         <div className="border-collapse grid grid-cols-6 gap-5">
@@ -203,35 +225,17 @@ const StoreDetailPage = () => {
                               variant="paragraph"
                               className="relative w-fit"
                             >
-                              {item.price},000
+                              {item.price}
                               <span className="absolute font-normal top-0 -right-2 text-xs">
                                 đ
                               </span>
                             </Typography>
-                            <Button size="sm" className="bg-primary">
-                              <svg
-                                width="30"
-                                height="2.5em"
-                                viewBox="0 0 30 40"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M10 35C11.1046 35 12 34.1046 12 33C12 31.8954 11.1046 31 10 31C8.89543 31 8 31.8954 8 33C8 34.1046 8.89543 35 10 35Z"
-                                  fill="white"
-                                />
-                                <path
-                                  d="M23 35C24.1046 35 25 34.1046 25 33C25 31.8954 24.1046 31 23 31C21.8954 31 21 31.8954 21 33C21 34.1046 21.8954 35 23 35Z"
-                                  fill="white"
-                                />
-                                <path
-                                  d="M5.2875 15H27.7125L24.4125 26.55C24.2948 26.9692 24.0426 27.3381 23.6948 27.6001C23.3471 27.862 22.9229 28.0025 22.4875 28H10.5125C10.0771 28.0025 9.65293 27.862 9.30515 27.6001C8.95738 27.3381 8.70524 26.9692 8.5875 26.55L4.0625 10.725C4.0027 10.5159 3.8764 10.3321 3.70271 10.2012C3.52903 10.0704 3.31744 9.99977 3.1 10H1"
-                                  stroke="white"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
+                            <Button
+                              size="sm"
+                              className="bg-primary"
+                              onClick={handleAddToCart(item)}
+                            >
+                              Add to cart
                             </Button>
                           </div>
                         </div>

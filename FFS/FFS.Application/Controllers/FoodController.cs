@@ -22,16 +22,18 @@ namespace FFS.Application.Controllers
         private readonly IFoodRepository _foodRepo;
         private readonly IComboRepository _comboRepository;
         private readonly ICommentRepository _commentRepository;
+        private readonly IWishlistRepository _wishlistRepository;
         private readonly IMapper _mapper;
 
-        public FoodController(IFoodRepository foodRepo, IComboRepository comboRepository, ICommentRepository commentRepository, IMapper mapper)
+        public FoodController(IFoodRepository foodRepo, IComboRepository comboRepository, ICommentRepository commentRepository, IWishlistRepository wishlistRepository, IMapper mapper)
         {
             _foodRepo = foodRepo;
             _comboRepository = comboRepository;
             _commentRepository = commentRepository;
+            _wishlistRepository = wishlistRepository;
             _mapper = mapper;
         }
-        
+
         [HttpPost]
         public IActionResult ListFood([FromBody] FoodParameters foodParameters)
         {
@@ -257,13 +259,51 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                await _commentRepository.CreateComment(_mapper.Map<Comment>(foodRatingDTO));
+                var wishlistByEmail = await _wishlistRepository.GetList(w => w.UserId == foodRatingDTO.UserId && w.FoodId == foodRatingDTO.FoodId);
+                var checkExist = wishlistByEmail.Count() == 0 ? true : false;
+                if (foodRatingDTO.Rate == 5 &&  checkExist == true)
+                {
+                    await _wishlistRepository.AddToWishlist(foodRatingDTO.UserId, foodRatingDTO.FoodId);
+                }
+                await _commentRepository.RatingFood(_mapper.Map<Comment>(foodRatingDTO));
                 return Ok();
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
+        }
+        [HttpGet]
+        public IActionResult ListAllFood([FromQuery] AllFoodParameters allFoodParameters)
+        {
+            try
+            {
+                var foods = _foodRepo.GetAllFoods(allFoodParameters);
+
+                var metadata = new
+                {
+                    foods.TotalCount,
+                    foods.PageSize,
+                    foods.CurrentPage,
+                    foods.TotalPages,
+                    foods.HasNext,
+                    foods.HasPrevious
+                };
+
+                var foodDTOs = _mapper.Map<List<AllFoodDTO>>(foods);
+
+                return Ok(
+                new
+                {
+                    foodDTOs,
+                    metadata
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
     }

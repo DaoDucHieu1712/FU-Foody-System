@@ -16,7 +16,7 @@ const StoreLayout = () => {
     setEmail(cookies.get("fu_foody_email"));
   }, []);
   return (
-    <div className="">
+    <div className="flex">
       <div className="p-3 flex flex-col gap-y-12 h-[100vh] shadow-md w-[20vw] bg-primary">
         <div className="flex items-center justify-center border-b pb-8 border-gray-300">
           <a href="/store/manager" className="logo">
@@ -58,7 +58,7 @@ const StoreLayout = () => {
           </button>
         </div>
       </div>
-      <section>
+      <section className="w-full">
         <div className="flex items-center justify-end bg-primary p-9">
           <p className="text-white font-medium cursor-pointer text-xl">
             {email}

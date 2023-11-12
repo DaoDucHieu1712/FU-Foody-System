@@ -45,7 +45,7 @@ const UpdateDiscount = ({ reload, discountData }) => {
                 expired: data.date
             };
             axios
-                .put(`/api/Discount/UpdateDiscount/${discountData.id}`, newDiscount)
+                .put(`/api/Discount/UpdateDiscount?id=${discountData.id}`, newDiscount)
                 .then(() => {
                     toast.success("Cập nhật ưu đãi thành công!");
                     reload();
