@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FFS.Application.DTOs.Order;
 using FFS.Application.Entities;
+using FFS.Application.Entities.Enum;
 using FFS.Application.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -96,6 +97,36 @@ namespace FFS.Application.Controllers
             {
                 var orderItems = await _orderDetailRepository.FindAll(x => x.OrderId == id, x => x.Food, x => x.Store).ToListAsync();
                 return Ok(_mapper.Map<List<OrderDetailResponseDTO>>(orderItems));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrderUnBook()
+        {
+            try
+            {
+                var orders = await _orderRepository.FindAll(x => x.OrderStatus == OrderStatus.Unbooked && x.ShipperId == null).ToListAsync();
+                return Ok(_mapper.Map<List<OrderResponseDTO>>(orders));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{idShipper}/{idOrder}")]
+        public async Task<IActionResult> ReceiveOrderUnbook(string idShipper, int idOrder)
+        {
+            try
+            {
+                var order = await _orderRepository.FindById(idOrder,null);
+                order.ShipperId = idShipper;
+                await _orderRepository.Update(order);
+                return Ok("Nhận đơn hàng thành công!");
             }
             catch (Exception ex)
             {

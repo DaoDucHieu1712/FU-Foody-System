@@ -47,8 +47,8 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                int totalPage = _reportRepository.CountGetReports(reportParameters);
-                return Ok(totalPage);
+                int total = _reportRepository.CountGetReports(reportParameters);
+                return Ok(total);
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace FFS.Application.Controllers {
                 var res = new
                 {
                     data = data,
-                    totalPage = total,
+                    total = total,
                 };
                 return Ok(res);
             }
@@ -122,5 +122,78 @@ namespace FFS.Application.Controllers {
                 return StatusCode(500, ex.Message);
             }
         }
+        [Authorize]
+        [HttpPost]
+        public IActionResult GetRequestAccount([FromBody] UserParameters userParameters)
+        {
+            try
+            {
+                IEnumerable<dynamic> data = _userRepository.GetRequestCreateAccount(userParameters);
+                int total = _userRepository.CountGetRequestCreateAccount(userParameters);
+                var res = new
+                {
+                    data = data,
+                    total = total,
+                };
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult BanAccount([FromBody] UserParameters userParameters)
+        {
+            try
+            {
+                string idBan = userParameters.id;
+                _userRepository.BanAccount(idBan);
+                return Ok($"Khóa thành công tài khoản {userParameters.Username}");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult UnBanAccount([FromBody] UserParameters userParameters)
+        {
+            try
+            {
+                string idUnBan = userParameters.id;
+                _userRepository.UnBanAccount(idUnBan);
+                return Ok($"Mở khóa thành công tài khoản {userParameters.Username}");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult ApproveUser([FromBody] UserParameters userParameters)
+        {
+            try
+            {
+                string id = userParameters.id;
+                _userRepository.ApproveUser(id, userParameters.Action);
+                return Ok($"Duyệt thành công tài khoản {userParameters.Username}");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        
+
+
+
     }
 }

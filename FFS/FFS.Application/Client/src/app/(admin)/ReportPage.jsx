@@ -135,20 +135,21 @@ const ReportPage = () => {
           </thead>
           <tbody>
             {reportList.map((report) => (
-              <>
-                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                  >
-                    {report.userReport}
-                  </th>
-                  <td className="px-6 py-4">{report.userTarget}</td>
-                  <td className="px-6 py-4">{report.Description}</td>
-                  <td className="px-6 py-4">{report.reportType}</td>
-                  <td className="px-6 py-4">{report.CreatedAt}</td>
-                </tr>
-              </>
+              <tr
+                key={report.Id}
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+              >
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {report.userReport}
+                </th>
+                <td className="px-6 py-4">{report.userTarget}</td>
+                <td className="px-6 py-4">{report.Description}</td>
+                <td className="px-6 py-4">{report.reportType}</td>
+                <td className="px-6 py-4">{report.CreatedAt}</td>
+              </tr>
             ))}
           </tbody>
         </table>

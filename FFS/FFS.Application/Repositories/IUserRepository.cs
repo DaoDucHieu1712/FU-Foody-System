@@ -8,5 +8,10 @@ namespace FFS.Application.Repositories {
         int CountGetUsers(UserParameters userParameters);
         IEnumerable<dynamic> GetRoles();
         Task<byte[]> ExportUser();
+        IEnumerable<dynamic> GetRequestCreateAccount(UserParameters userParameters);
+        int CountGetRequestCreateAccount(UserParameters userParameters);
+        void BanAccount(string idBan);
+        void UnBanAccount(string idUnBan);
+        void ApproveUser(string id, string action);
     }
 }
