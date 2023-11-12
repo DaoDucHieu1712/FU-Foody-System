@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import Cookies from "universal-cookie";
 
 const navigations = [
@@ -11,6 +11,7 @@ const navigations = [
 
 var cookies = new Cookies();
 const AdminLayout = () => {
+  const location = useLocation();
   const [email, setEmail] = useState();
   useEffect(() => {
     setEmail(cookies.get("fu_foody_email"));
@@ -64,7 +65,11 @@ const AdminLayout = () => {
               return (
                 <li key={item.href}>
                   <NavLink
-                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                    className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group ${
+                      location.pathname === item.href
+                        ? "bg-primary text-white"
+                        : ""
+                    }`}
                     to={item.href}
                   >
                     <span className="flex-1 ml-3 whitespace-nowrap">

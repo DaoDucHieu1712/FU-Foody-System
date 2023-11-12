@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FFS.Application.Entities.Enum;
+
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,6 +16,7 @@ namespace FFS.Application.Entities
         public bool? Gender { get; set; }
         public bool? Allow { get; set; }
         public DateTime? BirthDay { get; set; }
+        public StatusUser Status { get; set; }
         public virtual ICollection<Location> Locations { get; set; }
         public virtual ICollection<React> Reacts { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }

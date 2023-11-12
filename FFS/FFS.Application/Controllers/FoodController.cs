@@ -40,8 +40,15 @@ namespace FFS.Application.Controllers
             try
             {
                 var foods = _foodRepo.GetFoods(foodParameters);
-               
-                return Ok(foods);
+                int total = _foodRepo.CountGetFoods(foodParameters);
+
+                var data = new
+                {
+                    data = foods,
+                    totalPage = total
+                };
+
+                return Ok(data);
             }
             catch (Exception ex)
             {
