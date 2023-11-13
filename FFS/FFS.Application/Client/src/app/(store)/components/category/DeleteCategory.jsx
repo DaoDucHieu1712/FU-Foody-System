@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Button,
   Dialog,
@@ -8,10 +8,10 @@ import {
   IconButton,
   Typography,
 } from "@material-tailwind/react";
-import axios from "../../../../../shared/api/axiosConfig";
+import axios from "../../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 
-const DeleteInventory = ({ inventoryId, reloadInventory }) => {
+const DeleteCategory = ({ id, reloadCategory }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(!open);
@@ -19,16 +19,14 @@ const DeleteInventory = ({ inventoryId, reloadInventory }) => {
   const handleDelete = async () => {
     try {
       // Send a DELETE request to the API to delete the inventory item by inventoryId
-      await axios.delete(
-        `/api/Inventory/DeleteInventoryByInventoryId/${inventoryId}`
-      );
-      toast.success("Xóa món ăn khỏi kho thành công!");
+      await axios.delete(`/api/Category/Delete/${id}`);
+      toast.success("Xóa danh mục thành công!");
       // Close the dialog after a successful delete
       handleOpen();
       // Reload the inventory list
-      reloadInventory();
+      reloadCategory();
     } catch (error) {
-      toast.error("Lỗi xảy ra khi xóa món ăn khỏi kho:", error);
+      toast.error("Lỗi xảy ra khi xóa danh mục:", error);
     }
   };
 
@@ -42,7 +40,7 @@ const DeleteInventory = ({ inventoryId, reloadInventory }) => {
         <div className="flex items-center justify-between">
           <DialogHeader className="flex flex-col items-start">
             <Typography className="mb-1" variant="h4">
-              Xác nhận xóa món ăn khỏi kho
+              Xác nhận xóa danh mục
             </Typography>
           </DialogHeader>
           <svg
@@ -61,7 +59,7 @@ const DeleteInventory = ({ inventoryId, reloadInventory }) => {
         </div>
         <DialogBody>
           <p className="text-sm text-black">
-            Bạn có chắc chắn muốn xóa món ăn khỏi kho không?
+            Bạn có chắc chắn muốn xóa danh mục này không?
           </p>
         </DialogBody>
         <DialogFooter className="space-x-2">
@@ -77,4 +75,4 @@ const DeleteInventory = ({ inventoryId, reloadInventory }) => {
   );
 };
 
-export default DeleteInventory;
+export default DeleteCategory;

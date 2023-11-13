@@ -28,6 +28,7 @@ const schema = yup.object({
 });
 
 const AddInventory = ({ storeId, reloadInventory }) => {
+  console.log("add inven", storeId);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(!open);
   const [foodList, setFoodList] = useState([]);
@@ -48,7 +49,7 @@ const AddInventory = ({ storeId, reloadInventory }) => {
       .catch((error) => {
         console.error("Error fetching food items: " + error);
       });
-  }, []);
+  }, [storeId]);
 
   const onSubmit = async (data) => {
     try {
@@ -60,14 +61,11 @@ const AddInventory = ({ storeId, reloadInventory }) => {
         alert("Món ăn này đã tồn tại trong kho !");
       } else {
         // Proceed with creating the new inventory entry
-        await axios.post(
-          `/api/Inventory/CreateInventory`,
-          {
-            storeId: storeId,
-            foodId: data.selectedFood,
-            quantity: data.quantity,
-          }
-        );
+        await axios.post(`/api/Inventory/CreateInventory`, {
+          storeId: storeId,
+          foodId: data.selectedFood,
+          quantity: data.quantity,
+        });
         toast.success("Tạo kho món ăn thành công!");
         handleOpen();
 

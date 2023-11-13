@@ -1,65 +1,58 @@
-import axios from "../../../../../shared/api/axiosConfig";
-import React from "react";
-import { toast } from "react-toastify";
-
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
-  Input,
-  Typography,
   Button,
   Dialog,
-  DialogHeader,
   DialogBody,
   DialogFooter,
+  DialogHeader,
+  Input,
+  Typography,
   IconButton,
 } from "@material-tailwind/react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import propTypes from "prop-types";
-import ErrorText from "../../../../../shared/components/text/ErrorText";
-
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import axios from "../../../../shared/api/axiosConfig";
+import { toast } from "react-toastify";
+import ErrorText from "../../../../shared/components/text/ErrorText";
 const schema = yup.object({
-  quantity: yup
-    .number()
-    .positive("Số lượng tồn kho phải lớn hơn 0 !")
-    .default(null)
-    .typeError("Hãy nhập số lượng !"),
+  categoryName: yup.string().required("Hãy nhập tên phân loại!"),
 });
-
-const UpdateInventory = ({
-  storeId,
-  foodName,
-  quantity,
-  foodId,
-  reloadInventory,
-}) => {
-  const [open, setOpen] = React.useState(false);
+const UpdateCategory = ({ id, storeId, categoryName, reloadCategory }) => {
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
-
   const {
     register,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    mode: "onSubmit",
   });
 
   const onSubmit = async (data) => {
     try {
-      // Send the update request with the entered quantity
-      await axios.put(
-        `/api/Inventory/UpdateInventoryByStoreAndFoodId/update/${storeId}/${foodId}/${data.quantity}`
-      );
-      toast.success("Cập nhật kho thành công!");
-      // Close the dialog after a successful update
-      handleOpen();
-      // Reload the inventory list
-      reloadInventory();
+      const newCategory = {
+        categoryName: data.categoryName,
+        storeId: storeId,
+      };
+      axios
+        .put(`/api/Category/Update/${id}`, newCategory)
+        .then(() => {
+          toast.success("Cập nhật danh mục mới thành công!");
+          reloadCategory();
+          setOpen(false);
+        })
+        .catch(() => {
+          toast.error("Cập nhật danh mục mới thất bại!");
+          setOpen(false);
+        });
     } catch (error) {
-      toast.error("Lỗi xảy ra khi cập nhật kho:", error);
+      console.error("Error add category: ", error);
     }
   };
-
   return (
     <>
       <IconButton variant="text" onClick={handleOpen}>
@@ -71,7 +64,7 @@ const UpdateInventory = ({
           <div className="flex items-center justify-between">
             <DialogHeader className="flex flex-col items-start">
               <Typography className="mb-1" variant="h4">
-                Chỉnh sửa kho món ăn
+                CHỈNH SỬA DANH MỤC
               </Typography>
             </DialogHeader>
             <svg
@@ -90,24 +83,19 @@ const UpdateInventory = ({
           </div>
           <DialogBody>
             <div className="grid gap-6">
-              <div className="w-full">
+              <div className="w-full mb-4">
                 <Input
-                  label="Tên món ăn"
+                  label="Danh mục của bạn"
                   type="text"
-                  value={foodName}
-                  readOnly
+                  {...register("categoryName")}
+                  defaultValue={categoryName}
+                  className="rounded-none"
                 />
+                {errors.categoryName && (
+                  <ErrorText text={errors.categoryName.message}></ErrorText>
+                )}
               </div>
-              <Input
-                label="Số lượng"
-                type="number"
-                defaultValue={quantity || null}
-                {...register("quantity")}
-              />
             </div>
-            {errors.quantity && (
-              <ErrorText text={errors.quantity.message}></ErrorText>
-            )}
           </DialogBody>
           <DialogFooter className="space-x-2">
             <Button variant="text" color="deep-orange" onClick={handleOpen}>
@@ -122,10 +110,5 @@ const UpdateInventory = ({
     </>
   );
 };
-UpdateInventory.propTypes = {
-  foodId: propTypes.any.isRequired,
-  reloadInventory: propTypes.any.isRequired,
-  foodName: propTypes.any.isRequired,
-  quantity: propTypes.any.isRequired,
-};
-export default UpdateInventory;
+
+export default UpdateCategory;

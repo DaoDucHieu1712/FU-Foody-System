@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using FFS.Application.DTOs.Category;
+using FFS.Application.DTOs.Inventory;
+using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using FFS.Application.Entities.Common;
 using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +23,29 @@ namespace FFS.Application.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{storeId}")]
-        public async Task<IActionResult> ListCategoryByStoreId(int storeId)
+
+      
+        [HttpGet]
+        public async Task<IActionResult> ListCategoryByStoreId([FromQuery] CategoryParameters categoryParameters)
         {
             try
             {
-                var categories = _categoryRepository.GetList(x => x.StoreId == storeId);
-                return Ok(new { data = categories });
+                var categories = _categoryRepository.GetCategoriesByStoreId(categoryParameters);
+                var entityCatetory = _mapper.Map<List<CategoryDTO>>(categories);
+                var metadata = new
+                {
+                    categories.TotalCount,
+                    categories.PageSize,
+                    categories.CurrentPage,
+                    categories.TotalPages,
+                    categories.HasNext,
+                    categories.HasPrevious
+                };
+                return Ok(new
+                {
+                    entityCatetory,
+                    metadata
+                });
             }
             catch (Exception ex)
             {
@@ -54,7 +73,8 @@ namespace FFS.Application.Controllers
             try
             {
                 categoryRequestDTO.Id = id;
-                await _categoryRepository.Update(_mapper.Map<Category>(categoryRequestDTO));
+
+                await _categoryRepository.Update(_mapper.Map<Category>(categoryRequestDTO), nameof(BaseEntity<int>.CreatedAt));
                 return NoContent();
             }
             catch (Exception ex)

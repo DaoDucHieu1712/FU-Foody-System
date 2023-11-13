@@ -42,7 +42,7 @@ const ProfilePage = () => {
         avatar: data.avatar ? data.avatar : user.avatar,
         firstName: data.firstName,
         lastName: data.lastName,
-        gender: data.gender === "true",
+        gender: data.gender=== "true",
         allow: user.allow,
         birthDay: data.birthDay,
       };
@@ -184,14 +184,17 @@ const ProfilePage = () => {
                       <Radio
                         {...register("gender", { required: true })}
                         name="gender"
+                        value="true"
                         label="Nam"
-                        defaultChecked={user.gender === true}
+                        defaultChecked={user.gender}
                       />
                       <Radio
                         {...register("gender", { required: true })}
                         name="gender"
                         label="Nữ"
-                        defaultChecked={user.gender === false}
+                        value="false"
+                        defaultChecked={!user.gender}
+
                       />
                     </div>
                   </div>
@@ -204,7 +207,7 @@ const ProfilePage = () => {
                       type="datetime-local"
                       className="col-span-2 w-full"
                       label="Ngày sinh"                    
-                      defaultValue={user.birthDay}
+                      defaultValue={dayjs(user.birthDay).format("YYYY-MM-DDTHH:mm")}
                  
 
                     />

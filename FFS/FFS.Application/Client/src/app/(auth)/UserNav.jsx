@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 
 const UserNav = () => {
   const userInfo = useSelector((state) => state.auth.userProfile);
-  console.log("userinfor", userInfo);
+
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipRef = useRef(null);
   const navigate = useNavigate();

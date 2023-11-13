@@ -83,8 +83,14 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
-                updatedPost.UpdatedAt = DateTime.Now;
-                await Update(updatedPost);
+                var originalPost = await FindSingle(p => p.Id == updatedPost.Id);
+            
+                _context.Entry(originalPost).State = EntityState.Detached;
+
+                updatedPost.CreatedAt = originalPost.CreatedAt;
+
+                _context.Entry(updatedPost).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
                 return updatedPost;
             }
             catch (Exception ex)
