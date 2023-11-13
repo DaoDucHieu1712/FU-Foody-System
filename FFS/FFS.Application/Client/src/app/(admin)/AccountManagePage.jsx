@@ -1,7 +1,13 @@
 import Pagination from "../../shared/components/Pagination";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Input, Option, Select,Typography, Button } from "@material-tailwind/react";
+import {
+  Input,
+  Option,
+  Select,
+  Typography,
+  Button,
+} from "@material-tailwind/react";
 import axios from "../../shared/api/axiosConfig";
 
 const AccountManagePage = () => {
@@ -41,7 +47,7 @@ const AccountManagePage = () => {
         .post(`/api/Admin/GetAccounts`, dataSearch)
         .then((res) => {
           setUserList(res.data);
-          const totalPages = Math.ceil(res.totalPage / dataSearch.pageSize);
+          const totalPages = Math.ceil(res.total / dataSearch.pageSize);
           setTotalPage(totalPages);
         })
         .catch((error) => {
@@ -78,6 +84,56 @@ const AccountManagePage = () => {
     getUser();
   };
 
+  const handleBanAccountBtn = async (id, username) => {
+    const check = confirm(`Bạn có chắc chắn muốn khóa tài khoản ${username}`);
+    if (check) {
+      const data = {
+        id: id,
+        username: username,
+      };
+      try {
+        await axios
+          .post(`/api/Admin/BanAccount`, data)
+          .then((res) => {
+            toast.success(res);
+            getUser();
+          })
+          .catch((error) => {
+            toast.error("Có lỗi xảy ra!");
+            console.log(error);
+          });
+      } catch (error) {
+        console.log("Food error: " + error);
+      }
+    }
+  };
+
+  const handleUnBanAccountBtn = async (id, username) => {
+    const check = confirm(
+      `Bạn có chắc chắn muốn mở khóa tài khoản ${username}`
+    );
+    if (check) {
+      const data = {
+        id: id,
+        username: username,
+      };
+      try {
+        await axios
+          .post(`/api/Admin/UnBanAccount`, data)
+          .then((res) => {
+            toast.success(res);
+            getUser();
+          })
+          .catch((error) => {
+            toast.error("Có lỗi xảy ra!");
+            console.log(error);
+          });
+      } catch (error) {
+        console.log("Food error: " + error);
+      }
+    }
+  };
+
   useEffect(() => {
     getUser();
     getRoles();
@@ -86,7 +142,7 @@ const AccountManagePage = () => {
   return (
     <>
       <div className="relative overflow-x-auto">
-      <div className="mb-4 flex flex-col gap-8 md:flex-row md:items-center">
+        <div className="mb-4 flex flex-col gap-8 md:flex-row md:items-center">
           <Typography variant="h4" color="blue-gray">
             Danh sách báo cáo
           </Typography>
@@ -115,7 +171,14 @@ const AccountManagePage = () => {
                 Email
               </th>
               <th scope="col" className="px-6 py-3">
-                Role
+                Vai trò
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Trạng thái
+              </th>
+
+              <th scope="col" className="px-6 py-3">
+                Thao tác
               </th>
             </tr>
             <tr>
@@ -162,26 +225,69 @@ const AccountManagePage = () => {
                   </Select>
                 </div>
               </th>
+              <th scope="col" className="px-6 py-3"></th>
+              <th scope="col" className="px-6 py-3"></th>
             </tr>
           </thead>
           <tbody>
-            {userList.map((user) => (
-              <>
-                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                  >
-                    {user.userReport}
-                  </th>
-                  <td className="px-6 py-4">
-                    <img src={user.Avatar} height={100} width={100} />
-                  </td>
-                  <td className="px-6 py-4">{user.UserName}</td>
-                  <td className="px-6 py-4">{user.Email}</td>
-                  <td className="px-6 py-4">{user.Role}</td>
-                </tr>
-              </>
+            {userList.map((user, index) => (
+              <tr
+                key={user.Id}
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+              >
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
+                  {index + 1}
+                </th>
+                <td className="px-6 py-4">
+                  <img
+                    src={user.Avatar}
+                    height={100}
+                    width={100}
+                    alt="Avatar"
+                  />
+                </td>
+                <td className="px-6 py-4">{user.UserName}</td>
+                <td className="px-6 py-4">{user.Email}</td>
+                <td className="px-6 py-4">{user.Role}</td>
+                <td className="px-6 py-4">
+                  {user.Allow ? (
+                    <span className="text-green-500 font-bold">
+                      Đang hoạt động{" "}
+                    </span>
+                  ) : (
+                    <span className="text-red-600 font-bold">
+                      Tài khoản bị khóa
+                    </span>
+                  )}
+                </td>
+
+                <td className="px-6 py-4 text-center">
+                  {user.Allow ? (
+                    <Button
+                      variant="outlined"
+                      className="border-primary hover:bg-primary hover:text-white"
+                      onClick={() =>
+                        handleBanAccountBtn(user.Id, user.UserName)
+                      }
+                    >
+                      Khóa tài khoản
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outlined"
+                      className="border-primary hover:bg-primary hover:text-white"
+                      onClick={() =>
+                        handleUnBanAccountBtn(user.Id, user.UserName)
+                      }
+                    >
+                      Mở khóa
+                    </Button>
+                  )}
+                </td>
+              </tr>
             ))}
           </tbody>
         </table>

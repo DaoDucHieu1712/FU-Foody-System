@@ -15,7 +15,10 @@ namespace FFS.Application.Repositories.Impls
 {
     public class FoodRepository : EntityRepository<Food, int>, IFoodRepository
     {
-        public FoodRepository(ApplicationDbContext _dbContext) : base(_dbContext) { }
+        private readonly DapperContext _dapperContext;
+        public FoodRepository(ApplicationDbContext _dbContext, DapperContext dapperContext) : base(_dbContext) {
+            _dapperContext = dapperContext;
+        }
         public async Task<List<Food>> GetFoodListByStoreId(int storeId)
         {
             try
@@ -39,15 +42,33 @@ namespace FFS.Application.Repositories.Impls
                 parameters.Add("foodName", foodParameters.FoodName);
                 parameters.Add("pageNumber", foodParameters.PageNumber);
                 parameters.Add("pageSize", foodParameters.PageSize);
-
-                using (var db = _context.Database.GetDbConnection())
+                using (var db = _dapperContext.connection)
                 {
-                    if (db.State != ConnectionState.Open)
-                    {
-                        db.Open();
-                    }
 
                     returnData = db.Query<dynamic>("GetFoodsByStore", parameters, commandType: CommandType.StoredProcedure);
+                }
+                return returnData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public int CountGetFoods(FoodParameters foodParameters)
+        {
+            try
+            {
+                dynamic returnData = null;
+                var parameters = new DynamicParameters();
+                parameters.Add("userId", foodParameters.uId);
+                parameters.Add("foodName", foodParameters.FoodName);
+
+                using (var db = _dapperContext.connection)
+                {
+                   
+                    returnData = db.QuerySingle<int>("CountGetFoodsByStore", parameters, commandType: CommandType.StoredProcedure);
                 }
                 return returnData;
             }

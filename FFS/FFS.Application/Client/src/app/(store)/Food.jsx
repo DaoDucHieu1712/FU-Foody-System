@@ -31,8 +31,6 @@ const Food = () => {
   const [storeId, setStoreId] = useState(0);
   const uId = CookieService.getToken("fu_foody_id");
 
-
-
   const GetStoreByUid = async () => {
     try {
       await axios
@@ -64,7 +62,9 @@ const Food = () => {
       await axios
         .post(`/api/Food/ListFood`, dataPost)
         .then((res) => {
-          setFoodList(res);
+          setFoodList(res.data);
+          const totalPages = Math.ceil(res.totalPage / dataPost.PageSize);
+          setTotalPages(totalPages);
         })
         .catch((error) => {
           toast.error("Có lỗi xảy ra!");
