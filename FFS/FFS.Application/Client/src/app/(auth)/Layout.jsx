@@ -24,7 +24,7 @@ export function LazyLoadComponent({ children }) {
 const Layout = () => {
   
   const accesstoken = useSelector(state => state.auth.accessToken);
-  console.log("Layout",accesstoken)
+  
 
   return (
     <>

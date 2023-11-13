@@ -47,13 +47,12 @@ const TABLE_HEAD = [
   "",
 ];
 
-
 const uId = CookieService.getToken("fu_foody_id");
 
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
   const [foodNameFilter, setFoodNameFilter] = useState("");
-  const [storeID, setStoreID] = useState(1); // Set the storeID to 1
+  const [storeId, setStoreId] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(4);
   const [totalPages, setTotalPages] = useState(1);
@@ -82,16 +81,32 @@ const Inventory = () => {
     }
   };
   const handleExportExcel = () => {
-    const fileDownloadUrl = `https://localhost:7025/api/Store/ExportInventory/exportinventory?id=${storeID}`;
+    const fileDownloadUrl = `https://localhost:7025/api/Store/ExportInventory/exportinventory?id=${storeId}`;
 
     window.location.href = fileDownloadUrl;
+  };
+
+  const GetStoreByUid = async () => {
+    try {
+      await axios
+        .get(`/api/Store/GetStoreByUid?uId=${uId}`)
+        .then((response) => {
+          setStoreId(response.id);
+          console.log(response.id);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log("Get Store By Uid error: " + error);
+    }
   };
 
   const fetchInventory = async () => {
     try {
       const response = await axios.get("/api/Inventory/GetInventories", {
         params: {
-          StoreId: storeID,
+          StoreId: storeId,
           FoodName: foodNameFilter,
           PageNumber: pageNumber,
           PageSize: pageSize,
@@ -104,29 +119,13 @@ const Inventory = () => {
     }
   };
 
-  const GetStoreByUid = async () => {
-    try {
-      await axios
-        .get(`/api/Store/GetStoreByUid?uId=${uId}`)
-        .then((response) => {
-          setStoreID(response.id);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      console.log("Get Store By Uid error: " + error);
-    }
-  };
-
   useEffect(() => {
     fetchInventory();
-  }, [storeID, foodNameFilter, pageNumber, pageSize]);
+  }, [storeId, foodNameFilter, pageNumber, pageSize]);
 
   useEffect(() => {
     GetStoreByUid();
   }, []);
-
   const reloadInventory = async () => {
     await fetchInventory();
   };
@@ -138,7 +137,10 @@ const Inventory = () => {
           <p className="px-5 mx-5 mt-2 font-bold text-lg pointer-events-none">
             Tồn kho
           </p>
-          <AddInventory storeId={storeID} reloadInventory={reloadInventory}></AddInventory>
+          <AddInventory
+            storeId={storeId}
+            reloadInventory={reloadInventory}
+          ></AddInventory>
         </div>
 
         <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
@@ -148,7 +150,10 @@ const Inventory = () => {
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row mt-3">
             <div className="ExportExcel">
-              <button className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center" onClick={handleExportExcel}>
+              <button
+                className="text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                onClick={handleExportExcel}
+              >
                 Xuất Excel
               </button>
             </div>
@@ -164,7 +169,6 @@ const Inventory = () => {
           </div>
         </CardHeader>
         <CardBody className="p-0 mt-3">
-
           <table className="mt-4 w-full min-w-max table-auto text-left">
             <thead>
               <tr>
@@ -263,6 +267,7 @@ const Inventory = () => {
                       </td>
                       <td className={classes}>
                         <UpdateInventory
+                          storeId={storeId}
                           foodId={foodId}
                           foodName={foodName}
                           quantity={quantity}
@@ -279,7 +284,6 @@ const Inventory = () => {
               )}
             </tbody>
           </table>
-
         </CardBody>
 
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">

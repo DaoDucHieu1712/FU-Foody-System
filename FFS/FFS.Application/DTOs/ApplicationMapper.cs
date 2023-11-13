@@ -123,6 +123,7 @@ namespace FFS.Application.DTOs
         public void CategoryMapper()
         {
             CreateMap<Entities.Category, CategoryResponseDTO>().ReverseMap();
+            CreateMap<Entities.Category, CategoryDTO>().ReverseMap();
             CreateMap<Entities.Category, CategoryRequestDTO>().ReverseMap();
             CreateMap<Entities.Category, CategoryPopularDTO>().ReverseMap();
         }

@@ -64,7 +64,7 @@ const StoreLayout = () => {
             {email}
           </p>
         </div>
-        <div>
+        <div className="p-10">
           <Outlet></Outlet>
         </div>
       </section>

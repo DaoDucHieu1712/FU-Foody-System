@@ -164,6 +164,9 @@ namespace FFS.Application.Repositories.Impls
                 _context.Set<T>().Attach(entity);
                 var entry = _context.Entry(entity);
                 entry.State = EntityState.Modified;
+                // Exclude the CreatedAt property from being modified
+                propertiesToExclude = propertiesToExclude.Append(nameof(BaseEntity<int>.CreatedAt)).ToArray();
+
                 foreach (var property in propertiesToExclude)
                 {
                     entry.Property(property).IsModified = false;
