@@ -14,6 +14,7 @@ namespace FFS.Application.DTOs.Post
         public List<CommentPostDTO> Comments { get; set; }
         public List<ReactPostDTO>? ReactPosts { get; set; }
         public int? LikeNumber { get; set; }
+        public int? CommentNumber { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool IsDelete { get; set; }

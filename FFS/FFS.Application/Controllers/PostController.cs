@@ -65,7 +65,8 @@ namespace FFS.Application.Controllers
                 }
                 var postDTO = _mapper.Map<PostDTO>(post);
               
-                    postDTO.LikeNumber = postDTO.ReactPosts.Where(x => x.IsLike == true).Count();
+                 postDTO.LikeNumber = postDTO.ReactPosts.Where(x => x.IsLike == true).Count();
+                postDTO.CommentNumber = postDTO.Comments.Count();
                 return Ok(postDTO);
             }
             catch (Exception ex)
