@@ -10,7 +10,6 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
-import ReviewFood from "./components/ReviewFood";
 import CookieService from "../../shared/helper/cookieConfig";
 import { toast } from "react-toastify";
 
@@ -97,16 +96,11 @@ const FoodDetails = () => {
     GetFoodByCategoryId();
   }, [api1Completed]);
 
-
-
-
-
-  // const limitedFoodList = foodList.slice(0, 6);
-
   return (
     <>
       {foodData ? (
         <div className="container mt-8 mb-8 px-12 py-4">
+          <Typography variant="h4" className="pb-3">Thông tin món ăn</Typography>
           <div className="grid grid-cols-[4fr,6fr] gap-12">
             <div className="Sidebar">
               <img
@@ -116,22 +110,30 @@ const FoodDetails = () => {
               />
             </div>
             <div className="content-food">
+              <div className="flex gap-2 items-center">
+                <Typography className="font-semibold">Cửa hàng: </Typography>
+                <Typography color="orange" variant="h5" className="cursor-pointer" onClick={() => navigate(`/store/detail/${foodData.store.id}`)}>{foodData.store.storeName}</Typography>
+              </div>
               <div className="flex items-center gap-2 font-bold pointer-events-none">
+                Đánh giá:
                 <Rating value={Math.round(foodData.rateAverage)} readonly />
                 <Typography className="font-semibold">{foodData.rateAverage} Sao</Typography>
               </div>
-              <div className="food-name mx-1">
+              <div className="food-name">
                 <Typography variant="h2">{foodData.foodName}</Typography>
                 <p className="text-base">
                   Phân loại: {foodData.category.categoryName}
                 </p>
                 <p className="flex gap-1 text-base">
-                  Tình trạng: {}
-                  <p className="text-green-800 font-bold">còn hàng</p>
-                  <p className="text-red-800 font-bold">hết hàng</p>
+                  Tình trạng: {foodData.inventories[0].quantity > 0 ?
+                    (
+                      <p className="text-green-800 font-bold">còn hàng</p>
+                    ) : (
+                      <p className="text-red-800 font-bold">hết hàng</p>
+                    )}
                 </p>
                 <p className="text-base">Mô tả: {foodData.description}</p>
-                <p className="my-2 text-base font-bold flex items-center ">
+                <p className="my-1 text-base font-bold flex items-center ">
                   <span className="rounded-full">
                     <svg
                       className="w-4 h-4 text-blue-500 dark:text-white"
@@ -238,7 +240,7 @@ const FoodDetails = () => {
             <Typography variant="h4">Đồ ăn liên quan</Typography>
             <div className="grid py-3 grid-flow-row-dense grid-cols-3 xl:grid-cols-6">
               {foodList ? (
-                foodList.map((food, index) => (
+                foodList.splice(0, 6).map((food, index) => (
                   <div key={index} className="px-1 pt-1 border-solid border-2">
                     <div className="group relative flex lg:flex-none">
                       <img
@@ -448,7 +450,6 @@ const FoodDetails = () => {
               <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
             </div>
             {/* END COMMENT */}
-            <ReviewFood></ReviewFood>
           </div>
           {/* END COMMENT */}
         </div>

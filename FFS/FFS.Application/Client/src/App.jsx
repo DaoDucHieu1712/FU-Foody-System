@@ -28,6 +28,8 @@ import DashboardPage from "./app/(admin)/DashboardPage";
 import AccountManagePage from "./app/(admin)/AccountManagePage";
 import RequestAccountPage from "./app/(admin)/RequestAccountPage";
 import Category from "./app/(store)/Category";
+import AddFlashSale from "./app/(store)/AddFlashSale";
+import FlashSale from "./app/(store)/FlashSale";
 
 function App() {
   return (
@@ -46,7 +48,7 @@ function App() {
           <Route path="/food-details/:id" element={<FoodDetails />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/store-profile/:id" element={<StoreProfilePage />} />
-     
+
 
           <Route path="/store/detail/:id" element={<StoreDetailPage />} />
           <Route path="/post" element={<Post />} />
@@ -56,6 +58,8 @@ function App() {
           <Route path="/discount" element={<Discount />} />
           <Route path="/food-list" element={<FoodList />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/flash-sale/add" element={<AddFlashSale />} />
+          <Route path="/flash-sale" element={<FlashSale />} />
         </Route>
         <Route element={<StoreLayout></StoreLayout>}>
           <Route path="/food" element={<Food />} />
