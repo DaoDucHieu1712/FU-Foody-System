@@ -144,7 +144,7 @@ const AccountManagePage = () => {
       <div className="relative overflow-x-auto">
         <div className="mb-4 flex flex-col gap-8 md:flex-row md:items-center">
           <Typography variant="h4" color="blue-gray">
-            Danh sách báo cáo
+            Danh sách tài khoản
           </Typography>
           <div className="flex gap-5">
             <Button

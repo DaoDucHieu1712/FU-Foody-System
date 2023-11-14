@@ -64,9 +64,9 @@ function App() {
           <Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
         </Route>
         <Route element={<StoreLayout></StoreLayout>}>
-          <Route path="/food" element={<Food />} />
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/category" element={<Category />} />
+          <Route path="/store/food" element={<Food />} />
+          <Route path="store/inventory" element={<Inventory />} />
+          <Route path="store/category" element={<Category />} />
         </Route>
         <Route element={<AdminLayout></AdminLayout>}>
           <Route path="/admin/report" element={<ReportPage />} />

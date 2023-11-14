@@ -30,7 +30,7 @@ namespace FFS.Application.Repositories.Impls
             _dapperContext = dapperContext;
         }
 
-       
+
 
         public int CountGetUsers(UserParameters userParameters)
         {
@@ -75,7 +75,8 @@ namespace FFS.Application.Repositories.Impls
                         role => role.Id,
                         (user, role) => new
                         {
-                             User = user, RoleName = role.Name
+                            User = user,
+                            RoleName = role.Name
                         }
                     )
                     .ToListAsync();
@@ -86,7 +87,9 @@ namespace FFS.Application.Repositories.Impls
                         Number = index + 1,
                         Username = item.User.User.UserName,
                         Email = item.User.User.Email,
-                        Role = item.RoleName
+                        Role = item.RoleName,
+                        Status = (item.User.User.Allow ?? false) ? "Đang hoạt động" : "Tài khoản bị khóa"
+
                     })
                     .ToList();
                 using (var workbook = new XLWorkbook())
@@ -100,7 +103,8 @@ namespace FFS.Application.Repositories.Impls
                         return await Task.FromResult(stream.ToArray());
                     }
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -157,7 +161,7 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
-        
+
 
         public IEnumerable<dynamic> GetRoles()
         {
@@ -197,7 +201,7 @@ namespace FFS.Application.Repositories.Impls
             try
             {
                 var user = _context.Users.FirstOrDefault(x => x.Id == idBan);
-                if(user is null)
+                if (user is null)
                 {
                     throw new Exception("Người dùng không tồn tại, xin vui lòng kiểm tra lại!");
                 }
@@ -239,7 +243,7 @@ namespace FFS.Application.Repositories.Impls
                 {
                     throw new Exception("Người dùng không tồn tại, xin vui lòng kiểm tra lại!");
                 }
-                if(action == "Accept")
+                if (action == "Accept")
                 {
                     user.Status = StatusUser.Accept;
                 }

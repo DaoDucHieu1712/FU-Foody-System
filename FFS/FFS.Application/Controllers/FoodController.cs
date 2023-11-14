@@ -23,14 +23,16 @@ namespace FFS.Application.Controllers
         private readonly IComboRepository _comboRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly IWishlistRepository _wishlistRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
 
-        public FoodController(IFoodRepository foodRepo, IComboRepository comboRepository, ICommentRepository commentRepository, IWishlistRepository wishlistRepository, IMapper mapper)
+        public FoodController(IFoodRepository foodRepo, IComboRepository comboRepository, ICommentRepository commentRepository, IWishlistRepository wishlistRepository, IOrderRepository orderRepository, IMapper mapper)
         {
             _foodRepo = foodRepo;
             _comboRepository = comboRepository;
             _commentRepository = commentRepository;
             _wishlistRepository = wishlistRepository;
+            _orderRepository = orderRepository;
             _mapper = mapper;
         }
 
@@ -62,7 +64,7 @@ namespace FFS.Application.Controllers
             try
             {
                 var food = _foodRepo.GetFoodById(id);
-                if(food == null)
+                if (food == null)
                 {
                     return NotFound();
                 }
@@ -73,7 +75,7 @@ namespace FFS.Application.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        
+
         [HttpGet("{cateId}")]
         public async Task<IActionResult> GetFoodByCategoryid(int cateId)
         {
@@ -264,6 +266,22 @@ namespace FFS.Application.Controllers
                 return BadRequest($"Error: {ex.Message}");
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> IsCanRate(string Uid, int foodId)
+        {
+            try
+            {
+                var order = await _orderRepository.FindSingle(x =>
+    x.CustomerId.Equals(Uid) &&
+    x.OrderDetails.Any(od => od.FoodId.Equals(foodId)));
+                bool isCanRate = order != null ? true : false;
+                return Ok(isCanRate);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> RatingFood([FromBody] FoodRatingDTO foodRatingDTO)
@@ -272,12 +290,12 @@ namespace FFS.Application.Controllers
             {
                 var wishlistByEmail = await _wishlistRepository.GetList(w => w.UserId == foodRatingDTO.UserId && w.FoodId == foodRatingDTO.FoodId);
                 var checkExist = wishlistByEmail.Count() == 0 ? true : false;
-                if (foodRatingDTO.Rate == 5 &&  checkExist == true)
+                if (foodRatingDTO.Rate == 5 && checkExist == true)
                 {
                     await _wishlistRepository.AddToWishlist(foodRatingDTO.UserId, foodRatingDTO.FoodId);
                 }
                 await _commentRepository.RatingFood(_mapper.Map<Comment>(foodRatingDTO));
-                return Ok();
+                return Ok(new { IsCanRate = true });
             }
             catch (Exception ex)
             {
