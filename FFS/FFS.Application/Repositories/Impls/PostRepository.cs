@@ -103,7 +103,8 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
-                return await FindSingle(p => p.Id == postId, x => x.User, x => x.Comments, x=> x.ReactPosts);
+                var post = await _context.Posts.Include(x=>x.User).Include(x=>x.Comments).ThenInclude(x=>x.User).Include(x=>x.ReactPosts).ThenInclude(x=>x.User).FirstOrDefaultAsync(x=>x.Id == postId);
+                return post;
             }
             catch (Exception ex)
             {

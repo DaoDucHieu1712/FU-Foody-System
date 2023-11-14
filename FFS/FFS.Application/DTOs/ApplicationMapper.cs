@@ -49,7 +49,8 @@ namespace FFS.Application.DTOs
                opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName));
             CreateMap<UpdatePostDTO, Entities.Post>().ReverseMap();
 
-            CreateMap<Entities.ReactPost, ReactPostDTO>();
+            CreateMap<Entities.ReactPost, ReactPostDTO>().ForMember(dest => dest.Username,
+               opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName)); ;
           
 
             CreateMap<Entities.Comment, StoreRatingDTO>()
@@ -100,7 +101,13 @@ namespace FFS.Application.DTOs
 
             CreateMap<Discount, DiscountDTO>()
                 .ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.Expired<DateTime.Now)).ReverseMap();
-            CreateMap<Entities.Comment, CommentPostDTO>().ReverseMap();
+            CreateMap<Entities.Comment, CommentPostDTO>()
+              .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName))
+              .ForMember(dest => dest.Avartar, opt => opt.MapFrom(src => src.User.Avatar)) 
+              .ForMember(dest => dest.CommentDate, opt => opt.MapFrom(src => src.CreatedAt))
+              .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
+
+            CreateMap<Image, ImageCommentDTO>(); // Assuming ImageCommentDTO is a DTO for Image entity
 
 
             OrderMapper();

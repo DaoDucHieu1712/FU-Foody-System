@@ -94,7 +94,8 @@ namespace FFS.Application.Helper
             worksheet.Cell(currentRow, 1).Value = "STT";
             worksheet.Cell(currentRow, 2).Value = "USERNAME";
             worksheet.Cell(currentRow, 3).Value = "EMAIL";
-            worksheet.Cell(currentRow, 4).Value = "ROLE";
+            worksheet.Cell(currentRow, 4).Value = "VAI TRÒ";
+            worksheet.Cell(currentRow, 5).Value = "TRẠNG THÁI";
             foreach (var user in lstUsers)
             {
                 currentRow++;
@@ -102,6 +103,7 @@ namespace FFS.Application.Helper
                 worksheet.Cell(currentRow, 2).Value = user.Username;
                 worksheet.Cell(currentRow, 3).Value = user.Email;
                 worksheet.Cell(currentRow, 4).Value = user.Role;
+                worksheet.Cell(currentRow, 5).Value = user.Status;
             }
             // Auto-fit columns after adding data
             worksheet.Columns().AdjustToContents();
