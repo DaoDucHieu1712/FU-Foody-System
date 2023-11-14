@@ -46,10 +46,10 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
   const ListCaegory = async () => {
     try {
       axios
-        .get("/api/Category/ListCategoryByStoreId/" + storeId)
+        .get("/api/Category/ListCategoryByStoreId?StoreId=" + storeId)
         .then((response) => {
-          console.log(response);
-          setCategory(response.data.result);
+          setCategory(response.entityCatetory);
+          console.log(category);
         })
         .catch((error) => {
           toast.error("Lấy phân loại thất bại!");
@@ -165,11 +165,11 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
               label="Chọn loại"
               value={foodData.categoryId}
             >
-              {category.map((category) => (
+              {category ? category.map((category) => (
                 <Option key={category.id} value={category.id}>
                   {category.categoryName}
                 </Option>
-              ))}
+              )) : <Option>Lỗi</Option>}
             </Select>
             {errors.category && (
               <ErrorText text={errors.category.message}></ErrorText>
