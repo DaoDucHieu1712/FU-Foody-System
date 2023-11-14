@@ -30,6 +30,8 @@ import RequestAccountPage from "./app/(admin)/RequestAccountPage";
 import Category from "./app/(store)/Category";
 import ShipperDetailsPage from "./app/(auth)/ShipperDetailsPage";
 
+
+
 function App() {
   return (
     <>

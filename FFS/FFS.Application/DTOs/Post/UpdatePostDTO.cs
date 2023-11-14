@@ -1,5 +1,6 @@
 ﻿    namespace FFS.Application.DTOs.Post
     {
+
         public class UpdatePostDTO
         {
             public int Id { get; set; }
@@ -10,4 +11,6 @@
             public DateTime UpdatedAt { get; set; }
         
         }
+
+       
     }
