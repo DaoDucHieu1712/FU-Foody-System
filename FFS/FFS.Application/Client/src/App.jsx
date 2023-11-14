@@ -30,6 +30,7 @@ import RequestAccountPage from "./app/(admin)/RequestAccountPage";
 import Category from "./app/(store)/Category";
 import AddFlashSale from "./app/(store)/AddFlashSale";
 import FlashSale from "./app/(store)/FlashSale";
+import ShipperDetailsPage from "./app/(auth)/ShipperDetailsPage";
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/flash-sale/add" element={<AddFlashSale />} />
           <Route path="/flash-sale" element={<FlashSale />} />
+          <Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
         </Route>
         <Route element={<StoreLayout></StoreLayout>}>
           <Route path="/food" element={<Food />} />

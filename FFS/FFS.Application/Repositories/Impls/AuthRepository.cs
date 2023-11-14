@@ -56,6 +56,8 @@ namespace FFS.Application.Repositories.Impls
                 Token = token
             };
         }
+
+
         public async Task StoreRegister(StoreRegisterDTO storeRegisterDTO)
         {
             //using var transaction = await _context.Database.BeginTransactionAsync();
@@ -321,5 +323,25 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<ApplicationUser> GetShipperById(string userId)
+        {
+            try
+            {
+                ApplicationUser user = await _userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    throw new Exception("User not found!");
+                }
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
     }
 }

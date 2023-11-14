@@ -7,7 +7,7 @@ using FFS.Application.DTOs.Post;
 using FFS.Application.DTOs.Order;
 using FFS.Application.DTOs.Location;
 using FFS.Application.DTOs.Category;
-
+using FFS.Application.DTOs.Comment;
 
 namespace FFS.Application.DTOs
 {
@@ -52,7 +52,7 @@ namespace FFS.Application.DTOs
             CreateMap<Entities.ReactPost, ReactPostDTO>();
           
 
-            CreateMap<Comment, StoreRatingDTO>()
+            CreateMap<Entities.Comment, StoreRatingDTO>()
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
             .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.StoreId))
             .ForMember(dest => dest.Rate, opt => opt.MapFrom(src => src.Rate))
@@ -87,18 +87,20 @@ namespace FFS.Application.DTOs
             //.ForMember(dest => dest.NoteForShipper, opt => opt.MapFrom(src => src.NoteForShipper))
             //.ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
 
-            CreateMap<Comment, FoodRatingDTO>()
+            CreateMap<Entities.Comment, FoodRatingDTO>()
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.FoodId, opt => opt.MapFrom(src => src.FoodId))
             .ForMember(dest => dest.Rate, opt => opt.MapFrom(src => src.Rate))
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
             .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images)).ReverseMap();
+            CreateMap<Entities.Comment, CommentDTO>().ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.Avatar)).ReverseMap();
 
             CreateMap<Entities.Food, AllFoodDTO>().ReverseMap();
 
             CreateMap<Discount, DiscountDTO>()
                 .ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.Expired<DateTime.Now)).ReverseMap();
-            CreateMap<Comment, CommentPostDTO>().ReverseMap();
+            CreateMap<Entities.Comment, CommentPostDTO>().ReverseMap();
 
 
             OrderMapper();
