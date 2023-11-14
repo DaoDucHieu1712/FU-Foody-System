@@ -308,6 +308,20 @@ namespace FFS.Application.Controllers
             }
         }
 
-        
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetShipperById(string userId)
+        {
+            try
+            {
+                var user = await _authRepository.GetShipperById(userId);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
     }
 }

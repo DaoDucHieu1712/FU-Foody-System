@@ -146,7 +146,7 @@ const Inventory = () => {
         <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
       </div>
 
-      <Card className="h-full w-full" shadow={false} floated={false}>
+      <Card className="h-full w-full" shadow={false}>
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row mt-3">
             <div className="ExportExcel">

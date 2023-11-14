@@ -13,7 +13,7 @@ namespace FFS.Application.DTOs.Food
         public decimal? Price { get; set; }
         public int? CategoryId { get; set; }
         public int? StoreId { get; set; }
-        public ICollection<Comment>? Comments { get; set; }
+        public ICollection<Entities.Comment>? Comments { get; set; }
         public ICollection<OrderDetail>? OrderDetails { get; set; }
     }
 }

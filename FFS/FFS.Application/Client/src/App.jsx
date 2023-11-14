@@ -28,6 +28,7 @@ import DashboardPage from "./app/(admin)/DashboardPage";
 import AccountManagePage from "./app/(admin)/AccountManagePage";
 import RequestAccountPage from "./app/(admin)/RequestAccountPage";
 import Category from "./app/(store)/Category";
+import ShipperDetailsPage from "./app/(auth)/ShipperDetailsPage";
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
           <Route path="/discount" element={<Discount />} />
           <Route path="/food-list" element={<FoodList />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
         </Route>
         <Route element={<StoreLayout></StoreLayout>}>
           <Route path="/food" element={<Food />} />
