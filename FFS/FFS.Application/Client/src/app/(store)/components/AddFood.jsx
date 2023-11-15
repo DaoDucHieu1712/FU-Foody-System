@@ -45,9 +45,9 @@ const AddFood = ({ reload, storeId }) => {
   const ListCategory = async () => {
     try {
       axios
-        .get("/api/Category/ListCategoryByStoreId/" + storeId)
+        .get("/api/Category/ListCategoryByStoreId?StoreId=" + storeId)
         .then((response) => {
-          setCategory(response.data.result);
+          setCategory(response.entityCatetory);
         })
         .catch((error) => {
           console.log(error);
@@ -149,11 +149,11 @@ const AddFood = ({ reload, storeId }) => {
               }}
               label="Chọn loại"
             >
-              {category.map((category) => (
+              {category ? category.map((category) => (
                 <Option key={category.id} value={category.id.toString()}>
                   {category.categoryName}
                 </Option>
-              ))}
+              )) : <Option>Lỗi</Option>}
             </Select>
             {errors.category && (
               <ErrorText text={errors.category.message}></ErrorText>
