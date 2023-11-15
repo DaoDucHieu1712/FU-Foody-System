@@ -6,10 +6,10 @@ import Elips from "../../../../../shared/components/icon/Elips";
 import Cate from "../../../../../shared/components/icon/Cate";
 import axiosConfig from "../../../../../shared/api/axiosConfig";
 import { useParams } from "react-router-dom";
-import FormatDateString from "../../../../../shared/components/format/FormatDate";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
+import CookieService from "../../../../../shared/helper/cookieConfig";
 dayjs.extend(localizedFormat);
 dayjs.locale("vi");
 
@@ -17,35 +17,56 @@ import {
   Menu,
   MenuHandler,
   MenuList,
-  MenuItem,
-  Button,
-  ButtonGroup,
   Typography,
 } from "@material-tailwind/react";
-import SocialIcon from "../../../../../shared/components/icon/SocailIcon";
 import LastestPost from "../../../../(public)/components/LastestPost";
 import PopularFood from "../../../../(public)/components/PopularFood";
 import UpdatePost from "./UpdatePost";
 import DeletePost from "./DeletePost";
 
 const DetailPost = () => {
+  const userId = CookieService.getToken("fu_foody_id");
   const accesstoken = useSelector((state) => state.auth.accessToken);
   const userInfo = useSelector((state) => state.auth.userProfile);
   const { postId } = useParams();
   const [post, setPost] = useState("");
   const [openComment, setOpenComment] = useState(false);
+  const [isReact, setIsReact] = useState(false);
 
   const fetchPostDetails = () => {
     axiosConfig
       .get(`/api/Post/GetPostByPostId/${postId}`)
       .then((response) => {
         setPost(response);
-        console.log("aare", response);
+        const checkReact = response.reactPosts.filter(post => post.userId == userId && post.postId == postId).some(post => post.isLike == true);
+        if (checkReact) {
+          setIsReact(true);
+        }
       })
       .catch((error) => {
         console.error("Error fetching post details: ", error);
       });
   };
+
+  const handleReactPost = () => {
+    try {
+      const dataPost = {
+        userId: userId,
+        postId: postId
+      }
+      axiosConfig
+        .post("/api/Post/ReactPost", dataPost)
+        .then(() => {
+          fetchPostDetails();
+          setIsReact((cur) => !cur);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Error occur: ", error);
+    }
+  }
 
   useEffect(() => {
     fetchPostDetails();
@@ -163,8 +184,25 @@ const DetailPost = () => {
                 <div className="border border-gray-200 border-l-0 border-r-0 py-1">
                   <div className="flex space-x-2">
                     <div className="w-1/2 flex space-x-2 justify-center items-center hover:bg-gray-100 text-xl py-2 rounded-lg cursor-pointer text-gray-500">
-                      <i className="bx bx-like"></i>
-                      <span className="text-sm font-semibold">Thích</span>
+                      {isReact ?
+                        (
+                          <span className="flex gap-1 items-center text-pink-200 text-sm font-semibold" onClick={handleReactPost}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              height="1em"
+                              viewBox="0 0 512 512"
+                            >
+                              <path
+                                d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
+                                fill="pink"
+                              />
+                            </svg>
+                            Thích</span>
+                        )
+                        : (
+                          <span className="text-sm font-semibold" onClick={handleReactPost}>
+                            Thích</span>
+                        )}
                     </div>
                     <div className="w-1/2 flex space-x-2 justify-center items-center hover:bg-gray-100 text-xl py-2 rounded-lg cursor-pointer text-gray-500">
                       <i className="bx bx-comment"></i>
@@ -184,8 +222,8 @@ const DetailPost = () => {
               {/* SUB COMMENT */}
               {openComment ? (
                 <div className="ml-10 mt-1">
-                  {post.comments.map((comment, index) => (
-                    <div className="flex justify-start gap-2 mb-4">
+                  {post.comments.map((comment) => (
+                    <div key={comment.id} className="flex justify-start gap-2 mb-4">
                       <img
                         src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
                         alt="image 1"
