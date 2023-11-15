@@ -16,8 +16,5 @@ namespace FFS.Application.Entities
         public decimal? PriceAfterSale { get; set; }
         public int? SalePercent { get; set; }
         public int? NumberOfProductSale { get; set; }
-        public int? NumberOfProductInventory { get; set; }
-        public bool IsOpen { get; set; }
-
     }
 }

@@ -8,5 +8,6 @@ namespace FFS.Application.Infrastructure.Interfaces
     {
         Task<List<Category>> Top5PopularCategories();
         PagedList<Category> GetCategoriesByStoreId(CategoryParameters categoryParameters);
+        Task<byte[]> ExportCategory(int id);
     }
 }

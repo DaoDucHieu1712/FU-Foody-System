@@ -32,6 +32,20 @@ namespace FFS.Application.Controllers {
             _foodRepository = foodRepository;
             _commentRepository = commentRepository;
         }
+        //[HttpGet]
+        //public async Task<IActionResult> GetTop8Store()
+        //{
+        //    try
+        //    {
+        //        StoreInforDTO storeInforDTO = await _storeRepository.GetInformationStore();
+        //        return Ok(storeInforDTO);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
+
 
         [Authorize]
         [HttpGet("{id}")]
@@ -218,8 +232,5 @@ namespace FFS.Application.Controllers {
                 return BadRequest(ex.Message);
             }
         }
-
-       
-
     }
 }

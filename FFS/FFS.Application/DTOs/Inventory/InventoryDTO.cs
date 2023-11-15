@@ -8,6 +8,7 @@
         public string ImageURL { get; set; }
         public string CategoryName { get; set; }
         public int quantity { get; set; }
+        public decimal Price { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool IsDelete { get; set; }
