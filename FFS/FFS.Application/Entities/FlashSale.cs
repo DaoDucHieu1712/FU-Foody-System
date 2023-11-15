@@ -7,12 +7,11 @@ namespace FFS.Application.Entities
     {
         public int FoodId { get; set; }
         public int StoreId { get; set; }
-        public int Percent { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
-        [ForeignKey(nameof(FoodId))]
-        public Food Food { get; set; }
         [ForeignKey(nameof(StoreId))]
         public Store Store { get; set; }
+        public ICollection<FlashSaleDetail>? FlashSaleDetails { get; set; }
+        public bool IsOpen { get; set; }
     }
 }
