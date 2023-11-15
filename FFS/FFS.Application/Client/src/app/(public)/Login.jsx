@@ -107,7 +107,7 @@ const Login = () => {
     axios
       .post("/api/Authenticate/LoginGoogle", data)
       .then((response) => {
-        if (response.status === 200) {
+        if (response.userClient.userId.length > 0) {
           // Save the token using Cookies
           CookieService.saveToken(
             "fu_foody_email",

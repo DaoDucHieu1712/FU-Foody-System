@@ -18,6 +18,9 @@ using Microsoft.EntityFrameworkCore;
 using FFS.Application.Entities.Constant;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Bibliography;
+using Dapper;
+using FFS.Application.DTOs.QueryParametter;
+using System.Data;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -27,13 +30,22 @@ namespace FFS.Application.Repositories.Impls
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppSetting _appSettings;
         private readonly IEmailService _emailService;
+        private readonly DapperContext _dapperContext;
 
-        public AuthRepository(UserManager<ApplicationUser> userManager, IOptionsMonitor<AppSetting> optionsMonitor, IEmailService emailService, ApplicationDbContext context)
+        public AuthRepository(
+            UserManager<ApplicationUser> userManager
+            , IOptionsMonitor<AppSetting> optionsMonitor
+            , IEmailService emailService
+            , ApplicationDbContext context
+            , DapperContext dapperContext
+
+            )
         {
             _userManager = userManager;
             _appSettings = optionsMonitor.CurrentValue;
             _emailService = emailService;
             _context = context;
+            _dapperContext = dapperContext;
         }
 
         public async Task<UserClientDTO> Login(string email, string password)
@@ -343,5 +355,24 @@ namespace FFS.Application.Repositories.Impls
             }
         }
 
+        public async Task<dynamic> GetUser(string userId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("userId", userId);
+             
+
+                using var db = _dapperContext.connection;
+
+                var returnData = await db.QuerySingleAsync<dynamic>("GetRoleUser", parameters, commandType: CommandType.StoredProcedure);
+                db.Close();
+                return returnData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

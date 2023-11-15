@@ -1,11 +1,12 @@
 import { useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
 import { useEffect, useState } from "react";
-import { Button, Input, Spinner, Typography } from "@material-tailwind/react";
+import { Button, Input, Typography } from "@material-tailwind/react";
 import ReportStore from "../(public)/components/ReportStore";
 import Cookies from "universal-cookie";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../(auth)/shared/cartSlice";
+import Loading from "../../shared/components/Loading";
 
 const cookies = new Cookies();
 const uId = cookies.get("fu_foody_id");
@@ -17,6 +18,7 @@ const StoreDetailPage = () => {
   const [storeData, setStoreData] = useState(null);
   const [foodList, setFoodList] = useState([]);
   const [searchFood, setSearchFood] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -35,6 +37,10 @@ const StoreDetailPage = () => {
   };
 
   const GetStoreInformation = async () => {
+    console.log(loading);
+    setLoading(true);
+    console.log(loading);
+
     try {
       axios
         .get(`/api/Store/DetailStore/${id}`)
@@ -44,6 +50,9 @@ const StoreDetailPage = () => {
         })
         .catch((error) => {
           console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     } catch (error) {
       console.error("An error occurred", error);
@@ -93,7 +102,9 @@ const StoreDetailPage = () => {
 
   return (
     <>
-      {storeData ? (
+      {loading ? (
+        <Loading></Loading>
+      ) : (
         <div>
           <div className="grid grid-cols-5 gap-10">
             <div className="col-span-2">
@@ -108,7 +119,6 @@ const StoreDetailPage = () => {
                 <span className="text-base">Quán ăn</span>
 
                 <ReportStore uId={uId} sId={storeData.userId} />
-
               </div>
               <Typography variant="h2" className="">
                 {storeData.storeName}
@@ -198,8 +208,9 @@ const StoreDetailPage = () => {
                   <ul>
                     {foodList.map((item, index) => (
                       <li
-                        className={`p-2 ${backgroundColors[index % backgroundColors.length]
-                          }`}
+                        className={`p-2 ${
+                          backgroundColors[index % backgroundColors.length]
+                        }`}
                         key={item.id}
                       >
                         <div className="border-collapse grid grid-cols-6 gap-5">
@@ -244,8 +255,6 @@ const StoreDetailPage = () => {
             </div>
           </div>
         </div>
-      ) : (
-        <Spinner></Spinner>
       )}
     </>
   );
