@@ -57,19 +57,24 @@ namespace FFS.Application.Controllers
 
             return Ok(new { UserClient });
         }
-        [Authorize]
+
         [HttpGet]
         public async Task<IActionResult> GetCurrentUser()
         {
             var userId = User.FindFirst("UserId")?.Value;
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
+            try
+            {
+                dynamic user = await _authRepository.GetUser(userId);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
             {
                 return NotFound();
             }
-
-            return Ok(user);
         }
 
         [HttpPost]
@@ -321,7 +326,5 @@ namespace FFS.Application.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
-
     }
 }
