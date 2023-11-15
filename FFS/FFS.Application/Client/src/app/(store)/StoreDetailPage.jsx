@@ -222,7 +222,7 @@ const StoreDetailPage = () => {
                               variant="paragraph"
                               className="relative w-fit"
                             >
-                              {item.price}
+                              {item.price}.000
                               <span className="absolute font-normal top-0 -right-2 text-xs">
                                 đ
                               </span>
@@ -230,7 +230,7 @@ const StoreDetailPage = () => {
                             <Button
                               size="sm"
                               className="bg-primary"
-                              onClick={handleAddToCart(item)}
+                              onClick={() => handleAddToCart(item)}
                             >
                               Add to cart
                             </Button>

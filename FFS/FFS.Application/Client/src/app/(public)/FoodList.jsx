@@ -282,7 +282,7 @@ const FoodList = () => {
                                 </div>
                             </div>
                         )))
-                        : (<Typography variant="h5" className="mt-5 ml-5">Không có sản phẩm nào</Typography>)}
+                        : (<Typography variant="h5" className="mt-5 ml-5">Không có sản phẩm nào!</Typography>)}
                 </div>
                 <div className="flex items-center justify-between border-t border-blue-gray-50 p-4">
                     <Button
