@@ -8,6 +8,7 @@ namespace FFS.Application.Entities
     public class Discount : BaseEntity<int>
     { 
         public string Code { get; set; }
+        public string? Description { get; set; }
         public int Percent { get; set; }
         public decimal ConditionPrice { get; set; }
         public Rank? Rank { get; set; }  

@@ -2,8 +2,10 @@
 
 using Microsoft.Data.SqlClient;
 
-namespace FFS.Application.Entities {
-    public class DapperContext {
+namespace FFS.Application.Entities
+{
+    public class DapperContext
+    {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
         public DapperContext(IConfiguration configuration)

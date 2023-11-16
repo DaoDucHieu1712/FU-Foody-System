@@ -36,6 +36,11 @@ const Category = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [active, setActive] = React.useState(1);
 
+  const handleExportExcel = () => {
+    const fileDownloadUrl = `https://localhost:7025/api/Category/ExportCategory?id=${storeId}`;
+
+    window.location.href = fileDownloadUrl;
+  };
   const getItemProps = (index) => ({
     variant: active === index ? "filled" : "text",
     onClick: () => {
@@ -112,7 +117,7 @@ const Category = () => {
             <div className="flex gap-5">
               <Button
                 className=" text-white text-center font-bold bg-primary cursor-pointer hover:bg-orange-900"
-                // onClick={handleExportExcel}
+                onClick={handleExportExcel}
               >
                 Xuất Excel
               </Button>

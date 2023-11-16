@@ -50,7 +50,6 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/store-profile/:id" element={<StoreProfilePage />} />
 
-
           <Route path="/store/detail/:id" element={<StoreDetailPage />} />
           <Route path="/post" element={<Post />} />
           <Route path="/post-details/:postId" element={<DetailPost />} />
