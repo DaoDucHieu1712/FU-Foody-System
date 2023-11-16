@@ -22,9 +22,6 @@ namespace FFS.Application.Controllers
             _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
-
-
-      
         [HttpGet]
         public async Task<IActionResult> ListCategoryByStoreId([FromQuery] CategoryParameters categoryParameters)
         {
@@ -105,6 +102,22 @@ namespace FFS.Application.Controllers
                 var categories = await _categoryRepository.Top5PopularCategories();
                 var categoriesDTO = _mapper.Map<List<CategoryPopularDTO>>(categories);
                 return Ok(categoriesDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExportCategory(int id)
+        {
+            try
+            {
+                var data = await _categoryRepository.ExportCategory(id);
+                string uniqueFileName = "ThongKe_DanhMuc_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+
+                return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", uniqueFileName);
             }
             catch (Exception ex)
             {

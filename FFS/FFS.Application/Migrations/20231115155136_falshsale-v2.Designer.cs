@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FFS.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231115041336_flashsale-v1")]
-    partial class flashsalev1
+    [Migration("20231115155136_falshsale-v2")]
+    partial class falshsalev2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -344,9 +344,6 @@ namespace FFS.Application.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsOpen")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("Start")
                         .HasColumnType("datetime2");
 
@@ -382,12 +379,6 @@ namespace FFS.Application.Migrations
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
-
-                    b.Property<bool>("IsOpen")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("NumberOfProductInventory")
-                        .HasColumnType("int");
 
                     b.Property<int?>("NumberOfProductSale")
                         .HasColumnType("int");

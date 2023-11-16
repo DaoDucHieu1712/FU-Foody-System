@@ -1,15 +1,22 @@
-import { IconButton, Tooltip, Typography } from "@material-tailwind/react";
+import { Button, IconButton, Tooltip, Typography } from "@material-tailwind/react";
 import PickTimeSale from "./components/FlashSale/PickTimeSale";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddFoodSale from "./components/FlashSale/AddFoodSale";
+import { useNavigate } from "react-router-dom";
 
-const TABLE_HEAD = ["Id", "Tên đồ ăn", "Ảnh", "Loại", "Tồn kho", ""];
+const TABLE_HEAD = ["Sản phẩm", "Giá gốc", "Giá đã giảm", "Phần trăm giảm (%)", "Số lượng sản phẩm khuyến mãi", "Kho hàng", ""];
 const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 
+
 const AddFlashSale = () => {
+    const navigate = useNavigate();
     const [dateStart, setDateStart] = useState('');
     const [dateEnd, setDateEnd] = useState('');
     const [foodListSale, setFoodListSale] = useState([]);
+    const [formData, setFormData] = useState({});
+    const [priceInput, setPriceInput] = useState(null);
+    const [percentInput, setPercentInput] = useState(null);
+    const [quantityInput, setQuantityInput] = useState(null);
 
     const GetDateSale = (start, end) => {
         setDateStart(start);
@@ -18,6 +25,7 @@ const AddFlashSale = () => {
 
     const GetFoodListSale = (list) => {
         setFoodListSale(list);
+        console.log(foodListSale);
     }
 
     const formatDate = (date) => {
@@ -32,6 +40,57 @@ const AddFlashSale = () => {
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
     };
+
+    const handleDelete = (id) => {
+        const updatedFood = foodListSale.filter((food) => food.foodId != id);
+        setFoodListSale(updatedFood);
+    }
+
+    const handleChange = (foodId, field, value) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            [foodId]: {
+                ...prevData[foodId],
+                [field]: value,
+            },
+        }));
+        console.log(formData);
+    };
+
+    const onSubmit = () => {
+        Object.keys(formData).forEach((foodId) => {
+            const foodData = formData[foodId];
+            sendDataToDatabase(foodId, foodData);
+        });
+    };
+
+    const sendDataToDatabase = (foodId, foodData) => {
+
+    };
+
+    const handleUpdateAll = () => {
+        const updatedFoodList = foodListSale.map((food) => ({
+            ...food,
+            priceFood: priceInput !== null ? priceInput : food.priceFood,
+            percentFood: percentInput !== null ? percentInput : food.percentFood,
+            quantityFood: quantityInput !== null ? quantityInput : food.quantityFood,
+        }));
+
+        setFoodListSale(updatedFoodList);
+    };
+
+    useEffect(() => {
+        // Initialize formData with default values for each food item
+        const initialFormData = {};
+        foodListSale.forEach((food) => {
+            initialFormData[food.foodId] = {
+                priceFood: 0,
+                percentFood: 0,
+                quantityFood: 0,
+            };
+        });
+        setFormData(initialFormData);
+    }, [foodListSale]);
 
     return (
         <>
@@ -52,104 +111,167 @@ const AddFlashSale = () => {
                 <Typography variant="h6">Sản phẩm tham gia Flash Sale của Shop</Typography>
                 <AddFoodSale getFoodList={GetFoodListSale}></AddFoodSale>
             </div>
+            <div className="flex items-center justify-between p-5 mt-5 bg-gray-100 shadow-md rounded-t-lg">
+                <Typography>Chỉnh sửa tất cả</Typography>
+                <div>
+                    <Typography>Giá đã giảm</Typography>
+                    <input
+                        type="number"
+                        min={0}
+                        defaultValue={priceInput !== null ? priceInput : ''}
+                        onChange={(e) => setPriceInput(e.target.value !== '' ? parseFloat(e.target.value) : null)}
+                        className="w-20 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
+                    </input>
+                </div>
+                <div>
+                    <Typography>Phần trăm khuyến mãi</Typography>
+                    <input
+                        type="number"
+                        min={0}
+                        max={100}
+                        defaultValue={percentInput != null ? percentInput : ''}
+                        onChange={(e) => setPercentInput(e.target.value !== '' ? parseFloat(e.target.value) : null)}
+                        className="w-20 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
+                    </input>
+                </div>
+                <div>
+                    <Typography>Số lượng sản phẩm khuyến mãi</Typography>
+                    <input
+                        type="number"
+                        min={0}
+                        defaultValue={quantityInput !== null ? quantityInput : ''}
+                        onChange={(e) => setQuantityInput(e.target.value !== '' ? parseFloat(e.target.value) : null)}
+                        className="w-20 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
+                    </input>
+                </div>
+                <Button className="bg-primary" onClick={() => handleUpdateAll}>Cập nhật tất cả</Button>
+            </div>
             <div>
-                <table className="w-full min-w-max table-auto text-center">
-                    <thead>
-                        <tr>
-                            {TABLE_HEAD.map((head) => (
-                                <th
-                                    key={head}
-                                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                                >
-                                    <Typography
-                                        variant="small"
-                                        color="blue-gray"
-                                        className="font-normal leading-none opacity-70"
+                <form onSubmit={() => onSubmit()}>
+                    <table className="w-full min-w-max table-auto text-center">
+                        <thead>
+                            <tr>
+                                {TABLE_HEAD.map((head) => (
+                                    <th
+                                        key={head}
+                                        className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                                     >
-                                        {head}
-                                    </Typography>
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {foodListSale ?
-                            foodListSale.map((food, index) => (
-                                <tr
-                                    key={food.id}
-                                    className={
-                                        backgroundColors[index % backgroundColors.length]
-                                    }
-                                >
-                                    <td>
                                         <Typography
                                             variant="small"
                                             color="blue-gray"
-                                            className="font-bold"
+                                            className="font-normal leading-none opacity-70"
                                         >
-                                            {food.foodId}
+                                            {head}
                                         </Typography>
-                                    </td>
-                                    <td>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-normal max-w-xs truncate"
-                                        >
-                                            {food.foodName}
-                                        </Typography>
-                                    </td>
-                                    <td>
-                                        <img
-                                            className="font-normal mx-auto"
-                                            src={food.imageURL}
-                                            alt={food.foodName}
-                                            height={100}
-                                            width={100}
-                                        />
-                                    </td>
-                                    <td>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-normal"
-                                        >
-                                            {food.categoryName}
-                                        </Typography>
-                                    </td>
-                                    <td>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-normal"
-                                        >
-                                            {food.quantity}
-                                        </Typography>
-                                    </td>
-                                    <td>
-                                        <div className="h-full flex justify-center items-center">
-                                            <Tooltip content="Xem món ăn">
-                                                <IconButton
-                                                    variant="text"
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        width="20"
-                                                        height="20"
-                                                        viewBox="0 0 576 512"
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {foodListSale ?
+                                foodListSale.map((food, index) => (
+                                    <tr
+                                        key={food.foodId}
+                                        className={
+                                            backgroundColors[index % backgroundColors.length]
+                                        }
+                                    >
+                                        <td className="flex items-center justify-center">
+                                            <img
+                                                className="font-normal"
+                                                src={food.imageURL}
+                                                alt={food.foodName}
+                                                height={100}
+                                                width={100}
+                                            />
+                                            <Typography
+                                                variant="small"
+                                                color="blue-gray"
+                                                className="w-24 font-normal text-left pl-4"
+                                            >
+                                                {food.foodName}
+                                            </Typography>
+                                        </td>
+                                        <td>
+                                            <Typography
+                                                variant="small"
+                                                color="blue-gray"
+                                                className="font-normal max-w-xs truncate"
+                                            >
+                                                {food.foodName}
+                                            </Typography>
+                                        </td>
+                                        <td className="w-14 lg:w-48">
+                                            <input
+                                                type="number"
+                                                min={0}
+                                                // max={}
+                                                defaultValue={formData[food.foodId]?.priceFood}
+                                                onChange={(e) => handleChange(food.foodId, 'priceFood', e.target.value)}
+                                                className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
+                                            </input>
+                                        </td>
+                                        <td className="w-14 lg:w-48">
+                                            <input
+                                                type="number"
+                                                min={0}
+                                                max={100}
+                                                defaultValue={formData[food.foodId]?.percentFood}
+                                                onChange={(e) => handleChange(food.foodId, 'percentFood', e.target.value)}
+                                                className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
+                                            </input>
+                                        </td>
+                                        <td className="w-24 lg:w-48">
+                                            <input
+                                                type="number"
+                                                min={0}
+                                                max={food.quantity}
+                                                defaultValue={formData[food.foodId]?.quantityFood}
+                                                onChange={(e) => handleChange(food.foodId, 'quantityFood', e.target.value)}
+                                                className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
+                                            </input>
+                                        </td>
+                                        <td>
+                                            <Typography
+                                                variant="small"
+                                                color="blue-gray"
+                                                className="font-normal"
+                                            >
+                                                {food.quantity}
+                                            </Typography>
+                                        </td>
+                                        <td>
+                                            <div className="h-full flex justify-center items-center">
+                                                <Tooltip content="Xóa món ăn">
+                                                    <IconButton
+                                                        variant="text"
+                                                        onClick={() => handleDelete(food.foodId)}
                                                     >
-                                                        <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z" />
-                                                    </svg>
-                                                </IconButton>
-                                            </Tooltip>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
-                            : <Typography>Chưa thêm sản phẩm nào</Typography>}
-                    </tbody>
-                </table>
-
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="20"
+                                                            height="20"
+                                                            viewBox="0 0 448 512"
+                                                        >
+                                                            <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z" />
+                                                        </svg>
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                                : <Typography>Chưa thêm sản phẩm nào</Typography>}
+                        </tbody>
+                    </table>
+                    <div className="flex my-2 gap-1 justify-end">
+                        <Button onClick={() => navigate(`/flash-sale`)} variant="outlined">Hủy</Button>
+                        {foodListSale.length == 0 ?
+                            <Button disabled className="bg-primary">Xác nhận</Button>
+                            :
+                            <Button type="submit" className="bg-primary">Xác nhận</Button>}
+                    </div>
+                </form>
             </div>
         </>
     );

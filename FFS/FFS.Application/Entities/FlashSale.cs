@@ -12,6 +12,5 @@ namespace FFS.Application.Entities
         [ForeignKey(nameof(StoreId))]
         public Store Store { get; set; }
         public ICollection<FlashSaleDetail>? FlashSaleDetails { get; set; }
-        public bool IsOpen { get; set; }
     }
 }

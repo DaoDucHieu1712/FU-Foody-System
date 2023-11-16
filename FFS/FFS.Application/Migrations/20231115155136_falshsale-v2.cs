@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FFS.Application.Migrations
 {
-    public partial class flashsalev1 : Migration
+    public partial class falshsalev2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,13 +21,6 @@ namespace FFS.Application.Migrations
                 name: "Percent",
                 table: "FlashSales");
 
-            migrationBuilder.AddColumn<bool>(
-                name: "IsOpen",
-                table: "FlashSales",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
-
             migrationBuilder.CreateTable(
                 name: "FlashSaleDetail",
                 columns: table => new
@@ -39,8 +32,6 @@ namespace FFS.Application.Migrations
                     PriceAfterSale = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     SalePercent = table.Column<int>(type: "int", nullable: true),
                     NumberOfProductSale = table.Column<int>(type: "int", nullable: true),
-                    NumberOfProductInventory = table.Column<int>(type: "int", nullable: true),
-                    IsOpen = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDelete = table.Column<bool>(type: "bit", nullable: false)
@@ -75,10 +66,6 @@ namespace FFS.Application.Migrations
         {
             migrationBuilder.DropTable(
                 name: "FlashSaleDetail");
-
-            migrationBuilder.DropColumn(
-                name: "IsOpen",
-                table: "FlashSales");
 
             migrationBuilder.AddColumn<int>(
                 name: "Percent",

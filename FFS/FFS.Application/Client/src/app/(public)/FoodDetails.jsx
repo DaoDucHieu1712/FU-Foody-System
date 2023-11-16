@@ -23,7 +23,6 @@ const FoodDetails = () => {
   const [openComment, setOpenComment] = useState(false);
   const [api1Completed, setApi1Completed] = useState(false);
 
-
   const increaseValue = () => {
     setValue(value + 1);
   };
@@ -72,17 +71,17 @@ const FoodDetails = () => {
 
   const addToWishlist = async () => {
     try {
-
       const userId = CookieService.getToken("fu_foody_id");
       const foodId = id;
 
-      await axios.post(`/api/Wishlist/AddToWishlist?userId=${userId}&foodId=${foodId}`)
+      await axios
+        .post(`/api/Wishlist/AddToWishlist?userId=${userId}&foodId=${foodId}`)
         .then(() => {
-          toast.success("Thêm vào wishlist thành công !")
-        }).catch(() => {
+          toast.success("Thêm vào wishlist thành công !");
+        })
+        .catch(() => {
           toast.error("Món ăn này đã có trong wishlist");
         });
-
     } catch (error) {
       console.error("An error occurred while adding to the wishlist: ", error);
     }
@@ -100,7 +99,9 @@ const FoodDetails = () => {
     <>
       {foodData ? (
         <div className="container mt-8 mb-8 px-12 py-4">
-          <Typography variant="h4" className="pb-3">Thông tin món ăn</Typography>
+          <Typography variant="h4" className="pb-3">
+            Thông tin món ăn
+          </Typography>
           <div className="grid grid-cols-[4fr,6fr] gap-12">
             <div className="Sidebar">
               <img
@@ -112,25 +113,43 @@ const FoodDetails = () => {
             <div className="content-food">
               <div className="flex gap-2 items-center">
                 <Typography className="font-semibold">Cửa hàng: </Typography>
-                <Typography color="orange" variant="h5" className="cursor-pointer" onClick={() => navigate(`/store/detail/${foodData.store.id}`)}>{foodData.store.storeName}</Typography>
+                <Typography
+                  color="orange"
+                  variant="h5"
+                  className="cursor-pointer"
+                  onClick={() => navigate(`/store/detail/${foodData.store.id}`)}
+                >
+                  {foodData.store.storeName}
+                </Typography>
               </div>
-              <div className="flex items-center gap-2 font-bold pointer-events-none">
-                Đánh giá:
-                <Rating value={Math.round(foodData.rateAverage)} readonly />
-                <Typography className="font-semibold">{foodData.rateAverage} Sao</Typography>
-              </div>
+              {foodData.rateAverage !== 0 ? (
+                <div className="flex items-center gap-2 font-bold pointer-events-none">
+                  Đánh giá:
+                  <Rating value={Math.round(foodData.rateAverage)} readonly />
+                  <Typography className="font-semibold">
+                    {foodData.rateAverage} Sao
+                  </Typography>
+                </div>
+              ) : (
+                <div
+                  className="font-bold pointer-events-none"
+                  style={{ color: "gray" }}
+                >
+                  Chưa có đánh giá
+                </div>
+              )}
               <div className="food-name">
                 <Typography variant="h2">{foodData.foodName}</Typography>
                 <p className="text-base">
                   Phân loại: {foodData.category.categoryName}
                 </p>
                 <p className="flex gap-1 text-base">
-                  Tình trạng: {foodData.inventories[0].quantity > 0 ?
-                    (
-                      <p className="text-green-800 font-bold">còn hàng</p>
-                    ) : (
-                      <p className="text-red-800 font-bold">hết hàng</p>
-                    )}
+                  Tình trạng:{" "}
+                  {foodData.inventories[0].quantity > 0 ? (
+                    <p className="text-green-800 font-bold">còn hàng</p>
+                  ) : (
+                    <p className="text-red-800 font-bold">hết hàng</p>
+                  )}
                 </p>
                 <p className="text-base">Mô tả: {foodData.description}</p>
                 <p className="my-1 text-base font-bold flex items-center ">
@@ -209,7 +228,8 @@ const FoodDetails = () => {
                   <div className="h-10 w-28"></div>
 
                   <div>
-                    <button onClick={addToWishlist}
+                    <button
+                      onClick={addToWishlist}
                       type="button"
                       className="flex items-center space-x-2  text-dark  font-medium text-sm w-full px-5 py-2.5 text-center"
                     >
