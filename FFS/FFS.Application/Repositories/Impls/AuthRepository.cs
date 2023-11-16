@@ -52,10 +52,19 @@ namespace FFS.Application.Repositories.Impls
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            if (user == null || !await _userManager.CheckPasswordAsync(user, password))
+            if (user == null)
             {
-                throw new Exception("Email or Password is wrong !!");
+                throw new Exception("Email không tồn tại !");
             }
+
+            // Verify the password
+            var result = await _userManager.CheckPasswordAsync(user, password);
+            // Password is incorrect
+            if (!result)
+            {
+                throw new Exception("Mật khẩu không đúng !");
+            }
+
 
             // If the email and password are valid, generate a JWT token
             var token = await GenerateToken(user);
@@ -68,8 +77,7 @@ namespace FFS.Application.Repositories.Impls
                 Token = token
             };
         }
-
-
+       
         public async Task StoreRegister(StoreRegisterDTO storeRegisterDTO)
         {
             //using var transaction = await _context.Database.BeginTransactionAsync();

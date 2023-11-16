@@ -19,5 +19,6 @@ namespace FFS.Application.Repositories
         Task ProfileEdit(string email, UserCommandDTO userCommandDTO);
         Task<ApplicationUser> GetShipperById(string userId);
         Task<dynamic> GetUser(string userId);
+
     }
 }

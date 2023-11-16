@@ -11,8 +11,9 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import CookieService from "../../../../../shared/helper/cookieConfig";
 dayjs.extend(localizedFormat);
-dayjs.locale("vi");
-
+import moment from "moment";
+import "moment/dist/locale/vi";
+moment.locale("vi");
 import {
   Menu,
   MenuHandler,
@@ -225,17 +226,17 @@ const DetailPost = () => {
                   {post.comments.map((comment) => (
                     <div key={comment.id} className="flex justify-start gap-2 mb-4">
                       <img
-                        src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+                        src={comment.avartar}
                         alt="image 1"
                         className="h-14 w-14 rounded-full object-cover"
                       ></img>
                       <div>
                         <div className="flex gap-1">
                           <Typography variant="small" className="font-bold">
-                            Tung NT
+                          {comment.userName}
                           </Typography>
                           <Typography variant="small">
-                            - 30 Oct, 2023
+                            -{" "}{moment(comment.commentDate).fromNow()}
                           </Typography>
                         </div>
                         <Typography variant="paragraph">
@@ -262,7 +263,7 @@ const DetailPost = () => {
                 </div>
               ) : null}
               {/* END SUB COMMENT */}
-              <div className="py-2 px-8">
+              <div className="px-8 mb-4">
                 {accesstoken ? (
                   <div className="flex space-x-2">
                     {userInfo && (
