@@ -64,10 +64,9 @@ const Notification = () => {
     // Fetch initial notifications
     fetchNotifications();
 
-    // Cleanup function
     return () => {
       connection.stop();
-      window.removeEventListener("click", handleClickOutside);
+      window.removeEventListener("click", handleClickOutside);    
     };
     // Remove event click outside
   }, [userId, forceRender]);
