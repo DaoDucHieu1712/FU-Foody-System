@@ -32,19 +32,53 @@ namespace FFS.Application.Controllers {
             _foodRepository = foodRepository;
             _commentRepository = commentRepository;
         }
-        //[HttpGet]
-        //public async Task<IActionResult> GetTop8Store()
-        //{
-        //    try
-        //    {
-        //        StoreInforDTO storeInforDTO = await _storeRepository.GetInformationStore();
-        //        return Ok(storeInforDTO);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex.Message);
-        //    }
-        //}
+
+        [HttpGet]
+        public IActionResult ListAllStore([FromQuery] AllStoreParameters allStoreParameters)
+        {
+            try
+            {
+                var Stores = _storeRepository.GetAllStores(allStoreParameters);
+
+                var metadata = new
+                {
+                    Stores.TotalCount,
+                    Stores.PageSize,
+                    Stores.CurrentPage,
+                    Stores.TotalPages,
+                    Stores.HasNext,
+                    Stores.HasPrevious
+                };
+
+                var StoreDTOs = _mapper.Map<List<AllStoreDTO>>(Stores);
+
+                return Ok(
+                new
+                {
+                    StoreDTOs,
+                    metadata
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetTop8Store()
+        {
+            try
+            {
+                var top8Store = await _storeRepository.GetTop8PopularStore();
+                var top8StoreDTO =  _mapper.Map<List<AllStoreDTO>>(top8Store);
+                return Ok(top8StoreDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
 
         [Authorize]

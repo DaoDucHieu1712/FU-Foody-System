@@ -20,6 +20,7 @@ namespace FFS.Application.DTOs
                 opt => opt.MapFrom(src => src.User.Email)).ReverseMap();
             CreateMap<Entities.Food, FoodDTO>().ReverseMap();
             CreateMap<Entities.Store, StoreInforDTO>().ReverseMap();
+            CreateMap<Entities.Store, AllStoreDTO>().ReverseMap();
             CreateMap<CreateInventoryDTO, Entities.Inventory>().ReverseMap();
             CreateMap<Entities.Inventory, InventoryDTO>()
                 .ForMember(dest => dest.FoodName,
@@ -27,7 +28,9 @@ namespace FFS.Application.DTOs
                  .ForMember(dest => dest.ImageURL,
                 opt => opt.MapFrom(src => src.Food.ImageURL))
                  .ForMember(dest => dest.CategoryName,
-                opt => opt.MapFrom(src => src.Food.Category.CategoryName));
+                opt => opt.MapFrom(src => src.Food.Category.CategoryName))
+                 .ForMember(dest => dest.Price,
+                    opt => opt.MapFrom(src => src.Food.Price));
             CreateMap<Entities.Food, ExportFoodDTO>()
                 .ForMember(dest => dest.CategoryName,
                 opt => opt.MapFrom(src => src.Category.CategoryName)).ReverseMap();
