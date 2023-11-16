@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.InkML;
 using FFS.Application.Data;
 using FFS.Application.Entities;
 using Microsoft.AspNetCore.Http;
@@ -19,18 +20,23 @@ namespace FFS.Application.Controllers
             _db = db;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Notification>>> ListNotification()
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<IEnumerable<Notification>>> GetNotificationsByUserId(string userId)
         {
-            try
-            {
-                var list = await _db.Notifications.ToListAsync();
-                return Ok(list);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var notifications = await _db.Notifications
+                .Where(n => n.UserId == userId)
+                .ToListAsync();
+
+            return Ok(notifications);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateNotification(Notification notification)
+        {
+            _db.Notifications.Add(notification);
+            await _db.SaveChangesAsync();
+
+            return Ok(notification);
         }
     }
 }

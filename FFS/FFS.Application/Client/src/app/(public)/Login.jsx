@@ -90,11 +90,11 @@ const Login = () => {
           );
           dispatch(setAccessToken(token));
           toast.success("Đăng nhập thành công !!");
-          window.location.href = "/";
+          navigate("/");
         })
         .catch((err) => {
-          toast.error(err.response);
-          setError(err.response);
+          console.log(err.response);
+          toast.error(err.response.data)
         });
     } catch (errorMessage) {
       setError("Có lỗi xảy ra. Vui lòng thử lại !" + errorMessage);
