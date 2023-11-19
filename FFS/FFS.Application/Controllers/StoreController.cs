@@ -66,11 +66,11 @@ namespace FFS.Application.Controllers {
 
         }
         [HttpGet]
-        public async Task<IActionResult> GetTop8Store()
+        public async Task<IActionResult> GetTop10Store()
         {
             try
             {
-                var top8Store = await _storeRepository.GetTop8PopularStore();
+                var top8Store = await _storeRepository.GetTop10PopularStore();
                 var top8StoreDTO =  _mapper.Map<List<AllStoreDTO>>(top8Store);
                 return Ok(top8StoreDTO);
             }
