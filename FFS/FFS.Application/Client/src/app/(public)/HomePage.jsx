@@ -5,6 +5,7 @@ import FlashSaleHome from "./components/HomePage/FlashSaleHome";
 import BestSellerHome from "./components/HomePage/BestSellerHome";
 import BestRatingHome from "./components/HomePage/BestRatingHome";
 import NewestFoodHome from "./components/HomePage/NewestFoodHome";
+import StoreSpecial from "./components/HomePage/StoreSpecial";
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -904,6 +905,10 @@ const HomePage = () => {
                 </div>
             </div>
             {/* End Banner */}
+
+
+
+            <StoreSpecial></StoreSpecial>
 
             {/* Flash Sale, Popular,... */}
             <div className="grid py-4 gap-4 grid-flow-row-dense grid-cols-2 justify-stretch lg:flex lg:gap-2">
