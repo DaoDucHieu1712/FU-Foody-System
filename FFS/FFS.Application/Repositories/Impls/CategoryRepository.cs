@@ -60,8 +60,8 @@ namespace FFS.Application.Repositories.Impls
             {
                 var categoryNameLower = categoryParameters.CategoryName.ToLower();
 
-                query = query
-                    .Where(i => i.CategoryName.ToLower().Contains(categoryNameLower));
+                query = query.ToList()
+                    .Where(i => CommonService.RemoveDiacritics(i.CategoryName.ToLower()).Contains(CommonService.RemoveDiacritics(categoryNameLower))).AsQueryable();
             }
 
             // Apply pagination

@@ -150,7 +150,7 @@ namespace FFS.Application.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> ReactPost([FromBody] ReactPostDTO reactPostDTO)
+        public async Task<IActionResult> ReactPost([FromBody] CreateReactPostDTO reactPostDTO)
         {
             try
             {

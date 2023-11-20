@@ -1,4 +1,6 @@
-﻿namespace FFS.Application.DTOs.Post
+﻿using System.Text.Json.Serialization;
+
+namespace FFS.Application.DTOs.Post
 {
     public class ReactPostDTO
     {
