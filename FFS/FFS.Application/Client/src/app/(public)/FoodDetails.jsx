@@ -44,7 +44,7 @@ const FoodDetails = () => {
         .then((response) => {
           setFoodData(response.data.result);
           setCategoryId(response.data.result.categoryId);
-          setApi1Completed(true);
+          setApi1Completed((cur) => !cur);
         })
         .catch((error) => {
           console.log(error);
@@ -105,7 +105,7 @@ const FoodDetails = () => {
           <div className="grid grid-cols-[4fr,6fr] gap-12">
             <div className="Sidebar">
               <img
-                className="h-72 w-full object-cover object-center"
+                className="h-72 w-full object-fill object-center"
                 src={foodData.imageURL}
                 alt={foodData.foodName}
               />
@@ -145,7 +145,7 @@ const FoodDetails = () => {
                 </p>
                 <p className="flex gap-1 text-base">
                   Tình trạng:{" "}
-                  {foodData.inventories[0].quantity > 0 ? (
+                  {foodData.inventories[0] != null && foodData.inventories[0].quantity > 0 ? (
                     <p className="text-green-800 font-bold">còn hàng</p>
                   ) : (
                     <p className="text-red-800 font-bold">hết hàng</p>
