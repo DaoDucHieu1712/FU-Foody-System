@@ -149,13 +149,19 @@ const ReportPage = () => {
                 <td className="px-6 py-4">{report.Description}</td>
                 <td scope="col" className="px-6 py-4">
                   {report.reportType === "Report Store" && (
-                    <span className="font-bold text-primary">Báo cáo cửa hàng</span>
+                    <span className="font-bold text-primary">
+                      Báo cáo cửa hàng
+                    </span>
                   )}
                   {report.reportType === "Report Shipper" && (
-                    <span className="font-bold text-green-500">Báo cáo nhân viên giao hàng</span>
+                    <span className="font-bold text-green-500">
+                      Báo cáo nhân viên giao hàng
+                    </span>
                   )}
                   {report.reportType === "Report Customer" && (
-                    <span className="font-bold text-red-900">Báo cáo người dùng</span>
+                    <span className="font-bold text-red-900">
+                      Báo cáo người dùng
+                    </span>
                   )}
                 </td>
                 <td className="px-6 py-4">{report.CreatedAt}</td>

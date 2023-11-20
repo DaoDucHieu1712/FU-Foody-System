@@ -20,7 +20,7 @@ const StoreLayout = () => {
     axios
       .get("api/Authenticate/GetCurrentUser")
       .then((res) => {
-        if (res.Role != "SHIPPER") {
+        if (res.Role != "STOREOWNER") {
           setNotFound(true);
         }
         setEmail(res.Email);
