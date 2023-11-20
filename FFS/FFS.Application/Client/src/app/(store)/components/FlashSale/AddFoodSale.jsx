@@ -90,7 +90,6 @@ const AddFoodSale = ({ getFoodList }) => {
                 },
             });
             setInventory(response.entityInventory);
-            console.log(inventory);
             setTotalPages(response.metadata.totalPages);
         } catch (error) {
             console.error("Error fetching inventory data:", error);

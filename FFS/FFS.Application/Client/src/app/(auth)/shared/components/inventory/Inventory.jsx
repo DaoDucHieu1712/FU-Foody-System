@@ -13,9 +13,6 @@ import {
   Button,
   CardBody,
   CardFooter,
-  Tabs,
-  TabsHeader,
-  Tab,
   IconButton,
 } from "@material-tailwind/react";
 import FormatDateString from "../../../../../shared/components/format/FormatDate";
@@ -23,20 +20,6 @@ import ArrowRight from "../../../../../shared/components/icon/ArrowRight";
 import ArrowLeft from "../../../../../shared/components/icon/ArrowLeft";
 import CookieService from "../../../../../shared/helper/cookieConfig";
 
-const TABS = [
-  {
-    label: "All",
-    value: "all",
-  },
-  {
-    label: "Monitored",
-    value: "monitored",
-  },
-  {
-    label: "Unmonitored",
-    value: "unmonitored",
-  },
-];
 const TABLE_HEAD = [
   "Ảnh món ăn",
   "Tên món ăn",

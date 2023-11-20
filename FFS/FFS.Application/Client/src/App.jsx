@@ -28,9 +28,9 @@ import DashboardPage from "./app/(admin)/DashboardPage";
 import AccountManagePage from "./app/(admin)/AccountManagePage";
 import RequestAccountPage from "./app/(admin)/RequestAccountPage";
 import Category from "./app/(store)/Category";
-import AddFlashSale from "./app/(store)/AddFlashSale";
 import FlashSale from "./app/(store)/FlashSale";
 import ShipperDetailsPage from "./app/(auth)/ShipperDetailsPage";
+import AddFlashSale from "./app/(store)/components/FlashSale/AddFlashSale";
 
 function App() {
   return (
