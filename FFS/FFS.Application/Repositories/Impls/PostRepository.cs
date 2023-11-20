@@ -2,6 +2,7 @@
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using FFS.Application.Helper;
 using Microsoft.EntityFrameworkCore;
 
 namespace FFS.Application.Repositories.Impls
@@ -40,7 +41,7 @@ namespace FFS.Application.Repositories.Impls
                 // Apply filtering by title (if provided)
                 if (!string.IsNullOrEmpty(postParameters.PostTitle))
                 {
-                    query = query.Where(p => p.Title.Contains(postParameters.PostTitle));
+                    query = query.ToList().Where(p => CommonService.RemoveDiacritics(p.Title.ToLower()).Contains(CommonService.RemoveDiacritics(postParameters.PostTitle.Trim().ToLower()))).AsQueryable();
                 }
 
                 // Apply ordering (newest or oldest)

@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
 
 using FFS.Application.DTOs.Auth;
 
@@ -96,6 +98,28 @@ namespace FFS.Application.Helper
             {
                 return emailAddress;
             }
+        }
+        public static string RemoveDiacritics(string text)
+        {
+            string normalizedString = text.Normalize(NormalizationForm.FormD);
+            StringBuilder stringBuilder = new StringBuilder();
+
+            foreach (char c in normalizedString)
+            {
+                UnicodeCategory unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+
+                // Replace the Vietnamese letter "đ" with "d" (both lowercase and uppercase)
+                if (c == 'đ' || c == 'Đ')
+                {
+                    stringBuilder.Append('d');
+                }
+                else if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }

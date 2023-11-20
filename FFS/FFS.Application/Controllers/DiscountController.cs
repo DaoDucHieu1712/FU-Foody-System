@@ -5,6 +5,7 @@ using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
+using FFS.Application.Helper;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
@@ -37,8 +38,8 @@ namespace FFS.Application.Controllers
                 {
                     var codeNameLower = discountParameters.CodeName.ToLower();
 
-                    query = query
-                        .Where(i => i.Code.ToLower().Contains(codeNameLower));
+                    query = query.ToList()
+                        .Where(i => CommonService.RemoveDiacritics(i.Code.ToLower()).Contains(CommonService.RemoveDiacritics(codeNameLower))).AsQueryable();
                 }
                 var discounts = PagedList<Discount>.ToPagedList(
                 query,

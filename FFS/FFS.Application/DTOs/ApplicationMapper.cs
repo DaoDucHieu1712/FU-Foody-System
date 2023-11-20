@@ -54,7 +54,10 @@ namespace FFS.Application.DTOs
 
             CreateMap<Entities.ReactPost, ReactPostDTO>().ForMember(dest => dest.Username,
                opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName)); ;
-          
+
+            CreateMap<Entities.ReactPost, CreateReactPostDTO>();
+
+
 
             CreateMap<Entities.Comment, StoreRatingDTO>()
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
