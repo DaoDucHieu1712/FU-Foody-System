@@ -100,10 +100,11 @@ const AddFoodSale = ({ getFoodList }) => {
         const selectedItems = inventory.filter(({ id }) => checkedItems[id]);
 
         const selectedFoodList = selectedItems.map(
-            ({ foodId, imageURL, foodName, quantity, categoryName }) => ({               
+            ({ foodId, imageURL, foodName, price, quantity, categoryName }) => ({               
                 foodId,
                 imageURL,
                 foodName,
+                price,
                 quantity,
                 categoryName,
             })
