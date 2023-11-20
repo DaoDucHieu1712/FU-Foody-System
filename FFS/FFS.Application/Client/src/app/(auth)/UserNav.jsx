@@ -20,6 +20,9 @@ const UserNav = () => {
 
   const handleLogout = () => {
     CookieService.removeToken("fu_foody_token"); // Remove the user token
+    CookieService.removeToken("fu_foody_role");
+    CookieService.removeToken("fu_foody_id");
+    CookieService.removeToken("fu_foody_email");
     dispatch(setAccessToken(null));
     navigate("/Login"); // Redirect to the login page
   };

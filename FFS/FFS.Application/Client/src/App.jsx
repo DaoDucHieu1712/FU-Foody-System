@@ -56,7 +56,7 @@ function App() {
           <Route path="/post-details/:postId" element={<DetailPost />} />
           <Route path="/store/comment/:id" element={<StoreCommentPage />} />
           <Route path="/my-order" element={<MyOrder />} />
-          <Route path="/discount" element={<Discount />} />
+          
           <Route path="/food-list" element={<FoodList />} />
           <Route path="/store-list" element={<StoreList />} />
           <Route path="/wishlist" element={<Wishlist />} />
@@ -68,6 +68,7 @@ function App() {
           <Route path="/store/food" element={<Food />} />
           <Route path="/store/inventory" element={<Inventory />} />
           <Route path="store/category" element={<Category />} />
+          <Route path="store/discount" element={<Discount />} />
         </Route>
         <Route element={<AdminLayout></AdminLayout>}>
           <Route path="/admin/report" element={<ReportPage />} />

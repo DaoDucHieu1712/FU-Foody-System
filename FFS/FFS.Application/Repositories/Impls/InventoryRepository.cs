@@ -2,6 +2,7 @@
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using FFS.Application.Helper;
 using Microsoft.EntityFrameworkCore;
 
 namespace FFS.Application.Repositories.Impls
@@ -33,15 +34,15 @@ namespace FFS.Application.Repositories.Impls
         
         public PagedList<Inventory> GetInventories(InventoryParameters inventoryParameters)
         {
-            var query = FindAll(i => i.StoreId == inventoryParameters.StoreId);
+            var query = FindAll(i => i.StoreId == inventoryParameters.StoreId).Include(x=>x.Food).AsQueryable();
          
             // Filter by food name if specified
             if (!string.IsNullOrEmpty(inventoryParameters.FoodName))
             {
                 var foodNameLower = inventoryParameters.FoodName.ToLower();
 
-                query = query
-                    .Where(i => i.Food.FoodName.ToLower().Contains(foodNameLower));
+                query = query.ToList()
+                    .Where(i => CommonService.RemoveDiacritics(i.Food.FoodName.ToLower()).Contains(CommonService.RemoveDiacritics(foodNameLower))).AsQueryable();
             }
 
             // Apply pagination
