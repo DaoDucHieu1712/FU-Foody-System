@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -9,6 +10,7 @@ using AutoMapper;
 
 using FFS.Application.Controllers;
 using FFS.Application.Data;
+using FFS.Application.DTOs.Auth;
 using FFS.Application.DTOs.Common;
 using FFS.Application.Entities;
 using FFS.Application.Repositories;
@@ -31,11 +33,15 @@ namespace FFS.Test {
     [TestFixture]
     public class AuthenticateControllerTest {
 
+
+
         [Test]
-        public async Task GetCurrentUser_Returns_OkResult_With_UserData()
+        [TestCase("test@example.com", "password123", 200, typeof(object), null, TestName = "ValidModel_ReturnsOk")]
+        [TestCase("", "password123", 400, typeof(string), "Lỗi đăng nhập !", TestName = "InvalidEmail_ReturnsBadRequest")]
+        [TestCase("invalid@example.com", "invalidpassword", 401, typeof(string), "Email hoặc mật khẩu không hợp lệ !", TestName = "InvalidCredentials_ReturnsUnauthorized")]
+        public async Task LoginByEmail_Returns_OkResult_With_UserData(string email, string password, int expectedStatusCode, Type expectedValueType, string expectedErrorMessage)
         {
             // Arrange
-            var userId = "017e4112-40d9-4859-9faf-be9088426490";
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockApplicationDbContext = new Mock<ApplicationDbContext>();
             var mockMapper = new Mock<IMapper>();
@@ -47,18 +53,14 @@ namespace FFS.Test {
             string connectionString = "server=103.184.112.229,1435; database=FFS;uid=sa;pwd=Abc@123456;";
             var mockOptionsMonitor = new Mock<IOptionsMonitor<AppSetting>>();
             var mockConfiguration = new Mock<IConfiguration>();
-            mockConfiguration.SetupGet(c => c["ConnectionStrings:DefaultConnection"])
-                .Returns(connectionString);
-            // Real DapperContext that uses IDbConnection
-            var realDapperContext = new DapperContext(mockConfiguration.Object);
+            mockConfiguration.SetReturnsDefault(connectionString);
 
             // Mock DapperContext that uses the real IDbConnection
-            var mockDapperContext = new Mock<DapperContext>(mockConfiguration.Object.GetConnectionString("DefaultConnection"));
-            mockDapperContext.Setup(d => d.connection.ConnectionString).Returns(connectionString);
+            var mockDapperContext = new Mock<DapperContext>(mockConfiguration.Object);
             // Act
             var authRepository = new AuthRepository(
                 mockUserManager.Object,
-                mockOptionsMonitor.Object,
+                mockOptionsMonitor.Object, 
                 mockEmailService.Object,
                 mockApplicationDbContext.Object,
                 mockDapperContext.Object
@@ -71,30 +73,43 @@ namespace FFS.Test {
                 mockMapper.Object,
                 mockEmailService.Object
             );
-
-            // Mock the User property of the controller context
-            controller.ControllerContext = new ControllerContext
+            controller.ModelState.AddModelError("Email", "Invalid Email");
+            if (expectedErrorMessage != null)
             {
-                HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim("UserId", userId),
-                    }, "mock"))
-                }
-            };
+                controller.ModelState.AddModelError("Email", "Invalid Email");
+            }
+
+            if (expectedValueType == typeof(object))
+            {
+                mockAuthRepository.Setup(repo => repo.Login(It.IsAny<string>(), It.IsAny<string>()))
+                                  .Returns(new object());
+            }
+            else
+            {
+                mockAuthRepository.Setup(repo => repo.Login(It.IsAny<string>(), It.IsAny<string>()))
+                                  .Returns((object)null);
+            }
+
+            var loginDto = new LoginDTO { Email = email, Password = password };
 
             // Act
-            var result = await controller.GetCurrentUser();
+            var result = controller.LoginByEmail(loginDto) as ObjectResult;
 
             // Assert
-            Assert.IsInstanceOf<OkObjectResult>(result);
-            var okResult = result as OkObjectResult;
-            Assert.IsNotNull(okResult);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedStatusCode, (result as ObjectResult)?.StatusCode);
 
-            var userData = okResult.Value;
-            Assert.IsNotNull(userData);
-            Assert.AreEqual(userId, userId);
+            if (expectedErrorMessage == null)
+            {
+                Assert.IsNotNull(result.Value);
+                Assert.IsInstanceOf(expectedValueType, result.Value);
+            }
+            else
+            {
+                Assert.IsNotNull(result.Value);
+                Assert.IsInstanceOf<string>(result.Value);
+                Assert.AreEqual(expectedErrorMessage, result.Value);
+            }
         }
 
     }
