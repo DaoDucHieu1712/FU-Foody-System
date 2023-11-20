@@ -7,7 +7,7 @@ using FFS.Application.Infrastructure.Interfaces;
 
 namespace FFS.Application.Repositories {
     public interface IStoreRepository : IRepository<Store, int> {
-        Task<List<Store>> GetTop8PopularStore();
+        Task<List<Store>> GetTop10PopularStore();
         PagedList<Store> GetAllStores(AllStoreParameters allStoreParameters);
         Task<StoreInforDTO> GetInformationStore(int id);
         Task<StoreInforDTO> UpdateStore(int id, StoreInforDTO storeInforDTO);
