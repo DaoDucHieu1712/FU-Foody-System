@@ -237,7 +237,7 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
-        public async Task<List<Store>> GetTop8PopularStore()
+        public async Task<List<Store>> GetTop10PopularStore()
         {
             try
             {
@@ -250,7 +250,7 @@ namespace FFS.Application.Repositories.Impls
                         OrderCount = group.Count()
                     })
                     .OrderByDescending(x => x.OrderCount)
-                    .Take(8)
+                    .Take(10)
                     .ToListAsync();
 
                 var storeIds = popularStores.Select(ps => ps.StoreId).ToList();
