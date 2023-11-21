@@ -33,6 +33,7 @@ namespace FFS.Application.Controllers
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
 
+
         public AuthenticateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IAuthRepository authRepository, IMapper mapper, IEmailService emailService)
         {
             _db = db;
@@ -79,8 +80,6 @@ namespace FFS.Application.Controllers
             {
                 return BadRequest("Lỗi đăng nhập !");
             }
-           
-
             var UserClient =  _authRepository.Login(logindto.Email, logindto.Password);
 
             if (UserClient == null)
