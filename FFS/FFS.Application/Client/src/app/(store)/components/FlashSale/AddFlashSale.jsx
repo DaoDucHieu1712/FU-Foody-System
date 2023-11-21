@@ -1,10 +1,11 @@
 import { Button, IconButton, Tooltip, Typography } from "@material-tailwind/react";
-import PickTimeSale from "./components/FlashSale/PickTimeSale";
+import PickTimeSale from "./PickTimeSale";
 import { useEffect, useState } from "react";
-import AddFoodSale from "./components/FlashSale/AddFoodSale";
+import AddFoodSale from "./AddFoodSale";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const TABLE_HEAD = ["Sản phẩm", "Giá gốc", "Giá đã giảm", "Phần trăm giảm (%)", "Số lượng sản phẩm khuyến mãi", "Kho hàng", ""];
+const TABLE_HEAD = ["Sản phẩm", "Giá gốc (nghìn VND)", "Giá đã giảm", "Phần trăm giảm (%)", "Số lượng sản phẩm khuyến mãi", "Kho hàng", ""];
 const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 
 
@@ -25,7 +26,6 @@ const AddFlashSale = () => {
 
     const GetFoodListSale = (list) => {
         setFoodListSale(list);
-        console.log(foodListSale);
     }
 
     const formatDate = (date) => {
@@ -44,6 +44,7 @@ const AddFlashSale = () => {
     const handleDelete = (id) => {
         const updatedFood = foodListSale.filter((food) => food.foodId != id);
         setFoodListSale(updatedFood);
+        toast.success("Xoá thành công!");
     }
 
     const handleChange = (foodId, field, value) => {
@@ -69,18 +70,21 @@ const AddFlashSale = () => {
     };
 
     const handleUpdateAll = () => {
-        const updatedFoodList = foodListSale.map((food) => ({
-            ...food,
-            priceFood: priceInput !== null ? priceInput : food.priceFood,
-            percentFood: percentInput !== null ? percentInput : food.percentFood,
-            quantityFood: quantityInput !== null ? quantityInput : food.quantityFood,
-        }));
+        const updatedFormData = {};
+        Object.keys(formData).forEach((foodId) => {
+            const foodData = formData[foodId];
+            updatedFormData[foodId] = {
+                ...foodData,
+                priceFood: priceInput !== null ? priceInput : foodData.priceFood,
+                percentFood: percentInput !== null ? percentInput : foodData.percentFood,
+                quantityFood: quantityInput !== null ? quantityInput : foodData.quantityFood,
+            };
+        });
 
-        setFoodListSale(updatedFoodList);
+        setFormData(updatedFormData);
     };
 
     useEffect(() => {
-        // Initialize formData with default values for each food item
         const initialFormData = {};
         foodListSale.forEach((food) => {
             initialFormData[food.foodId] = {
@@ -112,14 +116,14 @@ const AddFlashSale = () => {
                 <AddFoodSale getFoodList={GetFoodListSale}></AddFoodSale>
             </div>
             <div className="flex items-center justify-between p-5 mt-5 bg-gray-100 shadow-md rounded-t-lg">
-                <Typography>Chỉnh sửa tất cả</Typography>
+                <Typography variant="h6">Chỉnh sửa tất cả</Typography>
                 <div>
-                    <Typography>Giá đã giảm</Typography>
+                    <Typography>Đồng giá</Typography>
                     <input
                         type="number"
                         min={0}
-                        defaultValue={priceInput !== null ? priceInput : ''}
-                        onChange={(e) => setPriceInput(e.target.value !== '' ? parseFloat(e.target.value) : null)}
+                        value={priceInput !== null ? priceInput : ''}
+                        onChange={(e) => setPriceInput(e.target.value !== '' ? e.target.value : null)}
                         className="w-20 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                     </input>
                 </div>
@@ -129,8 +133,8 @@ const AddFlashSale = () => {
                         type="number"
                         min={0}
                         max={100}
-                        defaultValue={percentInput != null ? percentInput : ''}
-                        onChange={(e) => setPercentInput(e.target.value !== '' ? parseFloat(e.target.value) : null)}
+                        value={percentInput != null ? percentInput : ''}
+                        onChange={(e) => setPercentInput(e.target.value !== '' ? e.target.value : null)}
                         className="w-20 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                     </input>
                 </div>
@@ -139,12 +143,12 @@ const AddFlashSale = () => {
                     <input
                         type="number"
                         min={0}
-                        defaultValue={quantityInput !== null ? quantityInput : ''}
-                        onChange={(e) => setQuantityInput(e.target.value !== '' ? parseFloat(e.target.value) : null)}
+                        value={quantityInput !== null ? quantityInput : ''}
+                        onChange={(e) => setQuantityInput(e.target.value !== '' ? e.target.value : null)}
                         className="w-20 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                     </input>
                 </div>
-                <Button className="bg-primary" onClick={() => handleUpdateAll}>Cập nhật tất cả</Button>
+                <Button className="bg-primary" onClick={() => handleUpdateAll()}>Cập nhật tất cả</Button>
             </div>
             <div>
                 <form onSubmit={() => onSubmit()}>
@@ -192,44 +196,56 @@ const AddFlashSale = () => {
                                                 {food.foodName}
                                             </Typography>
                                         </td>
-                                        <td>
+                                        <td className="w-28">
                                             <Typography
                                                 variant="small"
                                                 color="blue-gray"
                                                 className="font-normal max-w-xs truncate"
                                             >
-                                                {food.foodName}
+                                                {food.price}
                                             </Typography>
                                         </td>
-                                        <td className="w-14 lg:w-48">
+                                        <td className="relative w-14 lg:w-48">
                                             <input
                                                 type="number"
                                                 min={0}
-                                                // max={}
-                                                defaultValue={formData[food.foodId]?.priceFood}
+                                                max={food.price}
+                                                value={formData[food.foodId]?.priceFood}
                                                 onChange={(e) => handleChange(food.foodId, 'priceFood', e.target.value)}
                                                 className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                             </input>
+                                            <br />
+                                            {formData[food.foodId]?.priceFood > food.price && (
+                                                <span className="absolute right-0 pt-1 text-red-500 text-xs">Vui lòng nhập giá nhỏ hơn giá gốc</span>
+                                            )}
                                         </td>
-                                        <td className="w-14 lg:w-48">
+                                        <td className="relative w-14 lg:w-48">
                                             <input
                                                 type="number"
                                                 min={0}
                                                 max={100}
-                                                defaultValue={formData[food.foodId]?.percentFood}
+                                                value={formData[food.foodId]?.percentFood}
                                                 onChange={(e) => handleChange(food.foodId, 'percentFood', e.target.value)}
                                                 className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                             </input>
+                                            <br />
+                                            {formData[food.foodId]?.percentFood > 100 && (
+                                                <span className="absolute right-0 pt-1 text-red-500 text-xs">Phần trăm khuyến mãi chỉ có thể từ 0-100%</span>
+                                            )}
                                         </td>
-                                        <td className="w-24 lg:w-48">
+                                        <td className="relative w-24 lg:w-48">
                                             <input
                                                 type="number"
                                                 min={0}
                                                 max={food.quantity}
-                                                defaultValue={formData[food.foodId]?.quantityFood}
+                                                value={formData[food.foodId]?.quantityFood}
                                                 onChange={(e) => handleChange(food.foodId, 'quantityFood', e.target.value)}
                                                 className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                             </input>
+                                            <br/>
+                                            {formData[food.foodId]?.quantityFood > food.quantity && (
+                                                <span className="absolute right-0 pt-1 text-red-500 text-xs">Vui lòng nhập số lượng nhỏ hơn tồn kho</span>
+                                            )}
                                         </td>
                                         <td>
                                             <Typography

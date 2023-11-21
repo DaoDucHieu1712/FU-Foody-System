@@ -339,9 +339,6 @@ namespace FFS.Application.Migrations
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("FoodId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -363,23 +360,11 @@ namespace FFS.Application.Migrations
 
             modelBuilder.Entity("FFS.Application.Entities.FlashSaleDetail", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("FlashSaleId")
-                        .HasColumnType("int");
-
                     b.Property<int>("FoodId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
+                    b.Property<int>("FlashSaleId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("NumberOfProductSale")
                         .HasColumnType("int");
@@ -390,14 +375,11 @@ namespace FFS.Application.Migrations
                     b.Property<int?>("SalePercent")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
+                    b.HasKey("FoodId", "FlashSaleId");
 
                     b.HasIndex("FlashSaleId");
 
-                    b.HasIndex("FoodId");
+                    b.HasIndex("FoodId", "FlashSaleId");
 
                     b.ToTable("FlashSaleDetail");
                 });

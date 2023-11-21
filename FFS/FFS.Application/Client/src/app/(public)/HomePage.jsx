@@ -39,9 +39,9 @@ const HomePage = () => {
                             </div>
                             <div className="relative pointer-events-none">
                                 <img
-                                    src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+                                    src="https://png.pngtree.com/thumb_back/fh260/background/20230724/pngtree-the-table-is-filled-with-several-dishes-image_10193167.jpg"
                                     alt="image 1"
-                                    className="h-56 w-64 pt-5 object-cover"
+                                    className="h-56 w-64 pt-5 object-fill"
                                 />
                                 <div className="absolute top-0 md:right-0 h-12 w-12 bg-primary rounded-full text-white font-bold transform -translate-x-1/2 md:translate-x-1/2">
                                     <div className="flex h-full justify-center items-center">
@@ -73,9 +73,9 @@ const HomePage = () => {
                             </div>
                             <div className="relative pointer-events-none">
                                 <img
-                                    src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+                                    src="https://png.pngtree.com/thumb_back/fh260/background/20230902/pngtree-kimchi-tofu-boiled-on-a-stove-top-image_13181822.jpg"
                                     alt="image 1"
-                                    className="h-56 w-64 pt-5 object-cover"
+                                    className="h-56 w-64 pt-5 object-fill"
                                 />
                                 <div className="absolute top-0 md:right-0 h-12 w-12 bg-primary rounded-full text-white font-bold transform -translate-x-1/2 md:translate-x-1/2">
                                     <div className="flex h-full justify-center items-center">
@@ -107,9 +107,9 @@ const HomePage = () => {
                             </div>
                             <div className="relative pointer-events-none">
                                 <img
-                                    src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+                                    src="https://png.pngtree.com/thumb_back/fh260/background/20230727/pngtree-spicy-korean-oxtail-tofu-soup-image_10192729.jpg"
                                     alt="image 1"
-                                    className="h-56 w-64 pt-5 object-cover"
+                                    className="h-56 w-64 pt-5 object-fill"
                                 />
                                 <div className="absolute top-0 md:right-0 h-12 w-12 bg-primary rounded-full text-white font-bold transform -translate-x-1/2 md:translate-x-1/2">
                                     <div className="flex h-full justify-center items-center">
@@ -125,7 +125,11 @@ const HomePage = () => {
                         <div>
                             <Typography variant="paragraph" color="yellow" className="text-xs pointer-events-none">Giảm giá</Typography>
                             <Typography color="white" className="pb-2 font-semibold pointer-events-none">Cơm trộn</Typography>
-                            <Button size="sm" className="flex items-center gap-1 text-white text-center font-bold rounded-sm bg-primary cursor-pointer hover:bg-orange-900">
+                            <Button
+                                size="sm"
+                                className="flex items-center gap-1 text-white text-center font-bold rounded-sm bg-primary cursor-pointer hover:bg-orange-900"
+                                onClick={() => navigate(`/food-list`)}
+                            >
                                 Mua ngay
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -141,9 +145,9 @@ const HomePage = () => {
                         </div>
                         <div className="relative pointer-events-none">
                             <img
-                                src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+                                src="https://daotaobeptruong.vn/wp-content/uploads/2017/11/cach-lam-com-tron-han-quoc.jpg"
                                 alt="image 1"
-                                className="h-32 w-48 py-3 object-cover"
+                                className="h-32 w-48 py-3 object-fill"
                             />
                             <div className="absolute top-0 right-2 h-6 w-fit px-2 bg-yellow-300 rounded-sm text-black text-sm font-semibold transform translate-y-1">
                                 <div className="flex h-full justify-center items-center">
@@ -157,9 +161,9 @@ const HomePage = () => {
                     <div className="flex justify-around">
                         <div className="pointer-events-none">
                             <img
-                                src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+                                src="https://images.foody.vn/res/g92/914115/prof/s640x400/foody-upload-api-foody-mobile-seatalk_img_15845918-200319114117.jpg"
                                 alt="image 1"
-                                className="h-32 w-48 py-1 object-cover"
+                                className="h-32 w-48 py-1 object-fill"
                             />
                         </div>
                         <div>
@@ -170,7 +174,11 @@ const HomePage = () => {
                                     đ
                                 </span>
                             </Typography>
-                            <Button size="sm" className="flex items-center gap-1 text-white text-center font-bold rounded-sm bg-primary cursor-pointer hover:bg-orange-900 ">
+                            <Button
+                                size="sm"
+                                className="flex items-center gap-1 text-white text-center font-bold rounded-sm bg-primary cursor-pointer hover:bg-orange-900 "
+                                onClick={() => navigate(`/food-list`)}
+                            >
                                 Mua ngay
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -893,7 +901,7 @@ const HomePage = () => {
                 </div>
                 <div className="relative pointer-events-none">
                     <img
-                        src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+                        src="https://vi.alongwalker.co/img/post_images/a83d99a88f97c4e6087946099a9ff415.jpg"
                         alt="image 1"
                         className="h-72 w-96 object-cover"
                     />

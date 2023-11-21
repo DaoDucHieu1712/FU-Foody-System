@@ -15,7 +15,7 @@ const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 
 const StoreDetailPage = () => {
   const { id } = useParams();
-  const [storeData, setStoreData] = useState(null);
+  const [storeData, setStoreData] = useState();
   const [foodList, setFoodList] = useState([]);
   const [searchFood, setSearchFood] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,10 +37,6 @@ const StoreDetailPage = () => {
   };
 
   const GetStoreInformation = async () => {
-    console.log(loading);
-    setLoading(true);
-    console.log(loading);
-
     try {
       axios
         .get(`/api/Store/DetailStore/${id}`)
@@ -52,7 +48,7 @@ const StoreDetailPage = () => {
           console.log(error);
         })
         .finally(() => {
-          setLoading(false);
+          setLoading(true);
         });
     } catch (error) {
       console.error("An error occurred", error);
@@ -102,14 +98,14 @@ const StoreDetailPage = () => {
 
   return (
     <>
-      {loading ? (
+      {loading == false ? (
         <Loading></Loading>
       ) : (
         <div>
           <div className="grid grid-cols-5 gap-10">
             <div className="col-span-2">
               <img
-                className="w-full object-cover object-center"
+                className="w-full h-64 object-fill object-center"
                 src={storeData.avatarURL}
                 alt="nature image"
               />
@@ -208,9 +204,8 @@ const StoreDetailPage = () => {
                   <ul>
                     {foodList.map((item, index) => (
                       <li
-                        className={`p-2 ${
-                          backgroundColors[index % backgroundColors.length]
-                        }`}
+                        className={`p-2 ${backgroundColors[index % backgroundColors.length]
+                          }`}
                         key={item.id}
                       >
                         <div className="border-collapse grid grid-cols-6 gap-5">

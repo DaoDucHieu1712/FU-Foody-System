@@ -1,5 +1,6 @@
 ﻿using System.Data;
-
+using System.Globalization;
+using System.Text;
 using AutoMapper;
 using ClosedXML.Excel;
 using Dapper;
@@ -307,8 +308,18 @@ namespace FFS.Application.Repositories.Impls
         {
             if (!stores.Any() || string.IsNullOrWhiteSpace(search))
                 return;
-            stores = stores.Where(o => o.StoreName.ToLower().Contains(search.Trim().ToLower()));
+
+            var allStores = stores.ToList();
+
+            // Loại bỏ dấu từ chuỗi tìm kiếm
+            string searchWithoutDiacritics = CommonService.RemoveDiacritics(search);
+
+            // Thực hiện tìm kiếm không phân biệt dấu và không phân biệt chữ hoa/chữ thường
+            stores = allStores
+                .Where(o => CommonService.RemoveDiacritics(o.StoreName).ToLower().Contains(searchWithoutDiacritics.ToLower()))
+                .AsQueryable();
         }
+
         private void FilterByStoreNameAcs(ref IQueryable<Store> stores)
         {
             if (!stores.Any())

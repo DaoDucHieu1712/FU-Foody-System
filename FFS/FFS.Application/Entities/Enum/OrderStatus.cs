@@ -4,5 +4,7 @@
     {
         Unbooked = 1,
         Booked = 2 ,
+        Finish = 3,
+        Cancel = 4,
     }
 }

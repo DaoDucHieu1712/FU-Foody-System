@@ -8,6 +8,7 @@ using FFS.Application.DTOs.Order;
 using FFS.Application.DTOs.Location;
 using FFS.Application.DTOs.Category;
 using FFS.Application.DTOs.Comment;
+using FFS.Application.DTOs.FlashSale;
 
 namespace FFS.Application.DTOs
 {
@@ -54,7 +55,10 @@ namespace FFS.Application.DTOs
 
             CreateMap<Entities.ReactPost, ReactPostDTO>().ForMember(dest => dest.Username,
                opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName)); ;
-          
+
+            CreateMap<Entities.ReactPost, CreateReactPostDTO>();
+
+
 
             CreateMap<Entities.Comment, StoreRatingDTO>()
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
@@ -115,6 +119,7 @@ namespace FFS.Application.DTOs
 
             OrderMapper();
             CategoryMapper();
+            FlashSaleMapper();
         }
 
         public void OrderMapper()
@@ -138,6 +143,21 @@ namespace FFS.Application.DTOs
             CreateMap<Entities.Category, CategoryDTO>().ReverseMap();
             CreateMap<Entities.Category, CategoryRequestDTO>().ReverseMap();
             CreateMap<Entities.Category, CategoryPopularDTO>().ReverseMap();
+        }
+
+        public void FlashSaleMapper()
+        {
+            CreateMap<Entities.FlashSaleDetail, FlashSaleDetailDTO>().ReverseMap();
+            CreateMap<Entities.FlashSale, FlashSaleDTO>().ReverseMap();
+            CreateMap<Entities.Food, FoodFlashSaleDTO>()
+     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+     .ForMember(dest => dest.FoodName, opt => opt.MapFrom(src => src.FoodName))
+     .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.ImageURL))
+     .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+      .ForMember(dest => dest.CategoryName,
+                opt => opt.MapFrom(src => src.Category.CategoryName))
+     .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Inventories != null && src.Inventories.Any() ? src.Inventories.Sum(inv => inv.quantity) : 0));
+
         }
     }
 }

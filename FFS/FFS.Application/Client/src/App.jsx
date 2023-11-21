@@ -28,10 +28,14 @@ import DashboardPage from "./app/(admin)/DashboardPage";
 import AccountManagePage from "./app/(admin)/AccountManagePage";
 import RequestAccountPage from "./app/(admin)/RequestAccountPage";
 import Category from "./app/(store)/Category";
-import AddFlashSale from "./app/(store)/AddFlashSale";
 import FlashSale from "./app/(store)/FlashSale";
 import ShipperDetailsPage from "./app/(auth)/ShipperDetailsPage";
+import AddFlashSale from "./app/(store)/components/FlashSale/AddFlashSale";
 import StoreList from "./app/(public)/StoreList";
+import ShipperLayout from "./app/(shipper)/ShipperLayout";
+import OrderAvailablePage from "./app/(shipper)/OrderAvailablePage";
+import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
+import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 
 function App() {
   return (
@@ -56,18 +60,33 @@ function App() {
           <Route path="/post-details/:postId" element={<DetailPost />} />
           <Route path="/store/comment/:id" element={<StoreCommentPage />} />
           <Route path="/my-order" element={<MyOrder />} />
-          <Route path="/discount" element={<Discount />} />
+
           <Route path="/food-list" element={<FoodList />} />
           <Route path="/store-list" element={<StoreList />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/flash-sale/add" element={<AddFlashSale />} />
           <Route path="/flash-sale" element={<FlashSale />} />
+        </Route>
+        <Route element={<ShipperLayout></ShipperLayout>}>
           <Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
+          <Route
+            path="/shipper/order-available"
+            element={<OrderAvailablePage />}
+          />
+          <Route
+            path="/shipper/view-statistic"
+            element={<ShipperStatisticPage />}
+          />
+          <Route
+            path="/shipper/order-shipped"
+            element={<OrderFinishedPage />}
+          />
         </Route>
         <Route element={<StoreLayout></StoreLayout>}>
           <Route path="/store/food" element={<Food />} />
           <Route path="/store/inventory" element={<Inventory />} />
           <Route path="store/category" element={<Category />} />
+          <Route path="store/discount" element={<Discount />} />
         </Route>
         <Route element={<AdminLayout></AdminLayout>}>
           <Route path="/admin/report" element={<ReportPage />} />

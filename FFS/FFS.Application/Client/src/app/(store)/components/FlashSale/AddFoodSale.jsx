@@ -90,7 +90,6 @@ const AddFoodSale = ({ getFoodList }) => {
                 },
             });
             setInventory(response.entityInventory);
-            console.log(inventory);
             setTotalPages(response.metadata.totalPages);
         } catch (error) {
             console.error("Error fetching inventory data:", error);
@@ -101,10 +100,11 @@ const AddFoodSale = ({ getFoodList }) => {
         const selectedItems = inventory.filter(({ id }) => checkedItems[id]);
 
         const selectedFoodList = selectedItems.map(
-            ({ foodId, imageURL, foodName, quantity, categoryName }) => ({               
+            ({ foodId, imageURL, foodName, price, quantity, categoryName }) => ({               
                 foodId,
                 imageURL,
                 foodName,
+                price,
                 quantity,
                 categoryName,
             })
