@@ -5,7 +5,6 @@ namespace FFS.Application.Entities
 {
     public class FlashSale : BaseEntity<int>
     {
-        public int FoodId { get; set; }
         public int StoreId { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }

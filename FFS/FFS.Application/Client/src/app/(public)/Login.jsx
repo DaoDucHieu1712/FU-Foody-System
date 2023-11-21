@@ -19,11 +19,6 @@ const Login = () => {
       value: "login",
       desc: `Đăng nhập`,
     },
-    {
-      label: "Đăng kí",
-      value: "register",
-      desc: `Đăng kí`,
-    },
   ];
 
   const [activeTab, setActiveTab] = useState("login");
