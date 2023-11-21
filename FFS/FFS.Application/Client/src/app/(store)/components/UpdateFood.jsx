@@ -25,7 +25,7 @@ const schema = yup.object({
     .number()
     .positive("Giá tiền phải lớn hơn 0")
     .required("Hãy nhập giá món ăn!"),
-  imageURL: yup.string().required("Hãy thêm ảnh!"),
+  // imageURL: yup.string().required("Hãy thêm ảnh!"),
 });
 
 const UpdateFood = ({ reload, foodData, storeId }) => {
@@ -62,7 +62,7 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
 
   useEffect(() => {
     ListCaegory();
-    setValue("category", foodData.categoryId)
+    setValue("category", foodData.categoryId);
   }, [open]);
 
   const onSubmit = async (data) => {
@@ -165,11 +165,15 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
               label="Chọn loại"
               value={foodData.categoryId}
             >
-              {category ? category.map((category) => (
-                <Option key={category.id} value={category.id}>
-                  {category.categoryName}
-                </Option>
-              )) : <Option>Lỗi</Option>}
+              {category ? (
+                category.map((category) => (
+                  <Option key={category.id} value={category.id}>
+                    {category.categoryName}
+                  </Option>
+                ))
+              ) : (
+                <Option>Lỗi</Option>
+              )}
             </Select>
             {errors.category && (
               <ErrorText text={errors.category.message}></ErrorText>

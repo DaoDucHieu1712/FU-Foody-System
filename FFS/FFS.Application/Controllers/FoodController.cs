@@ -129,7 +129,14 @@ namespace FFS.Application.Controllers
                 food.ImageURL = foodDTO.ImageURL;
                 food.Price = (decimal)foodDTO.Price;
 
-                await _foodRepo.Update(food);
+                if (string.IsNullOrEmpty(foodDTO.ImageURL))
+                {
+                    await _foodRepo.Update(food, "ImageURL");
+                }
+                else
+                {
+                    await _foodRepo.Update(food);
+                }
                 return Ok();
             }
             catch (Exception ex)
