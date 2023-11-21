@@ -5,7 +5,7 @@ import AddFoodSale from "./AddFoodSale";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const TABLE_HEAD = ["Sản phẩm", "Giá gốc", "Giá đã giảm", "Phần trăm giảm (%)", "Số lượng sản phẩm khuyến mãi", "Kho hàng", ""];
+const TABLE_HEAD = ["Sản phẩm", "Giá gốc (nghìn VND)", "Giá đã giảm", "Phần trăm giảm (%)", "Số lượng sản phẩm khuyến mãi", "Kho hàng", ""];
 const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 
 
@@ -116,9 +116,9 @@ const AddFlashSale = () => {
                 <AddFoodSale getFoodList={GetFoodListSale}></AddFoodSale>
             </div>
             <div className="flex items-center justify-between p-5 mt-5 bg-gray-100 shadow-md rounded-t-lg">
-                <Typography>Chỉnh sửa tất cả</Typography>
+                <Typography variant="h6">Chỉnh sửa tất cả</Typography>
                 <div>
-                    <Typography>Giá đã giảm</Typography>
+                    <Typography>Đồng giá</Typography>
                     <input
                         type="number"
                         min={0}
@@ -196,26 +196,30 @@ const AddFlashSale = () => {
                                                 {food.foodName}
                                             </Typography>
                                         </td>
-                                        <td>
+                                        <td className="w-28">
                                             <Typography
                                                 variant="small"
                                                 color="blue-gray"
                                                 className="font-normal max-w-xs truncate"
                                             >
-                                                {food.foodName}
+                                                {food.price}
                                             </Typography>
                                         </td>
-                                        <td className="w-14 lg:w-48">
+                                        <td className="relative w-14 lg:w-48">
                                             <input
                                                 type="number"
                                                 min={0}
-                                                // max={}
+                                                max={food.price}
                                                 value={formData[food.foodId]?.priceFood}
                                                 onChange={(e) => handleChange(food.foodId, 'priceFood', e.target.value)}
                                                 className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                             </input>
+                                            <br />
+                                            {formData[food.foodId]?.priceFood > food.price && (
+                                                <span className="absolute right-0 pt-1 text-red-500 text-xs">Vui lòng nhập giá nhỏ hơn giá gốc</span>
+                                            )}
                                         </td>
-                                        <td className="w-14 lg:w-48">
+                                        <td className="relative w-14 lg:w-48">
                                             <input
                                                 type="number"
                                                 min={0}
@@ -224,8 +228,12 @@ const AddFlashSale = () => {
                                                 onChange={(e) => handleChange(food.foodId, 'percentFood', e.target.value)}
                                                 className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                             </input>
+                                            <br />
+                                            {formData[food.foodId]?.percentFood > 100 && (
+                                                <span className="absolute right-0 pt-1 text-red-500 text-xs">Phần trăm khuyến mãi chỉ có thể từ 0-100%</span>
+                                            )}
                                         </td>
-                                        <td className="w-24 lg:w-48">
+                                        <td className="relative w-24 lg:w-48">
                                             <input
                                                 type="number"
                                                 min={0}
@@ -234,6 +242,10 @@ const AddFlashSale = () => {
                                                 onChange={(e) => handleChange(food.foodId, 'quantityFood', e.target.value)}
                                                 className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                             </input>
+                                            <br/>
+                                            {formData[food.foodId]?.quantityFood > food.quantity && (
+                                                <span className="absolute right-0 pt-1 text-red-500 text-xs">Vui lòng nhập số lượng nhỏ hơn tồn kho</span>
+                                            )}
                                         </td>
                                         <td>
                                             <Typography

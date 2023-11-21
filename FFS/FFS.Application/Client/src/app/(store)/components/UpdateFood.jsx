@@ -143,7 +143,7 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
             <Input
               className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight"
               type="number"
-              label="Giá tiền"
+              label="Giá tiền (nghìn VND)"
               defaultValue={foodData.Price}
               {...register("price")}
             ></Input>
