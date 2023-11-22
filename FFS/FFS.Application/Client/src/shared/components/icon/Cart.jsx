@@ -1,11 +1,12 @@
 import { Badge } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cart);
 
   return (
-    <>
+    <NavLink to="/cart">
       <Badge content={cart?.list?.length} color="white">
         <svg
           width="38"
@@ -31,7 +32,7 @@ const Cart = () => {
           />
         </svg>
       </Badge>
-    </>
+    </NavLink>
   );
 };
 

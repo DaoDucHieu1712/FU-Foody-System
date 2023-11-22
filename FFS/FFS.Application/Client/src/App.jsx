@@ -28,6 +28,7 @@ import DashboardPage from "./app/(admin)/DashboardPage";
 import AccountManagePage from "./app/(admin)/AccountManagePage";
 import RequestAccountPage from "./app/(admin)/RequestAccountPage";
 import Category from "./app/(store)/Category";
+import OrderList from "./app/(store)/OrderList";
 import FlashSale from "./app/(store)/FlashSale";
 import ShipperDetailsPage from "./app/(auth)/ShipperDetailsPage";
 import AddFlashSale from "./app/(store)/components/FlashSale/AddFlashSale";
@@ -37,7 +38,6 @@ import OrderAvailablePage from "./app/(shipper)/OrderAvailablePage";
 import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 import UserDetails from "./app/(public)/UserDetails";
-import OrderShippingPage from "./app/(shipper)/OrderShippingPage";
 
 function App() {
 	return (
@@ -47,7 +47,6 @@ function App() {
 					<Route path="/" element={<HomePage />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/location" element={<Location />} />
-					{/* <Route path="/food" element={<Food />} /> */}
 					<Route path="/register-store" element={<StoreRegisterPage />} />
 					<Route path="/profile" element={<ProfilePage />} />
 					<Route path="/change-passsword" element={<ChangePasswordPage />} />
@@ -56,7 +55,6 @@ function App() {
 					<Route path="/food-details/:id" element={<FoodDetails />} />
 					<Route path="/cart" element={<CartPage />} />
 					<Route path="/store-profile/:id" element={<StoreProfilePage />} />
-
 					<Route path="/store/detail/:id" element={<StoreDetailPage />} />
 					<Route path="/post" element={<Post />} />
 					<Route path="/post-details/:postId" element={<DetailPost />} />
@@ -73,10 +71,6 @@ function App() {
 				<Route element={<ShipperLayout></ShipperLayout>}>
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
 					<Route
-						path="/shipper/order-pending"
-						element={<OrderShippingPage />}
-					/>
-					<Route
 						path="/shipper/order-available"
 						element={<OrderAvailablePage />}
 					/>
@@ -90,6 +84,10 @@ function App() {
 					/>
 				</Route>
 				<Route element={<StoreLayout></StoreLayout>}>
+					{/* <Route path="/food" element={<Food />} /> */}
+					<Route path="/store/order" element={<OrderList />} />
+					{/* <Route path="/inventory" element={<Inventory />} /> */}
+					{/* <Route path="/category" element={<Category />} /> */}
 					<Route path="/store/food" element={<Food />} />
 					<Route path="/store/inventory" element={<Inventory />} />
 					<Route path="/store/category" element={<Category />} />

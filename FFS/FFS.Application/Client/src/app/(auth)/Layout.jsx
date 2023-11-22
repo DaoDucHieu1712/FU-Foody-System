@@ -11,7 +11,6 @@ import UserNav from "./UserNav";
 import { useDispatch } from "react-redux";
 import { cartActions } from "./shared/cartSlice";
 
-
 export function LazyLoadComponent({ children }) {
   return (
     <Suspense fallback={<div className="!text-white">Loading...</div>}>
@@ -20,11 +19,8 @@ export function LazyLoadComponent({ children }) {
   );
 }
 
-
 const Layout = () => {
-  
-  const accesstoken = useSelector(state => state.auth.accessToken);
-  
+  const accesstoken = useSelector((state) => state.auth.accessToken);
 
   return (
     <>
@@ -91,8 +87,8 @@ const Layout = () => {
                 // <>
                 //   <p className="text-white">{username}</p>
                 <UserNav></UserNav>
-                // </>
               ) : (
+                // </>
                 <div className="flex items-center gap-3">
                   <a href="/login" className="login-link text-white">
                     Đăng nhập

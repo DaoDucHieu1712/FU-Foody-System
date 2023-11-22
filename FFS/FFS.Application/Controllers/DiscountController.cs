@@ -118,5 +118,20 @@ namespace FFS.Application.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> UseDiscount(string Code)
+        {
+            try
+            {
+                var check = await _discountRepository.FindSingle(x => x.Code == Code);
+                if (check == null) return Ok(false);
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
