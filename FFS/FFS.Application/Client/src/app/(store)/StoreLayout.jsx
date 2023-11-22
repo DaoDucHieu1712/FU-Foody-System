@@ -6,9 +6,9 @@ import Loading from "../../shared/components/Loading";
 
 const navigations = [
   { href: "/store/manager", name: "Cửa hàng của tôi" },
-  { href: "/category", name: "Danh mục của tôi" },
-  { href: "/food", name: "Thực phẩm" },
-  { href: "/order", name: "Đơn hàng" },
+  { href: "/store/category", name: "Danh mục của tôi" },
+  { href: "store/food", name: "Thực phẩm" },
+  { href: "store/order", name: "Đơn hàng" },
 ];
 
 const StoreLayout = () => {
