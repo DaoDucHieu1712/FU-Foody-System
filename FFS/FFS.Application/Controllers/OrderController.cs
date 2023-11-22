@@ -264,20 +264,28 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                parameters.OrderStatus = OrderStatus.Unbooked;
-                List<dynamic> orders = await _orderRepository.GetOrder(parameters);
-                foreach (var item in orders)
-                {
-                    item.detail = await _orderRepository.GetOrderDetail(item.Id);
-                }
-                int total = await _orderRepository.CountGetOrder(parameters);
-                var res =
-                 new
-                 {
-                     data = orders,
-                     total = total
-                 };
-                return Ok(res);
+				List<Order> check = _orderRepository.FindAll(x => x.OrderStatus == OrderStatus.Booked && x.ShipperId == parameters.ShipperId).ToList();
+				if(check.Count > 0) {
+					return BadRequest("Bạn đang có đơn hàng chưa hoàn thành!");
+				}
+				else
+				{
+					parameters.OrderStatus = OrderStatus.Unbooked;
+					List<dynamic> orders = await _orderRepository.GetOrder(parameters);
+					foreach (var item in orders)
+					{
+						item.detail = await _orderRepository.GetOrderDetail(item.Id);
+					}
+					int total = await _orderRepository.CountGetOrder(parameters);
+					var res =
+					 new
+					 {
+						 data = orders,
+						 total = total
+					 };
+					return Ok(res);
+				}
+				
             }
             catch (Exception ex)
             {
