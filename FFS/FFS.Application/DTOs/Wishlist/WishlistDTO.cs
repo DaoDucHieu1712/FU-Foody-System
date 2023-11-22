@@ -8,6 +8,7 @@
         public string ImageURL { get; set; }
         public string FoodName { get; set; }
         public decimal Price { get; set; }
+        public int StoreId { get; set; }
         public bool IsOutStock { get; set; }
     }
 }

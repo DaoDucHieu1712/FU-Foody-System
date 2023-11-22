@@ -36,6 +36,7 @@ import ShipperLayout from "./app/(shipper)/ShipperLayout";
 import OrderAvailablePage from "./app/(shipper)/OrderAvailablePage";
 import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
+import UserDetails from "./app/(public)/UserDetails";
 
 function App() {
   return (
@@ -66,6 +67,7 @@ function App() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/flash-sale/add" element={<AddFlashSale />} />
           <Route path="/flash-sale" element={<FlashSale />} />
+          <Route path="/user-detail" element={<UserDetails />} />
         </Route>
         <Route element={<ShipperLayout></ShipperLayout>}>
           <Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
@@ -85,8 +87,8 @@ function App() {
         <Route element={<StoreLayout></StoreLayout>}>
           <Route path="/store/food" element={<Food />} />
           <Route path="/store/inventory" element={<Inventory />} />
-          <Route path="store/category" element={<Category />} />
-          <Route path="store/discount" element={<Discount />} />
+          <Route path="/store/category" element={<Category />} />
+          <Route path="/store/discount" element={<Discount />} />
         </Route>
         <Route element={<AdminLayout></AdminLayout>}>
           <Route path="/admin/report" element={<ReportPage />} />
