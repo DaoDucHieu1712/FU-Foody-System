@@ -3,16 +3,20 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import NotFoundPage from "../NotFoundPage";
 import Loading from "../../shared/components/Loading";
+import { useDispatch } from "react-redux";
+import CookieService from "../../shared/helper/cookieConfig";
+import { setAccessToken } from "../../redux/auth";
 
 const navigations = [
   { href: "/store/manager", name: "Cửa hàng của tôi" },
-  { href: "/category", name: "Danh mục của tôi" },
-  { href: "/food", name: "Thực phẩm" },
-  { href: "/order", name: "Đơn hàng" },
+  { href: "/store/category", name: "Danh mục của tôi" },
+  { href: "/store/food", name: "Thực phẩm" },
+  { href: "/store/order", name: "Đơn hàng" },
 ];
 
 const StoreLayout = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState();
   const [notFound, setNotFound] = useState(null);
   const [loading, setLoading] = useState(true); // Add loading state
@@ -33,9 +37,11 @@ const StoreLayout = () => {
         setLoading(false); // Set loading to false when the API call completes
       });
   };
+
   useEffect(() => {
     getCurrentUser();
   }, []);
+ 
   if (loading) {
     return <Loading></Loading>;
   }
@@ -79,7 +85,12 @@ const StoreLayout = () => {
               <button
                 className="uppercase"
                 onClick={() => {
-                  console.log("Ok");
+                  CookieService.removeToken("fu_foody_token"); // Remove the user token
+                  CookieService.removeToken("fu_foody_role");
+                  CookieService.removeToken("fu_foody_id");
+                  CookieService.removeToken("fu_foody_email");
+                  dispatch(setAccessToken(null));
+                  navigate("/Login"); // Redirect to the login page
                 }}
               >
                 Đăng xuất

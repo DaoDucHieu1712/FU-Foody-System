@@ -15,7 +15,7 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
-                return await GetList(w => w.UserId == userId, w => w.Food);
+                return await GetList(w => w.UserId == userId, w => w.Food, w => w.Food.Store);
             }
             catch (Exception ex)
             {
@@ -43,39 +43,52 @@ namespace FFS.Application.Repositories.Impls
         }
 
 
-        public async Task<bool> AddToWishlist(string userId, int foodId)
+        //public async Task<bool> AddToWishlist(string userId, int foodId)
+        //{
+        //    try
+        //    {
+        //        // Check if the item already exists in the wishlist
+        //        var existingWishlistItem = await _context.Wishlists
+        //            .FirstOrDefaultAsync(w => w.UserId == userId && w.FoodId == foodId);
+
+        //        if (existingWishlistItem != null)
+        //        {
+        //            // If the item already exists
+        //            return false;
+        //        }
+
+        //        // If the item doesn't exist in the wishlist
+        //        var newWishlistItem = new Wishlist
+        //        {
+        //            UserId = userId,
+        //            FoodId = foodId,
+        //            CreatedAt= DateTime.Now,
+        //            UpdatedAt = DateTime.Now,
+        //            IsDelete = false
+        //        };
+
+        //        // Add the new item to the wishlist
+        //        await Add(newWishlistItem);
+
+        //        return true; // added successfully
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+
+        public async Task AddToWishlist(string userId, int foodId)
         {
-            try
-            {
-                // Check if the item already exists in the wishlist
-                var existingWishlistItem = await _context.Wishlists
-                    .FirstOrDefaultAsync(w => w.UserId == userId && w.FoodId == foodId);
+            // Implement logic to add the item to the wishlist
+            var wishlistItem = new Wishlist { UserId = userId, FoodId = foodId };
+            _context.Wishlists.Add(wishlistItem);
+            await _context.SaveChangesAsync();
+        }
 
-                if (existingWishlistItem != null)
-                {
-                    // If the item already exists
-                    return false;
-                }
-
-                // If the item doesn't exist in the wishlist
-                var newWishlistItem = new Wishlist
-                {
-                    UserId = userId,
-                    FoodId = foodId,
-                    CreatedAt= DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                    IsDelete = false
-                };
-
-                // Add the new item to the wishlist
-                await Add(newWishlistItem);
-
-                return true; // added successfully
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+        public async Task<bool> IsInWishlist(string userId, int foodId)
+        {
+            return await _context.Wishlists.AnyAsync(w => w.UserId == userId && w.FoodId == foodId);
         }
 
         public async Task RemoveFromWishlist(int wishlistId)
@@ -96,6 +109,17 @@ namespace FFS.Application.Repositories.Impls
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task RemoveFromWishlist2(string userId, int foodId)
+        {
+            
+            var wishlistItem = await _context.Wishlists.FirstOrDefaultAsync(w => w.UserId == userId && w.FoodId == foodId);
+            if (wishlistItem != null)
+            {
+                _context.Wishlists.Remove(wishlistItem);
+                await _context.SaveChangesAsync();
             }
         }
 

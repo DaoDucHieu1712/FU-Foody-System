@@ -5,6 +5,7 @@ using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Hubs;
 using FFS.Application.Infrastructure.Interfaces;
+using FFS.Application.Migrations;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Http;
@@ -66,6 +67,7 @@ namespace FFS.Application.Controllers
             try
             {
                 var post = await _postRepository.GetPostByPostId(postId);
+
                 if (post == null)
                 {
                     return NotFound();
@@ -81,6 +83,22 @@ namespace FFS.Application.Controllers
                 return StatusCode(500, ex.Message); 
             }
         }
+
+        [HttpGet()]
+        public async Task<ActionResult<List<Post>>> GetTop3NewestPosts()
+        {
+            try
+            {
+                var top3Posts = await _postRepository.GetTop3NewestPosts();
+                var postDTO = _mapper.Map<List<PostDTO>>(top3Posts);
+                return Ok(postDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<Post>> CreatePost([FromBody] CreatePostDTO post)

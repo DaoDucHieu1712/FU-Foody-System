@@ -20,8 +20,8 @@ import {
   MenuList,
   Typography,
 } from "@material-tailwind/react";
-import LastestPost from "../../../../(public)/components/LastestPost";
-import PopularFood from "../../../../(public)/components/PopularFood";
+import LastestPost from "../../../../(public)/components/post/LastestPost";
+import PopularFood from "../../../../(public)/components/post/PopularFood";
 import UpdatePost from "./UpdatePost";
 import DeletePost from "./DeletePost";
 
@@ -153,14 +153,7 @@ const DetailPost = () => {
               {/* POST CONTENT */}
               <div className="text-justify px-8 py-2">
                 <div dangerouslySetInnerHTML={{ __html: post.content }}></div>
-                <img src={post.image} className="w-full h-[450px] mt-3" />
-                <style>
-                  {`
-                  .Content-blog img {
-                    width: 100%;
-                  }
-                `}
-                </style>
+                <img src={post.image} className="w-full h-[450px] object-cover mt-3" />
               </div>
               {/* END POST CONTENT */}
               {/* POST EVENTS */}

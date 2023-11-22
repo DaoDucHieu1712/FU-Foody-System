@@ -2,6 +2,7 @@
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using FFS.Application.Entities.Enum;
 using FFS.Application.Helper;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,25 +16,7 @@ namespace FFS.Application.Repositories.Impls
         }
         public PagedList<Post> GetListPosts(PostParameters postParameters)
         {
-            //var query = FindAll(i => i.StoreId == inventoryParameters.StoreId);
-
-            //// Filter by food name if specified
-            //if (!string.IsNullOrEmpty(inventoryParameters.FoodName))
-            //{
-            //    var foodNameLower = inventoryParameters.FoodName.ToLower();
-
-            //    query = query
-            //        .Where(i => i.Food.FoodName.ToLower().Contains(foodNameLower));
-            //}
-
-            //// Apply pagination
-            //var pagedList = PagedList<Inventory>.ToPagedList(
-            //    query.Include(f => f.Food).ThenInclude(c => c.Category).ThenInclude(s => s.Store),
-            //    inventoryParameters.PageNumber,
-            //    inventoryParameters.PageSize
-            //);
-
-            //return pagedList;
+            
             try
             {
                 IQueryable<Post> query = FindAll();
@@ -66,11 +49,20 @@ namespace FFS.Application.Repositories.Impls
             }
         }
 
+        public async Task<List<Post>> GetTop3NewestPosts()
+        {
+            return await _context.Posts
+                .OrderByDescending(p => p.CreatedAt)
+                .Take(3)
+                .ToListAsync();
+        }
+
         public async Task<Post> CreatePost(Post post)
         {
             try
             {
                 post.CreatedAt = DateTime.Now;
+                post.Status = StatusPost.Pending;
                 await Add(post);
                 return post;
             }
@@ -132,6 +124,8 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
+
+
 
     }
 }

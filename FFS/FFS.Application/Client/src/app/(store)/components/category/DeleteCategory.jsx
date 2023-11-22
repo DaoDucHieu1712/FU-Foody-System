@@ -26,7 +26,7 @@ const DeleteCategory = ({ id, reloadCategory }) => {
       // Reload the inventory list
       reloadCategory();
     } catch (error) {
-      toast.error("Lỗi xảy ra khi xóa danh mục:", error);
+      toast.error("Không thể xóa danh mục chứa sản phẩm!!", error);
     }
   };
 
