@@ -12,9 +12,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
 import CookieService from "../../shared/helper/cookieConfig";
 import { toast } from "react-toastify";
-import addToWishlist from "./components/wishlist/WishlistDetails";
 import AddToWishlist from "./components/wishlist/AddToWishlist";
 import WishlistDetails from "./components/wishlist/WishlistDetails";
+import ReviewStore from "./components/ReviewStore"; 
+
 
 const FoodDetails = () => {
   const { id } = useParams();
@@ -427,6 +428,8 @@ const FoodDetails = () => {
             {/* END COMMENT */}
           </div>
           {/* END COMMENT */}
+
+          <ReviewStore></ReviewStore>
         </div>
       ) : (
         <Spinner></Spinner>

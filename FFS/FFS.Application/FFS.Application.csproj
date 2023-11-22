@@ -33,4 +33,12 @@
     <Folder Include="Client\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="D:\PROJECT\FU-Foody-System\FFS\FFS.Application\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\PROJECT\FU-Foody-System\FFS\FFS.Application\.editorconfig" />
+  </ItemGroup>
+
 </Project>

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FFS.Application.Repositories.Impls
 {
-    public class FlashSaleRepository : EntityRepository<FlashSale, int>, IFlashSaleRepository
+	public class FlashSaleRepository : EntityRepository<FlashSale, int>, IFlashSaleRepository
     {
         public FlashSaleRepository(ApplicationDbContext context) : base(context)
         {
@@ -41,7 +41,42 @@ namespace FFS.Application.Repositories.Impls
             }
         }
 
-        public PagedList<Food> ListFoodAvailable(CheckFoodFlashSaleParameters parameters)
+		public async Task DeleteFlashSaleDetail(int flashSaleId, int foodId)
+		{
+			try
+			{
+				var flashSaleDetailToDelete = await _context.FlashSaleDetails.FirstOrDefaultAsync(x => x.FlashSaleId == flashSaleId && x.FoodId == foodId);
+				if (flashSaleDetailToDelete != null)
+				{
+					_context.FlashSaleDetails.Remove(flashSaleDetailToDelete);
+				}
+				await _context.SaveChangesAsync();
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Error deleting FlashSaleDetail", ex);
+			}
+		}
+
+		public PagedList<FlashSale> ListFlashSaleByStore(int storeId, FlashSaleParameter parameter)
+		{
+			var query = _context.FlashSales.Include(x => x.FlashSaleDetails).Where(x=>x.StoreId == storeId && x.IsDelete == false).AsQueryable();
+			
+			SearchByDateTime(ref query, parameter.Start, parameter.End);
+			var pagedList = PagedList<FlashSale>.ToPagedList(
+			   query,
+			   parameter.PageNumber,
+			   parameter.PageSize
+		   );
+			return pagedList;
+		}
+		private void SearchByDateTime(ref IQueryable<FlashSale> flashSales, DateTime startDate, DateTime endDate)
+		{
+			flashSales = flashSales.Where(o => o.Start >= startDate && o.End <= endDate);
+		}
+
+
+		public PagedList<Food> ListFoodAvailable(CheckFoodFlashSaleParameters parameters)
         {
             var listFS = _context.FlashSales.Include(x => x.FlashSaleDetails).FirstOrDefault(x => x.StoreId == parameters.StoreId && x.Start <= parameters.Start && x.End >= parameters.End);
             List<int> foodIds = new List<int>();
@@ -54,9 +89,15 @@ namespace FFS.Application.Repositories.Impls
      .Include(x => x.Category)
      .Where(x => x.StoreId == parameters.StoreId && !foodIds.Contains(x.Id))
      .AsQueryable();
+			if (!string.IsNullOrEmpty(parameters.FoodName))
+			{
+				var foodNameToLower = parameters.FoodName.ToLower();
 
-            // Apply pagination
-            var pagedList = PagedList<Food>.ToPagedList(
+				foodsNotInFlashSale = foodsNotInFlashSale.ToList()
+					.Where(i => CommonService.RemoveDiacritics(i.FoodName.ToLower()).Contains(CommonService.RemoveDiacritics(foodNameToLower))).AsQueryable();
+			}
+			// Apply pagination
+			var pagedList = PagedList<Food>.ToPagedList(
                 foodsNotInFlashSale,
                 parameters.PageNumber,
                 parameters.PageSize

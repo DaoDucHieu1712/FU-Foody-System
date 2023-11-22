@@ -27,7 +27,7 @@ namespace FFS.Application.Controllers {
         }
 
         [HttpPost]
-        [Authorize(Roles = $"StoreOwner")]
+        [Authorize(Roles = $"Admin")]
         public IActionResult GetReports([FromBody]ReportParameters reportParameters)
         {
             try
