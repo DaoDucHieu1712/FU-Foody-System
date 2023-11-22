@@ -12,7 +12,7 @@ namespace FFS.Application.DTOs.Store {
         public DateTime TimeEnd { get; set; }
         public ICollection<Discount> Discounts { get; set; }
         public ICollection<FFS.Application.Entities.Inventory> Inventories { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Entities.Comment> Comments { get; set; }
         public ICollection<Entities.Category> Categories { get; set; }
         public ICollection<Combo> Combos { get; set; }
         public ICollection<FFS.Application.Entities.Food> Foods { get; set; }

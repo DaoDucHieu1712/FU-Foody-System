@@ -3,6 +3,7 @@ using FFS.Application.Entities.Common;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Reflection.Emit;
 
 namespace FFS.Application.Data
 {
@@ -82,8 +83,18 @@ namespace FFS.Application.Data
              HasOne(c => c.Store).WithMany(c => c.FoodCombos).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
             builder.Entity<ReactPost>().
              HasOne(c => c.Post).WithMany(c => c.ReactPosts).HasForeignKey(c => c.PostId).OnDelete(DeleteBehavior.ClientNoAction);
-            builder.Entity<FlashSale>().
-             HasOne(c => c.Food).WithMany(c => c.FlashSales).HasForeignKey(c => c.FoodId).OnDelete(DeleteBehavior.ClientNoAction);
+            // Drop existing unique constraint
+            builder.Entity<FlashSaleDetail>()
+                .HasIndex(fs => new { fs.FoodId, fs.FlashSaleId })
+                .IsUnique(false);
+
+            // Add the composite key
+            builder.Entity<FlashSaleDetail>()
+                .HasKey(fs => new { fs.FoodId, fs.FlashSaleId });
+            builder.Entity<FlashSaleDetail>().
+              HasOne(c => c.Food).WithMany(c => c.FlashSaleDetails).HasForeignKey(c => c.FoodId).OnDelete(DeleteBehavior.ClientNoAction);
+            builder.Entity<FlashSaleDetail>().
+             HasOne(c => c.FlashSale).WithMany(c => c.FlashSaleDetails).HasForeignKey(c => c.FlashSaleId).OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.Entity<FlashSale>().
              HasOne(c => c.Store).WithMany(c => c.FlashSales).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
@@ -116,6 +127,7 @@ namespace FFS.Application.Data
         public virtual DbSet<Post> Posts { get; set; }
 
         public virtual DbSet<FlashSale> FlashSales { get; set; }
+        public virtual DbSet<FlashSaleDetail> FlashSaleDetails { get; set; }
         public override int SaveChanges()
         {
             TrackingEntities();

@@ -4,6 +4,7 @@ using FFS.Application.DTOs;
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Email;
 using FFS.Application.Entities;
+using FFS.Application.Hubs;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
@@ -23,6 +24,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddCors();
+
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -31,6 +34,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(ApplicationMapper).Assembly);
+builder.Services.AddSignalR();
 
 
 #region database
@@ -104,6 +108,8 @@ builder.Services.AddTransient<IWishlistRepository, WishlistRepository>();
 builder.Services.AddTransient<IDiscountRepository, DiscountRepository>();
 builder.Services.AddTransient<IReactPostRepository, ReactPostRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IFlashSaleRepository, FlashSaleRepository>();
+builder.Services.AddTransient<IFlashSaleDetailRepository, FlashSaleDetailRepository>();
 
 
 #endregion
@@ -142,6 +148,7 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.MapHub<NotificationHub>("/notificationHub");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -149,8 +156,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseHttpsRedirection();
-app.UseCors(opt => opt.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+//app.UseHttpsRedirection();
+//app.UseCors(opt => opt.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseCors(x => x
+          .AllowAnyMethod()
+          .AllowAnyHeader()
+          .SetIsOriginAllowed(origin => true)
+          .AllowCredentials());
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

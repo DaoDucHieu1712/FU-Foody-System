@@ -15,12 +15,14 @@ import React from "react";
 import AddPost from "../(auth)/shared/components/post/AddPost";
 import axiosConfig from "../../shared/api/axiosConfig";
 import { useNavigate } from "react-router-dom";
-import LastestPost from "./components/LastestPost";
-import PopularFood from "./components/PopularFood";
+import LastestPost from "./components/post/LastestPost";
+import PopularFood from "./components/post/PopularFood";
 import ArrowRight from "../../shared/components/icon/ArrowRight";
 import ArrowLeft from "../../shared/components/icon/ArrowLeft";
+import { useSelector } from "react-redux";
 
 const Post = () => {
+  const accesstoken = useSelector(state => state.auth.accessToken);
   const [active, setActive] = React.useState(1);
   const [posts, setPosts] = React.useState([]);
   const [postTitle, setPostTitle] = useState("");
@@ -28,7 +30,6 @@ const Post = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(4);
   const [totalPages, setTotalPages] = useState(1);
-
 
   let navigate = useNavigate();
 
@@ -73,16 +74,13 @@ const Post = () => {
       });
   };
 
-
   useEffect(() => {
     fetchPostList();
   }, [postTitle, orderBy, pageNumber, pageSize]);
 
   const reloadPost = () => {
     fetchPostList();
-
-  }
- 
+  };
 
   return (
     <>
@@ -100,7 +98,7 @@ const Post = () => {
                 <Input
                   labelProps={{
                     className: "hidden",
-                  }} 
+                  }}
                   className="rounded-none border border-gray-700 bg-white text-gray-900  placeholder:text-gray-500 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10 "
                   icon={<i className="fas fa-search" />}
                   placeholder="Tìm kiếm"
@@ -108,11 +106,12 @@ const Post = () => {
                   onChange={(e) => setPostTitle(e.target.value)}
                 />
               </div>
+
               <div className="sort_blog">
                 <Select
                   labelProps={{
                     className: "hidden",
-                  }} 
+                  }}
                   className="rounded-none border border-gray-400 bg-white text-gray-900  placeholder:text-gray-500 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10 "
                   value={orderBy}
                   onChange={(value) => setOrderBy(value)}
@@ -120,9 +119,11 @@ const Post = () => {
                   <Option value="newest">Mới nhất</Option>
                   <Option value="oldest">Cũ nhất</Option>
                 </Select>
-
-                {/* <AddPost reloadPost={reloadPost}></AddPost> */}
               </div>
+              {accesstoken ? (
+                 <AddPost reloadPost={reloadPost}></AddPost>
+              ) : (
+              null)}
             </div>
             <div className="list_post mt-8">
               <div className="grid grid-cols-2 gap-4">

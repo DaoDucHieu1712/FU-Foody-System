@@ -9,6 +9,7 @@ import axios from "../../shared/api/axiosConfig";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CookieService from "../../shared/helper/cookieConfig";
+import ReportStore from "../(public)/components/ReportStore";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();

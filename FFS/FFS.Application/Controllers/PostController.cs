@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
+using FFS.Application.Data;
 using FFS.Application.DTOs.Post;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using FFS.Application.Hubs;
 using FFS.Application.Infrastructure.Interfaces;
+using FFS.Application.Migrations;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace FFS.Application.Controllers
 {
@@ -17,12 +21,16 @@ namespace FFS.Application.Controllers
         private readonly IPostRepository _postRepository;
         private readonly IReactPostRepository _reactPostRepository;
         private readonly IMapper _mapper;
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly ApplicationDbContext _db;
 
-        public PostController(IPostRepository postRepository, IReactPostRepository reactPostRepository, IMapper mapper)
+        public PostController(IPostRepository postRepository, ApplicationDbContext db, IReactPostRepository reactPostRepository, IMapper mapper, IHubContext<NotificationHub> hubContext)
         {
             _postRepository = postRepository;
             _reactPostRepository = reactPostRepository;
             _mapper = mapper;
+            _hubContext = hubContext;
+            _db = db;
         }
 
         [HttpGet]
@@ -59,13 +67,15 @@ namespace FFS.Application.Controllers
             try
             {
                 var post = await _postRepository.GetPostByPostId(postId);
+
                 if (post == null)
                 {
                     return NotFound();
                 }
                 var postDTO = _mapper.Map<PostDTO>(post);
               
-                    postDTO.LikeNumber = postDTO.ReactPosts.Where(x => x.IsLike == true).Count();
+                 postDTO.LikeNumber = postDTO.ReactPosts.Where(x => x.IsLike == true).Count();
+                postDTO.CommentNumber = postDTO.Comments.Count();
                 return Ok(postDTO);
             }
             catch (Exception ex)
@@ -74,12 +84,42 @@ namespace FFS.Application.Controllers
             }
         }
 
+        [HttpGet()]
+        public async Task<ActionResult<List<Post>>> GetTop3NewestPosts()
+        {
+            try
+            {
+                var top3Posts = await _postRepository.GetTop3NewestPosts();
+                var postDTO = _mapper.Map<List<PostDTO>>(top3Posts);
+                return Ok(postDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<Post>> CreatePost([FromBody] CreatePostDTO post)
         {
             try
             {
                 var createdPost = await _postRepository.CreatePost(_mapper.Map<Post>(post));
+
+                // Notify clients
+                await _hubContext.Clients.All.SendAsync("ReceiveNotification", $"Bài viết mới của bạn đã được tạo: {post.Title}");
+
+                // Create and save notification
+                var notification = new Notification
+                {
+                    UserId = post.UserId,
+                    Title = "Bài viết mới",
+                    Content = $"Bài viết của bạn có tiêu đề: {post.Title} đã được tạo thành công."
+                };
+
+                _db.Notifications.Add(notification);
+                await _db.SaveChangesAsync();
                 return Ok();
             }
             catch (Exception ex)
@@ -128,7 +168,7 @@ namespace FFS.Application.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> ReactPost([FromBody] ReactPostDTO reactPostDTO)
+        public async Task<IActionResult> ReactPost([FromBody] CreateReactPostDTO reactPostDTO)
         {
             try
             {

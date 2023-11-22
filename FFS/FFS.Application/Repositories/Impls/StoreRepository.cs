@@ -1,5 +1,6 @@
 ﻿using System.Data;
-
+using System.Globalization;
+using System.Text;
 using AutoMapper;
 using ClosedXML.Excel;
 using Dapper;
@@ -11,8 +12,10 @@ using DocumentFormat.OpenXml.Office2010.Excel;
 using FFS.Application.Data;
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Food;
+using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
+using FFS.Application.Entities.Enum;
 using FFS.Application.Helper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -235,5 +238,109 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
+        public async Task<List<Store>> GetTop10PopularStore()
+        {
+            try
+            {
+                var popularStores = await _context.OrderDetails
+                    .Include(od => od.Store)
+                    .GroupBy(od => od.StoreId)
+                    .Select(group => new
+                    {
+                        StoreId = group.Key,
+                        OrderCount = group.Count()
+                    })
+                    .OrderByDescending(x => x.OrderCount)
+                    .Take(10)
+                    .ToListAsync();
+
+                var storeIds = popularStores.Select(ps => ps.StoreId).ToList();
+
+                var topStores = await _context.Stores
+                    .Where(s => storeIds.Contains(s.Id))
+                    .ToListAsync();
+
+                return topStores;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public PagedList<Store> GetAllStores(AllStoreParameters allStoreParameters)
+        {
+            var query = _context.Stores.Include(x => x.Categories).AsQueryable();
+
+            if (!string.IsNullOrEmpty(allStoreParameters.CategoryName))
+            {
+                query = query.Where(store => store.Categories.Any(category => category.CategoryName.Contains(allStoreParameters.CategoryName)));
+            }
+            SearchByStoreName(ref query, allStoreParameters.Search);
+            if (!string.IsNullOrEmpty(allStoreParameters.FilterStore.ToString()))
+            {
+                switch (allStoreParameters.FilterStore)
+                {
+                    case FilterStore.StoreNameAcs:
+                        FilterByStoreNameAcs(ref query);
+                        break;
+                    case FilterStore.StoreNameDesc:
+                        FilterByStoreNameDesc(ref query);
+                        break;
+                    case FilterStore.TopRated:
+                        FilterByTopRated(ref query);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            //Apply pagination
+            var pagedList = PagedList<Store>.ToPagedList(
+                query,
+                allStoreParameters.PageNumber,
+                allStoreParameters.PageSize
+            );
+
+            return pagedList;
+        }
+        private void SearchByStoreName(ref IQueryable<Store> stores, string search)
+        {
+            if (!stores.Any() || string.IsNullOrWhiteSpace(search))
+                return;
+
+            var allStores = stores.ToList();
+
+            // Loại bỏ dấu từ chuỗi tìm kiếm
+            string searchWithoutDiacritics = CommonService.RemoveDiacritics(search);
+
+            // Thực hiện tìm kiếm không phân biệt dấu và không phân biệt chữ hoa/chữ thường
+            stores = allStores
+                .Where(o => CommonService.RemoveDiacritics(o.StoreName).ToLower().Contains(searchWithoutDiacritics.ToLower()))
+                .AsQueryable();
+        }
+
+        private void FilterByStoreNameAcs(ref IQueryable<Store> stores)
+        {
+            if (!stores.Any())
+                return;
+            stores = stores.OrderBy(x => x.StoreName);
+            ;
+        }
+        private void FilterByStoreNameDesc(ref IQueryable<Store> stores)
+        {
+            if (!stores.Any())
+                return;
+            stores = stores.OrderByDescending(x => x.StoreName);
+            ;
+        }
+        private void FilterByTopRated(ref IQueryable<Store> stores)
+        {
+            if (!stores.Any())
+                return;
+            stores = stores.OrderByDescending(x => x.RateAverage);
+            ;
+        }
+
     }
 }

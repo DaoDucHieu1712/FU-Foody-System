@@ -13,9 +13,6 @@ import {
   Button,
   CardBody,
   CardFooter,
-  Tabs,
-  TabsHeader,
-  Tab,
   IconButton,
 } from "@material-tailwind/react";
 import FormatDateString from "../../../../../shared/components/format/FormatDate";
@@ -23,20 +20,6 @@ import ArrowRight from "../../../../../shared/components/icon/ArrowRight";
 import ArrowLeft from "../../../../../shared/components/icon/ArrowLeft";
 import CookieService from "../../../../../shared/helper/cookieConfig";
 
-const TABS = [
-  {
-    label: "All",
-    value: "all",
-  },
-  {
-    label: "Monitored",
-    value: "monitored",
-  },
-  {
-    label: "Unmonitored",
-    value: "unmonitored",
-  },
-];
 const TABLE_HEAD = [
   "Ảnh món ăn",
   "Tên món ăn",
@@ -134,7 +117,7 @@ const Inventory = () => {
     <>
       <div className="w-full h-auto">
         <div className="flex items-center justify-between">
-          <p className="px-5 mx-5 mt-2 font-bold text-lg pointer-events-none">
+          <p className="mx-5 mt-2 font-bold text-3xl pointer-events-none">
             Tồn kho
           </p>
           <AddInventory
@@ -146,7 +129,7 @@ const Inventory = () => {
         <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
       </div>
 
-      <Card className="h-full w-full" shadow={false} floated={false}>
+      <Card className="h-full w-full" shadow={false}>
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row mt-3">
             <div className="ExportExcel">

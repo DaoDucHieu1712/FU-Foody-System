@@ -294,6 +294,9 @@ namespace FFS.Application.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Expired")
                         .HasColumnType("datetime2");
 
@@ -336,14 +339,8 @@ namespace FFS.Application.Migrations
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("FoodId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
-
-                    b.Property<int>("Percent")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("Start")
                         .HasColumnType("datetime2");
@@ -356,11 +353,35 @@ namespace FFS.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FoodId");
-
                     b.HasIndex("StoreId");
 
                     b.ToTable("FlashSales");
+                });
+
+            modelBuilder.Entity("FFS.Application.Entities.FlashSaleDetail", b =>
+                {
+                    b.Property<int>("FoodId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FlashSaleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NumberOfProductSale")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("PriceAfterSale")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("SalePercent")
+                        .HasColumnType("int");
+
+                    b.HasKey("FoodId", "FlashSaleId");
+
+                    b.HasIndex("FlashSaleId");
+
+                    b.HasIndex("FoodId", "FlashSaleId");
+
+                    b.ToTable("FlashSaleDetail");
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Food", b =>
@@ -833,6 +854,9 @@ namespace FFS.Application.Migrations
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -1332,21 +1356,32 @@ namespace FFS.Application.Migrations
 
             modelBuilder.Entity("FFS.Application.Entities.FlashSale", b =>
                 {
-                    b.HasOne("FFS.Application.Entities.Food", "Food")
-                        .WithMany("FlashSales")
-                        .HasForeignKey("FoodId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
-                        .IsRequired();
-
                     b.HasOne("FFS.Application.Entities.Store", "Store")
                         .WithMany("FlashSales")
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
-                    b.Navigation("Food");
-
                     b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("FFS.Application.Entities.FlashSaleDetail", b =>
+                {
+                    b.HasOne("FFS.Application.Entities.FlashSale", "FlashSale")
+                        .WithMany("FlashSaleDetails")
+                        .HasForeignKey("FlashSaleId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("FFS.Application.Entities.Food", "Food")
+                        .WithMany("FlashSaleDetails")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("FlashSale");
+
+                    b.Navigation("Food");
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Food", b =>
@@ -1672,11 +1707,16 @@ namespace FFS.Application.Migrations
                     b.Navigation("Reacts");
                 });
 
+            modelBuilder.Entity("FFS.Application.Entities.FlashSale", b =>
+                {
+                    b.Navigation("FlashSaleDetails");
+                });
+
             modelBuilder.Entity("FFS.Application.Entities.Food", b =>
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("FlashSales");
+                    b.Navigation("FlashSaleDetails");
 
                     b.Navigation("FoodCombos");
 

@@ -1,11 +1,12 @@
 import { useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
 import { useEffect, useState } from "react";
-import { Button, Input, Spinner, Typography } from "@material-tailwind/react";
+import { Button, Input, Typography } from "@material-tailwind/react";
 import ReportStore from "../(public)/components/ReportStore";
 import Cookies from "universal-cookie";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../(auth)/shared/cartSlice";
+import Loading from "../../shared/components/Loading";
 
 const cookies = new Cookies();
 const uId = cookies.get("fu_foody_id");
@@ -14,9 +15,10 @@ const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 
 const StoreDetailPage = () => {
   const { id } = useParams();
-  const [storeData, setStoreData] = useState(null);
+  const [storeData, setStoreData] = useState();
   const [foodList, setFoodList] = useState([]);
   const [searchFood, setSearchFood] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -44,6 +46,9 @@ const StoreDetailPage = () => {
         })
         .catch((error) => {
           console.log(error);
+        })
+        .finally(() => {
+          setLoading(true);
         });
     } catch (error) {
       console.error("An error occurred", error);
@@ -93,12 +98,14 @@ const StoreDetailPage = () => {
 
   return (
     <>
-      {storeData ? (
+      {loading == false ? (
+        <Loading></Loading>
+      ) : (
         <div>
           <div className="grid grid-cols-5 gap-10">
             <div className="col-span-2">
               <img
-                className="w-full object-cover object-center"
+                className="w-full h-64 object-fill object-center"
                 src={storeData.avatarURL}
                 alt="nature image"
               />
@@ -108,7 +115,6 @@ const StoreDetailPage = () => {
                 <span className="text-base">Quán ăn</span>
 
                 <ReportStore uId={uId} sId={storeData.userId} />
-
               </div>
               <Typography variant="h2" className="">
                 {storeData.storeName}
@@ -222,7 +228,7 @@ const StoreDetailPage = () => {
                               variant="paragraph"
                               className="relative w-fit"
                             >
-                              {item.price}
+                              {item.price}.000
                               <span className="absolute font-normal top-0 -right-2 text-xs">
                                 đ
                               </span>
@@ -230,7 +236,7 @@ const StoreDetailPage = () => {
                             <Button
                               size="sm"
                               className="bg-primary"
-                              onClick={handleAddToCart(item)}
+                              onClick={() => handleAddToCart(item)}
                             >
                               Add to cart
                             </Button>
@@ -244,8 +250,6 @@ const StoreDetailPage = () => {
             </div>
           </div>
         </div>
-      ) : (
-        <Spinner></Spinner>
       )}
     </>
   );

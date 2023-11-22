@@ -19,6 +19,8 @@ using FFS.Application.Helper;
 using System.Web;
 using Microsoft.Extensions.FileSystemGlobbing;
 using System.Diagnostics.Metrics;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace FFS.Application.Controllers
 {
@@ -31,6 +33,7 @@ namespace FFS.Application.Controllers
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
 
+
         public AuthenticateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IAuthRepository authRepository, IMapper mapper, IEmailService emailService)
         {
             _db = db;
@@ -39,6 +42,36 @@ namespace FFS.Application.Controllers
             _mapper = mapper;
             _emailService = emailService;
         }
+        [HttpPost()]
+        public async Task<IActionResult> Login([FromBody] LoginDTO model)
+        {
+            // Kiểm tra xem email có tồn tại trong hệ thống hay không
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return BadRequest("Email không tồn tại");
+            }
+
+            // Kiểm tra mật khẩu
+            var result = await _userManager.CheckPasswordAsync(user, model.Password);
+            if (result)
+            {
+                var token = await _authRepository.GenerateToken(user);
+                var roles = await _userManager.GetRolesAsync(user);
+                return Ok(new UserClientDTO
+                {
+                    UserId = user.Id,
+                    Email = user.Email,
+                    Role = roles[0],
+                    Token = token
+                });
+            }
+            else
+            {
+                return BadRequest("Mật khẩu không đúng");
+            }
+        }
+
 
         [HttpPost]
         public IActionResult LoginByEmail([FromBody] LoginDTO logindto)
@@ -47,8 +80,7 @@ namespace FFS.Application.Controllers
             {
                 return BadRequest("Lỗi đăng nhập !");
             }
-
-            var UserClient = _authRepository.Login(logindto.Email, logindto.Password);
+            var UserClient =  _authRepository.Login(logindto.Email, logindto.Password);
 
             if (UserClient == null)
             {
@@ -57,19 +89,24 @@ namespace FFS.Application.Controllers
 
             return Ok(new { UserClient });
         }
-        [Authorize]
+
         [HttpGet]
         public async Task<IActionResult> GetCurrentUser()
         {
             var userId = User.FindFirst("UserId")?.Value;
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
+            try
+            {
+                dynamic user = await _authRepository.GetUser(userId);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
             {
                 return NotFound();
             }
-
-            return Ok(user);
         }
 
         [HttpPost]
@@ -308,6 +345,18 @@ namespace FFS.Application.Controllers
             }
         }
 
-        
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetShipperById(string userId)
+        {
+            try
+            {
+                var user = await _authRepository.GetShipperById(userId);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

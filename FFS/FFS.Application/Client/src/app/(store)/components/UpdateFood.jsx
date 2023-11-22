@@ -25,7 +25,7 @@ const schema = yup.object({
     .number()
     .positive("Giá tiền phải lớn hơn 0")
     .required("Hãy nhập giá món ăn!"),
-  imageURL: yup.string().required("Hãy thêm ảnh!"),
+  // imageURL: yup.string().required("Hãy thêm ảnh!"),
 });
 
 const UpdateFood = ({ reload, foodData, storeId }) => {
@@ -46,10 +46,10 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
   const ListCaegory = async () => {
     try {
       axios
-        .get("/api/Category/ListCategoryByStoreId/" + storeId)
+        .get("/api/Category/ListCategoryByStoreId?StoreId=" + storeId)
         .then((response) => {
-          console.log(response);
-          setCategory(response.data.result);
+          setCategory(response.entityCatetory);
+          console.log(category);
         })
         .catch((error) => {
           toast.error("Lấy phân loại thất bại!");
@@ -62,7 +62,7 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
 
   useEffect(() => {
     ListCaegory();
-    setValue("category", foodData.categoryId)
+    setValue("category", foodData.categoryId);
   }, [open]);
 
   const onSubmit = async (data) => {
@@ -143,7 +143,7 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
             <Input
               className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight"
               type="number"
-              label="Giá tiền"
+              label="Giá tiền (nghìn VND)"
               defaultValue={foodData.Price}
               {...register("price")}
             ></Input>
@@ -165,11 +165,15 @@ const UpdateFood = ({ reload, foodData, storeId }) => {
               label="Chọn loại"
               value={foodData.categoryId}
             >
-              {category.map((category) => (
-                <Option key={category.id} value={category.id}>
-                  {category.categoryName}
-                </Option>
-              ))}
+              {category ? (
+                category.map((category) => (
+                  <Option key={category.id} value={category.id}>
+                    {category.categoryName}
+                  </Option>
+                ))
+              ) : (
+                <Option>Lỗi</Option>
+              )}
             </Select>
             {errors.category && (
               <ErrorText text={errors.category.message}></ErrorText>

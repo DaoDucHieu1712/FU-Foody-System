@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Wordprocessing;
 using FFS.Application.Data;
 using FFS.Application.DTOs.Wishlist;
 using FFS.Application.Entities;
@@ -41,9 +42,10 @@ namespace FFS.Application.Controllers
                         Id = item.Id,
                         UserId = item.UserId,
                         FoodId = item.FoodId,
-                        ImageURL= item.Food.ImageURL,
+                        ImageURL = item.Food.ImageURL,
                         FoodName = item.Food.FoodName,
                         Price = item.Food.Price,
+                        StoreId = item.Food.StoreId,
                         IsOutStock = isOutOfStock
                     });
                 }
@@ -55,27 +57,41 @@ namespace FFS.Application.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpPost]
-        public async Task<ActionResult<string>> AddToWishlist(string userId, int foodId)
-        {
-            try
-            {
-                // Call the AddToWishlist method in your repository
-                bool itemAdded = await _wishlistRepository.AddToWishlist(userId, foodId);
+        //[HttpPost]
+        //public async Task<ActionResult<string>> AddToWishlist(string userId, int foodId)
+        //{
+        //    try
+        //    {
+        //        // Call the AddToWishlist method in your repository
+        //        bool itemAdded = await _wishlistRepository.AddToWishlist(userId, foodId);
 
-                if (itemAdded)
-                {
-                    return Ok("Item added to the wishlist successfully.");
-                }
-                else
-                {
-                    return BadRequest("Item is already in the wishlist.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+        //        if (itemAdded)
+        //        {
+        //            return Ok("Item added to the wishlist successfully.");
+        //        }
+        //        else
+        //        {
+        //            return BadRequest("Item is already in the wishlist.");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
+
+        [HttpPost()]
+        public async Task<ActionResult> AddToWishlist(string userId, int foodId)
+        {
+            await _wishlistRepository.AddToWishlist(userId, foodId);
+            return Ok();
+        }
+
+        [HttpGet()]
+        public async Task<ActionResult<bool>> IsInWishlist(string userId, int foodId)
+        {
+            var isInWishlist = await _wishlistRepository.IsInWishlist(userId, foodId);
+            return Ok(isInWishlist);
         }
 
         [HttpDelete("{wishlistId}")]
@@ -91,6 +107,12 @@ namespace FFS.Application.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+        [HttpDelete("{userId}/{foodId}")]
+        public async Task<ActionResult> RemoveFromWishlistv2(string userId, int foodId)
+        {
+            await _wishlistRepository.RemoveFromWishlist2(userId, foodId);
+            return Ok();
         }
 
 

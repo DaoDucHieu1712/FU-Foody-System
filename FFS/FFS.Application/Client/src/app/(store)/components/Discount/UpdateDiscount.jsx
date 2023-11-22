@@ -3,6 +3,7 @@ import {
     Dialog,
     IconButton,
     Input,
+    Textarea,
     Tooltip,
 } from "@material-tailwind/react";
 import * as yup from "yup";
@@ -15,6 +16,7 @@ import ErrorText from "../../../../shared/components/text/ErrorText";
 
 const schema = yup.object({
     code: yup.string().required("Hãy ghi mã ưu đãi!"),
+    desc: yup.string().required("Hãy nhập mô tả chi tiết mã giảm giá!"),
     percent: yup.number().max(100, "Giá trị tối đa là 100%!").typeError("Hãy nhập phần trăm giảm giá!").positive("Giá trị phải lớn hơn 0").required("Hãy nhập phần trăm giảm giá!"),
     price: yup.number().positive("Giá trị phải lớn hơn 0").typeError("Hãy nhập giá trị đơn hàng tối thiếu!").required("Hãy nhập giá trị đơn hàng tối thiếu!"),
     quantity: yup.number().positive("Giá trị phải lớn hơn 0").typeError("Hãy nhập số lượng!").required("Hãy nhập số lượng!"),
@@ -39,6 +41,7 @@ const UpdateDiscount = ({ reload, discountData }) => {
             const newDiscount = {
                 id: discountData.id,
                 code: data.code,
+                description: data.desc,
                 percent: data.percent,
                 conditionPrice: data.price,
                 quantity: data.quantity,
@@ -95,6 +98,15 @@ const UpdateDiscount = ({ reload, discountData }) => {
                             {...register("code")}
                         ></Input>
                         {errors.code && <ErrorText text={errors.code.message}></ErrorText>}
+                    </div>
+                    <div className="mb-4">
+                        <Textarea
+                            className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight"
+                            type="text"
+                            label="Mô tả"
+                            {...register("desc")}
+                        ></Textarea>
+                        {errors.desc && <ErrorText text={errors.desc.message}></ErrorText>}
                     </div>
                     <div className="mb-4">
                         <Input

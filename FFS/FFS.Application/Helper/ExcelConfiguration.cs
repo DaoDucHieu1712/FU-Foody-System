@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using FFS.Application.DTOs.Category;
 using FFS.Application.DTOs.Report;
 using FFS.Application.DTOs.Store;
 using FFS.Application.DTOs.User;
@@ -94,7 +95,8 @@ namespace FFS.Application.Helper
             worksheet.Cell(currentRow, 1).Value = "STT";
             worksheet.Cell(currentRow, 2).Value = "USERNAME";
             worksheet.Cell(currentRow, 3).Value = "EMAIL";
-            worksheet.Cell(currentRow, 4).Value = "ROLE";
+            worksheet.Cell(currentRow, 4).Value = "VAI TRÒ";
+            worksheet.Cell(currentRow, 5).Value = "TRẠNG THÁI";
             foreach (var user in lstUsers)
             {
                 currentRow++;
@@ -102,6 +104,28 @@ namespace FFS.Application.Helper
                 worksheet.Cell(currentRow, 2).Value = user.Username;
                 worksheet.Cell(currentRow, 3).Value = user.Email;
                 worksheet.Cell(currentRow, 4).Value = user.Role;
+                worksheet.Cell(currentRow, 5).Value = user.Status;
+            }
+            // Auto-fit columns after adding data
+            worksheet.Columns().AdjustToContents();
+            return workbook;
+        }
+
+        public static XLWorkbook ExportCategory(List<CategoryDTO> lstCategory, XLWorkbook workbook)
+        {
+            var worksheet = workbook.Worksheets.Add("Danh mục");
+            worksheet.Cell(1, 1).Value = "Bảng Thống Kê";
+            worksheet.Cell(2, 1).Value = "Danh sách danh mục";
+            var currentRow = 3;
+            worksheet.Cell(currentRow, 1).Value = "Mã danh mục";
+            worksheet.Cell(currentRow, 2).Value = "Tên danh mục";
+            worksheet.Cell(currentRow, 3).Value = "Ngày tạo";
+            foreach (var cate in lstCategory)
+            {
+                currentRow++;
+                worksheet.Cell(currentRow, 1).Value = cate.Id;
+                worksheet.Cell(currentRow, 2).Value = cate.CategoryName;
+                worksheet.Cell(currentRow, 3).Value = cate.CreatedAt.ToString("MM/dd/yyyy");
             }
             // Auto-fit columns after adding data
             worksheet.Columns().AdjustToContents();

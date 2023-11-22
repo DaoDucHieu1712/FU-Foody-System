@@ -10,13 +10,15 @@ using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using DocumentFormat.OpenXml.Wordprocessing;
 using FFS.Application.Entities.Enum;
+using FFS.Application.Helper;
 
 namespace FFS.Application.Repositories.Impls
 {
     public class FoodRepository : EntityRepository<Food, int>, IFoodRepository
     {
         private readonly DapperContext _dapperContext;
-        public FoodRepository(ApplicationDbContext _dbContext, DapperContext dapperContext) : base(_dbContext) {
+        public FoodRepository(ApplicationDbContext _dbContext, DapperContext dapperContext) : base(_dbContext)
+        {
             _dapperContext = dapperContext;
         }
         public async Task<List<Food>> GetFoodListByStoreId(int storeId)
@@ -67,7 +69,7 @@ namespace FFS.Application.Repositories.Impls
 
                 using (var db = _dapperContext.connection)
                 {
-                   
+
                     returnData = db.QuerySingle<int>("CountGetFoodsByStore", parameters, commandType: CommandType.StoredProcedure);
                 }
                 return returnData;
@@ -121,7 +123,8 @@ namespace FFS.Application.Repositories.Impls
         {
             if (!foods.Any() || string.IsNullOrWhiteSpace(search))
                 return;
-            foods = foods.Where(o => o.Category.CategoryName.ToLower().Contains(search.Trim().ToLower()) || o.FoodName.ToLower().Contains(search.Trim().ToLower()));
+            var allFoods = foods.ToList();
+            foods = allFoods.Where(o => CommonService.RemoveDiacritics(o.Category.CategoryName.ToLower()).Contains(CommonService.RemoveDiacritics(search.Trim().ToLower())) || CommonService.RemoveDiacritics(o.FoodName.ToLower()).Contains(CommonService.RemoveDiacritics(search.Trim().ToLower()))).AsQueryable(); ;
         }
         private void SearchByPriceRange(ref IQueryable<Food> foods, decimal? minPrice, decimal? maxPrice)
         {
@@ -157,8 +160,8 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
-                var food =  await _context.Foods.Include(x => x.Category).Include(x => x.Inventories).Include
-                (x => x.Store).Include(x=>x.Comments).FirstOrDefaultAsync(x => x.Id == id);
+                var food = await _context.Foods.Include(x => x.Category).Include(x => x.Inventories).Include
+                (x => x.Store).Include(x => x.Comments).FirstOrDefaultAsync(x => x.Id == id);
                 return food;
             }
             catch (Exception ex)

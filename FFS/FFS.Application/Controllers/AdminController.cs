@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 
 using FFS.Application.DTOs.QueryParametter;
+using FFS.Application.Entities.Constant;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 
@@ -25,8 +26,8 @@ namespace FFS.Application.Controllers {
             _userRepository = userRepository;
         }
 
-        [Authorize]
         [HttpPost]
+        [Authorize(Roles = $"Admin")]
         public IActionResult GetReports([FromBody]ReportParameters reportParameters)
         {
             try

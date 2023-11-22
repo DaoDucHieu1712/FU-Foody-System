@@ -11,10 +11,13 @@ import { useEffect, useState } from "react";
 import axios from "../../shared/api/axiosConfig";
 import CookieService from "../../shared/helper/cookieConfig";
 import RemoveWishlist from "./components/wishlist/RemoveWishlist";
+import { useDispatch } from "react-redux";
+import { cartActions } from "../(auth)/shared/cartSlice";
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   const userId = CookieService.getToken("fu_foody_id");
+  const dispatch = useDispatch();
 
   const fetchWishlist = async () => {
     try {
@@ -35,6 +38,22 @@ const Wishlist = () => {
     await fetchWishlist();
   };
 
+  
+
+  const handleAddToCart = (cartItem) => {
+    console.log(cartItem);
+    console.log("ok");
+    const item = {
+      foodId: cartItem.id,
+      foodName: cartItem.foodName,
+      storeId: cartItem.storeId,
+      img: cartItem.imageURL,
+      price: cartItem.price,
+      quantity: 1,
+    };
+    dispatch(cartActions.addToCart(item));
+  };
+
   return (
     <>
       <div className="container">
@@ -53,8 +72,8 @@ const Wishlist = () => {
               >
                 <img
                   src={item.imageURL}
-                  alt="ui/ux review check"
-                  style={{ height: "216px" }}
+                  alt="ui/ux review check "
+                  style={{ height: "216px", width:"100%" }}
                 />
               </CardHeader>
               <CardBody className="px-0 py-3">
@@ -81,7 +100,7 @@ const Wishlist = () => {
               </CardBody>
               <CardFooter className="pt-0 px-0">
                 <ButtonGroup variant="outlined" fullWidth>
-                  <Button
+                  <Button  onClick={() => handleAddToCart(item)}
                     className="text-xs rounded-none px-0 bg-primary text-white px-0 border-orange-700"
                     disabled={item.isOutStock}
                   >
@@ -89,12 +108,6 @@ const Wishlist = () => {
                   </Button>
 
                   <RemoveWishlist wishlistId={item.id} reloadWishlist={reloadWishlist}/>
-                  {/* <Button
-                    className="rounded-none px-0 border-orange-100"
-                    
-                  >
-                    Xóa
-                  </Button> */}
                 </ButtonGroup>
               </CardFooter>
             </Card>

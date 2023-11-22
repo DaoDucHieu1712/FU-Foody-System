@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 
 const UserNav = () => {
   const userInfo = useSelector((state) => state.auth.userProfile);
+  console.log(userInfo);
 
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipRef = useRef(null);
@@ -20,6 +21,9 @@ const UserNav = () => {
 
   const handleLogout = () => {
     CookieService.removeToken("fu_foody_token"); // Remove the user token
+    CookieService.removeToken("fu_foody_role");
+    CookieService.removeToken("fu_foody_id");
+    CookieService.removeToken("fu_foody_email");
     dispatch(setAccessToken(null));
     navigate("/Login"); // Redirect to the login page
   };

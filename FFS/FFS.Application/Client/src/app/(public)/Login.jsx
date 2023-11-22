@@ -19,11 +19,6 @@ const Login = () => {
       value: "login",
       desc: `Đăng nhập`,
     },
-    {
-      label: "Đăng kí",
-      value: "register",
-      desc: `Đăng kí`,
-    },
   ];
 
   const [activeTab, setActiveTab] = useState("login");
@@ -93,8 +88,8 @@ const Login = () => {
           navigate("/");
         })
         .catch((err) => {
-          toast.error(err.response);
-          setError(err.response);
+          console.log(err.response);
+          toast.error(err.response.data)
         });
     } catch (errorMessage) {
       setError("Có lỗi xảy ra. Vui lòng thử lại !" + errorMessage);
@@ -107,7 +102,7 @@ const Login = () => {
     axios
       .post("/api/Authenticate/LoginGoogle", data)
       .then((response) => {
-        if (response.status === 200) {
+        if (response.userClient.userId.length > 0) {
           // Save the token using Cookies
           CookieService.saveToken(
             "fu_foody_email",

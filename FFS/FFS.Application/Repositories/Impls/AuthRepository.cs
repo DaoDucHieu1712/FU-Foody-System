@@ -18,6 +18,9 @@ using Microsoft.EntityFrameworkCore;
 using FFS.Application.Entities.Constant;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Bibliography;
+using Dapper;
+using FFS.Application.DTOs.QueryParametter;
+using System.Data;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -27,23 +30,41 @@ namespace FFS.Application.Repositories.Impls
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppSetting _appSettings;
         private readonly IEmailService _emailService;
+        private readonly DapperContext _dapperContext;
 
-        public AuthRepository(UserManager<ApplicationUser> userManager, IOptionsMonitor<AppSetting> optionsMonitor, IEmailService emailService, ApplicationDbContext context)
+        public AuthRepository(
+            UserManager<ApplicationUser> userManager
+            , IOptionsMonitor<AppSetting> optionsMonitor
+            , IEmailService emailService
+            , ApplicationDbContext context
+            , DapperContext dapperContext
+
+            )
         {
             _userManager = userManager;
             _appSettings = optionsMonitor.CurrentValue;
             _emailService = emailService;
             _context = context;
+            _dapperContext = dapperContext;
         }
 
         public async Task<UserClientDTO> Login(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            if (user == null || !await _userManager.CheckPasswordAsync(user, password))
+            if (user == null)
             {
-                throw new Exception("Email or Password is wrong !!");
+                throw new Exception("Email không tồn tại !");
             }
+
+            // Verify the password
+            var result = await _userManager.CheckPasswordAsync(user, password);
+            // Password is incorrect
+            if (!result)
+            {
+                throw new Exception("Mật khẩu không đúng !");
+            }
+
 
             // If the email and password are valid, generate a JWT token
             var token = await GenerateToken(user);
@@ -56,6 +77,7 @@ namespace FFS.Application.Repositories.Impls
                 Token = token
             };
         }
+       
         public async Task StoreRegister(StoreRegisterDTO storeRegisterDTO)
         {
             //using var transaction = await _context.Database.BeginTransactionAsync();
@@ -318,6 +340,45 @@ namespace FFS.Application.Repositories.Impls
             catch (Exception ex)
             {
 
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ApplicationUser> GetShipperById(string userId)
+        {
+            try
+            {
+                ApplicationUser user = await _userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    throw new Exception("User not found!");
+                }
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<dynamic> GetUser(string userId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("userId", userId);
+             
+
+                using var db = _dapperContext.connection;
+
+                var returnData = await db.QuerySingleAsync<dynamic>("GetRoleUser", parameters, commandType: CommandType.StoredProcedure);
+                db.Close();
+                return returnData;
+            }
+            catch (Exception ex)
+            {
                 throw new Exception(ex.Message);
             }
         }

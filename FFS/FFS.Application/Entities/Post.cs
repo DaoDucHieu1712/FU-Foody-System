@@ -1,4 +1,5 @@
 ﻿using FFS.Application.Entities.Common;
+using FFS.Application.Entities.Enum;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FFS.Application.Entities
@@ -12,6 +13,7 @@ namespace FFS.Application.Entities
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public ApplicationUser User { get; set; }
+        public StatusPost Status { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<ReactPost>? ReactPosts { get; set; }
     }

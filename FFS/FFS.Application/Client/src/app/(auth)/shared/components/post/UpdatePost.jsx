@@ -18,7 +18,7 @@ import axios from "../../../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 import ErrorText from "../../../../../shared/components/text/ErrorText";
 import CookieService from "../../../../../shared/helper/cookieConfig";
-import UpdateImage from "../../../../../shared/components/form/UpdateImage";
+import UpdateImagev2 from "../../../../../shared/components/form/UpdateImagev2";
 
 const schema = yup.object({
   title: yup.string().required("Hãy viết tiêu đề của bạn!"),
@@ -31,6 +31,7 @@ const UpdatePost = forwardRef(({ post, reloadPost }, ref) => {
   const handleOpen = () => setOpen(!open);
   const [editorContent, setEditorContent] = useState(post.content);
   const userId = CookieService.getToken("fu_foody_id");
+
   const {
     register,
     setValue,
@@ -55,10 +56,10 @@ const UpdatePost = forwardRef(({ post, reloadPost }, ref) => {
         id: post.id,
         title: data.title,
         content: editorContent,
-        image: data.image,
+        image: data.image !== "" ? data.image : post.image,
         userId: userId,
       };
-
+      console.log(updatePost);
       axios
         .put(`/api/Post/UpdatePost/${post.id}`, updatePost)
         .then(() => {
@@ -69,7 +70,7 @@ const UpdatePost = forwardRef(({ post, reloadPost }, ref) => {
         })
         .catch(() => {
           toast.error("Chỉnh sửa bài viết thất bại!");
-          console.log(updatePost);
+        
           setOpen(false);
         });
     } catch (error) {
@@ -120,11 +121,11 @@ const UpdatePost = forwardRef(({ post, reloadPost }, ref) => {
             {errors.content && (
               <ErrorText text={errors.content.message}></ErrorText>
             )}
-            <UpdateImage
+            <UpdateImagev2
             name="image"
             onChange={setValue}
             url={post.image}
-          ></UpdateImage>
+          ></UpdateImagev2>
           </DialogBody>
           <DialogFooter className="space-x-2">
             <Button variant="text" color="deep-orange" onClick={handleOpen}>
