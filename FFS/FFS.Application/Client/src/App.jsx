@@ -28,6 +28,7 @@ import DashboardPage from "./app/(admin)/DashboardPage";
 import AccountManagePage from "./app/(admin)/AccountManagePage";
 import RequestAccountPage from "./app/(admin)/RequestAccountPage";
 import Category from "./app/(store)/Category";
+import OrderList from "./app/(store)/OrderList";
 
 function App() {
   return (
@@ -37,7 +38,6 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/location" element={<Location />} />
-          {/* <Route path="/food" element={<Food />} /> */}
           <Route path="/register-store" element={<StoreRegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/change-passsword" element={<ChangePasswordPage />} />
@@ -46,8 +46,6 @@ function App() {
           <Route path="/food-details/:id" element={<FoodDetails />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/store-profile/:id" element={<StoreProfilePage />} />
-     
-
           <Route path="/store/detail/:id" element={<StoreDetailPage />} />
           <Route path="/post" element={<Post />} />
           <Route path="/post-details/:postId" element={<DetailPost />} />
@@ -59,6 +57,7 @@ function App() {
         </Route>
         <Route element={<StoreLayout></StoreLayout>}>
           <Route path="/food" element={<Food />} />
+          <Route path="/store/order" element={<OrderList />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/category" element={<Category />} />
         </Route>

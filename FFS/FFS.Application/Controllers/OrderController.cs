@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Order;
+using FFS.Application.DTOs.Others;
 using FFS.Application.Entities;
 using FFS.Application.Entities.Enum;
 using FFS.Application.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace FFS.Application.Controllers
 {
@@ -53,12 +56,72 @@ namespace FFS.Application.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> MyOrder(string id)
+        public async Task<IActionResult> MyOrder(string id, [FromQuery] OrderFilterDTO orderFilterDTO)
         {
             try
             {
-                var list = await _orderRepository.FindAll(x => x.CustomerId == id && x.IsDelete == false).Include(x => x.Customer).Include(x => x.Shipper).ToListAsync();
-                return Ok(_mapper.Map<List<OrderResponseDTO>>(list));
+                var queryOrders = _orderRepository.FindAll(x => x.CustomerId == id, x => x.Customer, x => x.Shipper);
+
+                if (orderFilterDTO.SortType != null)
+                {
+                    switch (orderFilterDTO.SortType)
+                    {
+                        case "date-asc":
+                            queryOrders = queryOrders.OrderBy(x => x.CreatedAt);
+                            break;
+                        case "date-desc":
+                            queryOrders = queryOrders.OrderByDescending(x => x.CreatedAt);
+                            break;
+                        case "price-asc":
+                            queryOrders = queryOrders.OrderBy(x => x.TotalPrice);
+                            break;
+                        case "price-desc":
+                            queryOrders = queryOrders.OrderByDescending(x => x.TotalPrice);
+                            break;
+                    }
+                }
+
+                if(orderFilterDTO.OrderId != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.Id == orderFilterDTO.OrderId);
+                }
+
+                if (orderFilterDTO.Status != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.OrderStatus == orderFilterDTO.Status);
+                }
+
+                if (orderFilterDTO.StartDate != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.CreatedAt >= orderFilterDTO.StartDate);
+                }
+
+                if (orderFilterDTO.EndDate != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.CreatedAt <= orderFilterDTO.EndDate);
+                }
+
+                if (orderFilterDTO.ToPrice != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.TotalPrice >= orderFilterDTO.ToPrice);
+                }
+
+                if (orderFilterDTO.FromPrice != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.TotalPrice <= orderFilterDTO.FromPrice);
+                }
+
+                int pageSize = Constant.Contants.PAGE_SIZE;
+                List<Order> orders = PagedList<Order>.ToPagedList(queryOrders, orderFilterDTO.PageIndex ?? 1, pageSize);
+                var TotalPages = (int)Math.Ceiling(orders.Count / (double)pageSize);
+
+                return Ok(new EntityFilter<OrderResponseDTO>()
+                {
+                    List = _mapper.Map<List<OrderResponseDTO>>(orders),
+                    PageIndex = orderFilterDTO.PageIndex ?? 1,
+                    Total = TotalPages,
+                });
+
             }
             catch (Exception ex)
             {
@@ -67,22 +130,113 @@ namespace FFS.Application.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderWithStore(int id)
+        public async Task<IActionResult> GetOrderWithStore(int id, [FromQuery] OrderFilterDTO orderFilterDTO)
         {
             try
-            {   
-                List<Order> orders = new List<Order>();
-                var oddts = await _orderDetailRepository.FindAll(x => x.StoreId == id)
-                    .GroupBy(x => new {x.StoreId, x.OrderId})
-                    .Select(x => new {orderId = x.Key.OrderId})
-                    .ToListAsync();
+            {
+                var queryOrders = _orderDetailRepository.FindAll(x => x.StoreId == id, x => x.Order)
+                    .Include(x => x.Order)
+                    .ThenInclude(x => x.Customer)
+                    .Include(x => x.Order)
+                    .ThenInclude(x => x.Shipper)
+                    .GroupBy(x => new
+                    {
+                        Id = x.OrderId,
+                        CustomerId = x.Order.CustomerId,
+                        ShipperId = x.Order.ShipperId,
+                        PaymentId = x.Order.PaymentId,
+                        CustomerName = x.Order.Customer.UserName,
+                        ShipperName = x.Order.Shipper.FirstName + " " + x.Order.Shipper.LastName,
+                        CancelReason = x.Order.CancelReason,
+                        Location = x.Order.Location,
+                        Note = x.Order.Note,
+                        PhoneNumber = x.Order.PhoneNumber,
+                        TotalPrice = x.Order.TotalPrice,
+                        OrderStatus = x.Order.OrderStatus,
+                        CreatedAt = x.Order.CreatedAt,
+                        UpdatedAt = x.Order.UpdatedAt,
+                    })
+                    .Select(x => new OrderResponseDTO
+                    {
+                        Id = x.Key.Id,
+                        CustomerId = x.Key.CustomerId,
+                        ShipperId = x.Key.ShipperId,
+                        CustomerName = x.Key.CustomerName,
+                        ShipperName = x.Key.ShipperName,
+                        CancelReason = x.Key.CancelReason,
+                        Location = x.Key.Location,
+                        Note = x.Key.Note,
+                        PhoneNumber = x.Key.PhoneNumber,
+                        OrderStatus = x.Key.OrderStatus,
+                        TotalPrice = x.Key.TotalPrice,
+                        PaymentId = x.Key.PaymentId,
+                        CreatedAt = x.Key.CreatedAt,
+                    });
 
-                foreach (var item in oddts)
+                if(orderFilterDTO.SortType != null)
                 {
-                    var od = await _orderRepository.FindSingle(x => x.Id == item.orderId, x=> x.Customer, x => x.Shipper);
-                    orders.Add(od);
+                    switch (orderFilterDTO.SortType)
+                    {
+                        case "date-asc":
+                            queryOrders = queryOrders.OrderBy(x => x.CreatedAt);
+                            break;
+                        case "date-desc":
+                            queryOrders = queryOrders.OrderByDescending(x => x.CreatedAt);
+                            break; 
+                        case "price-asc":
+                            queryOrders = queryOrders.OrderBy(x => x.TotalPrice);
+                            break;
+                        case "price-desc":
+                            queryOrders = queryOrders.OrderByDescending(x => x.TotalPrice);
+                            break;
+                    }
                 }
-                return Ok(_mapper.Map<List<OrderResponseDTO>>(orders));
+
+                if(orderFilterDTO.CustomerName != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.CustomerName.ToLower().Contains(orderFilterDTO.CustomerName.ToLower()));
+                } 
+
+                if(orderFilterDTO.ShipperName != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.ShipperName.ToLower().Contains(orderFilterDTO.ShipperName.ToLower()));
+                }
+                
+                if(orderFilterDTO.Status != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.OrderStatus == orderFilterDTO.Status);
+                }
+
+                if (orderFilterDTO.StartDate != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.CreatedAt >= orderFilterDTO.StartDate);
+                }
+
+                if (orderFilterDTO.EndDate != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.CreatedAt <= orderFilterDTO.EndDate);
+                }
+
+                if(orderFilterDTO.ToPrice != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.TotalPrice >= orderFilterDTO.ToPrice);
+                }
+
+                if (orderFilterDTO.FromPrice != null)
+                {
+                    queryOrders = queryOrders.Where(x => x.TotalPrice <= orderFilterDTO.FromPrice);
+                }
+
+                int pageSize = Constant.Contants.PAGE_SIZE;
+                List<OrderResponseDTO> orders = PagedList<OrderResponseDTO>.ToPagedList(queryOrders, orderFilterDTO.PageIndex ?? 1, pageSize);
+                var TotalPages = (int)Math.Ceiling(orders.Count / (double)pageSize);
+
+                return Ok(new EntityFilter<OrderResponseDTO>()
+                {
+                    List = orders,
+                    PageIndex = orderFilterDTO.PageIndex ?? 1,
+                    Total = TotalPages,
+                });
             }
             catch (Exception ex)
             {
