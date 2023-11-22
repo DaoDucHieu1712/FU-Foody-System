@@ -75,7 +75,7 @@ namespace FFS.Application.Repositories.Impls {
         
         public async Task<List<dynamic>> GetOrder(Parameters parameters)
         {
-            try
+			try
             {
                 dynamic returnData = null;
                 var p = new DynamicParameters();
