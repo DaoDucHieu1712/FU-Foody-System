@@ -74,20 +74,27 @@ namespace FFS.Application.Controllers
 
 
         [HttpPost]
-        public IActionResult LoginByEmail([FromBody] LoginDTO logindto)
+        public async Task<IActionResult> LoginByEmail([FromBody] LoginDTO logindto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Lỗi đăng nhập !");
-            }
-            var UserClient =  _authRepository.Login(logindto.Email, logindto.Password);
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest("Lỗi đăng nhập !");
+				}
+				var UserClient = await _authRepository.Login(logindto.Email, logindto.Password);
 
-            if (UserClient == null)
-            {
-                return Unauthorized("Email hoặc mật khẩu không hợp lệ !");
-            }
+				if (UserClient == null)
+				{
+					return BadRequest("Email hoặc mật khẩu không hợp lệ !");
+				}
 
-            return Ok(new { UserClient });
+				return Ok(new { UserClient });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
         }
 
         [HttpGet]

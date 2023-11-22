@@ -21,6 +21,7 @@ using DocumentFormat.OpenXml.Bibliography;
 using Dapper;
 using FFS.Application.DTOs.QueryParametter;
 using System.Data;
+using FFS.Application.Entities.Enum;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -50,32 +51,53 @@ namespace FFS.Application.Repositories.Impls
 
         public async Task<UserClientDTO> Login(string email, string password)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+			try
+			{
+				var user = await _userManager.FindByEmailAsync(email);
 
-            if (user == null)
-            {
-                throw new Exception("Email không tồn tại !");
-            }
+				if (user == null)
+				{
+					throw new Exception("Email không tồn tại !");
+				}
 
-            // Verify the password
-            var result = await _userManager.CheckPasswordAsync(user, password);
-            // Password is incorrect
-            if (!result)
-            {
-                throw new Exception("Mật khẩu không đúng !");
-            }
+				// Verify the password
+				var result = await _userManager.CheckPasswordAsync(user, password);
+				// Password is incorrect
+				if (!result)
+				{
+					throw new Exception("Mật khẩu không đúng !");
+				}
 
+				// If the email and password are valid, generate a JWT token
+				var token = await GenerateToken(user);
+				var roles = await _userManager.GetRolesAsync(user);
+				if (roles.Contains("shipper") && roles.Contains("storeowner"))
+				{
+					// kiểm tra phê duyệt
+					var status = user.Status;
 
-            // If the email and password are valid, generate a JWT token
-            var token = await GenerateToken(user);
-            var roles = await _userManager.GetRolesAsync(user);
-            return new UserClientDTO
-            {
-                UserId = user.Id,
-                Email = user.Email,
-                Role = roles[0],
-                Token = token
-            };
+					if (status == StatusUser.Reject)
+					{
+						throw new Exception("Tài khoản của bạn đã bị cấm khỏi hệ thống! Xin vui lòng liên hệ admin để biết thêm chi tiết!");
+					}
+					if (status == StatusUser.Reject)
+					{
+						throw new Exception("Tài khoản của bạn đang đợi duyệt! Xin vui lòng thử lại sau");
+					}
+				}
+				
+				return new UserClientDTO
+				{
+					UserId = user.Id,
+					Email = user.Email,
+					Role = roles[0],
+					Token = token
+				};
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
         }
        
         public async Task StoreRegister(StoreRegisterDTO storeRegisterDTO)
@@ -88,7 +110,7 @@ namespace FFS.Application.Repositories.Impls
                     throw new Exception("Email đã tồn tại , Vui lòng thử lại !");
                 if (storeRegisterDTO.Password != storeRegisterDTO.PasswordConfirm)
                     throw new Exception("Vui lòng kiểm tra lại mật khẩu !");
-
+				
                 var NewUser = new ApplicationUser
                 {
                     FirstName = storeRegisterDTO.FirstName,
@@ -276,10 +298,15 @@ namespace FFS.Application.Repositories.Impls
                 {
                     throw new Exception("Mật khẩu phải nhiều hơn 8 kí tư, có chữ in hoa, chữ thường, số và kí tự đặc biệt!");
                 }
-                var shipper = new ApplicationUser()
+				if (shipperRegisterDTO.password != shipperRegisterDTO.PasswordConfirm)
+				{
+					throw new Exception("Mật khẩu xác nhận không khớp!");
+				}
+				var shipper = new ApplicationUser()
                 {
                     Email = shipperRegisterDTO.email,
-                    UserName = CommonService.ExtractUsername(shipperRegisterDTO.email)
+                    UserName = CommonService.ExtractUsername(shipperRegisterDTO.email),
+					Status = StatusUser.Pending
                 };
 
                 IdentityResult check = await _userManager.CreateAsync(shipper, shipperRegisterDTO.password);
