@@ -113,6 +113,7 @@ const MyOrder = () => {
 								color="blue"
 								onChange={(e) => setStatus(e)}
 							>
+								<Option value="">Tất cả</Option>
 								<Option value="1">Đang chờ</Option>
 								<Option value="3">Đang giao</Option>
 								<Option value="4">Đã hủy</Option>
@@ -126,8 +127,11 @@ const MyOrder = () => {
 								color="blue"
 								onChange={(e) => setSortType(e)}
 							>
-								<Option value="createdat-asc">Date - CreateAt Asc</Option>
-								<Option value="createdat-desc">Date - CreateAt Desc</Option>
+								<Option value="">Mặc định</Option>
+								<Option value="date-asc">Ngày giao - tăng dần</Option>
+								<Option value="date-desc">Ngày giao - giảm dần</Option>
+								<Option value="price-asc">Giá - tăng dần</Option>
+								<Option value="price-desc">Giá - giảm dần</Option>
 							</Select>
 						</div>
 					</div>
@@ -182,6 +186,7 @@ const MyOrder = () => {
 												</span>
 											</div>
 										</td>
+										<td className={classes}>{item.location}</td>
 										<td className={classes}>
 											{item.shipperName && (
 												<>
@@ -195,7 +200,6 @@ const MyOrder = () => {
 												</>
 											)}
 										</td>
-										<td className={classes}>{item.location}</td>
 										<td className={classes}>
 											<OrderStatus status={item.orderStatus}></OrderStatus>
 										</td>

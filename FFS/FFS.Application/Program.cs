@@ -110,6 +110,7 @@ builder.Services.AddTransient<IReactPostRepository, ReactPostRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IFlashSaleRepository, FlashSaleRepository>();
 builder.Services.AddTransient<IFlashSaleDetailRepository, FlashSaleDetailRepository>();
+builder.Services.AddTransient<IUserDiscountRepository, UserDiscountRepository>();
 
 
 #endregion
