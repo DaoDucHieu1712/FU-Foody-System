@@ -92,7 +92,7 @@ const StoreList = () => {
   return (
     <div className="flex gap-5">
       <div className="flex w-60 flex-col">
-        <Typography variant="h6">DANH MỤC</Typography>
+        <Typography variant="h6">DANH MỤC PHỔ BIẾN</Typography>
         {category ? (
           category.map((category) => (
             <Radio

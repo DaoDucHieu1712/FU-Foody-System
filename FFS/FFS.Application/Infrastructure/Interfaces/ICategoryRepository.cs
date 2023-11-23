@@ -6,7 +6,7 @@ namespace FFS.Application.Infrastructure.Interfaces
 {
     public interface ICategoryRepository : IRepository<Category, int>
     {
-        Task<List<Category>> Top5PopularCategories();
+        Task<List<Category>> Top8PopularCategories();
         PagedList<Category> GetCategoriesByStoreId(CategoryParameters categoryParameters);
         Task<byte[]> ExportCategory(int id);
     }

@@ -25,7 +25,7 @@ const FoodList = ({ foodId }) => {
     const GetListCategory = async () => {
         try {
             axios
-                .get("/api/Category/ListTop5PopularCategory")
+                .get("/api/Category/ListTop8PopularCategory")
                 .then((response) => {
                     setCategory([{ id: "", categoryName: 'Tất cả' }, ...response]);
                 })
@@ -94,7 +94,7 @@ const FoodList = ({ foodId }) => {
     return (
         <div className="flex gap-5">
             <div className="flex w-60 flex-col">
-                <Typography variant="h6">DANH MỤC</Typography>
+                <Typography variant="h6">DANH MỤC PHỔ BIẾN</Typography>
                 {category ?
                     category.map((category) => (
                         <Radio
@@ -164,7 +164,7 @@ const FoodList = ({ foodId }) => {
                 <div className="flex justify-between">
                     <div className="w-96">
                         <Input
-                            label="Tìm kiếm theo tên món ăn và tên loại"
+                            label="Món ăn, tên loại..."
                             icon={
                                 <svg
                                     width="20"
