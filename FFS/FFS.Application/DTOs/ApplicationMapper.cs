@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using FFS.Application.DTOs.Inventory;
 using FFS.Application.DTOs.Food;
 using FFS.Application.DTOs.Store;
@@ -9,6 +9,7 @@ using FFS.Application.DTOs.Location;
 using FFS.Application.DTOs.Category;
 using FFS.Application.DTOs.Comment;
 using FFS.Application.DTOs.FlashSale;
+using FFS.Application.DTOs.Auth;
 
 namespace FFS.Application.DTOs
 {
@@ -114,7 +115,9 @@ namespace FFS.Application.DTOs
               .ForMember(dest => dest.CommentDate, opt => opt.MapFrom(src => src.CreatedAt))
               .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
 
-            CreateMap<Image, ImageCommentDTO>(); // Assuming ImageCommentDTO is a DTO for Image entity
+            CreateMap<Image, ImageCommentDTO>(); 
+
+			CreateMap<ApplicationUser, UserInfoDTO>();
 
 
             OrderMapper();
