@@ -409,5 +409,20 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
-    }
+
+		public async Task<ApplicationUser> GetUserInformation(string userId)
+		{
+			try
+			{
+				var userWithPost = await _context.ApplicationUsers.Include(x => x.Posts).ThenInclude(p => p.ReactPosts)
+				.Include(c => c.Comments).FirstOrDefaultAsync(x => x.Id.Equals(userId));
+				return userWithPost;
+			}
+			catch(Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+
+		}
+	}
 }
