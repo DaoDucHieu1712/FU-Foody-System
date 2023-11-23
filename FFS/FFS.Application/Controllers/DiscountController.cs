@@ -20,15 +20,17 @@ namespace FFS.Application.Controllers
     public class DiscountController : ControllerBase
     {
         private readonly IDiscountRepository _discountRepository;
+		private readonly IUserDiscountRepository _userDiscountRepository;
         private readonly IMapper _mapper;
 
-        public DiscountController(IDiscountRepository discountRepository, IMapper mapper)
-        {
-            _discountRepository = discountRepository;
-            _mapper = mapper;
-        }
+		public DiscountController(IDiscountRepository discountRepository, IUserDiscountRepository userDiscountRepository, IMapper mapper)
+		{
+			_discountRepository = discountRepository;
+			_userDiscountRepository = userDiscountRepository;
+			_mapper = mapper;
+		}
 
-        [HttpGet]
+		[HttpGet]
         public  IActionResult ListDiscoutByStore([FromQuery] DiscountParameters discountParameters)
         {
             try
@@ -119,19 +121,102 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> UseDiscount(string Code)
+        [HttpPost]
+        public async Task<IActionResult> CheckDiscount(string Code, string UserId, decimal TotalPrice , int[] storeIds)
         {
             try
             {
-                var check = await _discountRepository.FindSingle(x => x.Code == Code);
-                if (check == null) return Ok(false);
-                return Ok(true);
+                var discount = await _discountRepository
+					.FindSingle(x => x.Code == Code);
+
+				if(discount == null) return StatusCode(500, new
+				{
+					msg = "Mã giảm giá không tồn tại !!!",
+					IsUse = false,
+				});
+
+				var checkstore = false;
+				for (int i = 0; i < storeIds.Length; i++)
+				{
+				   if(discount.StoreId == storeIds[i])
+					{
+						checkstore = true;
+					}
+				}
+
+				if (!checkstore) return StatusCode(500, new
+				{
+					msg = "Mã giảm giá không hợp lệ !!!",
+					IsUse = false,
+				});
+
+				if (discount.Quantity <= 0) return StatusCode(500, new
+				{
+					msg = "Đã hết số lượng mã !!",
+					IsUse = false,
+				});
+
+				if (discount.ConditionPrice > TotalPrice) return StatusCode(500, new
+				{
+					msg = "Đơn hàng không đủ điều kiện để sử dụng mã !!",
+					IsUse = false,
+				});
+
+				if (discount.Expired < DateTime.Now) return StatusCode(500, new
+				{
+					msg = "Mã giảm giá đã hết hạn !!",
+					IsUse = false,
+				});
+
+				var check = await _userDiscountRepository
+					.FindSingle(x => x.DiscountId == discount.Id && x.UserId == UserId , x => x.Discount);
+
+				if(check != null) return StatusCode(500, new
+				{
+					msg = "Bạn đã sử dụng mã này rồi !!!",
+					IsUse = false,
+				});
+
+                return Ok(new
+				{
+					msg = "Mã hợp lệ <3 ",
+					discount = (decimal)discount.Percent / 100,
+					storeId  = discount.StoreId,
+					//test = storeIds,
+					//gi = storeIds.Length,
+					//a = storeIds[0],
+					IsUse = true,
+				});
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
         }
+
+		[HttpGet]
+		public async Task<IActionResult> UseDiscount(string Code, string UserId)
+		{
+			try
+			{
+				var discount = await _discountRepository
+					.FindSingle(x => x.Code == Code);
+
+				discount.Quantity = discount.Quantity - 1;
+				await _discountRepository.Update(discount);
+
+				await _userDiscountRepository.Add(new UserDiscount
+				{
+					DiscountId = discount.Id,
+					UserId = UserId
+				});
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+
+				return StatusCode(500, ex.Message);
+			}
+		}
     }
 }

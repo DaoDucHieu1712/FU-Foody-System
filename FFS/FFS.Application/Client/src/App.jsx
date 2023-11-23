@@ -60,7 +60,6 @@ function App() {
 					<Route path="/post-details/:postId" element={<DetailPost />} />
 					<Route path="/store/comment/:id" element={<StoreCommentPage />} />
 					<Route path="/my-order" element={<MyOrder />} />
-
 					<Route path="/food-list" element={<FoodList />} />
 					<Route path="/store-list" element={<StoreList />} />
 					<Route path="/wishlist" element={<Wishlist />} />

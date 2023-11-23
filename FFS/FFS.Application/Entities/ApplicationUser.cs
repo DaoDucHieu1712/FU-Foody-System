@@ -8,6 +8,18 @@ namespace FFS.Application.Entities
 {
     public class ApplicationUser : IdentityUser
     {
+
+		public ApplicationUser() {
+
+			Locations = new HashSet<Location>();
+			Reacts = new HashSet<React>();
+			Comments = new HashSet<Comment>();	
+			Orders = new HashSet<Order>();
+			Notifications = new HashSet<Notification>();
+			Posts = new HashSet<Post>();
+			UserDiscounts = new HashSet<UserDiscount>();
+		}
+
         [Key]
         public override string Id { get; set; }
         public string? Avatar { get; set; }
@@ -23,5 +35,6 @@ namespace FFS.Application.Entities
         public virtual ICollection<Order> Orders { get;set; }
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Post> Posts { get; set; }
+		public virtual ICollection<UserDiscount> UserDiscounts { get; set; }
     }
 }
