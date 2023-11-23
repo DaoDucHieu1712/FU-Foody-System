@@ -152,9 +152,9 @@ namespace FFS.Application.DTOs
 		{
 			CreateMap<Entities.FlashSaleDetail, FlashSaleDetailDTO>()
 	.ForMember(dest => dest.FoodName, opt => opt.MapFrom(src => src.Food != null ? src.Food.FoodName : null))
-	.ForMember(dest => dest.FoodImage, opt => opt.MapFrom(src => src.Food != null ? src.Food.ImageURL : null))
+	.ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Food != null ? src.Food.ImageURL : null))
 	.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Food != null ? src.Food.Price : default(decimal?)))
-	.ForMember(dest => dest.QuantityInInventory, opt => opt.MapFrom(src => src.Food != null && src.Food.Inventories != null && src.Food.Inventories.Any() ? src.Food.Inventories.First().quantity : default(int?)))
+	.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Food != null && src.Food.Inventories != null && src.Food.Inventories.Any() ? src.Food.Inventories.First().quantity : default(int?)))
 	.ReverseMap();
 			CreateMap<Entities.FlashSale, FlashSaleDTO>().ReverseMap();
 			CreateMap<Entities.Food, FoodFlashSaleDTO>()
