@@ -1,10 +1,3 @@
-
-const MyOrder = () => {
-    return (
-        <div>
-
-        </div>
-    );
-};
+const MyOrder = () => {};
 
 export default MyOrder;
