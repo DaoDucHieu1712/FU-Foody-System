@@ -14,7 +14,6 @@ import CookieService from "../../shared/helper/cookieConfig";
 import { toast } from "react-toastify";
 import AddToWishlist from "./components/wishlist/AddToWishlist";
 import WishlistDetails from "./components/wishlist/WishlistDetails";
-
 import ReviewStore from "./components/ReviewStore"; 
 
 

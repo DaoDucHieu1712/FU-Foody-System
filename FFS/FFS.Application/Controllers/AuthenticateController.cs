@@ -24,92 +24,121 @@ using System.Text;
 
 namespace FFS.Application.Controllers
 {
-    [Route("api/[controller]/[action]")]
-    [ApiController]
-    public class AuthenticateController : ControllerBase {
-        private readonly ApplicationDbContext _db;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IAuthRepository _authRepository;
-        private readonly IMapper _mapper;
-        private readonly IEmailService _emailService;
+	[Route("api/[controller]/[action]")]
+	[ApiController]
+	public class AuthenticateController : ControllerBase {
+		private readonly ApplicationDbContext _db;
+		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly IAuthRepository _authRepository;
+		private readonly IMapper _mapper;
+		private readonly IEmailService _emailService;
 
 
-        public AuthenticateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IAuthRepository authRepository, IMapper mapper, IEmailService emailService)
-        {
-            _db = db;
-            _userManager = userManager;
-            _authRepository = authRepository;
-            _mapper = mapper;
-            _emailService = emailService;
-        }
-        [HttpPost()]
-        public async Task<IActionResult> Login([FromBody] LoginDTO model)
-        {
-            // Kiểm tra xem email có tồn tại trong hệ thống hay không
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
-            {
-                return BadRequest("Email không tồn tại");
-            }
+		public AuthenticateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IAuthRepository authRepository, IMapper mapper, IEmailService emailService)
+		{
+			_db = db;
+			_userManager = userManager;
+			_authRepository = authRepository;
+			_mapper = mapper;
+			_emailService = emailService;
+		}
+		[HttpPost()]
+		public async Task<IActionResult> Login([FromBody] LoginDTO model)
+		{
+			// Kiểm tra xem email có tồn tại trong hệ thống hay không
+			var user = await _userManager.FindByEmailAsync(model.Email);
+			if (user == null)
+			{
+				return BadRequest("Email không tồn tại");
+			}
 
-            // Kiểm tra mật khẩu
-            var result = await _userManager.CheckPasswordAsync(user, model.Password);
-            if (result)
-            {
-                var token = await _authRepository.GenerateToken(user);
-                var roles = await _userManager.GetRolesAsync(user);
-                return Ok(new UserClientDTO
-                {
-                    UserId = user.Id,
-                    Email = user.Email,
-                    Role = roles[0],
-                    Token = token
-                });
-            }
-            else
-            {
-                return BadRequest("Mật khẩu không đúng");
-            }
-        }
+			// Kiểm tra mật khẩu
+			var result = await _userManager.CheckPasswordAsync(user, model.Password);
+			if (result)
+			{
+				var token = await _authRepository.GenerateToken(user);
+				var roles = await _userManager.GetRolesAsync(user);
+				return Ok(new UserClientDTO
+				{
+					UserId = user.Id,
+					Email = user.Email,
+					Role = roles[0],
+					Token = token
+				});
+			}
+			else
+			{
+				return BadRequest("Mật khẩu không đúng");
+			}
+		}
 
 
-        [HttpPost]
-        public IActionResult LoginByEmail([FromBody] LoginDTO logindto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Lỗi đăng nhập !");
-            }
-            var UserClient =  _authRepository.Login(logindto.Email, logindto.Password);
+		[HttpPost]
+		public async Task<IActionResult> LoginByEmail([FromBody] LoginDTO logindto)
+		{
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest("Lỗi đăng nhập !");
+				}
+				var UserClient = await _authRepository.Login(logindto.Email, logindto.Password);
 
-            if (UserClient == null)
-            {
-                return Unauthorized("Email hoặc mật khẩu không hợp lệ !");
-            }
+				if (UserClient == null)
+				{
+					return BadRequest("Email hoặc mật khẩu không hợp lệ !");
+				}
 
-            return Ok(new { UserClient });
-        }
+				return Ok(new { UserClient });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
 
-        [HttpGet]
-        public async Task<IActionResult> GetCurrentUser()
-        {
-            var userId = User.FindFirst("UserId")?.Value;
-            try
-            {
-                dynamic user = await _authRepository.GetUser(userId);
-                if (user == null)
-                {
-                    return NotFound();
-                }
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                return NotFound();
-            }
-        }
+		[HttpGet]
+		public async Task<IActionResult> GetCurrentUser()
+		{
+			var userId = User.FindFirst("UserId")?.Value;
+			try
+			{
+				dynamic user = await _authRepository.GetUser(userId);
+				if (user == null)
+				{
+					return NotFound();
+				}
+				return Ok(user);
+			}
+			catch (Exception ex)
+			{
+				return NotFound();
+			}
+		}
 
-        [HttpPost]
+		[HttpGet("{UId}")]
+		public async Task<IActionResult> GetUserInformation(string UId)
+		{
+			try
+			{
+				var user = await _authRepository.GetUserInformation(UId);
+				if (user == null)
+				{
+					return NotFound();
+				}
+				var userInfo = _mapper.Map<UserInfoDTO>(user);
+				userInfo.TotalPost = user.Posts.Count;
+				DateTime sevenDaysAgo = DateTime.Now.AddDays(-7);
+				userInfo.TotalRecentComments = user.Comments.Count(c => c.UpdatedAt >= sevenDaysAgo); ;
+				return Ok(userInfo);
+			}
+			catch (Exception ex)
+			{
+				return NotFound();
+			}
+		}
+
+		[HttpPost]
         public async Task<IActionResult> LoginGoogle([FromBody] GoogleRequest googleRequest)
         {
             try

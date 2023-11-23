@@ -16,7 +16,16 @@ import AddDiscount from "./components/Discount/AddDiscount";
 import UpdateDiscount from "./components/Discount/UpdateDiscount";
 import DeleteDiscount from "./components/Discount/DeleteDiscount";
 
-const TABLE_HEAD = ["Id", "Mã ưu đãi", "Phần trăm giảm giá (%)", "Áp dụng với đơn hàng (nghìn VND)", "Số lượng", "Ngày hết hạn", "Tình trạng", ""];
+const TABLE_HEAD = [
+  "Id",
+  "Mã ưu đãi",
+  "Phần trăm giảm giá (%)",
+  "Áp dụng với đơn hàng (nghìn VND)",
+  "Số lượng",
+  "Ngày hết hạn",
+  "Tình trạng",
+  "",
+];
 
 const Discount = () => {
   const backgroundColors = ["bg-gray-50", "bg-gray-200"];
@@ -27,7 +36,6 @@ const Discount = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [storeId, setStoreId] = useState(0);
   const uId = CookieService.getToken("fu_foody_id");
-
 
   const GetStoreByUid = async () => {
     try {
@@ -47,7 +55,9 @@ const Discount = () => {
   const reloadList = async () => {
     try {
       await axios
-        .get(`/api/Discount/ListDiscoutByStore?StoreId=${storeId}&CodeName=${discountFilter}&PageNumber=${pageNumber}&PageSize=${pageSize}`)
+        .get(
+          `/api/Discount/ListDiscoutByStore?StoreId=${storeId}&CodeName=${discountFilter}&PageNumber=${pageNumber}&PageSize=${pageSize}`
+        )
         .then((res) => {
           setDiscountList(res.discounts);
           setTotalPages(res.metadata.totalPages);
@@ -60,7 +70,6 @@ const Discount = () => {
       console.log("Discount error: " + error);
     }
   };
-
 
   useEffect(() => {
     GetStoreByUid();
@@ -85,7 +94,6 @@ const Discount = () => {
               Danh sách ưu đãi
             </Typography>
             <AddDiscount reload={reloadList} storeId={storeId}></AddDiscount>
-
 
             <div className="w-full shrink-0 gap-2 px-2 py-2 md:w-max">
               <div className="w-full md:w-72">
@@ -206,7 +214,7 @@ const Discount = () => {
                       </Typography>
                     </td>
                     <td>
-                      {discount.isExpired ?
+                      {discount.isExpired ? (
                         <Typography
                           variant="h6"
                           color="red"
@@ -214,7 +222,7 @@ const Discount = () => {
                         >
                           HẾT HẠN
                         </Typography>
-                        :
+                      ) : (
                         <Typography
                           variant="h6"
                           color="green"
@@ -222,7 +230,7 @@ const Discount = () => {
                         >
                           CÒN HẠN
                         </Typography>
-                      }
+                      )}
                     </td>
                     <td>
                       <div className="h-full flex justify-center items-center">
@@ -277,8 +285,8 @@ const Discount = () => {
             Next
           </Button>
         </CardFooter>
-      </Card >
-    </div >
+      </Card>
+    </div>
   );
 };
 

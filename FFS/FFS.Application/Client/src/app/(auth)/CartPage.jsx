@@ -7,16 +7,15 @@ import {
   Textarea,
   Typography,
 } from "@material-tailwind/react";
-import DeleteIcon from "../../shared/components/icon/DeleteIcon";
-import propTypes from "prop-types";
-import { useDispatch, useSelector } from "react-redux";
-import CartService from "./shared/cart.service";
-import Cookies from "universal-cookie";
 import { useEffect, useState } from "react";
-import LocationService from "./shared/location.service";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import Cookies from "universal-cookie";
+import CartService from "./shared/cart.service";
 import { cartActions } from "./shared/cartSlice";
 import CartItem from "./shared/components/cart/CartItem";
-import { toast } from "react-toastify";
+import LocationService from "./shared/location.service";
+import { useNavigate } from "react-router-dom";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
@@ -24,6 +23,7 @@ const cookies = new Cookies();
 
 const CartPage = () => {
   const cart = useSelector((state) => state.cart);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [locations, setLocations] = useState([]);
   const [location, setLocation] = useState("");
@@ -34,6 +34,7 @@ const CartPage = () => {
     const email = cookies.get("fu_foody_email");
     await LocationService.getAll(email).then((res) => {
       setLocations(res);
+      console.log(res);
     });
   };
 
@@ -46,7 +47,7 @@ const CartPage = () => {
     await CartService.CreateOrder({
       customerId: cookies.get("fu_foody_id"),
       location: location,
-      phoneNumer: phone,
+      phoneNumber: phone,
       note: note,
       totalPrice: cart.totalPrice,
       orderStatus: 1,
@@ -67,12 +68,15 @@ const CartPage = () => {
           .then((res) => {
             console.log(res);
             toast.success("Đặt hàng thành công");
+            localStorage.removeItem("fu_foody_cart");
+            navigate("/");
           })
           .catch((err) => {
             console.log(err.response.data);
           });
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         toast.error("Đã có lỗi xảy ra, vui lòng đặt lại !");
       });
   };
@@ -125,12 +129,13 @@ const CartPage = () => {
                 type="number"
                 onChange={(e) => setPhone(e.target.value)}
               ></Input>
-              <Select
-                label="Địa chỉ"
-                onChange={(e) => setLocation(e.target.value)}
-              >
+              <Select label="Địa chỉ" onChange={(e) => setLocation(e)}>
                 {locations.map((item) => {
-                  return <Option key={item.id}>{item.address}</Option>;
+                  return (
+                    <Option key={item.id} value={item.address}>
+                      {item.address}
+                    </Option>
+                  );
                 })}
               </Select>
               <Textarea
