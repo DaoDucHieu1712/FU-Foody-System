@@ -95,11 +95,11 @@ namespace FFS.Application.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ListTop5PopularCategory()
+        public async Task<IActionResult> ListTop8PopularCategory()
         {
             try
             {
-                var categories = await _categoryRepository.Top5PopularCategories();
+                var categories = await _categoryRepository.Top8PopularCategories();
                 var categoriesDTO = _mapper.Map<List<CategoryPopularDTO>>(categories);
                 return Ok(categoriesDTO);
             }

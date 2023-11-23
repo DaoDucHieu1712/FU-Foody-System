@@ -60,7 +60,7 @@ namespace FFS.Application.Repositories.Impls
 
 		public PagedList<FlashSale> ListFlashSaleByStore(int storeId, FlashSaleParameter parameter)
 		{
-			var query = _context.FlashSales.Include(x => x.FlashSaleDetails).Where(x=>x.StoreId == storeId && x.IsDelete == false).AsQueryable();
+			var query = _context.FlashSales.Include(x => x.FlashSaleDetails).ThenInclude(f=>f.Food).ThenInclude(i=>i.Inventories).Where(x=>x.StoreId == storeId && x.IsDelete == false).AsQueryable();
 			
 			SearchByDateTime(ref query, parameter.Start, parameter.End);
 			var pagedList = PagedList<FlashSale>.ToPagedList(

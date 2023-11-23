@@ -216,7 +216,6 @@ namespace FFS.Application.Controllers
 					flashSales.HasNext,
 					flashSales.HasPrevious
 				};
-
 				var flashSaleDTOs = _mapper.Map<List<FlashSaleDTO>>(flashSales);
 				foreach (var flashSaleDTO in flashSaleDTOs)
 				{

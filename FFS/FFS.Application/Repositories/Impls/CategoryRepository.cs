@@ -74,7 +74,7 @@ namespace FFS.Application.Repositories.Impls
             return pagedList;
         }
 
-        public async Task<List<Category>> Top5PopularCategories()
+        public async Task<List<Category>> Top8PopularCategories()
         {
             try
             {
@@ -82,13 +82,13 @@ namespace FFS.Application.Repositories.Impls
                     .Include(x => x.Foods)
                         .ThenInclude(x => x.OrderDetails)
                     .OrderByDescending(x => x.Foods.SelectMany(food => food.OrderDetails).Sum(od => od.Quantity)).ToListAsync();
-                if (popularCategories.Count() < 5)
+                if (popularCategories.Count() < 8)
                 {
-                    popularCategories = popularCategories.ToList();
+                    popularCategories = popularCategories.DistinctBy(x => x.CategoryName).ToList();
                 }
                 else
                 {
-                    popularCategories = popularCategories.Take(5).ToList(); 
+                    popularCategories = popularCategories.DistinctBy(x=>x.CategoryName).Take(10).ToList(); 
                 }
 
                 return popularCategories;
