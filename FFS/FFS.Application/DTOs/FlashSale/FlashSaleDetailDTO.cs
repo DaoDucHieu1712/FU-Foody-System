@@ -10,8 +10,8 @@ namespace FFS.Application.DTOs.FlashSale
         public int? SalePercent { get; set; }
         public int? NumberOfProductSale { get; set; }
 		public string? FoodName {  get; set; }
-		public string? FoodImage { get; set; }
+		public string? ImageURL { get; set; }
 		public decimal? Price { get; set; }
-		public int? QuantityInInventory { get; set; }
+		public int? Quantity { get; set; }
 	}
 }

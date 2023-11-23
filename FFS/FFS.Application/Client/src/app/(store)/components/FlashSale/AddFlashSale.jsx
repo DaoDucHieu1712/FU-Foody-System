@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import AddFoodSale from "./AddFoodSale";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axios from "../../../../shared/api/axiosConfig";
+import CookieService from "../../../../shared/helper/cookieConfig";
 
 const TABLE_HEAD = ["Sản phẩm", "Giá gốc (nghìn VND)", "Giá đã giảm", "Phần trăm giảm (%)", "Số lượng sản phẩm khuyến mãi", "Kho hàng", ""];
 const backgroundColors = ["bg-gray-50", "bg-gray-200"];
@@ -11,10 +13,12 @@ const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 
 const AddFlashSale = () => {
     const navigate = useNavigate();
+    const uId = CookieService.getToken("fu_foody_id");
+    const [storeId, setStoreId] = useState(0);
     const [dateStart, setDateStart] = useState('');
     const [dateEnd, setDateEnd] = useState('');
     const [foodListSale, setFoodListSale] = useState([]);
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState([]);
     const [priceInput, setPriceInput] = useState(null);
     const [percentInput, setPercentInput] = useState(null);
     const [quantityInput, setQuantityInput] = useState(null);
@@ -41,6 +45,21 @@ const AddFlashSale = () => {
         return `${hours}:${minutes}`;
     };
 
+    const GetStoreByUid = async () => {
+        try {
+            await axios
+                .get(`/api/Store/GetStoreByUid?uId=${uId}`)
+                .then((response) => {
+                    setStoreId(response.id);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.log("Get Store By Uid error: " + error);
+        }
+    };
+
     const handleDelete = (id) => {
         const updatedFood = foodListSale.filter((food) => food.foodId != id);
         setFoodListSale(updatedFood);
@@ -55,19 +74,29 @@ const AddFlashSale = () => {
                 [field]: value,
             },
         }));
-        console.log(formData);
     };
 
-    const onSubmit = () => {
-        Object.keys(formData).forEach((foodId) => {
-            const foodData = formData[foodId];
-            sendDataToDatabase(foodId, foodData);
-        });
+    const handleSubmit = async () => {
+        try {
+            const formDataArray = Object.values(formData);
+            const dataPost = {
+                storeId: storeId,
+                start: dateStart,
+                end: dateEnd,
+                flashSaleDetails: formDataArray,
+            }
+            await axios.post("/api/FlashSale/CreateFlashSale", dataPost)
+                .then(() => {
+                    toast.success("Thêm flash sale thành công!");
+                    setTimeout(() => {
+                        navigate(`/store/flash-sale`);
+                    }, 3000);
+                });
+        } catch (error) {
+            console.error("Error occur:", error);
+        }
     };
 
-    const sendDataToDatabase = (foodId, foodData) => {
-
-    };
 
     const handleUpdateAll = () => {
         const updatedFormData = {};
@@ -75,9 +104,10 @@ const AddFlashSale = () => {
             const foodData = formData[foodId];
             updatedFormData[foodId] = {
                 ...foodData,
-                priceFood: priceInput !== null ? priceInput : foodData.priceFood,
-                percentFood: percentInput !== null ? percentInput : foodData.percentFood,
-                quantityFood: quantityInput !== null ? quantityInput : foodData.quantityFood,
+                foodId: parseInt(foodId),
+                priceAfterSale: priceInput !== null ? parseFloat(priceInput) : parseFloat(foodData.priceAfterSale),
+                salePercent: percentInput !== null ? parseInt(percentInput) : parseInt(foodData.salePercent),
+                numberOfProductSale: quantityInput !== null ? parseInt(quantityInput) : parseInt(foodData.numberOfProductSale),
             };
         });
 
@@ -88,13 +118,18 @@ const AddFlashSale = () => {
         const initialFormData = {};
         foodListSale.forEach((food) => {
             initialFormData[food.foodId] = {
-                priceFood: 0,
-                percentFood: 0,
-                quantityFood: 0,
+                foodId: parseInt(food.foodId),
+                priceAfterSale: parseFloat(0),
+                salePercent: parseInt(0),
+                numberOfProductSale: parseInt(0),
             };
         });
         setFormData(initialFormData);
     }, [foodListSale]);
+
+    useEffect(() => {
+        GetStoreByUid();
+    }, []);
 
     return (
         <>
@@ -113,12 +148,29 @@ const AddFlashSale = () => {
             </div>
             <div className="flex justify-between items-center p-5 mt-5 bg-gray-100 shadow-md rounded-t-lg">
                 <Typography variant="h6">Sản phẩm tham gia Flash Sale của Shop</Typography>
-                <AddFoodSale getFoodList={GetFoodListSale}></AddFoodSale>
+                {dateStart.trim() != '' && dateEnd.trim() != '' ?
+                    (
+                        <AddFoodSale getFoodList={GetFoodListSale} dateS={dateStart} dateE={dateEnd}></AddFoodSale>
+                    ) : (
+                        <Button disabled color="white" className="flex mt-2 gap-2 text-orange-500 border-solid border-2 border-orange-500">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                height="1.2em"
+                                viewBox="0 0 448 512"
+                            >
+                                <path
+                                    d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"
+                                    fill="orange"
+                                />
+                            </svg>
+                            Thêm sản phẩm
+                        </Button>
+                    )}
             </div>
             <div className="flex items-center justify-between p-5 mt-5 bg-gray-100 shadow-md rounded-t-lg">
                 <Typography variant="h6">Chỉnh sửa tất cả</Typography>
                 <div>
-                    <Typography>Đồng giá</Typography>
+                    <Typography>Giảm đồng giá</Typography>
                     <input
                         type="number"
                         min={0}
@@ -151,7 +203,7 @@ const AddFlashSale = () => {
                 <Button className="bg-primary" onClick={() => handleUpdateAll()}>Cập nhật tất cả</Button>
             </div>
             <div>
-                <form onSubmit={() => onSubmit()}>
+                <form>
                     <table className="w-full min-w-max table-auto text-center">
                         <thead>
                             <tr>
@@ -210,12 +262,12 @@ const AddFlashSale = () => {
                                                 type="number"
                                                 min={0}
                                                 max={food.price}
-                                                value={formData[food.foodId]?.priceFood}
-                                                onChange={(e) => handleChange(food.foodId, 'priceFood', e.target.value)}
+                                                value={formData[food.foodId]?.priceAfterSale}
+                                                onChange={(e) => handleChange(food.foodId, 'priceAfterSale', e.target.value)}
                                                 className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                             </input>
                                             <br />
-                                            {formData[food.foodId]?.priceFood > food.price && (
+                                            {formData[food.foodId]?.priceAfterSale > food.price && (
                                                 <span className="absolute right-0 pt-1 text-red-500 text-xs">Vui lòng nhập giá nhỏ hơn giá gốc</span>
                                             )}
                                         </td>
@@ -224,12 +276,12 @@ const AddFlashSale = () => {
                                                 type="number"
                                                 min={0}
                                                 max={100}
-                                                value={formData[food.foodId]?.percentFood}
-                                                onChange={(e) => handleChange(food.foodId, 'percentFood', e.target.value)}
+                                                value={formData[food.foodId]?.salePercent}
+                                                onChange={(e) => handleChange(food.foodId, 'salePercent', e.target.value)}
                                                 className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                             </input>
                                             <br />
-                                            {formData[food.foodId]?.percentFood > 100 && (
+                                            {formData[food.foodId]?.salePercent > 100 && (
                                                 <span className="absolute right-0 pt-1 text-red-500 text-xs">Phần trăm khuyến mãi chỉ có thể từ 0-100%</span>
                                             )}
                                         </td>
@@ -238,12 +290,12 @@ const AddFlashSale = () => {
                                                 type="number"
                                                 min={0}
                                                 max={food.quantity}
-                                                value={formData[food.foodId]?.quantityFood}
-                                                onChange={(e) => handleChange(food.foodId, 'quantityFood', e.target.value)}
+                                                value={formData[food.foodId]?.numberOfProductSale}
+                                                onChange={(e) => handleChange(food.foodId, 'numberOfProductSale', e.target.value)}
                                                 className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                             </input>
-                                            <br/>
-                                            {formData[food.foodId]?.quantityFood > food.quantity && (
+                                            <br />
+                                            {formData[food.foodId]?.numberOfProductSale > food.quantity && (
                                                 <span className="absolute right-0 pt-1 text-red-500 text-xs">Vui lòng nhập số lượng nhỏ hơn tồn kho</span>
                                             )}
                                         </td>
@@ -281,16 +333,17 @@ const AddFlashSale = () => {
                         </tbody>
                     </table>
                     <div className="flex my-2 gap-1 justify-end">
-                        <Button onClick={() => navigate(`/flash-sale`)} variant="outlined">Hủy</Button>
+                        <Button onClick={() => navigate(`/store/flash-sale`)} variant="outlined">Hủy</Button>
                         {foodListSale.length == 0 ?
                             <Button disabled className="bg-primary">Xác nhận</Button>
                             :
-                            <Button type="submit" className="bg-primary">Xác nhận</Button>}
+                            <Button onClick={() => handleSubmit()} className="bg-primary">Xác nhận</Button>}
                     </div>
                 </form>
             </div>
         </>
     );
 };
+
 
 export default AddFlashSale;

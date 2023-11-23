@@ -32,7 +32,7 @@ const Discount = () => {
   const [discountList, setDiscountList] = useState([]);
   const [discountFilter, setDiscountFilter] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
-  const pageSize = 10;
+  const pageSize = 5;
   const [totalPages, setTotalPages] = useState(0);
   const [storeId, setStoreId] = useState(0);
   const uId = CookieService.getToken("fu_foody_id");

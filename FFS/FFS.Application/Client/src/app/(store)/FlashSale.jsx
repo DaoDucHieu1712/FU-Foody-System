@@ -1,25 +1,60 @@
-import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Tooltip, Typography } from "@material-tailwind/react";
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input, Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import axios from "../../shared/api/axiosConfig"
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import UpdateFlashSale from "./components/FlashSale/UpdateFlashSale";
+import CookieService from "../../shared/helper/cookieConfig";
 
 const TABLE_HEAD = ["Khung giờ", "Số sản phẩm", "Trạng thái", ""];
 const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 
 const FlashSale = () => {
+    const uId = CookieService.getToken("fu_foody_id");
     const navigate = useNavigate();
     const [listSale, setListSale] = useState([]);
+    const [dayStartFilter, setDayStartFilter] = useState();
+    const [dayEndFilter, setDayEndFilter] = useState();
+    const [storeId, setStoreId] = useState(0);
+    const [pageNumber, setPageNumber] = useState(1);
+    const pageSize = 5;
+    const [totalPages, setTotalPages] = useState(1);
+    const [flashSaleDelete, setFlashSaleDelete] = useState(0);
+
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen((cur) => !cur);
+
+    const GetStoreByUid = async () => {
+        try {
+            await axios
+                .get(`/api/Store/GetStoreByUid?uId=${uId}`)
+                .then((response) => {
+                    setStoreId(response.id);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.log("Get Store By Uid error: " + error);
+        }
+    };
 
     const GetListSale = async () => {
         try {
             axios
-                .get(`/api/Store/GetStoreByUid?uId=`)
+                .get(`/api/FlashSale/ListFlashSaleByStore/${storeId}`,
+                    {
+                        params:
+                        {
+                            Start: dayStartFilter,
+                            End: dayEndFilter,
+                            PageNumber: pageNumber,
+                            PageSize: pageSize
+                        }
+                    })
                 .then((response) => {
-                    setListSale(response);
+                    setListSale(response.flashSaleDTOs);
+                    setTotalPages(response.metadata.totalPages);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -29,24 +64,50 @@ const FlashSale = () => {
         }
     };
 
-    const handleDelete = async (iddd) => {
+    const handleDelete = async () => {
         try {
             axios
-                .get(`/api/Store/GetStoreByUid?uId=${iddd}`)
+                .delete(`/api/FlashSale/DeleteFlashSale/${flashSaleDelete}`)
                 .then(() => {
                     toast.success("Xóa thành công!");
+                    GetListSale();
+                    setOpen(false);
                 })
                 .catch((error) => {
                     console.log(error);
                 })
         } catch (error) {
             console.log(error);
+        }
+    };
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setPageNumber(newPage);
         }
     };
 
     useEffect(() => {
+        GetStoreByUid();
+    }, [uId]);
+
+    useEffect(() => {
         GetListSale();
-    }, []);
+    }, [storeId, pageNumber, dayStartFilter, dayEndFilter]);
+
+    const formatDate = (date) => {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    const formatTime = (date) => {
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    };
+
 
     return (
         <>
@@ -54,6 +115,24 @@ const FlashSale = () => {
             <div className="p-5 mt-5 bg-gray-100 shadow-md rounded-t-lg">
                 <div className="pb-5 flex items-center justify-between">
                     <Typography variant="h5">Danh sách chương trình</Typography>
+                    <div>
+                        <Input
+                            label="Ngày bắt đầu"
+                            value={dayStartFilter || ""}
+                            onChange={(e) => setDayStartFilter(e.target.value)}
+                            type="datetime-local"
+                        >
+                        </Input>
+                    </div>
+                    <div>
+                        <Input
+                            label="Ngày kết thúc"
+                            value={dayEndFilter || ""}
+                            onChange={(e) => setDayEndFilter(e.target.value)}
+                            type="datetime-local"
+                        >
+                        </Input>
+                    </div>
                     <Button
                         className="flex gap-1 items-center bg-primary"
                         onClick={() => navigate(`/flash-sale/add`)}
@@ -91,58 +170,26 @@ const FlashSale = () => {
                     </thead>
                     <tbody>
                         {listSale.length > 0 ?
-                            listSale.map((food, index) => (
+                            listSale.map((sale, index) => (
                                 <tr
-                                    key={food.foodId}
+                                    key={sale.id}
                                     className={
                                         backgroundColors[index % backgroundColors.length]
                                     }
                                 >
-                                    <td className="flex items-center justify-center">
-                                        <img
-                                            className="font-normal"
-                                            src={food.imageURL}
-                                            alt={food.foodName}
-                                            height={100}
-                                            width={100}
-                                        />
+                                    <td className="lg:flex lg:justify-center">
                                         <Typography
-                                            variant="small"
                                             color="blue-gray"
-                                            className="w-24 font-normal text-left pl-4"
+                                            className="font-semibold text-left pl-4"
                                         >
-                                            {food.foodName}
+                                            Từ: {formatDate(new Date(sale.start))} - {formatTime(new Date(sale.start))}
                                         </Typography>
-                                    </td>
-                                    <td>
                                         <Typography
-                                            variant="small"
                                             color="blue-gray"
-                                            className="font-normal max-w-xs truncate"
+                                            className="font-semibold text-left pl-4"
                                         >
-                                            {food.foodName}
+                                            Đến: {formatDate(new Date(sale.end))} - {formatTime(new Date(sale.end))}
                                         </Typography>
-                                    </td>
-                                    <td className="w-14 lg:w-48">
-                                        <input
-                                            type="number"
-
-                                            className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
-                                        </input>
-                                    </td>
-                                    <td className="w-14 lg:w-48">
-                                        <input
-                                            type="number"
-
-                                            className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
-                                        </input>
-                                    </td>
-                                    <td className="w-24 lg:w-48">
-                                        <input
-                                            type="number"
-
-                                            className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
-                                        </input>
                                     </td>
                                     <td>
                                         <Typography
@@ -150,15 +197,57 @@ const FlashSale = () => {
                                             color="blue-gray"
                                             className="font-normal"
                                         >
-                                            {food.quantity}
+                                            {sale.noOfParticipateFoodSale}
                                         </Typography>
+                                    </td>
+                                    <td>
+                                        {sale.flashSaleStatus == "Sắp diễn ra" ? (
+                                            <Typography
+                                                variant="h6"
+                                                color="orange"
+                                                className="max-w-xs truncate"
+                                            >
+                                                Sắp diễn ra
+                                            </Typography>
+                                        ) : null}
+                                        {sale.flashSaleStatus == "Chưa diễn ra" ? (
+                                            <Typography
+                                                variant="h6"
+                                                color="gray"
+                                                className="max-w-xs truncate"
+                                            >
+                                                Chưa diễn ra
+                                            </Typography>
+                                        ) : null}
+                                        {sale.flashSaleStatus == "Đang diễn ra" ? (
+                                            <Typography
+                                                variant="h6"
+                                                color="green"
+                                                className="max-w-xs truncate"
+                                            >
+                                                Đang diễn ra
+                                            </Typography>
+                                        ) : null}
+                                        {sale.flashSaleStatus == "Đã kết thúc" ? (
+                                            <Typography
+                                                variant="h6"
+                                                color="red"
+                                                className="max-w-xs truncate"
+                                            >
+                                                Đã kết thúc
+                                            </Typography>
+                                        ) : null}
                                     </td>
                                     <td>
                                         <div className="h-full flex justify-center items-center">
+                                            <UpdateFlashSale fId={sale.id} reload={GetListSale} dayStart={sale.start} dayEnd={sale.end} fsList={sale.flashSaleDetails}></UpdateFlashSale>
                                             <Tooltip content="Xóa flash sale">
                                                 <IconButton
                                                     variant="text"
-                                                    onClick={handleOpen}
+                                                    onClick={() => {
+                                                        handleOpen();
+                                                        setFlashSaleDelete(sale.id);
+                                                    }}
                                                 >
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -170,7 +259,6 @@ const FlashSale = () => {
                                                     </svg>
                                                 </IconButton>
                                             </Tooltip>
-                                            
                                         </div>
                                     </td>
                                 </tr>
@@ -178,7 +266,35 @@ const FlashSale = () => {
                             : null}
                     </tbody>
                 </table>
-                <UpdateFlashSale></UpdateFlashSale>
+                <div className="flex w-full items-center justify-between border-t border-blue-gray-50 p-4">
+                    <Button
+                        variant="outlined"
+                        size="sm"
+                        onClick={() => handlePageChange(pageNumber - 1)}
+                    >
+                        Previous
+                    </Button>
+                    <div className="flex items-center gap-2">
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <IconButton
+                                key={i}
+                                variant={i + 1 === pageNumber ? "outlined" : "text"}
+                                size="sm"
+                                onClick={() => handlePageChange(i + 1)}
+                            >
+                                {i + 1}
+                            </IconButton>
+                        ))}
+                    </div>
+                    <Button
+                        variant="outlined"
+                        size="sm"
+                        onClick={() => handlePageChange(pageNumber + 1)}
+                    >
+                        Next
+                    </Button>
+                </div>
+
             </div>
             <Dialog
                 size="xs"

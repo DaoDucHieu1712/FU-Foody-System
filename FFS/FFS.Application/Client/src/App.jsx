@@ -64,8 +64,8 @@ function App() {
 					<Route path="/food-list" element={<FoodList />} />
 					<Route path="/store-list" element={<StoreList />} />
 					<Route path="/wishlist" element={<Wishlist />} />
-					<Route path="/flash-sale/add" element={<AddFlashSale />} />
-					<Route path="/flash-sale" element={<FlashSale />} />
+					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
+					<Route path="/store/flash-sale" element={<FlashSale />} />
 					<Route path="/user-detail" element={<UserDetails />} />
 				</Route>
 				<Route element={<ShipperLayout></ShipperLayout>}>
