@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../../../shared/api/axiosConfig";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import { useNavigate } from "react-router-dom";
+dayjs.extend(localizedFormat);
 const LastestPost = () => {
   const [lastestPost, setLastestPost] = useState([]);
+  let navigate = useNavigate();
 
   const GetLastestPost = async () => {
     try {
@@ -25,9 +30,9 @@ const LastestPost = () => {
   return (
     <>
       <div className="Blog_newest border p-4">
-        <h1 className="text-lg font-bold uppercase">Blog mới nhất</h1>
+        <h1 className="text-lg font-bold uppercase">Bài viết phổ biến</h1>
         {lastestPost.map((post) => (
-          <div className="flex mb-4 mt-4">
+          <div key={post.id} className="flex mb-4 mt-4 cursor-poiter "  onClick={() => navigate(`/post-details/${post.id}`)}>
             {/* Image */}
             <div className="w-1/3">
               <img
@@ -40,7 +45,7 @@ const LastestPost = () => {
               <h2 className="text-sm font-bold">
                 {post.title}
               </h2>
-              <p className="text-sm text-gray-500">12 Nov, 2023</p>
+              <p className="text-sm text-gray-500">{dayjs(post.createdAt).format("D [Tháng] M, YYYY")}</p>
             </div>
           </div>
         ))}

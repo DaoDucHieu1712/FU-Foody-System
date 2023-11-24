@@ -26,9 +26,9 @@ namespace FFS.Application.Repositories.Impls
                 {
                     query = query.ToList().Where(p => CommonService.RemoveDiacritics(p.Title.ToLower()).Contains(CommonService.RemoveDiacritics(postParameters.PostTitle.Trim().ToLower()))).AsQueryable();
                 }
-
-                // Apply ordering (newest or oldest)
-                if (string.Equals(postParameters.OrderBy, "newest", StringComparison.OrdinalIgnoreCase))
+				query = query.Where(p => p.Status == StatusPost.Accept);
+				// Apply ordering (newest or oldest)
+				if (string.Equals(postParameters.OrderBy, "newest", StringComparison.OrdinalIgnoreCase))
                 {
                     query = query.OrderByDescending(p => p.CreatedAt);
                 }
@@ -51,11 +51,12 @@ namespace FFS.Application.Repositories.Impls
 
         public async Task<List<Post>> GetTop3NewestPosts()
         {
-            return await _context.Posts
-                .OrderByDescending(p => p.CreatedAt)
-                .Take(3)
-                .ToListAsync();
-        }
+            return await _context.Posts.Include(x => x.User).Include(x => x.Comments).ThenInclude(x => x.User).Include(x => x.ReactPosts).ThenInclude(x => x.User)
+			.OrderByDescending(post => post.Comments.Count)
+			.Take(3)
+			.ToListAsync();
+
+		}
 
         public async Task<Post> CreatePost(Post post)
         {

@@ -41,6 +41,8 @@ import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 import UserDetails from "./app/(public)/UserDetails";
 import ShipperRegisterPage from "./app/(public)/ShipperRegister";
+import OrderDetail from "./app/(store)/OrderDetail";
+import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 
 function App() {
 	return (
