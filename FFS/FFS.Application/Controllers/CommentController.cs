@@ -1,59 +1,63 @@
 ﻿using AutoMapper;
 using FFS.Application.DTOs.Comment;
-using FFS.Application.DTOs.Inventory;
-using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
-using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FFS.Application.Controllers
 {
-    [Route("api/[controller]/[action]")]
-    [ApiController]
-    public class CommentController : ControllerBase
-    {
-        private readonly ICommentRepository _commentRepository;
-        private readonly IMapper _mapper;
+	[Route("api/[controller]/[action]")]
+	[ApiController]
+	public class CommentController : ControllerBase
+	{
+		private readonly ICommentRepository _commentRepository;
+		private readonly IStoreRepository _storeRepository;
 
-        public CommentController(ICommentRepository commentRepository, IMapper mapper)
-        {
-            _commentRepository = commentRepository;
-            _mapper = mapper;
-        }
+		private readonly IMapper _mapper;
 
-        [HttpGet("{idStore}")]
-        public IActionResult GetAllCommentByStore(int idStore)
-        {
-            try
-            {
-                List<Comment> comments = _commentRepository.FindAll(x => x.StoreId == idStore).ToList();
-                return Ok(comments);
-            }
-            catch (Exception ex)
-            {
+		public CommentController(ICommentRepository commentRepository, IMapper mapper, IStoreRepository storeRepository)
+		{
+			_commentRepository = commentRepository;
+			_mapper = mapper;
+			_storeRepository = storeRepository;
+		}
 
-                throw new Exception(ex.Message);
-            }
-        }
+		[HttpGet("{idStore}")]
+		public async Task<IActionResult> GetAllCommentByStore(int idStore)
+		{
+			try
+			{
+				Store st = await _storeRepository.FindById(idStore, null);
+				if (st != null)
+				{
+					List<Comment> comments = _commentRepository.FindAll(x => x.StoreId == idStore).ToList();
+					return Ok(comments);
+				}
+				throw new Exception();
+			}
+			catch (Exception)
+			{
+				return StatusCode(StatusCodes.Status400BadRequest, "Cửa hàng không tồn tại");
+			}
+		}
 
-        [HttpGet("{idShipper}")]
-        public IActionResult GetAllCommentByShipperId(string? idShipper)
-        {
-            try
-            {
-                List<Comment> comments = _commentRepository.FindAll(x => x.ShipperId == idShipper,  u=>u.User).ToList();
-                
-                return Ok(_mapper.Map<List<CommentDTO>>(comments));
-            }
-            catch (Exception ex)
-            {
+		[HttpGet("{idShipper}")]
+		public IActionResult GetAllCommentByShipperId(string? idShipper)
+		{
+			try
+			{
+				List<Comment> comments = _commentRepository.FindAll(x => x.ShipperId == idShipper, u => u.User).ToList();
 
-                throw new Exception(ex.Message);
-            }
-        }
+				return Ok(_mapper.Map<List<CommentDTO>>(comments));
+			}
+			catch (Exception ex)
+			{
+
+				throw new Exception(ex.Message);
+			}
+		}
 
 
-    }
+	}
 }

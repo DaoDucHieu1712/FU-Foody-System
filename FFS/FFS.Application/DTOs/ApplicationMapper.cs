@@ -55,7 +55,9 @@ namespace FFS.Application.DTOs
 			CreateMap<UpdatePostDTO, Entities.Post>().ReverseMap();
 
 			CreateMap<Entities.ReactPost, ReactPostDTO>().ForMember(dest => dest.Username,
-			   opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName)); ;
+			   opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName))
+				.ForMember(dest => dest.Avartar,
+			   opt => opt.MapFrom(src => src.User.Avatar));
 
 			CreateMap<Entities.ReactPost, CreateReactPostDTO>();
 
@@ -105,7 +107,10 @@ namespace FFS.Application.DTOs
 			CreateMap<Entities.Comment, CommentDTO>().ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName))
 				.ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.Avatar)).ReverseMap();
 
-			CreateMap<Entities.Food, AllFoodDTO>().ReverseMap();
+			CreateMap<Entities.Food, AllFoodDTO>()
+				.ForMember(dest => dest.PriceAfterSale, opt => opt.MapFrom(src => src.FlashSaleDetails != null && src.FlashSaleDetails.Any() ? src.FlashSaleDetails.First().PriceAfterSale : default(decimal?)))
+				.ForMember(dest => dest.SalePercent, opt => opt.MapFrom(src => src.FlashSaleDetails != null && src.FlashSaleDetails.Any() ? src.FlashSaleDetails.First().SalePercent : default(int?)))
+				.ReverseMap();
 
 			CreateMap<Discount, DiscountDTO>()
 				.ForMember(dest => dest.IsExpired, opt => opt.MapFrom(src => src.Expired < DateTime.Now)).ReverseMap();
@@ -117,7 +122,7 @@ namespace FFS.Application.DTOs
 
 			CreateMap<Image, ImageCommentDTO>();
 
-			CreateMap<ApplicationUser, UserInfoDTO>();
+			CreateMap<ApplicationUser, UserInfoDTO>().ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName));
 
 
 			OrderMapper();

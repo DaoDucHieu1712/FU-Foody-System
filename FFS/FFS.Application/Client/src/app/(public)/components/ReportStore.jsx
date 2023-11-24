@@ -62,6 +62,7 @@ const ReportStore = ({ uId, sId }) => {
             const newReport = {
                 userId: uId,
                 targetId: sId,
+                reportType: 1,
                 description: reasons
             };
             axios

@@ -8,6 +8,7 @@ using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Migrations;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -90,8 +91,13 @@ namespace FFS.Application.Controllers
             try
             {
                 var top3Posts = await _postRepository.GetTop3NewestPosts();
-                var postDTO = _mapper.Map<List<PostDTO>>(top3Posts);
-                return Ok(postDTO);
+                var entityPost = _mapper.Map<List<PostDTO>>(top3Posts);
+				foreach (var postDTO in entityPost)
+				{
+					postDTO.LikeNumber = postDTO.ReactPosts.Where(x => x.IsLike == true).Count();
+					postDTO.CommentNumber = postDTO.Comments.Count();
+				}
+				return Ok(entityPost);
             }
             catch (Exception ex)
             {
@@ -101,14 +107,15 @@ namespace FFS.Application.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Post>> CreatePost([FromBody] CreatePostDTO post)
+		[Authorize(Roles = $"User")]
+		public async Task<ActionResult<Post>> CreatePost([FromBody] CreatePostDTO post)
         {
             try
             {
                 var createdPost = await _postRepository.CreatePost(_mapper.Map<Post>(post));
 
                 // Notify clients
-                await _hubContext.Clients.All.SendAsync("ReceiveNotification", $"Bài viết mới của bạn đã được tạo: {post.Title}");
+                await _hubContext.Clients.All.SendAsync("ReceiveNotification", $"Bài viết {post.Title} đang chờ được phê duyệt");
 
                 // Create and save notification
                 var notification = new Notification

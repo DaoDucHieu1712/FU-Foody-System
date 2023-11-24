@@ -72,11 +72,12 @@ function App() {
 					<Route path="/wishlist" element={<Wishlist />} />
 					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
 					<Route path="/store/flash-sale" element={<FlashSale />} />
-					<Route path="/user-detail" element={<UserDetails />} />
+					<Route path="/user-detail/:id" element={<UserDetails />} />
 					<Route path="/my-order/:id" element={<MyOrderDetail />} />
+					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
 				</Route>
 				<Route element={<ShipperLayout></ShipperLayout>}>
-					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
+					
 					<Route
 						path="/shipper/order-pending"
 						element={<OrderShippingPage />}

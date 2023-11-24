@@ -303,7 +303,7 @@ const FlashSale = () => {
                 className="bg-white shadow-none"
             >
                 <DialogHeader>Xác nhận xóa</DialogHeader>
-                <DialogBody divider>Bạn có muốn xóa món ăn này không?</DialogBody>
+                <DialogBody divider>Bạn có muốn xóa flash sale này không?</DialogBody>
                 <DialogFooter>
                     <Button
                         variant="text"
