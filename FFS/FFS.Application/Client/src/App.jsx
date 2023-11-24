@@ -43,6 +43,8 @@ import UserDetails from "./app/(public)/UserDetails";
 import ShipperRegisterPage from "./app/(public)/ShipperRegister";
 import OrderDetail from "./app/(store)/OrderDetail";
 import MyOrderDetail from "./app/(auth)/MyOrderDetail";
+import AccessDenied from "./app/(public)/AccessDenied";
+import NotFoundPage from "./app/NotFoundPage";
 
 function App() {
 	return (
@@ -115,7 +117,8 @@ function App() {
 						element={<RequestAccountPage />}
 					/>
 				</Route>
-				<Route path="*" element={<>404 Not Found !!</>}></Route>
+				<Route path="*" element={<NotFoundPage />}></Route>
+				<Route path="/access-denied" element={<AccessDenied />}></Route>
 			</Routes>
 		</>
 	);
