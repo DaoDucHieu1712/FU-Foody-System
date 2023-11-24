@@ -117,7 +117,7 @@ namespace FFS.Application.DTOs
 
 			CreateMap<Image, ImageCommentDTO>();
 
-			CreateMap<ApplicationUser, UserInfoDTO>();
+			CreateMap<ApplicationUser, UserInfoDTO>().ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName));
 
 
 			OrderMapper();

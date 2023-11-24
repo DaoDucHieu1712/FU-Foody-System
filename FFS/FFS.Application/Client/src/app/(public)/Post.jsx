@@ -16,13 +16,17 @@ import AddPost from "../(auth)/shared/components/post/AddPost";
 import axiosConfig from "../../shared/api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import LastestPost from "./components/post/LastestPost";
-import PopularFood from "./components/post/PopularFood";
 import ArrowRight from "../../shared/components/icon/ArrowRight";
 import ArrowLeft from "../../shared/components/icon/ArrowLeft";
 import { useSelector } from "react-redux";
+import ArrowBlog from "../../shared/components/icon/ArrowBlog";
+import FlashSalePost from "./components/post/FlashSalePost";
 
 const Post = () => {
   const accesstoken = useSelector(state => state.auth.accessToken);
+  const userInfo = useSelector((state) => state.auth.userProfile);
+  const isUser = userInfo && userInfo.Role === "USER";
+
   const [active, setActive] = React.useState(1);
   const [posts, setPosts] = React.useState([]);
   const [postTitle, setPostTitle] = useState("");
@@ -89,7 +93,7 @@ const Post = () => {
           {/* Column 1 */}
           <div className="md:col-span-1 sticky top-0 h-screen">
             <LastestPost></LastestPost>
-            <PopularFood></PopularFood>
+            <FlashSalePost></FlashSalePost>
           </div>
           {/* Column 2 */}
           <div className="md:col-span-2 ">
@@ -120,7 +124,7 @@ const Post = () => {
                   <Option value="oldest">Cũ nhất</Option>
                 </Select>
               </div>
-              {accesstoken ? (
+              {accesstoken && isUser ? (
                  <AddPost reloadPost={reloadPost}></AddPost>
               ) : (
               null)}
@@ -179,20 +183,7 @@ const Post = () => {
                         onClick={() => handleReadMoreClick(post.id)}
                       >
                         Đọc Thêm
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          className="w-4 h-4"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                          />
-                        </svg>
+                      <ArrowBlog></ArrowBlog>
                       </Button>
                     </CardFooter>
                   </Card>

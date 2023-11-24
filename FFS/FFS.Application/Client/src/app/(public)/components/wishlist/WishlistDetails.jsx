@@ -31,7 +31,7 @@ const WishlistDetails = ({ foodId }) => {
       toast.success("Thêm vào wishlist thành công !");
     } catch (error) {
       console.error("Error adding to wishlist:", error);
-      toast.error("Món ăn này đã có trong wishlist");
+      toast.error("Thêm vào wishlist thất bại !");
     }
   };
 
@@ -44,6 +44,7 @@ const WishlistDetails = ({ foodId }) => {
       setIsInWishlist(false);
     } catch (error) {
       console.error("Error removing from wishlist:", error);
+      toast.error("Xóa khỏi wishlist thất bại !");
     }
   };
 
