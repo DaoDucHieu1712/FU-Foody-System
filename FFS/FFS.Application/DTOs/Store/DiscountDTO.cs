@@ -5,7 +5,7 @@ namespace FFS.Application.DTOs.Store
 {
     public class DiscountDTO
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public int StoreId { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }

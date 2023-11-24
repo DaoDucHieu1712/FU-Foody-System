@@ -9,21 +9,18 @@ import propTypes from "prop-types";
 import { useEffect, useState } from "react";
 import axios from "../../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import PickTimeSale from "./PickTimeSale";
 import AddFoodSale from "./AddFoodSale";
 
 const TABLE_HEAD = ["Sản phẩm", "Giá gốc", "Giá đã giảm", "Phần trăm giảm (%)", "Số lượng sản phẩm khuyến mãi", "Kho hàng", ""];
 const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 
-const UpdateFlashSale = ({ reload, discountData }) => {
-    const navigate = useNavigate();
+const UpdateFlashSale = ({ fId, reload, dayStart, dayEnd, fsList }) => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen((cur) => !cur);
-
-    const [dateStart, setDateStart] = useState('');
-    const [dateEnd, setDateEnd] = useState('');
-    const [foodListSale, setFoodListSale] = useState([]);
+    const [dateStart, setDateStart] = useState(dayStart);
+    const [dateEnd, setDateEnd] = useState(dayEnd);
+    const [foodListSale, setFoodListSale] = useState(fsList);
     const [formData, setFormData] = useState({});
     const [priceInput, setPriceInput] = useState(null);
     const [percentInput, setPercentInput] = useState(null);
@@ -35,7 +32,15 @@ const UpdateFlashSale = ({ reload, discountData }) => {
     }
 
     const GetFoodListSale = (list) => {
-        setFoodListSale(list);
+        const updatedList = [...foodListSale];
+        list.forEach((newItem) => {
+            const exists = updatedList.some((existingItem) => existingItem.foodId === newItem.foodId);
+            if (!exists) {
+                updatedList.push(newItem);
+            }
+        });
+
+        setFoodListSale(updatedList);
     }
 
     const formatDate = (date) => {
@@ -51,10 +56,20 @@ const UpdateFlashSale = ({ reload, discountData }) => {
         return `${hours}:${minutes}`;
     };
 
-    const handleDelete = (id) => {
-        const updatedFood = foodListSale.filter((food) => food.foodId != id);
-        setFoodListSale(updatedFood);
-        toast.success("Xoá thành công!");
+    const handleDelete = async (id, flashSaleId) => {
+        try {
+            await axios.delete(`/api/FlashSale/DeleteFlashSaleDetail/${flashSaleId}/${id}`)
+                .then(() => {
+                    const updatedFood = foodListSale.filter((food) => food.foodId != id);
+                    setFoodListSale(updatedFood);
+                })
+                .catch(() => {
+                    const updatedFood = foodListSale.filter((food) => food.foodId != id);
+                    setFoodListSale(updatedFood);
+                });
+        } catch (error) {
+            console.error("Error occur:", error);
+        }
     }
 
     const handleChange = (foodId, field, value) => {
@@ -65,19 +80,31 @@ const UpdateFlashSale = ({ reload, discountData }) => {
                 [field]: value,
             },
         }));
-        console.log(formData);
     };
 
-    const onSubmit = () => {
-        Object.keys(formData).forEach((foodId) => {
-            const foodData = formData[foodId];
-            sendDataToDatabase(foodId, foodData);
-        });
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const formDataArray = Object.values(formData);
+            const dataPut = {
+                start: dateStart,
+                end: dateEnd,
+                flashSaleDetails: formDataArray,
+            }
+            await axios.put(`/api/FlashSale/UpdateFlashSale/${fId}`, dataPut)
+                .then(() => {
+                    toast.success("Sửa flash sale thành công!");
+                    setOpen(false);
+                    reload();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        } catch (error) {
+            console.error("Error occur:", error);
+        }
     };
 
-    const sendDataToDatabase = (foodId, foodData) => {
-
-    };
 
     const handleUpdateAll = () => {
         const updatedFormData = {};
@@ -85,9 +112,10 @@ const UpdateFlashSale = ({ reload, discountData }) => {
             const foodData = formData[foodId];
             updatedFormData[foodId] = {
                 ...foodData,
-                priceFood: priceInput !== null ? priceInput : foodData.priceFood,
-                percentFood: percentInput !== null ? percentInput : foodData.percentFood,
-                quantityFood: quantityInput !== null ? quantityInput : foodData.quantityFood,
+                foodId: parseInt(foodId),
+                priceAfterSale: priceInput !== null ? parseFloat(priceInput) : parseFloat(foodData.priceAfterSale),
+                salePercent: percentInput !== null ? parseInt(percentInput) : parseInt(foodData.salePercent),
+                numberOfProductSale: quantityInput !== null ? parseInt(quantityInput) : parseInt(foodData.numberOfProductSale),
             };
         });
 
@@ -95,17 +123,19 @@ const UpdateFlashSale = ({ reload, discountData }) => {
     };
 
     useEffect(() => {
-        // Initialize formData with default values for each food item
         const initialFormData = {};
         foodListSale.forEach((food) => {
             initialFormData[food.foodId] = {
-                priceFood: 0,
-                percentFood: 0,
-                quantityFood: 0,
+                foodId: parseInt(food.foodId),
+                priceAfterSale: parseFloat(food.priceAfterSale),
+                salePercent: parseInt(food.salePercent),
+                numberOfProductSale: parseInt(food.numberOfProductSale),
             };
         });
         setFormData(initialFormData);
     }, [foodListSale]);
+
+
 
     return (
         <div>
@@ -146,7 +176,7 @@ const UpdateFlashSale = ({ reload, discountData }) => {
                     </div>
                     <div className="flex justify-between items-center p-2 mt-1 bg-gray-100 shadow-md rounded-t-lg">
                         <Typography variant="h6">Sản phẩm tham gia Flash Sale của Shop</Typography>
-                        <AddFoodSale getFoodList={GetFoodListSale}></AddFoodSale>
+                        <AddFoodSale getFoodList={GetFoodListSale} dateS={dateStart} dateE={dateEnd}></AddFoodSale>
                     </div>
                     <div className="flex items-center justify-between p-2 mt-1 bg-gray-100 shadow-md rounded-t-lg">
                         <Typography>Chỉnh sửa tất cả</Typography>
@@ -184,7 +214,7 @@ const UpdateFlashSale = ({ reload, discountData }) => {
                         <Button className="bg-primary" onClick={() => handleUpdateAll()}>Cập nhật tất cả</Button>
                     </div>
                     <div>
-                        <form onSubmit={() => onSubmit()}>
+                        <form onSubmit={(e) => onSubmit(e)}>
                             <table className="w-full min-w-max table-auto text-center">
                                 <thead>
                                     <tr>
@@ -229,13 +259,13 @@ const UpdateFlashSale = ({ reload, discountData }) => {
                                                         {food.foodName}
                                                     </Typography>
                                                 </td>
-                                                <td>
+                                                <td className="w-28">
                                                     <Typography
                                                         variant="small"
                                                         color="blue-gray"
                                                         className="font-normal max-w-xs truncate"
                                                     >
-                                                        {food.foodName}
+                                                        {food.price}
                                                     </Typography>
                                                 </td>
                                                 <td className="relative w-14 lg:w-48">
@@ -243,12 +273,12 @@ const UpdateFlashSale = ({ reload, discountData }) => {
                                                         type="number"
                                                         min={0}
                                                         max={food.price}
-                                                        value={formData[food.foodId]?.priceFood}
-                                                        onChange={(e) => handleChange(food.foodId, 'priceFood', e.target.value)}
+                                                        value={formData[food.foodId]?.priceAfterSale}
+                                                        onChange={(e) => handleChange(food.foodId, 'priceAfterSale', e.target.value)}
                                                         className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                                     </input>
                                                     <br />
-                                                    {formData[food.foodId]?.priceFood > food.price && (
+                                                    {formData[food.foodId]?.priceAfterSale > food.price && (
                                                         <span className="absolute right-0 pt-1 text-red-500 text-xs">Vui lòng nhập giá nhỏ hơn giá gốc</span>
                                                     )}
                                                 </td>
@@ -257,12 +287,12 @@ const UpdateFlashSale = ({ reload, discountData }) => {
                                                         type="number"
                                                         min={0}
                                                         max={100}
-                                                        value={formData[food.foodId]?.percentFood}
-                                                        onChange={(e) => handleChange(food.foodId, 'percentFood', e.target.value)}
+                                                        value={formData[food.foodId]?.salePercent}
+                                                        onChange={(e) => handleChange(food.foodId, 'salePercent', e.target.value)}
                                                         className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                                     </input>
                                                     <br />
-                                                    {formData[food.foodId]?.percentFood > 100 && (
+                                                    {formData[food.foodId]?.salePercent > 100 && (
                                                         <span className="absolute right-0 pt-1 text-red-500 text-xs">Phần trăm khuyến mãi chỉ có thể từ 0-100%</span>
                                                     )}
                                                 </td>
@@ -271,12 +301,12 @@ const UpdateFlashSale = ({ reload, discountData }) => {
                                                         type="number"
                                                         min={0}
                                                         max={food.quantity}
-                                                        value={formData[food.foodId]?.quantityFood}
-                                                        onChange={(e) => handleChange(food.foodId, 'quantityFood', e.target.value)}
+                                                        value={formData[food.foodId]?.numberOfProductSale}
+                                                        onChange={(e) => handleChange(food.foodId, 'numberOfProductSale', e.target.value)}
                                                         className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
                                                     </input>
                                                     <br />
-                                                    {formData[food.foodId]?.quantityFood > food.quantity && (
+                                                    {formData[food.foodId]?.numberOfProductSale > food.quantity && (
                                                         <span className="absolute right-0 pt-1 text-red-500 text-xs">Vui lòng nhập số lượng nhỏ hơn tồn kho</span>
                                                     )}
                                                 </td>
@@ -294,7 +324,7 @@ const UpdateFlashSale = ({ reload, discountData }) => {
                                                         <Tooltip content="Xóa món ăn">
                                                             <IconButton
                                                                 variant="text"
-                                                                onClick={() => handleDelete(food.foodId)}
+                                                                onClick={() => handleDelete(food.foodId, food.flashSaleId)}
                                                             >
                                                                 <svg
                                                                     xmlns="http://www.w3.org/2000/svg"
@@ -329,8 +359,11 @@ const UpdateFlashSale = ({ reload, discountData }) => {
 };
 
 UpdateFlashSale.propTypes = {
+    fId: propTypes.any.isRequired,
     reload: propTypes.any.isRequired,
-    discountData: propTypes.any.isRequired,
+    dayStart: propTypes.any.isRequired,
+    dayEnd: propTypes.any.isRequired,
+    fsList: propTypes.any.isRequired,
 };
 
 export default UpdateFlashSale;

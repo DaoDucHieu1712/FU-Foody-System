@@ -1,4 +1,4 @@
-import { Button, Input, Radio, Textarea } from "@material-tailwind/react";
+import { Button, Input, Radio } from "@material-tailwind/react";
 import UploadImage from "../../shared/components/form/UploadImage";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,16 +9,8 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const schema = yup.object({
-	storeName: yup
-		.string()
-		.min(8, "Tên cửa hàng phải từ 8 ký tự trở lên")
-		.required("Tên cửa hàng không thể để trống !"),
 	avatarURL: yup.string().required(),
-	description: yup.string().required("Mô tả không thể để trống !"),
-	address: yup.string().required("Địa chỉ không thể để trống !"),
 	phoneNumber: yup.string().required("Số điện thoại không thể để trống !"),
-	timeStart: yup.date().required("Hãy chọn thời gian mở cửa !"),
-	timeEnd: yup.date().required("Hãy chọn thời gian đóng cửa !"),
 	firstName: yup.string().required("Họ không thể để trống"),
 	lastName: yup.string().required("Tên không thể để trống"),
 	gender: yup.boolean().required("Giới tính không thể để trống !"),
@@ -44,7 +36,7 @@ const schema = yup.object({
 		.required("Vui lòng điền xác nhận mật khẩu !"),
 });
 
-const StoreRegisterPage = () => {
+const ShipperRegisterPage = () => {
 	const navigate = useNavigate();
 
 	const {
@@ -58,10 +50,10 @@ const StoreRegisterPage = () => {
 	});
 
 	const onSubmitHandler = async (data) => {
-		console.log(data);
+		console.log("asdds");
 		data.allow = true;
 		data.avatar = data.avatarURL;
-		AuthServices.storeRegister(data)
+		AuthServices.shipperRegister(data)
 			.then((res) => {
 				console.log(res);
 				toast.success(
@@ -79,36 +71,16 @@ const StoreRegisterPage = () => {
 			<div className="container mx-auto shadow-sm mb-16">
 				<div className="heading mb-10 mt-10">
 					<h1 className="font-bold uppercase">
-						Cùng trở thành Người bán Hàng cùng FU
+						Đăng kí để trở thành người giao hàng cùng FU Food
 					</h1>
 				</div>
 				<form onSubmit={handleSubmit(onSubmitHandler)}>
 					<div className="flex gap-x-10">
 						<div className="flex flex-col gap-4 w-full">
 							<div className="w-full">
-								<Input label="Tên Cửa Hàng" {...register("storeName")} />
-								{errors.storeName && (
-									<ErrorText text={errors.storeName.message} />
-								)}
-							</div>
-							<div className="w-full">
 								<UploadImage name="avatarURL" onChange={setValue} />
 								{errors.avatarURL && (
 									<ErrorText text={errors.avatarURL.message} />
-								)}
-							</div>
-							<div className="w-full">
-								<Input label="Địa chỉ" {...register("address")} />
-								{errors.address && <ErrorText text={errors.address.message} />}
-							</div>
-							<div className="w-full">
-								<Textarea
-									label="Mô tả"
-									{...register("description")}
-									className="h-[185px]"
-								/>
-								{errors.description && (
-									<ErrorText text={errors.description.message} />
 								)}
 							</div>
 						</div>
@@ -118,24 +90,6 @@ const StoreRegisterPage = () => {
 								{errors.phoneNumber && (
 									<ErrorText text={errors.phoneNumber.message} />
 								)}
-							</div>
-							<div className="w-full">
-								<Input
-									type="datetime-local"
-									label="Thời gian mở cửa"
-									{...register("timeStart")}
-								/>
-								{errors.timeStart && (
-									<ErrorText text={errors.timeStart.message} />
-								)}
-							</div>
-							<div className="w-full">
-								<Input
-									type="datetime-local"
-									label="Thời gian đóng cửa"
-									{...register("timeEnd")}
-								/>
-								{errors.timeEnd && <ErrorText text={errors.timeEnd.message} />}
 							</div>
 							<div className="w-full flex gap-x-3">
 								<Input label="Họ" {...register("firstName")} />
@@ -202,4 +156,4 @@ const StoreRegisterPage = () => {
 	);
 };
 
-export default StoreRegisterPage;
+export default ShipperRegisterPage;

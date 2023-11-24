@@ -12,6 +12,7 @@ import {
 import axios from "../../shared/api/axiosConfig";
 import { useEffect, useState } from "react";
 import AddFood from "./components/AddFood";
+import AddCombo from "./components/AddCombo";
 import UpdateFood from "./components/UpdateFood";
 import DeleteFood from "./components/DeleteFood";
 import { toast } from "react-toastify";
@@ -105,6 +106,8 @@ const Food = () => {
                 Xuất Excel
               </Button>
               <AddFood reload={reloadList} storeId={storeId}></AddFood>
+              <AddCombo reload={reloadList} storeId={storeId} foodList={foodList}></AddCombo>
+
             </div>
             <div className="w-full shrink-0 gap-2 px-2 py-2 md:w-max">
               <div className="w-full md:w-72">

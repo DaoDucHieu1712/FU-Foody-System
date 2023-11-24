@@ -6,7 +6,7 @@ import CookieService from "../../../../shared/helper/cookieConfig";
 import axios from "../../../../shared/api/axiosConfig";
 import propTypes from "prop-types";
 
-const AddFoodSale = ({ getFoodList }) => {
+const AddFoodSale = ({ getFoodList, dateS, dateE }) => {
     const uId = CookieService.getToken("fu_foody_id");
 
     const [open, setOpen] = useState(false);
@@ -21,24 +21,59 @@ const AddFoodSale = ({ getFoodList }) => {
     const [active, setActive] = useState(1);
     const [isCheckedAll, setIsCheckedAll] = useState(false);
     const [checkedItems, setCheckedItems] = useState({});
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [allCheckedItems, setAllCheckedItems] = useState({});
+
+    const getSelectedItem = (itemId) => {
+        const numericItemId = parseInt(itemId, 10);
+        return {
+            foodId: numericItemId,
+            imageURL: inventory.find((item) => item.id === numericItemId)?.imageURL,
+            foodName: inventory.find((item) => item.id === numericItemId)?.foodName,
+            price: inventory.find((item) => item.id === numericItemId)?.price,
+            quantity: inventory.find((item) => item.id === numericItemId)?.quantity,
+            categoryName: inventory.find((item) => item.id === numericItemId)?.categoryName,
+        };
+    };
 
     const handleCheckAll = () => {
         const newCheckedState = !isCheckedAll;
-        setIsCheckedAll(newCheckedState);
 
-        const newCheckedItems = {};
+        const newAllCheckedItems = {};
         inventory.forEach(({ id }) => {
-            newCheckedItems[id] = newCheckedState;
+            newAllCheckedItems[id] = newCheckedState;
         });
-        setCheckedItems(newCheckedItems);
+        setIsCheckedAll(newCheckedState);
+        setCheckedItems(newAllCheckedItems);
+        setAllCheckedItems(newAllCheckedItems);
+
+        const updatedSelectedItems = newCheckedState
+            ? [
+                ...selectedItems,
+                ...inventory.map(({ id }) => getSelectedItem(id)),
+            ]
+            : selectedItems.filter(({ foodId }) => newAllCheckedItems[foodId]);
+
+        setSelectedItems(updatedSelectedItems);
     };
 
     const handleCheckSingle = (itemId) => {
-        const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };
-        setCheckedItems(newCheckedItems);
+        const numericItemId = parseInt(itemId, 10);
+        const newCheckedItems = { ...checkedItems, [numericItemId]: !checkedItems[numericItemId] };
+        const newAllCheckedItems = { ...allCheckedItems, [numericItemId]: !allCheckedItems[numericItemId] };
 
-        const areAllChecked = Object.values(newCheckedItems).every((isChecked) => isChecked);
-        setIsCheckedAll(areAllChecked);
+        setCheckedItems(newCheckedItems);
+        setAllCheckedItems(newAllCheckedItems);
+
+        const isSelected = newAllCheckedItems[itemId];
+
+        const selectedItem = getSelectedItem(itemId);
+
+        const updatedSelectedItems = isSelected
+            ? [...selectedItems, selectedItem]
+            : selectedItems.filter(({ foodId }) => foodId !== itemId);
+
+        setSelectedItems(updatedSelectedItems);
     };
 
     const getItemProps = (index) => ({
@@ -81,46 +116,38 @@ const AddFoodSale = ({ getFoodList }) => {
 
     const fetchInventory = async () => {
         try {
-            const response = await axios.get("/api/Inventory/GetInventories", {
+            const response = await axios.get("/api/FlashSale/ListFoodAvailable", {
                 params: {
                     StoreId: storeId,
                     FoodName: foodNameFilter,
+                    Start: dateS,
+                    End: dateE,
                     PageNumber: pageNumber,
                     PageSize: pageSize,
                 },
             });
-            setInventory(response.entityInventory);
+
+            setInventory(response.foodAvailable);
             setTotalPages(response.metadata.totalPages);
+
         } catch (error) {
             console.error("Error fetching inventory data:", error);
         }
     };
 
     const handleSubmit = () => {
-        const selectedItems = inventory.filter(({ id }) => checkedItems[id]);
-
-        const selectedFoodList = selectedItems.map(
-            ({ foodId, imageURL, foodName, price, quantity, categoryName }) => ({               
-                foodId,
-                imageURL,
-                foodName,
-                price,
-                quantity,
-                categoryName,
-            })
-        );
-
-        getFoodList(selectedFoodList);
+        getFoodList(selectedItems);
         handleOpen();
     };
 
     useEffect(() => {
-        fetchInventory();
-    }, [storeId, foodNameFilter, pageNumber, pageSize]);
+        const fetchData = async () => {
+            await GetStoreByUid();
+            await fetchInventory();
+        };
 
-    useEffect(() => {
-        GetStoreByUid();
-    }, []);
+        fetchData();
+    }, [storeId, foodNameFilter, pageNumber, pageSize]);
 
     const TABLE_HEAD = [
         <Checkbox key="checkbox-header" label="Chọn tất cả" checked={isCheckedAll} onChange={handleCheckAll}></Checkbox>,
@@ -159,7 +186,7 @@ const AddFoodSale = ({ getFoodList }) => {
                                 <Input
                                     label="Tên món ăn"
                                     icon={<i className="fas fa-search" />}
-                                    value={foodNameFilter}
+                                    value={foodNameFilter || ""}
                                     onChange={(e) => setFoodNameFilter(e.target.value)}
                                 />
                             </div>
@@ -209,13 +236,12 @@ const AddFoodSale = ({ getFoodList }) => {
                                         const imageClasses = isLast
                                             ? "p-1 flex items-center justify-center"
                                             : "p-1 border-b border-blue-gray-50 flex items-center justify-center";
-                                        const isItemChecked = checkedItems[id];
                                         return (
                                             <tr key={id}>
                                                 <td className={classes}>
                                                     {isCheckboxColumn && (
                                                         <Checkbox
-                                                            checked={isItemChecked}
+                                                            checked={checkedItems[id] || false}
                                                             onChange={() => handleCheckSingle(id)}
                                                         ></Checkbox>
                                                     )}
@@ -299,6 +325,8 @@ const AddFoodSale = ({ getFoodList }) => {
 
 AddFoodSale.propTypes = {
     getFoodList: propTypes.any.isRequired,
+    dateS: propTypes.any.isRequired,
+    dateE: propTypes.any.isRequired
 }
 
 export default AddFoodSale;

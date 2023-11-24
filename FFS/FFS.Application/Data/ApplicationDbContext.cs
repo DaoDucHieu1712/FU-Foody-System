@@ -99,7 +99,12 @@ namespace FFS.Application.Data
             builder.Entity<FlashSale>().
              HasOne(c => c.Store).WithMany(c => c.FlashSales).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
 
-        }
+			builder.Entity<UserDiscount>().
+				HasOne(c => c.User).WithMany(c => c.UserDiscounts).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.ClientNoAction);
+			
+			builder.Entity<UserDiscount>().
+				HasOne(c => c.Discount).WithMany(c => c.UserDiscounts).HasForeignKey(c => c.DiscountId).OnDelete(DeleteBehavior.ClientNoAction);
+		}
 
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public virtual DbSet<Category> Categories { get; set; }

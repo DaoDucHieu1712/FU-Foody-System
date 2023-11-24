@@ -7,6 +7,12 @@ namespace FFS.Application.Entities
     [Table("Discount")]
     public class Discount : BaseEntity<int>
     { 
+
+		public Discount() {
+
+			UserDiscounts = new HashSet<UserDiscount>();
+		}
+
         public string Code { get; set; }
         public string? Description { get; set; }
         public int Percent { get; set; }
@@ -17,5 +23,6 @@ namespace FFS.Application.Entities
         public int StoreId { get; set; }
         [ForeignKey(nameof(StoreId))]
         public Store Store { get; set; }
+		public ICollection<UserDiscount> UserDiscounts { get; set; }
     }
 }
