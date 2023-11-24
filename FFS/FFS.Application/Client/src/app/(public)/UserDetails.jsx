@@ -4,15 +4,23 @@ import {
 	MenuList,
 	Typography,
 	Avatar,
-  MenuItem,
+	MenuItem,
 } from "@material-tailwind/react";
 import Elips from "../../shared/components/icon/Elips";
 import axios from "../../shared/api/axiosConfig";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import CookieService from "../../shared/helper/cookieConfig";
+import moment from "moment";
+import "moment/dist/locale/vi";
+moment.locale("vi");
 const UserDetails = () => {
 	const { id } = useParams();
 	const [user, setUser] = useState([]);
+	const [isReact, setIsReact] = useState(false);
+	const [postIdToCheck, setPostIdToCheck] = useState(null);
+	const [openComment, setOpenComment] = useState(false);
+	const userId = CookieService.getToken("fu_foody_id");
 
 	const GetUserInformation = async () => {
 		try {
@@ -21,65 +29,96 @@ const UserDetails = () => {
 				.then((response) => {
 					console.log(response);
 					setUser(response);
-				})
-				.catch((error) => {
-					console.log(error);
+					response.posts.forEach((post) => {
+						setPostIdToCheck(post.id);
+
+						const checkReact = post.reactPosts.some(
+							(reactPost) =>
+								reactPost.userId === userId && reactPost.isLike === true
+						);
+
+						if (checkReact) {
+							setIsReact(true);
+						}
+					});
 				});
 		} catch (error) {
 			console.error("An error occurred", error);
 		}
 	};
 
+	const handleReactPost = (postId) => {
+		try {
+			const dataPost = {
+				userId: userId,
+				postId: postId,
+			};
+			axios
+				.post("/api/Post/ReactPost", dataPost)
+				.then(() => {
+					GetUserInformation();
+					setIsReact((cur) => !cur);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("Error occur: ", error);
+		}
+	};
+
 	useEffect(() => {
 		GetUserInformation();
 	}, [id]);
-
+	const handleopenComent = () => {
+		setOpenComment((cur) => !cur);
+	};
 	return (
 		<>
-			<div class="container mx-auto  px-20 py-8">
-				<div class="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
-					<div class="col-span-4 sm:col-span-3 sticky top-0 h-screen">
-						<div class="bg-white shadow rounded-lg p-6">
-							<div class="flex flex-col items-center">
+			<div className="container mx-auto  px-20 py-8">
+				<div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
+					<div className="col-span-4 sm:col-span-3 sticky top-0 h-screen">
+						<div className="bg-white shadow rounded-lg p-6">
+							<div className="flex flex-col items-center">
 								<img
 									src={user.avatar}
-									class="w-32 h-32 bg-gray-300 rounded-full mb-3 shrink-0"
+									className="w-32 h-32 bg-gray-300 rounded-full mb-3 shrink-0"
 								></img>
-								<h1 class="text-xl font-bold">{user.userName}</h1>
+								<h1 className="text-xl font-bold">{user.userName}</h1>
 
-								<div class="mt-3 flex flex-wrap gap-4 justify-center">
+								<div className="mt-3 flex flex-wrap gap-4 justify-center">
 									<a
 										href="#"
-										class="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
+										className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
 									>
 										Nhắn tin
 									</a>
 									<a
 										href="#"
-										class="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
+										className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
 									>
 										Báo cáo
 									</a>
 								</div>
 							</div>
-							<hr class="my-6 border-t border-gray-300" />
-							<div class="flex flex-col">
-								<span class="text-gray-600 uppercase font-bold tracking-wider mb-2">
+							<hr className="my-6 border-t border-gray-300" />
+							<div className="flex flex-col">
+								<span className="text-gray-600 uppercase font-bold tracking-wider mb-2">
 									Hoạt động cá nhân
 								</span>
 								<ul>
-									<li class="mb-2">Đã đăng {user.totalPost} bài viết</li>
-									<li class="mb-2">
+									<li className="mb-2">Đã đăng {user.totalPost} bài viết</li>
+									<li className="mb-2">
 										Đã có {user.totalRecentComments} bình luận trong tuần qua
 									</li>
 								</ul>
 							</div>
 						</div>
 					</div>
-					<div class="col-span-4 sm:col-span-9">
+					<div className="col-span-4 sm:col-span-9">
 						{user.posts &&
 							user.posts.map((post) => (
-								<div key={post.id} class="bg-white shadow rounded-lg mb-4">
+								<div key={post.id} className="bg-white shadow rounded-lg mb-4">
 									<div className="md:col-span-2 py-4 px-6">
 										{/* POST AUTHOR */}
 										<div className="flex justify-between items-center py-3">
@@ -107,9 +146,9 @@ const UserDetails = () => {
 															<Elips></Elips>
 														</button>
 													</MenuHandler>
-                          <MenuList>
-                            <MenuItem>Báo cáo bài viết</MenuItem>
-                          </MenuList>
+													<MenuList>
+														<MenuItem>Báo cáo bài viết</MenuItem>
+													</MenuList>
 												</Menu>
 											</div>
 										</div>
@@ -133,12 +172,12 @@ const UserDetails = () => {
 											<div className="flex items-center justify-between">
 												<div className="flex flex-row-reverse items-center">
 													<span className="ml-2 text-gray-500">
-														0 lượt thích
+														{post.likeNumber} lượt thích
 													</span>
 												</div>
 												<div className="text-gray-500">
 													<span onClick="" style={{ cursor: "pointer" }}>
-														0 bình luận
+														{post.commentNumber} bình luận
 													</span>
 												</div>
 											</div>
@@ -146,32 +185,36 @@ const UserDetails = () => {
 										{/* END POST EVENTS */}
 
 										{/* POST ACTION */}
-										<div className="py-2">
+										<div className="py-2 px-8">
 											<div className="border border-gray-200 border-l-0 border-r-0 py-1">
 												<div className="flex space-x-2">
 													<div className="w-1/2 flex space-x-2 justify-center items-center hover:bg-gray-100 text-xl py-2 rounded-lg cursor-pointer text-gray-500">
-														<span
-															className="flex gap-1 items-center text-pink-200 text-sm font-semibold"
-															//   onClick={handleReactPost}
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																height="1em"
-																viewBox="0 0 512 512"
+														{postIdToCheck === post.id && isReact ? (
+															<span
+																className="flex gap-1 items-center text-orange-900
+                        text-sm font-semibold"
+																onClick={() => handleReactPost(post.id)}
 															>
-																<path
-																	d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
-																	fill="orange"
-																/>
-															</svg>
-															Thích
-														</span>
-														<span
-															className="text-sm font-semibold"
-															//   onClick={handleReactPost}
-														>
-															Thích
-														</span>
+																<svg
+																	xmlns="http://www.w3.org/2000/svg"
+																	height="1em"
+																	viewBox="0 0 512 512"
+																>
+																	<path
+																		d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
+																		fill="orange"
+																	/>
+																</svg>
+																Thích
+															</span>
+														) : (
+															<span
+																className="text-sm font-semibold"
+																onClick={() => handleReactPost(post.id)}
+															>
+																Thích
+															</span>
+														)}
 													</div>
 													<div className="w-1/2 flex space-x-2 justify-center items-center hover:bg-gray-100 text-xl py-2 rounded-lg cursor-pointer text-gray-500">
 														<i className="bx bx-comment"></i>
@@ -186,47 +229,59 @@ const UserDetails = () => {
 										<Typography
 											variant="small"
 											className="cursor-pointer hover:text-orange-900 py-2"
-											// onClick={handleopenComent}
+											onClick={handleopenComent}
 										>
 											<i className="fal fa-angle-double-down p-1"></i>Xem bình
 											luận
 										</Typography>
 										{/* SUB COMMENT */}
-
-										<div className=" mt-1">
-											<div className="flex justify-start gap-2 mb-4">
-												<img
-													src=""
-													alt="image 1"
-													className="h-14 w-14 rounded-full object-cover"
-												></img>
-												<div>
-													<div className="flex gap-1">
-														<Typography variant="small" className="font-bold">
-															Linh Linh
-														</Typography>
-														<Typography variant="small">12/10/2023</Typography>
+										{openComment ? (
+											<div className="mt-1">
+												{post.comments.map((comment) => (
+													<div
+														key={comment.id}
+														className="flex justify-start gap-2 mb-4"
+													>
+														<img
+															src={comment.avartar}
+															alt="image 1"
+															className="h-14 w-14 rounded-full object-cover"
+														></img>
+														<div>
+															<div className="flex gap-1">
+																<Typography
+																	variant="small"
+																	className="font-bold"
+																>
+																	{comment.userName}
+																</Typography>
+																<Typography variant="small">
+																	- {moment(comment.commentDate).fromNow()}
+																</Typography>
+															</div>
+															<Typography variant="paragraph">
+																{comment.content}
+															</Typography>
+															<div className="flex gap-2">
+																<Typography
+																	variant="small"
+																	className="cursor-pointer hover:text-orange-900"
+																>
+																	<i className="fal fa-heart pr-1"></i>Thích
+																</Typography>
+																<Typography
+																	variant="small"
+																	className="cursor-pointer hover:text-orange-900"
+																>
+																	<i className="fal fa-angle-double-right fa-rotate-90 p-1"></i>
+																	Xem bình luận
+																</Typography>
+															</div>
+														</div>
 													</div>
-													<Typography variant="paragraph">Oidoioi</Typography>
-													<div className="flex gap-2">
-														<Typography
-															variant="small"
-															className="cursor-pointer hover:text-orange-900"
-														>
-															<i className="fal fa-heart pr-1"></i>Thích
-														</Typography>
-														<Typography
-															variant="small"
-															className="cursor-pointer hover:text-orange-900"
-														>
-															<i className="fal fa-angle-double-right fa-rotate-90 p-1"></i>
-															Xem bình luận
-														</Typography>
-													</div>
-												</div>
+												))}
 											</div>
-										</div>
-
+										) : null}
 										{/* END SUB COMMENT */}
 										<div className="mb-4">
 											<div className="flex space-x-2">

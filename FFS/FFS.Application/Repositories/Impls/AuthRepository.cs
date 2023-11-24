@@ -22,6 +22,7 @@ using Dapper;
 using FFS.Application.DTOs.QueryParametter;
 using System.Data;
 using FFS.Application.Entities.Enum;
+using FFS.Application.DTOs.Post;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -430,6 +431,24 @@ namespace FFS.Application.Repositories.Impls
 			{
 				var userWithPost = await _context.ApplicationUsers.Include(x => x.Posts.Where(p => p.Status == StatusPost.Accept)).ThenInclude(p => p.ReactPosts)
 				.Include(c => c.Comments).FirstOrDefaultAsync(x => x.Id.Equals(userId));
+				if (userWithPost != null)
+				{
+					foreach (var post in userWithPost.Posts.Where(p => p.Status == StatusPost.Accept))
+					{
+						_context.Entry(post)
+						   .Collection(p => p.Comments)
+						   .Query()
+						   .Include(comment => comment.User)
+						   .Load();
+
+						_context.Entry(post)
+							.Collection(p => p.ReactPosts)
+							.Load();
+
+					}
+				}
+
+
 				return userWithPost;
 			}
 			catch (Exception ex)
