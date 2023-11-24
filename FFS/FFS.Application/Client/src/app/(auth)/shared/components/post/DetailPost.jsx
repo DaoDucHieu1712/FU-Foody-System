@@ -24,8 +24,10 @@ import {
 import LastestPost from "../../../../(public)/components/post/LastestPost";
 import UpdatePost from "./UpdatePost";
 import DeletePost from "./DeletePost";
+import ViewLikePost from "./ViewLikePost";
 import FlashSalePost from "../../../../(public)/components/post/FlashSalePost";
 import ReportUser from "../../../../(public)/components/ReportUser";
+
 
 const DetailPost = () => {
 	const userId = CookieService.getToken("fu_foody_id");
@@ -54,25 +56,29 @@ const DetailPost = () => {
 			});
 	};
 
+
 	const handleReactPost = () => {
 		try {
 			const dataPost = {
 				userId: userId,
-				postId: postId,
-			};
+				postId: postId
+			}
 			axiosConfig
 				.post("/api/Post/ReactPost", dataPost)
 				.then(() => {
 					fetchPostDetails();
-					setIsReact((cur) => !cur);
 				})
 				.catch((error) => {
 					console.log(error);
+				})
+				.finally(() => {
+					setIsReact((cur) => !cur);
 				});
 		} catch (error) {
 			console.error("Error occur: ", error);
 		}
-	};
+	}
+
 
 	useEffect(() => {
 		fetchPostDetails();
@@ -164,19 +170,14 @@ const DetailPost = () => {
 							{/* POST CONTENT */}
 							<div className="text-justify px-8 py-2">
 								<div dangerouslySetInnerHTML={{ __html: post.content }}></div>
-								<img
-									src={post.image}
-									className="w-full h-[450px] object-cover mt-3"
-								/>
+								<img src={post.image} className="w-full h-[450px] object-cover mt-3" />
 							</div>
 							{/* END POST CONTENT */}
 							{/* POST EVENTS */}
 							<div className="px-8 py-2">
 								<div className="flex items-center justify-between">
 									<div className="flex flex-row-reverse items-center">
-										<span className="ml-2 text-gray-500">
-											{post.likeNumber} lượt thích
-										</span>
+										<ViewLikePost likeNumber={post.likeNumber} likedBy={post.reactPosts}></ViewLikePost>
 									</div>
 									<div className="text-gray-500">
 										<span onClick="" style={{ cursor: "pointer" }}>
@@ -234,50 +235,52 @@ const DetailPost = () => {
 								<i className="fal fa-angle-double-down p-1"></i>Xem bình luận
 							</Typography>
 							{/* SUB COMMENT */}
-							{openComment ? (
-								<div className="ml-10 mt-1">
-									{post.comments.map((comment) => (
-										<div
-											key={comment.id}
-											className="flex justify-start gap-2 mb-4"
-										>
-											<img
-												src={comment.avartar}
-												alt="image 1"
-												className="h-14 w-14 rounded-full object-cover"
-											></img>
-											<div>
-												<div className="flex gap-1">
-													<Typography variant="small" className="font-bold">
-														{comment.userName}
+							{
+								openComment ? (
+									<div className="ml-10 mt-1">
+										{post.comments.map((comment) => (
+											<div
+												key={comment.id}
+												className="flex justify-start gap-2 mb-4"
+											>
+												<img
+													src={comment.avartar}
+													alt="image 1"
+													className="h-14 w-14 rounded-full object-cover"
+												></img>
+												<div>
+													<div className="flex gap-1">
+														<Typography variant="small" className="font-bold">
+															{comment.userName}
+														</Typography>
+														<Typography variant="small">
+															- {moment(comment.commentDate).fromNow()}
+														</Typography>
+													</div>
+													<Typography variant="paragraph">
+														{comment.content}
 													</Typography>
-													<Typography variant="small">
-														- {moment(comment.commentDate).fromNow()}
-													</Typography>
-												</div>
-												<Typography variant="paragraph">
-													{comment.content}
-												</Typography>
-												<div className="flex gap-2">
-													<Typography
-														variant="small"
-														className="cursor-pointer hover:text-orange-900"
-													>
-														<i className="fal fa-heart pr-1"></i>Thích
-													</Typography>
-													<Typography
-														variant="small"
-														className="cursor-pointer hover:text-orange-900"
-													>
-														<i className="fal fa-angle-double-right fa-rotate-90 p-1"></i>
-														Xem bình luận
-													</Typography>
+													<div className="flex gap-2">
+														<Typography
+															variant="small"
+															className="cursor-pointer hover:text-orange-900"
+														>
+															<i className="fal fa-heart pr-1"></i>Thích
+														</Typography>
+														<Typography
+															variant="small"
+															className="cursor-pointer hover:text-orange-900"
+														>
+															<i className="fal fa-angle-double-right fa-rotate-90 p-1"></i>
+															Xem bình luận
+														</Typography>
+													</div>
 												</div>
 											</div>
-										</div>
-									))}
-								</div>
-							) : null}
+										))}
+									</div>
+								) : null
+							}
 							{/* END SUB COMMENT */}
 							<div className="px-8 mb-4">
 								{accesstoken ? (
@@ -300,18 +303,19 @@ const DetailPost = () => {
 									</div>
 								) : null}
 							</div>
-						</div>
+						</div >
+
 
 						{/* // END POST */}
-					</div>
+					</div >
 
 					{/* Column 2 */}
-					<div className="md:col-span-1 sticky top-0 h-screen">
+					< div className="md:col-span-1 sticky top-0 h-screen" >
 						<LastestPost></LastestPost>
 						<FlashSalePost></FlashSalePost>
-					</div>
-				</div>
-			</div>
+					</div >
+				</div >
+			</div >
 		</>
 	);
 };

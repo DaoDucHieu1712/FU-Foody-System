@@ -110,11 +110,15 @@ const UpdateFlashSale = ({ fId, reload, dayStart, dayEnd, fsList }) => {
         const updatedFormData = {};
         Object.keys(formData).forEach((foodId) => {
             const foodData = formData[foodId];
+
+            const shouldUpdateSalePercent = foodData.priceAfterSale <= 0;
+            const shouldUpdatePriceAfterSale = foodData.salePercent <= 0;
+
             updatedFormData[foodId] = {
                 ...foodData,
                 foodId: parseInt(foodId),
-                priceAfterSale: priceInput !== null ? parseFloat(priceInput) : parseFloat(foodData.priceAfterSale),
-                salePercent: percentInput !== null ? parseInt(percentInput) : parseInt(foodData.salePercent),
+                priceAfterSale: shouldUpdatePriceAfterSale ? (priceInput !== null ? parseFloat(priceInput) : parseFloat(foodData.priceAfterSale)) : parseFloat(foodData.priceAfterSale),
+                salePercent: shouldUpdateSalePercent ? (percentInput !== null ? parseInt(percentInput) : parseInt(foodData.salePercent)) : parseInt(foodData.salePercent),
                 numberOfProductSale: quantityInput !== null ? parseInt(quantityInput) : parseInt(foodData.numberOfProductSale),
             };
         });
@@ -127,9 +131,9 @@ const UpdateFlashSale = ({ fId, reload, dayStart, dayEnd, fsList }) => {
         foodListSale.forEach((food) => {
             initialFormData[food.foodId] = {
                 foodId: parseInt(food.foodId),
-                priceAfterSale: parseFloat(food.priceAfterSale),
-                salePercent: parseInt(food.salePercent),
-                numberOfProductSale: parseInt(food.numberOfProductSale),
+                priceAfterSale: parseFloat(food.priceAfterSale) ? parseFloat(food.priceAfterSale) : 0,
+                salePercent: parseInt(food.salePercent) ? parseInt(food.salePercent) : 0,
+                numberOfProductSale: parseInt(food.numberOfProductSale) ? parseInt(food.numberOfProductSale) : 0,
             };
         });
         setFormData(initialFormData);
@@ -268,34 +272,57 @@ const UpdateFlashSale = ({ fId, reload, dayStart, dayEnd, fsList }) => {
                                                         {food.price}
                                                     </Typography>
                                                 </td>
-                                                <td className="relative w-14 lg:w-48">
-                                                    <input
-                                                        type="number"
-                                                        min={0}
-                                                        max={food.price}
-                                                        value={formData[food.foodId]?.priceAfterSale}
-                                                        onChange={(e) => handleChange(food.foodId, 'priceAfterSale', e.target.value)}
-                                                        className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
-                                                    </input>
-                                                    <br />
-                                                    {formData[food.foodId]?.priceAfterSale > food.price && (
-                                                        <span className="absolute right-0 pt-1 text-red-500 text-xs">Vui lòng nhập giá nhỏ hơn giá gốc</span>
+                                                {formData[food.foodId]?.salePercent == 0 ?
+                                                    (
+                                                        <td className="relative w-14 lg:w-48">
+                                                            <input
+                                                                type="number"
+                                                                min={0}
+                                                                max={food.price}
+                                                                value={formData[food.foodId]?.priceAfterSale}
+                                                                onChange={(e) => handleChange(food.foodId, 'priceAfterSale', e.target.value)}
+                                                                className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
+                                                            </input>
+                                                            <br />
+                                                            {formData[food.foodId]?.priceAfterSale > food.price && (
+                                                                <span className="absolute right-0 pt-1 text-red-500 text-xs">Vui lòng nhập giá nhỏ hơn giá gốc</span>
+                                                            )}
+                                                        </td>
+                                                    ) : (
+                                                        <td className="w-14 lg:w-48">
+                                                            <input
+                                                                type="number"
+                                                                disabled
+                                                                className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
+                                                            </input>
+                                                        </td>
                                                     )}
-                                                </td>
-                                                <td className="relative w-14 lg:w-48">
-                                                    <input
-                                                        type="number"
-                                                        min={0}
-                                                        max={100}
-                                                        value={formData[food.foodId]?.salePercent}
-                                                        onChange={(e) => handleChange(food.foodId, 'salePercent', e.target.value)}
-                                                        className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
-                                                    </input>
-                                                    <br />
-                                                    {formData[food.foodId]?.salePercent > 100 && (
-                                                        <span className="absolute right-0 pt-1 text-red-500 text-xs">Phần trăm khuyến mãi chỉ có thể từ 0-100%</span>
-                                                    )}
-                                                </td>
+                                                {
+                                                    formData[food.foodId]?.priceAfterSale == 0 ?
+                                                        (
+                                                            <td className="relative w-14 lg:w-48">
+                                                                <input
+                                                                    type="number"
+                                                                    min={0}
+                                                                    max={100}
+                                                                    value={formData[food.foodId]?.salePercent}
+                                                                    onChange={(e) => handleChange(food.foodId, 'salePercent', e.target.value)}
+                                                                    className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
+                                                                </input>
+                                                                <br />
+                                                                {formData[food.foodId]?.salePercent > 100 && (
+                                                                    <span className="absolute right-0 pt-1 text-red-500 text-xs">Phần trăm khuyến mãi chỉ có thể từ 0-100%</span>
+                                                                )}
+                                                            </td>
+                                                        ) : (
+                                                            <td className="w-14 lg:w-48">
+                                                                <input
+                                                                    type="number"
+                                                                    disabled
+                                                                    className="w-14 lg:w-24 px-1 border-2 border-gray-300 rounded-md">
+                                                                </input>
+                                                            </td>
+                                                        )}
                                                 <td className="relative w-24 lg:w-48">
                                                     <input
                                                         type="number"
@@ -352,9 +379,9 @@ const UpdateFlashSale = ({ fId, reload, dayStart, dayEnd, fsList }) => {
                             </div>
                         </form>
                     </div>
-                </div>
-            </Dialog>
-        </div>
+                </div >
+            </Dialog >
+        </div >
     );
 };
 

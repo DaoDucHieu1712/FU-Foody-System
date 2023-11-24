@@ -52,7 +52,7 @@ const StoreLayout = () => {
 				<NotFoundPage />
 			) : (
 				<div className="flex">
-					<div className="p-3 flex flex-col gap-y-12 h-[100vh] shadow-md w-[20vw] bg-primary">
+					<div className="fixed p-3 flex flex-col gap-y-12 h-[100vh] shadow-md w-[20vw] bg-primary">
 						<div className="flex items-center justify-center border-b pb-8 border-gray-300">
 							<a href="/store/manager" className="logo">
 								<svg
@@ -98,7 +98,7 @@ const StoreLayout = () => {
 							</button>
 						</div>
 					</div>
-					<section className="w-full">
+					<section className="w-[80vw] ml-[20vw]">
 						<div className="flex items-center justify-end bg-primary p-9">
 							<div className="text-center">Quản lí cửa hàng</div>
 

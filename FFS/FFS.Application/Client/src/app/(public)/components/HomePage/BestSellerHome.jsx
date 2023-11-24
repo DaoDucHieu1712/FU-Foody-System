@@ -50,6 +50,9 @@ const BestSellerHome = () => {
                 alt={bestSellerItem.foodName}
                 className="h-28 w-44 object-cover group-hover:opacity-40"
               />
+              <div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
+                <Typography className="text-white font-semibold">HOT</Typography>
+              </div>
               <div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
                 <AddToWishlist foodId={bestSellerItem.id} />
                 <FoodCart></FoodCart>

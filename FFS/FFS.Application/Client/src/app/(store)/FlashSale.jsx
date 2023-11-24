@@ -135,7 +135,7 @@ const FlashSale = () => {
                     </div>
                     <Button
                         className="flex gap-1 items-center bg-primary"
-                        onClick={() => navigate(`/flash-sale/add`)}
+                        onClick={() => navigate(`/store/flash-sale/add`)}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
