@@ -21,6 +21,7 @@ using Microsoft.Extensions.FileSystemGlobbing;
 using System.Diagnostics.Metrics;
 using Newtonsoft.Json;
 using System.Text;
+using FFS.Application.DTOs.Post;
 
 namespace FFS.Application.Controllers
 {
@@ -129,7 +130,20 @@ namespace FFS.Application.Controllers
 				var userInfo = _mapper.Map<UserInfoDTO>(user);
 				userInfo.TotalPost = user.Posts.Count;
 				DateTime sevenDaysAgo = DateTime.Now.AddDays(-7);
-				userInfo.TotalRecentComments = user.Comments.Count(c => c.UpdatedAt >= sevenDaysAgo); ;
+				userInfo.TotalRecentComments = user.Comments.Count(c => c.UpdatedAt >= sevenDaysAgo);
+				userInfo.Posts = user.Posts.Select(post =>
+				{
+					var postDto = _mapper.Map<PostDTO>(post);
+					postDto.LikeNumber = post.ReactPosts.Where(x => x.IsLike == true).Count();
+					postDto.CommentNumber = post.Comments?.Count ?? 0;
+
+					postDto.Comments = post.Comments.Select(comment =>
+					{
+						var commentDto = _mapper.Map<CommentPostDTO>(comment);
+						return commentDto;
+					}).ToList();
+					return postDto;
+				}).ToList();
 				return Ok(userInfo);
 			}
 			catch (Exception ex)

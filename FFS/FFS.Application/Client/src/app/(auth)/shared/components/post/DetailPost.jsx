@@ -22,7 +22,6 @@ import {
 	MenuItem,
 } from "@material-tailwind/react";
 import LastestPost from "../../../../(public)/components/post/LastestPost";
-import PopularFood from "../../../../(public)/components/post/PopularFood";
 import UpdatePost from "./UpdatePost";
 import DeletePost from "./DeletePost";
 import FlashSalePost from "../../../../(public)/components/post/FlashSalePost";
