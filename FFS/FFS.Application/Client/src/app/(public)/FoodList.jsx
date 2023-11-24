@@ -8,7 +8,7 @@ import AddToWishlist from "./components/wishlist/AddToWishlist";
 
 const filter = [{ id: "", name: "Tất cả" }, { id: 1, name: "Flash sale" }, { id: 2, name: "Bán chạy nhất" }, { id: 3, name: "Đánh giá hàng đầu" }, { id: 4, name: "Sản phẩm mới" }]
 
-const FoodList = ({ foodId }) => {
+const FoodList = () => {
     const [foodList, setFoodList] = useState([]);
     const [foodNameFilter, setFoodNameFilter] = useState("");
     const [foodFilter, setFoodFilter] = useState("");

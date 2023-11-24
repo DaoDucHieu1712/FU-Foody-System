@@ -66,7 +66,7 @@ function App() {
 					<Route path="/wishlist" element={<Wishlist />} />
 					<Route path="/flash-sale/add" element={<AddFlashSale />} />
 					<Route path="/flash-sale" element={<FlashSale />} />
-					<Route path="/user-detail" element={<UserDetails />} />
+					<Route path="/user-detail/:id" element={<UserDetails />} />
 				</Route>
 				<Route element={<ShipperLayout></ShipperLayout>}>
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
