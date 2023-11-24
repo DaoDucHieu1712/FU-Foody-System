@@ -24,6 +24,7 @@ import LastestPost from "../../../../(public)/components/post/LastestPost";
 import PopularFood from "../../../../(public)/components/post/PopularFood";
 import UpdatePost from "./UpdatePost";
 import DeletePost from "./DeletePost";
+import ViewLikePost from "./ViewLikePost";
 
 const DetailPost = () => {
   const userId = CookieService.getToken("fu_foody_id");
@@ -59,10 +60,12 @@ const DetailPost = () => {
         .post("/api/Post/ReactPost", dataPost)
         .then(() => {
           fetchPostDetails();
-          setIsReact((cur) => !cur);
         })
         .catch((error) => {
           console.log(error);
+        })
+        .finally(() => {
+          setIsReact((cur) => !cur);
         });
     } catch (error) {
       console.error("Error occur: ", error);
@@ -160,9 +163,7 @@ const DetailPost = () => {
               <div className="px-8 py-2">
                 <div className="flex items-center justify-between">
                   <div className="flex flex-row-reverse items-center">
-                    <span className="ml-2 text-gray-500">
-                      {post.likeNumber} lượt thích
-                    </span>
+                    <ViewLikePost likeNumber={post.likeNumber} likedBy={post.reactPosts}></ViewLikePost>
                   </div>
                   <div className="text-gray-500">
                     <span onClick="" style={{ cursor: "pointer" }}>
@@ -226,7 +227,7 @@ const DetailPost = () => {
                       <div>
                         <div className="flex gap-1">
                           <Typography variant="small" className="font-bold">
-                          {comment.userName}
+                            {comment.userName}
                           </Typography>
                           <Typography variant="small">
                             -{" "}{moment(comment.commentDate).fromNow()}

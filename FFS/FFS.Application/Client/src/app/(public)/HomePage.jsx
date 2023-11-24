@@ -45,7 +45,7 @@ const HomePage = () => {
                                 />
                                 <div className="absolute top-0 md:right-0 h-12 w-12 bg-primary rounded-full text-white font-bold transform -translate-x-1/2 md:translate-x-1/2">
                                     <div className="flex h-full justify-center items-center">
-                                        115k
+                                        115K
                                     </div>
                                 </div>
                             </div>
@@ -79,7 +79,7 @@ const HomePage = () => {
                                 />
                                 <div className="absolute top-0 md:right-0 h-12 w-12 bg-primary rounded-full text-white font-bold transform -translate-x-1/2 md:translate-x-1/2">
                                     <div className="flex h-full justify-center items-center">
-                                        115k
+                                        115K
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +113,7 @@ const HomePage = () => {
                                 />
                                 <div className="absolute top-0 md:right-0 h-12 w-12 bg-primary rounded-full text-white font-bold transform -translate-x-1/2 md:translate-x-1/2">
                                     <div className="flex h-full justify-center items-center">
-                                        115k
+                                        115K
                                     </div>
                                 </div>
                             </div>
@@ -151,7 +151,7 @@ const HomePage = () => {
                             />
                             <div className="absolute top-0 right-2 h-6 w-fit px-2 bg-yellow-300 rounded-sm text-black text-sm font-semibold transform translate-y-1">
                                 <div className="flex h-full justify-center items-center">
-                                    10% off
+                                    10% OFF
                                 </div>
                             </div>
                         </div>
