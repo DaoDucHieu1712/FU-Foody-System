@@ -105,6 +105,7 @@ namespace FFS.Application.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteDiscount(int id)
 		{
