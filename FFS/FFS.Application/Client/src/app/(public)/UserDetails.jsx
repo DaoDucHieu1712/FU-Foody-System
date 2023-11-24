@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import CookieService from "../../shared/helper/cookieConfig";
 import moment from "moment";
 import "moment/dist/locale/vi";
+import ReportUser from "./components/ReportUser";
+
 moment.locale("vi");
 const UserDetails = () => {
 	const { id } = useParams();
@@ -93,12 +95,13 @@ const UserDetails = () => {
 									>
 										Nhắn tin
 									</a>
-									<a
+									{/* <a
 										href="#"
 										className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
 									>
 										Báo cáo
-									</a>
+									</a> */}
+									<ReportUser uId={userId} sId={id}></ReportUser>
 								</div>
 							</div>
 							<hr className="my-6 border-t border-gray-300" />
@@ -147,7 +150,7 @@ const UserDetails = () => {
 														</button>
 													</MenuHandler>
 													<MenuList>
-														<MenuItem>Báo cáo bài viết</MenuItem>
+														<MenuItem><ReportUser uId={userId} sId={post.userId}></ReportUser></MenuItem>
 													</MenuList>
 												</Menu>
 											</div>

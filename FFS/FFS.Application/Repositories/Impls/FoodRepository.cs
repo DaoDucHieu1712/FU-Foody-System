@@ -82,7 +82,7 @@ namespace FFS.Application.Repositories.Impls
         }
         public PagedList<Food> GetAllFoods(AllFoodParameters allFoodParameters)
         {
-            var query = _context.Foods.Include(x => x.Category).Include(x => x.OrderDetails).AsQueryable();
+            var query = _context.Foods.Include(x => x.Category).Include(x => x.OrderDetails).Include(x=>x.FlashSaleDetails).ThenInclude(x=>x.FlashSale).AsQueryable();
 
             if (!string.IsNullOrEmpty(allFoodParameters.CatId.ToString()))
             {
@@ -95,7 +95,8 @@ namespace FFS.Application.Repositories.Impls
                 switch (allFoodParameters.FilterFood)
                 {
                     case FilterFood.Flashsale:
-                        break;
+						FilterByFlashsale(ref query);
+						break;
                     case FilterFood.Bestseller:
                         FilterByBestSeller(ref query);
                         break;
@@ -156,7 +157,18 @@ namespace FFS.Application.Repositories.Impls
             ;
         }
 
-        public async Task<Food> GetFoodById(int id)
+		private void FilterByFlashsale(ref IQueryable<Food> foods)
+		{
+			if (!foods.Any())
+				return;
+
+			foods = foods
+				.Where(food => food.FlashSaleDetails.Any(detail =>
+					detail.FlashSale.Start <= DateTime.Now && detail.FlashSale.End >= DateTime.Now
+				));
+		}
+
+		public async Task<Food> GetFoodById(int id)
         {
             try
             {

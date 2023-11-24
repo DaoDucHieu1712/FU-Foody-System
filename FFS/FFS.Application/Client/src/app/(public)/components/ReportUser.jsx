@@ -46,6 +46,7 @@ const ReportUser = ({ uId, sId }) => {
             const newReport = {
                 userId: uId,
                 targetId: sId,
+                reportType: 3,
                 description: reasons
             };
             axios
