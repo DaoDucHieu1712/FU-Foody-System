@@ -31,6 +31,8 @@ const CartPage = () => {
 	const [phone, setPhone] = useState("");
 	const [note, setNote] = useState("");
 	const [code, setCode] = useState("");
+	const [IsDiscount, setIsDiscount] = useState(false);
+	const [discount, setDiscount] = useState();
 
 	const getLocations = async () => {
 		const email = cookies.get("fu_foody_email");
@@ -62,11 +64,13 @@ const CartPage = () => {
 		)
 			.then((res) => {
 				console.log(res);
+				setIsDiscount(true);
+				setDiscount(res);
 				toast.success(`Dùng mã thành công !!`);
 				dispatch(cartActions.useDiscount(res));
 			})
 			.catch((err) => {
-				toast.error(err.response.data);
+				toast.error(err.response.data.msg);
 			});
 	};
 
@@ -87,7 +91,7 @@ const CartPage = () => {
 						storeId: item.storeId,
 						foodId: item.foodId,
 						quantity: item.quantity,
-						unitPrice: item.unitPrice,
+						unitPrice: item.price,
 					};
 				});
 				await CartService.AddOrderItem(items)
@@ -100,10 +104,6 @@ const CartPage = () => {
 					.catch((err) => {
 						console.log(err.response.data);
 					});
-				await CartService.UseDiscount(
-					code,
-					CookieService.getToken("fu_foody_id")
-				);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -192,7 +192,9 @@ const CartPage = () => {
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Giảm giá</p>
-								<span>chưa có thông tin</span>
+								<span>
+									{discount ? discount.discount * 100 + " %" : "chưa áp dụng"}
+								</span>
 							</div>
 						</div>
 						<div className="p-3 flex justify-between">
@@ -217,6 +219,7 @@ const CartPage = () => {
 							></Input>
 							<Button
 								className="bg-blue-500 w-full"
+								disabled={IsDiscount}
 								onClick={useDiscountHandler}
 							>
 								Sử dụng mã giảm giá

@@ -28,23 +28,11 @@ const MyOrder = () => {
 	const [page, setPage] = useState(1);
 	const [startDate, setStartDate] = useState("");
 	const [endDate, setEndDate] = useState("");
-	const [toPrice, setToPrice] = useState("");
-	const [fromPrice, setFromPrice] = useState("");
 	const [sortType, setSortType] = useState("");
 	const [status, setStatus] = useState("");
 	const [orderId, setOrderId] = useState("");
 	const ordersQuery = useQuery({
-		queryKey: [
-			"my-order",
-			page,
-			startDate,
-			endDate,
-			toPrice,
-			fromPrice,
-			status,
-			sortType,
-			orderId,
-		],
+		queryKey: ["my-order", page, startDate, endDate, status, sortType, orderId],
 		queryFn: async (context) => {
 			var id = await CookieService.getToken("fu_foody_id");
 			return OrderService.FindByUser(id, context);
@@ -57,9 +45,8 @@ const MyOrder = () => {
 				<div className="flex justify-between p-2">
 					<div className="">
 						<h1 className="text-2xl text-orange-400 font-bold mb-3">
-							Quản lý đơn hàng
+							Đơn hàng của tui !
 						</h1>
-						<p className="text-sm">Đơn hàng của tôi</p>
 					</div>
 				</div>
 				<div className="mt-5">
@@ -90,24 +77,6 @@ const MyOrder = () => {
 						</div>
 
 						<div className="form-group">
-							<Input
-								color="blue"
-								label="Giá từ"
-								type="number"
-								onChange={(e) => setToPrice(e.target.value)}
-							/>
-						</div>
-
-						<div className="form-group">
-							<Input
-								color="blue"
-								label="Giá đến"
-								type="number"
-								onChange={(e) => setFromPrice(e.target.value)}
-							/>
-						</div>
-
-						<div className="form-group">
 							<Select
 								label="Trạng thái"
 								color="blue"
@@ -115,9 +84,9 @@ const MyOrder = () => {
 							>
 								<Option value="">Tất cả</Option>
 								<Option value="1">Đang chờ</Option>
-								<Option value="3">Đang giao</Option>
-								<Option value="4">Đã hủy</Option>
-								<Option value="5">Đã nhận hàng</Option>
+								<Option value="2">Đang giao</Option>
+								<Option value="3">Đã hủy</Option>
+								<Option value="4">Đã nhận hàng</Option>
 							</Select>
 						</div>
 
@@ -207,7 +176,7 @@ const MyOrder = () => {
 										<td className={classes}>
 											<div className="flex gap-x-3">
 												<Link
-													href={`/my-order/${item.id}`}
+													to={`/my-order/${item.id}`}
 													className="px-6 py-2 text-light-blue-500 font-medium rounded-lg cursor-pointer"
 												>
 													chi tiết đơn hàng

@@ -41,12 +41,14 @@ import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 import UserDetails from "./app/(public)/UserDetails";
 import ShipperRegisterPage from "./app/(public)/ShipperRegister";
+import OrderDetail from "./app/(store)/OrderDetail";
+import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 
 function App() {
 	return (
 		<>
 			<Routes>
-				<Route path="/" element={<Layout />}>
+				<Route element={<Layout />}>
 					<Route path="/" element={<HomePage />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/location" element={<Location />} />
@@ -71,6 +73,7 @@ function App() {
 					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
 					<Route path="/store/flash-sale" element={<FlashSale />} />
 					<Route path="/user-detail" element={<UserDetails />} />
+					<Route path="/my-order/:id" element={<MyOrderDetail />} />
 				</Route>
 				<Route element={<ShipperLayout></ShipperLayout>}>
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
@@ -92,14 +95,15 @@ function App() {
 					/>
 				</Route>
 				<Route element={<StoreLayout></StoreLayout>}>
-					{/* <Route path="/food" element={<Food />} /> */}
 					<Route path="/store/order" element={<OrderList />} />
-					{/* <Route path="/inventory" element={<Inventory />} /> */}
-					{/* <Route path="/category" element={<Category />} /> */}
 					<Route path="/store/food" element={<Food />} />
 					<Route path="/store/inventory" element={<Inventory />} />
 					<Route path="/store/category" element={<Category />} />
 					<Route path="/store/discount" element={<Discount />} />
+					<Route
+						path="/store/order/order-detail/:id"
+						element={<OrderDetail />}
+					/>
 				</Route>
 				<Route element={<AdminLayout></AdminLayout>}>
 					<Route path="/admin/report" element={<ReportPage />} />
@@ -110,6 +114,7 @@ function App() {
 						element={<RequestAccountPage />}
 					/>
 				</Route>
+				<Route path="*" element={<>404 Not Found !!</>}></Route>
 			</Routes>
 		</>
 	);
