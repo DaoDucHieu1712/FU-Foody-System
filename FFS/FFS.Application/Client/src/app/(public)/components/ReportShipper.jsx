@@ -46,6 +46,7 @@ const ReportShipper = ({ uId, sId }) => {
             const newReport = {
                 userId: uId,
                 targetId: sId,
+                reportType: 2,
                 description: reasons
             };
             axios

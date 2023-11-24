@@ -25,6 +25,7 @@ import LastestPost from "../../../../(public)/components/post/LastestPost";
 import UpdatePost from "./UpdatePost";
 import DeletePost from "./DeletePost";
 import FlashSalePost from "../../../../(public)/components/post/FlashSalePost";
+import ReportUser from "../../../../(public)/components/ReportUser";
 
 const DetailPost = () => {
 	const userId = CookieService.getToken("fu_foody_id");
@@ -152,7 +153,7 @@ const DetailPost = () => {
 											</MenuList>
 										) : (
 											<MenuList>
-												<MenuItem>Báo cáo bài viết</MenuItem>
+												<MenuItem><ReportUser uId={userId} sId={post.userId}></ReportUser></MenuItem>
 											</MenuList>
 										)}
 									</Menu>

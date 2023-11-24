@@ -9,5 +9,7 @@
         public decimal? Price { get; set; }
         public int? CategoryId { get; set; }
         public int? StoreId { get; set; }
+        public decimal? PriceAfterSale { get; set; }
+        public int? SalePercent { get; set; }
     }
 }

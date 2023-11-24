@@ -16,6 +16,9 @@ import {
   Menu, MenuHandler, MenuList, MenuItem,
 } from "@material-tailwind/react";
 import Elips from "../../shared/components/icon/Elips";
+import CookieService from "../../shared/helper/cookieConfig";
+import ReportShipper from "../(public)/components/ReportShipper";
+
 
 const ShipperDetailsPage = () => {
 	moment.locale("vi");
@@ -23,6 +26,8 @@ const ShipperDetailsPage = () => {
 	const [activeTab, setActiveTab] = useState("reviews");
 	const [reviews, setReviews] = useState([]);
 	const [shipperData, setShipperData] = useState([]);
+	const userId = CookieService.getToken("fu_foody_id");
+
 
 	const GetShipperInformation = async () => {
 		try {
@@ -83,12 +88,7 @@ const ShipperDetailsPage = () => {
 									>
 										Nhắn tin
 									</a>
-									<a
-										href="#"
-										className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
-									>
-										Báo cáo
-									</a>
+									<ReportShipper uId={userId} sId={id}></ReportShipper>
 								</div>
 							</div>
 							<hr className="my-6 border-t border-gray-300" />
