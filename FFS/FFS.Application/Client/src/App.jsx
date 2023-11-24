@@ -35,9 +35,12 @@ import AddFlashSale from "./app/(store)/components/FlashSale/AddFlashSale";
 import StoreList from "./app/(public)/StoreList";
 import ShipperLayout from "./app/(shipper)/ShipperLayout";
 import OrderAvailablePage from "./app/(shipper)/OrderAvailablePage";
+import OrderShippingPage from "./app/(shipper)/OrderShippingPage";
+
 import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 import UserDetails from "./app/(public)/UserDetails";
+import ShipperRegisterPage from "./app/(public)/ShipperRegister";
 import OrderDetail from "./app/(store)/OrderDetail";
 import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 
@@ -50,6 +53,8 @@ function App() {
 					<Route path="/login" element={<Login />} />
 					<Route path="/location" element={<Location />} />
 					<Route path="/register-store" element={<StoreRegisterPage />} />
+					<Route path="/register-shipper" element={<ShipperRegisterPage />} />
+
 					<Route path="/profile" element={<ProfilePage />} />
 					<Route path="/change-passsword" element={<ChangePasswordPage />} />
 					<Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -72,6 +77,10 @@ function App() {
 				</Route>
 				<Route element={<ShipperLayout></ShipperLayout>}>
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
+					<Route
+						path="/shipper/order-pending"
+						element={<OrderShippingPage />}
+					/>
 					<Route
 						path="/shipper/order-available"
 						element={<OrderAvailablePage />}
