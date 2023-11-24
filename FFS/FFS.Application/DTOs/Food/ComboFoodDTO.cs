@@ -6,7 +6,8 @@ namespace FFS.Application.DTOs.Food {
         public string Name { get; set; }
         [Required]
         public int StoreId { get; set; }
-        public int Percent { get; set; } = 0;
+		public string? Image { get; set; }
+		public int Percent { get; set; } = 0;
         public List<int>? IdFoods { get; set; }
     }
   

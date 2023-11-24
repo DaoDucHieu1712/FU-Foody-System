@@ -41,8 +41,9 @@ import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 import UserDetails from "./app/(public)/UserDetails";
 import ShipperRegisterPage from "./app/(public)/ShipperRegister";
-import OrderDetail from "./app/(store)/OrderDetail";
-import MyOrderDetail from "./app/(auth)/MyOrderDetail";
+import PaymentPage from "./app/(auth)/PaymentPage";
+// import OrderDetail from "./app/(store)/OrderDetail";
+// import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 
 function App() {
 	return (
@@ -61,6 +62,7 @@ function App() {
 					<Route path="/reset-password" element={<ResetPasswordPage />} />
 					<Route path="/food-details/:id" element={<FoodDetails />} />
 					<Route path="/cart" element={<CartPage />} />
+					<Route path="/payment" element={<PaymentPage />} />
 					<Route path="/store-profile/:id" element={<StoreProfilePage />} />
 					<Route path="/store/detail/:id" element={<StoreDetailPage />} />
 					<Route path="/post" element={<Post />} />

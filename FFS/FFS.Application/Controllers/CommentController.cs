@@ -47,13 +47,16 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				if(idShipper == null)
+				{
+					return BadRequest("Shipper không tồn tại!");
+				}
 				List<Comment> comments = _commentRepository.FindAll(x => x.ShipperId == idShipper, u => u.User).ToList();
 
 				return Ok(_mapper.Map<List<CommentDTO>>(comments));
 			}
 			catch (Exception ex)
 			{
-
 				throw new Exception(ex.Message);
 			}
 		}
