@@ -58,7 +58,6 @@ function App() {
 					<Route path="/location" element={<Location />} />
 					<Route path="/register-store" element={<StoreRegisterPage />} />
 					<Route path="/register-shipper" element={<ShipperRegisterPage />} />
-
 					<Route path="/profile" element={<ProfilePage />} />
 					<Route path="/change-passsword" element={<ChangePasswordPage />} />
 					<Route path="/forgot-password" element={<ForgotPasswordPage />} />

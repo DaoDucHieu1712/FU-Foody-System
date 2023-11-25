@@ -1,11 +1,13 @@
-import { useParams } from "react-router-dom";
-import axios from "../../shared/api/axiosConfig";
-import { useEffect, useState } from "react";
 import { Button, Input, Typography } from "@material-tailwind/react";
-import ReportStore from "../(public)/components/ReportStore";
-import Cookies from "universal-cookie";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import Cookies from "universal-cookie";
 import { cartActions } from "../(auth)/shared/cartSlice";
+import ChatService from "../(auth)/shared/chat.service";
+import { chatActions } from "../(auth)/shared/chatSlice";
+import ReportStore from "../(public)/components/ReportStore";
+import axios from "../../shared/api/axiosConfig";
 import Loading from "../../shared/components/Loading";
 
 const cookies = new Cookies();

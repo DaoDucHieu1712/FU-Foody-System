@@ -10,6 +10,7 @@ using FFS.Application.DTOs.Category;
 using FFS.Application.DTOs.Comment;
 using FFS.Application.DTOs.FlashSale;
 using FFS.Application.DTOs.Auth;
+using FFS.Application.DTOs.Chat;
 
 namespace FFS.Application.DTOs
 {
@@ -128,6 +129,7 @@ namespace FFS.Application.DTOs
 			OrderMapper();
 			CategoryMapper();
 			FlashSaleMapper();
+			ChatMapper();
 		}
 
 		public void OrderMapper()
@@ -151,6 +153,19 @@ namespace FFS.Application.DTOs
 			CreateMap<Entities.Category, CategoryDTO>().ReverseMap();
 			CreateMap<Entities.Category, CategoryRequestDTO>().ReverseMap();
 			CreateMap<Entities.Category, CategoryPopularDTO>().ReverseMap();
+		}
+
+		public void ChatMapper()
+		{
+			CreateMap<Entities.Chat, ChatResponseDTO>()
+				.ForMember(dest => dest.ToUserImage, opt => opt.MapFrom(src => src.ToUser.Avatar))
+				.ForMember(dest => dest.FromUserImage, opt => opt.MapFrom(src => src.FormUser.Avatar))
+				.ForMember(dest => dest.FromUserName, opt => opt.MapFrom(src => src.FormUser.UserName))
+				.ForMember(dest => dest.ToUserName, opt => opt.MapFrom(src => src.ToUser.UserName))
+				.ReverseMap();
+			CreateMap<Entities.Chat, ChatRequestDTO>().ReverseMap();
+			CreateMap<Message, MessageResponseDTO>().ReverseMap();
+			CreateMap<Message, MessageRequestDTO>().ReverseMap();
 		}
 
 		public void FlashSaleMapper()

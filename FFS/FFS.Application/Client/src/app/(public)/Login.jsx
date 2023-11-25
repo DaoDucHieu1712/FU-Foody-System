@@ -88,13 +88,13 @@ const Login = () => {
 					dispatch(setAccessToken(token));
 					toast.success("Đăng nhập thành công !!");
 					if (res.userClient.role == "Shipper") {
-						navigate("/shipper/order-available");
+						window.location.href = "/shipper/order-available";
 					} else if (res.userClient.role == "Admin") {
-						navigate("/admin/dashboard");
+						window.location.href = "/admin/dashboard";
 					} else if (res.userClient.role == "StoreOwner") {
-						navigate("/store/food");
+						window.location.href = "/store/food";
 					} else {
-						navigate("/");
+						window.location.href = "/";
 					}
 				})
 				.catch((err) => {
