@@ -4,6 +4,7 @@ using FFS.Application.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FFS.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231124150650_addColumnImage")]
+    partial class addColumnImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -471,6 +473,10 @@ namespace FFS.Application.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ComboId");
+
+                    b.HasIndex("FoodId");
 
                     b.HasIndex("StoreId");
 
@@ -1438,11 +1444,29 @@ namespace FFS.Application.Migrations
 
             modelBuilder.Entity("FFS.Application.Entities.FoodCombo", b =>
                 {
-                    b.HasOne("FFS.Application.Entities.Store", null)
-                        .WithMany("FoodCombos")
-                        .HasForeignKey("StoreId")
+                    b.HasOne("FFS.Application.Entities.Combo", "Combo")
+                        .WithMany()
+                        .HasForeignKey("ComboId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FFS.Application.Entities.Food", "Food")
+                        .WithMany("FoodCombos")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("FFS.Application.Entities.Store", "Store")
+                        .WithMany("FoodCombos")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Combo");
+
+                    b.Navigation("Food");
+
+                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Image", b =>
@@ -1758,6 +1782,8 @@ namespace FFS.Application.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("FlashSaleDetails");
+
+                    b.Navigation("FoodCombos");
 
                     b.Navigation("Inventories");
 

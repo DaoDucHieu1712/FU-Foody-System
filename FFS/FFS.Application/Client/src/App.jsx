@@ -41,16 +41,18 @@ import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 import UserDetails from "./app/(public)/UserDetails";
 import ShipperRegisterPage from "./app/(public)/ShipperRegister";
-import OrderDetail from "./app/(store)/OrderDetail";
 import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 import AccessDenied from "./app/(public)/AccessDenied";
 import NotFoundPage from "./app/NotFoundPage";
+import PaymentPage from "./app/(auth)/PaymentPage";
+// import OrderDetail from "./app/(store)/OrderDetail";
+// import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 
 function App() {
 	return (
 		<>
 			<Routes>
-				<Route element={<Layout />}>
+				<Route path="/" element={<Layout />}>
 					<Route path="/" element={<HomePage />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/location" element={<Location />} />
@@ -63,6 +65,7 @@ function App() {
 					<Route path="/reset-password" element={<ResetPasswordPage />} />
 					<Route path="/food-details/:id" element={<FoodDetails />} />
 					<Route path="/cart" element={<CartPage />} />
+					<Route path="/payment" element={<PaymentPage />} />
 					<Route path="/store-profile/:id" element={<StoreProfilePage />} />
 					<Route path="/store/detail/:id" element={<StoreDetailPage />} />
 					<Route path="/post" element={<Post />} />
@@ -79,7 +82,6 @@ function App() {
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
 				</Route>
 				<Route element={<ShipperLayout></ShipperLayout>}>
-					
 					<Route
 						path="/shipper/order-pending"
 						element={<OrderShippingPage />}
@@ -98,15 +100,14 @@ function App() {
 					/>
 				</Route>
 				<Route element={<StoreLayout></StoreLayout>}>
+					{/* <Route path="/food" element={<Food />} /> */}
 					<Route path="/store/order" element={<OrderList />} />
+					{/* <Route path="/inventory" element={<Inventory />} /> */}
+					{/* <Route path="/category" element={<Category />} /> */}
 					<Route path="/store/food" element={<Food />} />
 					<Route path="/store/inventory" element={<Inventory />} />
 					<Route path="/store/category" element={<Category />} />
 					<Route path="/store/discount" element={<Discount />} />
-					<Route
-						path="/store/order/order-detail/:id"
-						element={<OrderDetail />}
-					/>
 				</Route>
 				<Route element={<AdminLayout></AdminLayout>}>
 					<Route path="/admin/report" element={<ReportPage />} />
