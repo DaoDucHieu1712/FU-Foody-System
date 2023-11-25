@@ -1,49 +1,33 @@
-﻿using System.Linq.Expressions;
-
-using AutoMapper;
+﻿using AutoMapper;
 using FFS.Application.Controllers;
-using FFS.Application.Data;
-using FFS.Application.DTOs.Order;
+using FFS.Application.DTOs.Comment;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
-using FFS.Application.Repositories.Impls;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 using Moq;
-
+using System.Linq.Expressions;
 using Test.Mocks;
 
 namespace Test
 {
     public class CommentControllerTest
     {
-        private readonly ICommentRepository commentRepository;
-        private readonly IStoreRepository storeRepository;
+        private readonly Mock<ICommentRepository> commentRepositoryMock;
+        private readonly Mock<IStoreRepository> storeRepositoryMock;
 
         private Mock<IMapper> mockMapper;
-        private Mock<ApplicationDbContext> mockDbContext;
         private CommentController controller;
         public CommentControllerTest()
         {
-            var mockDbComment = new Mock<DbSet<Comment>>();
-           
-
-            mockDbContext = new Mock<ApplicationDbContext>();
-            mockDbContext.Setup(c => c.Comments).Returns(mockDbComment.Object);
-
-            var iRepository = new Mock<IRepository<Comment, int>>();
-            var entityRepository = new Mock<EntityRepository<Comment, int>>(mockDbContext);
-
-
             mockMapper = new Mock<IMapper>();
-            commentRepository = new CommentRepository(mockDbContext.Object);
-            storeRepository = new StoreRepository(mockDbContext.Object, mockMapper.Object);
-            controller = new CommentController(commentRepository, mockMapper.Object, storeRepository);
+            commentRepositoryMock = new Mock<ICommentRepository>();
+            storeRepositoryMock = new Mock<IStoreRepository>();
+
+            controller = new CommentController(commentRepositoryMock.Object, mockMapper.Object, storeRepositoryMock.Object);
         }
 
         [Fact]
@@ -60,7 +44,7 @@ namespace Test
         }
 
         [Fact]
-        public  void GetAllCommentByShipperId_ReturnListEmpty_WhenIdShipperIsNull()
+        public void GetAllCommentByShipperId_ReturnListEmpty_WhenIdShipperIsNull()
         {
 
             // Act
@@ -75,14 +59,61 @@ namespace Test
         [Fact]
         public void GetAllCommentByShipperId_ReturnListEmpty_WhenIdShipperIsNotNull()
         {
-            var mockComment = MockICommentRepository.GetMock();
-            var mockStore = MockIStoreRepository.GetMock();
+            #region data test
+            var comments = new List<Comment>
+                {
+                    new Comment
+                    {
+                        Content = "This is a comment",
+                        Rate = 5,
+                        UserId = "user1",
+                        StoreId = 1,
+                        FoodId = 101,
+                        ShipperId = "shipper1",
+                        NoteForShipper = "Handle with care",
+                        PostId = 201,
+                        ParentCommentId = null // Assuming it's a top-level comment
+                    },
+                };
 
-            var controller = new CommentController(mockComment.Object, mockMapper.Object, mockStore.Object);
-            string id = "fe73e17c-edcc-44e0-b52a-1b9d298a0d25";
-            var res = controller.GetAllCommentByShipperId(null) as ObjectResult;
-            Assert.NotNull(res);
-            Assert.Equal(StatusCodes.Status200OK, res.StatusCode);
+            // Test data for CommentDTO
+            var commentDTOs = new List<CommentDTO>
+            {
+                //new CommentDTO
+                //{
+                //    UserId = "user1",
+                //    Username = "User1Name",
+                //    Avatar = "user1_avatar.jpg",
+                //    ShipperId = "shipper1",
+                //    NoteForShipper = "Handle with care",
+                //    CreatedAt = DateTime.UtcNow
+                //},
+                //new CommentDTO
+                //{
+                //    UserId = "user2",
+                //    Username = "User2Name",
+                //    Avatar = "user2_avatar.jpg",
+                //    ShipperId = "shipper2",
+                //    NoteForShipper = "Quick delivery, please",
+                //    CreatedAt = DateTime.UtcNow
+                //},
+                // Add more instances as needed
+            };
+            #endregion
+
+            string id = "shipper1";
+
+            _ = commentRepositoryMock.Setup(repo => repo.FindAll(It.IsAny<Expression<Func<Comment, object>>>()))
+                .Returns(comments.AsQueryable().Where(x => x.ShipperId == id));
+
+            _ = mockMapper.Setup(mapper => mapper.Map<List<CommentDTO>>(It.IsAny<List<Comment>>()))
+                .Returns(commentDTOs);
+            var res = controller.GetAllCommentByShipperId(id) as ObjectResult;
+
+            var okResult = Assert.IsType<OkObjectResult>(res);
+            var model = Assert.IsAssignableFrom<List<CommentDTO>>(okResult.Value);
+            Assert.Equal(comments.Count, model.Count); ;
+
         }
 
         [Fact]

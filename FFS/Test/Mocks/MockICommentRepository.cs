@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using FFS.Application.Entities;
+﻿using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 
 using Moq;
 
-namespace Test.Mocks {
-    public class MockICommentRepository {
+namespace Test.Mocks
+{
+    public class MockICommentRepository
+    {
         public static Mock<ICommentRepository> GetMock()
         {
             var mock = new Mock<ICommentRepository>();
@@ -31,10 +27,10 @@ namespace Test.Mocks {
             c.Add(comment);
             IQueryable<Comment> comments = c.AsQueryable();
 
-            mock.Setup(m => m.RatingFood(It.IsAny<Comment>()))
+            _ = mock.Setup(m => m.RatingFood(It.IsAny<Comment>()))
                 .Callback(() => { return; });
 
-            mock.Setup(m => m.FindAll(x => x.ShipperId == It.IsAny<string>(), null))
+            _ = mock.Setup(m => m.FindAll(x => x.ShipperId == It.IsAny<string>(), null))
                 .Returns(() => comments);
 
             return mock;
