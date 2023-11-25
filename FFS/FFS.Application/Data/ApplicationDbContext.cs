@@ -31,7 +31,7 @@ namespace FFS.Application.Data
             builder.Entity<Chat>()
                 .HasOne(p => p.ToUser)
                 .WithMany()
-                .HasForeignKey(p => p.FromUserId)
+                .HasForeignKey(p => p.ToUserId)
                 .OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.Entity<Order>().HasOne(p => p.Customer).WithMany().HasForeignKey(p => p.CustomerId).OnDelete(DeleteBehavior.ClientNoAction);
@@ -104,9 +104,16 @@ namespace FFS.Application.Data
 			
 			builder.Entity<UserDiscount>().
 				HasOne(c => c.Discount).WithMany(c => c.UserDiscounts).HasForeignKey(c => c.DiscountId).OnDelete(DeleteBehavior.ClientNoAction);
+		    
+			builder.Entity<Message>()
+				.HasOne(c => c.Chat).WithMany(c => c.Messages).HasForeignKey(c => c.ChatId).OnDelete(DeleteBehavior.ClientNoAction);
+
+			builder.Entity<Message>()
+				.HasOne(c => c.User).WithMany(c => c.Messages).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.ClientNoAction);
+
 		}
 
-        public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
+		public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Chat> Chats { get; set; }
         public virtual DbSet<Combo> Combos { get; set; }
@@ -130,7 +137,6 @@ namespace FFS.Application.Data
         public virtual DbSet<Report> Reports { get; set; }
         public virtual DbSet<FoodCombo> FoodCombos { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
-
         public virtual DbSet<FlashSale> FlashSales { get; set; }
         public virtual DbSet<FlashSaleDetail> FlashSaleDetails { get; set; }
         public override int SaveChanges()

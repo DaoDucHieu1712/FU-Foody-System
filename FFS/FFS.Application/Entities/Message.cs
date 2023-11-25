@@ -7,8 +7,11 @@ namespace FFS.Application.Entities
     public class Message : BaseEntity<int>
     {
         public string Content { get; set; }
+		public int ChatId { get; set; }
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public ApplicationUser User { get; set; }
+		[ForeignKey(nameof(ChatId))]
+		public Chat Chat { get; set; }
     }
 }

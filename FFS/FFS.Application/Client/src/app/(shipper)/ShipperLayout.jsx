@@ -51,7 +51,7 @@ const ShipperLayout = () => {
 		CookieService.removeToken("fu_foody_id");
 		CookieService.removeToken("fu_foody_email");
 		dispatch(setAccessToken(null));
-		navigate("/Login"); // Redirect to the login page
+		window.location.href = "/login";
 	};
 	return (
 		<>

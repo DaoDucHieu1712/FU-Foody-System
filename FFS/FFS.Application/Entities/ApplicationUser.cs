@@ -18,6 +18,8 @@ namespace FFS.Application.Entities
 			Notifications = new HashSet<Notification>();
 			Posts = new HashSet<Post>();
 			UserDiscounts = new HashSet<UserDiscount>();
+			Chats = new HashSet<Chat>();
+			Messages = new HashSet<Message>();
 		}
 
         [Key]
@@ -36,5 +38,7 @@ namespace FFS.Application.Entities
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Post> Posts { get; set; }
 		public virtual ICollection<UserDiscount> UserDiscounts { get; set; }
+		public virtual ICollection<Chat> Chats { get; set; }
+		public virtual ICollection<Message> Messages { get; set; }
     }
 }

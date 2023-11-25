@@ -8,7 +8,6 @@ import CookieService from "../../shared/helper/cookieConfig";
 import { setAccessToken } from "../../redux/auth";
 
 const navigations = [
-
 	{ href: "/store/manager", name: "Cửa hàng của tôi" },
 	{ href: "/store/category", name: "Danh mục của tôi" },
 	{ href: "/store/food", name: "Thực phẩm" },
@@ -91,7 +90,7 @@ const StoreLayout = () => {
 									CookieService.removeToken("fu_foody_id");
 									CookieService.removeToken("fu_foody_email");
 									dispatch(setAccessToken(null));
-									navigate("/Login"); // Redirect to the login page
+									window.location.href = "/login"; // Redirect to the login page
 								}}
 							>
 								Đăng xuất

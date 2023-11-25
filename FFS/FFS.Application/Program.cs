@@ -89,6 +89,8 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.Toke
 #endregion
 
 #region repository
+
+
 builder.Services.AddTransient(typeof(IRepository<,>), typeof(EntityRepository<,>));
 builder.Services.AddTransient<IAuthRepository, AuthRepository>();
 builder.Services.AddTransient<ITokenRepository, TokenRepository>();
@@ -111,6 +113,8 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IFlashSaleRepository, FlashSaleRepository>();
 builder.Services.AddTransient<IFlashSaleDetailRepository, FlashSaleDetailRepository>();
 builder.Services.AddTransient<IUserDiscountRepository, UserDiscountRepository>();
+builder.Services.AddTransient<IChatRepository, ChatRepository>();
+builder.Services.AddTransient<IMessageRepository, MessageRepository>();
 
 
 #endregion
@@ -150,6 +154,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapHub<NotificationHub>("/notificationHub");
+app.MapHub<ChatHub>("/chatHub");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
