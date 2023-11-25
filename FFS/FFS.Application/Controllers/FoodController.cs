@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
+
 using FFS.Application.DTOs.Food;
 using FFS.Application.DTOs.Inventory;
 using FFS.Application.DTOs.QueryParametter;
@@ -170,9 +172,18 @@ namespace FFS.Application.Controllers
         {
             try
             {
-
+				List<dynamic> res = new List<dynamic>();
                 List<Combo> combos = await _comboRepository.GetList(x => x.StoreId == idStore && x.IsDelete == false);
-                return Ok(combos);
+				foreach(Combo combo in combos)
+				{
+					var c = new
+					{
+						combo = combo,
+						detail = await _comboRepository.GetDetail(combo.Id),
+					};
+					res.Add(c);
+				}
+                return Ok(res);
             }
             catch (Exception ex)
             {
@@ -185,7 +196,7 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                Combo combo = await _comboRepository.FindById(id, null);
+                List< dynamic> combo = await _comboRepository.GetDetail(id);
                 return Ok(combo);
             }
             catch (Exception ex)
@@ -195,7 +206,7 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCombo(ComboFoodDTO comboFoodDTO)
+        public async Task<IActionResult> CreateCombo(ComboFoodDTO comboFoodDTO)
         {
             try
             {
@@ -204,10 +215,13 @@ namespace FFS.Application.Controllers
                     Name = comboFoodDTO.Name,
                     StoreId = comboFoodDTO.StoreId,
                     Percent = comboFoodDTO.Percent,
+					Image = comboFoodDTO.Image,
                 };
-                _comboRepository.Add(combo);
+                await _comboRepository.Add(combo);
 
-                _comboRepository.AddComboFood(combo.Id, comboFoodDTO.StoreId, comboFoodDTO.IdFoods);
+				int id = combo.Id;
+
+                await _comboRepository.AddComboFood(combo.Id, comboFoodDTO.StoreId, comboFoodDTO.IdFoods);
 
                 return Ok("Tạo thành công Combo!");
             }

@@ -8,7 +8,6 @@ import CookieService from "../../shared/helper/cookieConfig";
 import { setAccessToken } from "../../redux/auth";
 
 const navigations = [
-
 	{ href: "/store/manager", name: "Cửa hàng của tôi" },
 	{ href: "/store/category", name: "Danh mục của tôi" },
 	{ href: "/store/food", name: "Thực phẩm" },

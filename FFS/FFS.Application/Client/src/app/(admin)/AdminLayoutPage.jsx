@@ -3,6 +3,9 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
 import NotFoundPage from "../NotFoundPage";
 import Loading from "../../shared/components/Loading";
+import CookieService from "../../shared/helper/cookieConfig";
+import { useDispatch } from "react-redux";
+import { setAccessToken } from "../../redux/auth";
 
 const navigations = [
 	{ href: "/admin/dashboard", name: "Dashboard" },
@@ -13,6 +16,7 @@ const navigations = [
 
 const AdminLayout = () => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const [notFound, setNotFound] = useState(null);
 	const location = useLocation();
 	const [email, setEmail] = useState();
@@ -111,6 +115,23 @@ const AdminLayout = () => {
 										</li>
 									);
 								})}
+								<li>
+									<NavLink
+										className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+										onClick={() => {
+											CookieService.removeToken("fu_foody_token"); // Remove the user token
+											CookieService.removeToken("fu_foody_role");
+											CookieService.removeToken("fu_foody_id");
+											CookieService.removeToken("fu_foody_email");
+											dispatch(setAccessToken(null));
+											navigate("/Login"); // Redirect to the login page
+										}}
+									>
+										<span className="flex-1 ml-3 whitespace-nowrap">
+											Đăng xuất
+										</span>
+									</NavLink>
+								</li>
 							</ul>
 						</div>
 					</aside>
