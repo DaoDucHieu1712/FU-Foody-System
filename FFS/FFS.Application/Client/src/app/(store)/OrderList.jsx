@@ -196,8 +196,8 @@ const OrderList = () => {
 												</span>
 											</div>
 										</td>
-										<td className={classes}>{item.location}</td>
 										<td className={classes}>{item.shipperName}</td>
+										<td className={classes}>{item.location}</td>
 										<td className={classes}>
 											<OrderStatus status={item.orderStatus}></OrderStatus>
 										</td>
@@ -205,7 +205,7 @@ const OrderList = () => {
 										<td className={classes}>
 											<div className="flex gap-x-3">
 												<Link
-													to={`/store/order/order-detail/${item.id}`}
+													href={`/my-order/${item.id}`}
 													className="px-6 py-2 text-light-blue-500 font-medium rounded-lg cursor-pointer"
 												>
 													chi tiết đơn hàng

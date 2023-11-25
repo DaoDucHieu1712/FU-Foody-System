@@ -15,13 +15,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FFS.Application.Controllers
 {
-	[Route("api/[controller]/[action]")]
-	[ApiController]
-	public class DiscountController : ControllerBase
-	{
-		private readonly IDiscountRepository _discountRepository;
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class DiscountController : ControllerBase
+    {
+        private readonly IDiscountRepository _discountRepository;
 		private readonly IUserDiscountRepository _userDiscountRepository;
-		private readonly IMapper _mapper;
+        private readonly IMapper _mapper;
 
 		public DiscountController(IDiscountRepository discountRepository, IUserDiscountRepository userDiscountRepository, IMapper mapper)
 		{
@@ -31,58 +31,55 @@ namespace FFS.Application.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult ListDiscoutByStore([FromQuery] DiscountParameters discountParameters)
-		{
-			try
-			{
-				var query = _discountRepository.FindAll(x => x.StoreId == discountParameters.StoreId && x.IsDelete == false);
-				if (!string.IsNullOrEmpty(discountParameters.CodeName))
-				{
-					var codeNameLower = discountParameters.CodeName.ToLower();
+        public  IActionResult ListDiscoutByStore([FromQuery] DiscountParameters discountParameters)
+        {
+            try
+            {
+                var query = _discountRepository.FindAll(x => x.StoreId == discountParameters.StoreId && x.IsDelete == false);
+                if (!string.IsNullOrEmpty(discountParameters.CodeName))
+                {
+                    var codeNameLower = discountParameters.CodeName.ToLower();
 
-					query = query.ToList()
-						.Where(i => CommonService.RemoveDiacritics(i.Code.ToLower()).Contains(CommonService.RemoveDiacritics(codeNameLower))).AsQueryable();
-				}
-				var discounts = PagedList<Discount>.ToPagedList(
-				query,
-				discountParameters.PageNumber,
-				discountParameters.PageSize
-			);
-				var metadata = new
-				{
-					discounts.TotalCount,
-					discounts.PageSize,
-					discounts.CurrentPage,
-					discounts.TotalPages,
-					discounts.HasNext,
-					discounts.HasPrevious
-				};
-				var discountDtos = _mapper.Map<List<DiscountDTO>>(discounts);
-				return Ok(new
-				{
-					Discounts = discountDtos,
-					Metadata = metadata
-				});
-			}
-			catch (Exception ex)
-			{
-				throw new Exception(ex.Message);
-			}
+                    query = query.ToList()
+                        .Where(i => CommonService.RemoveDiacritics(i.Code.ToLower()).Contains(CommonService.RemoveDiacritics(codeNameLower))).AsQueryable();
+                }
+                var discounts = PagedList<Discount>.ToPagedList(
+                query,
+                discountParameters.PageNumber,
+                discountParameters.PageSize
+            );
+                var metadata = new
+                {
+                    discounts.TotalCount,
+                    discounts.PageSize,
+                    discounts.CurrentPage,
+                    discounts.TotalPages,
+                    discounts.HasNext,
+                    discounts.HasPrevious
+                };
+                var discountDtos = _mapper.Map<List<DiscountDTO>>(discounts);
+                return Ok(new {Discounts = discountDtos,
+                Metadata = metadata});
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
 
-		}
-		[HttpPost]
-		public async Task<IActionResult> CreateDiscount([FromBody] DiscountDTO discountDTO)
-		{
-			try
-			{
-				await _discountRepository.Add(_mapper.Map<Discount>(discountDTO));
-				return Ok();
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-		}
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateDiscount([FromBody] DiscountDTO discountDTO)
+        {
+            try
+            {
+                await _discountRepository.Add(_mapper.Map<Discount>(discountDTO));
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
 		[HttpPut]
 		public async Task<IActionResult> UpdateDiscount(int id, DiscountDTO discountDTO)
@@ -125,15 +122,15 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[HttpPost]
-		public async Task<IActionResult> CheckDiscount(string Code, string UserId, decimal TotalPrice, int[] storeIds)
-		{
-			try
-			{
-				var discount = await _discountRepository
+        [HttpPost]
+        public async Task<IActionResult> CheckDiscount(string Code, string UserId, decimal TotalPrice , int[] storeIds)
+        {
+            try
+            {
+                var discount = await _discountRepository
 					.FindSingle(x => x.Code == Code);
 
-				if (discount == null) return StatusCode(500, new
+				if(discount == null) return StatusCode(500, new
 				{
 					msg = "Mã giảm giá không tồn tại !!!",
 					IsUse = false,
@@ -142,7 +139,7 @@ namespace FFS.Application.Controllers
 				var checkstore = false;
 				for (int i = 0; i < storeIds.Length; i++)
 				{
-					if (discount.StoreId == storeIds[i])
+				   if(discount.StoreId == storeIds[i])
 					{
 						checkstore = true;
 					}
@@ -173,35 +170,30 @@ namespace FFS.Application.Controllers
 				});
 
 				var check = await _userDiscountRepository
-					.FindSingle(x => x.DiscountId == discount.Id && x.UserId == UserId, x => x.Discount);
+					.FindSingle(x => x.DiscountId == discount.Id && x.UserId == UserId , x => x.Discount);
 
-				if (check != null) return StatusCode(500, new
+				if(check != null) return StatusCode(500, new
 				{
 					msg = "Bạn đã sử dụng mã này rồi !!!",
 					IsUse = false,
 				});
 
-				discount.Quantity = discount.Quantity - 1;
-				await _discountRepository.Update(discount);
-				await _userDiscountRepository.Add(new UserDiscount
-				{
-					DiscountId = discount.Id,
-					UserId = UserId
-				});
-
-				return Ok(new
+                return Ok(new
 				{
 					msg = "Mã hợp lệ <3 ",
 					discount = (decimal)discount.Percent / 100,
-					storeId = discount.StoreId,
+					storeId  = discount.StoreId,
+					//test = storeIds,
+					//gi = storeIds.Length,
+					//a = storeIds[0],
 					IsUse = true,
 				});
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, ex.Message);
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
 		[HttpGet]
 		public async Task<IActionResult> UseDiscount(string Code, string UserId)
@@ -210,18 +202,15 @@ namespace FFS.Application.Controllers
 			{
 				var discount = await _discountRepository
 					.FindSingle(x => x.Code == Code);
-				var check = await _userDiscountRepository.FindSingle(x => x.DiscountId == discount.Id && x.UserId == UserId);
 
-				if (check == null)
+				discount.Quantity = discount.Quantity - 1;
+				await _discountRepository.Update(discount);
+
+				await _userDiscountRepository.Add(new UserDiscount
 				{
-					discount.Quantity = discount.Quantity - 1;
-					await _discountRepository.Update(discount);
-					await _userDiscountRepository.Add(new UserDiscount
-					{
-						DiscountId = discount.Id,
-						UserId = UserId
-					});
-				}
+					DiscountId = discount.Id,
+					UserId = UserId
+				});
 				return Ok();
 			}
 			catch (Exception ex)
@@ -230,5 +219,5 @@ namespace FFS.Application.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-	}
+    }
 }

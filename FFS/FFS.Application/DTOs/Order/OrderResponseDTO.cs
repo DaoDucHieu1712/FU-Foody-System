@@ -18,6 +18,5 @@ namespace FFS.Application.DTOs.Order
         public OrderStatus? OrderStatus { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? ShipDate { get; set;}
-		public List<OrderDetailResponseDTO> OrderDetails { get; set; }
     }
 }

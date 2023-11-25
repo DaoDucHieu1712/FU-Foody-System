@@ -11,5 +11,6 @@ namespace FFS.Application.Entities
         [ForeignKey(nameof(StoreId))]
         public Store Store { get; set; }
         public int Percent { get; set; }
-    }
+		public string Image { get; set; }
+	}
 }

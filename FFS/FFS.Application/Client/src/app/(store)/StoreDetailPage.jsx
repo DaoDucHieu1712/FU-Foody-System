@@ -12,13 +12,13 @@ import Loading from "../../shared/components/Loading";
 
 const cookies = new Cookies();
 const uId = cookies.get("fu_foody_id");
-console.log("uid = ", uId);
 const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 
 const StoreDetailPage = () => {
 	const { id } = useParams();
 	const [storeData, setStoreData] = useState();
 	const [foodList, setFoodList] = useState([]);
+	const [comboList, setComboList] = useState([]);
 	const [searchFood, setSearchFood] = useState("");
 	const [loading, setLoading] = useState(false);
 
@@ -43,7 +43,6 @@ const StoreDetailPage = () => {
 			axios
 				.get(`/api/Store/DetailStore/${id}`)
 				.then((response) => {
-					console.log(response);
 					setStoreData(response);
 					setFoodList(response.foods);
 				})
@@ -79,14 +78,17 @@ const StoreDetailPage = () => {
 	};
 
 	const handleSearchFood = (e) => {
-		const serachTxt = e.target.value;
+		var serachTxt = e.target.value;
+		if (typeof serachTxt == "undefined") {
+			serachTxt = "";
+		}
 		setSearchFood(serachTxt);
-		console.log(serachTxt.length);
 		try {
 			axios
 				.get(`/api/Store/GetFoodByName?name=${serachTxt}`)
 				.then((response) => {
 					setFoodList(response);
+					setComboList([]);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -95,21 +97,24 @@ const StoreDetailPage = () => {
 			console.error("An error occurred", error);
 		}
 	};
-
+	const handleSearchCombo = () => {
+		try {
+			axios
+				.get(`/api/Food/GetListCombo/${id}`)
+				.then((response) => {
+					console.log(response);
+					setComboList(response);
+					setFoodList([]);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("An error occurred", error);
+		}
+	};
 	const handleViewComment = () => {
 		window.location = `/store/comment/${id}`;
-	};
-
-	const handleCreateBoxChat = async () => {
-		await ChatService.CreateChatBox({
-			fromUserId: cookies.get("fu_foody_id"),
-			toUserId: storeData.userId,
-		})
-			.then(() => {
-				window.location.reload();
-			})
-			.catch(() => {});
-		dispatch(chatActions.Update(true));
 	};
 
 	return (
@@ -156,21 +161,20 @@ const StoreDetailPage = () => {
 									<i className="fal fa-clock mr-2"></i>Hoạt động từ:
 								</span>
 								<span>
-									{storeData.timeStart.replace("T", " ").slice(10, 16)} {"-"}
-									{storeData.timeEnd.replace("T", " ").slice(10, 16)}
+									{storeData.timeStart} : {storeData.timeEnd}
 								</span>
-							</div>
-							<div className="flex mt-3">
-								<Button className="bg-primary" onClick={handleCreateBoxChat}>
-									Chat Ngay
-								</Button>
 							</div>
 						</div>
 					</div>
 					<hr className="h-px my-4 bg-gray-400 border-0 dark:bg-gray-700"></hr>
 					<div className="grid grid-cols-6">
 						<div className="col-span-1">
-							<Typography variant="h6" color="red" className="text-center">
+							<Typography
+								variant="h6"
+								color="red"
+								className="text-center cursor-pointer"
+								onClick={handleSearchFood}
+							>
 								THỰC ĐƠN ({storeData.categories.length})
 							</Typography>
 							<ul className="m-2 bg-gray-100 rounded">
@@ -185,7 +189,17 @@ const StoreDetailPage = () => {
 									</li>
 								))}
 							</ul>
+
+							<Typography
+								variant="h6"
+								color="red"
+								className="text-center cursor-pointer"
+								onClick={handleSearchCombo}
+							>
+								COMBO ({storeData.combos.length})
+							</Typography>
 						</div>
+
 						<div className="col-span-5">
 							<div>
 								<br></br>
@@ -218,6 +232,7 @@ const StoreDetailPage = () => {
 												/>
 											</svg>
 										}
+										disabled={foodList.length < 0 ? true : false}
 										defaultValue={searchFood}
 										onChange={handleSearchFood}
 									/>
@@ -260,6 +275,53 @@ const StoreDetailPage = () => {
 															size="sm"
 															className="bg-primary"
 															onClick={() => handleAddToCart(item)}
+														>
+															Add to cart
+														</Button>
+													</div>
+												</div>
+											</li>
+										))}
+									</ul>
+									<ul>
+										{comboList.map((item, index) => (
+											<li
+												className={`p-2 ${
+													backgroundColors[index % backgroundColors.length]
+												}`}
+												key={item.combo.id}
+											>
+												<div className="border-collapse grid grid-cols-6 gap-5">
+													<div className="col-span-2">
+														<img
+															className="w-full h-52 rounded-lg object-cover"
+															src={item.combo.image}
+														/>
+													</div>
+													<div className="col-span-3">
+														<Typography variant="h6">
+															{item.combo.name}
+														</Typography>
+														<Typography variant="h6">Combo gồm</Typography>
+														<ul className="py-2">
+															{item.detail.map((detail) => (
+																<li key={detail.Id}>
+																	<span>{detail.FoodName}</span>
+																</li>
+															))}
+														</ul>
+													</div>
+													<div className="col-span-1">
+														<Typography
+															variant="paragraph"
+															className="relative w-fit"
+														>
+															Giảm giá {item.combo.percent}%
+														</Typography>
+														<Button
+															size="sm"
+															className="bg-primary"
+															// onClick={() => handleAddToCartCombo(item.detail)}
 														>
 															Add to cart
 														</Button>

@@ -77,10 +77,7 @@ namespace FFS.Application.Data
             {
                 entity.Property(x => x.Id).HasMaxLength(50).IsRequired(true);
             });
-            builder.Entity<FoodCombo>().
-              HasOne(c => c.Food).WithMany(c => c.FoodCombos).HasForeignKey(c => c.FoodId).OnDelete(DeleteBehavior.ClientNoAction);
-            builder.Entity<FoodCombo>().
-             HasOne(c => c.Store).WithMany(c => c.FoodCombos).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
+            
             builder.Entity<ReactPost>().
              HasOne(c => c.Post).WithMany(c => c.ReactPosts).HasForeignKey(c => c.PostId).OnDelete(DeleteBehavior.ClientNoAction);
             // Drop existing unique constraint

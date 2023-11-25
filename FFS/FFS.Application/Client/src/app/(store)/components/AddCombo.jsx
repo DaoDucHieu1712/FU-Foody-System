@@ -68,16 +68,23 @@ const AddCombo = ({ reload, storeId, foodList }) => {
 	useEffect(() => {}, [open]);
 
 	const onSubmit = async (data) => {
+		const listInt = [];
+		for (const key in checkedItems) {
+			if (checkedItems[key]) {
+				listInt.push(parseInt(key));
+			}
+		}
+
 		try {
-			const newFood = {
+			const newCombo = {
 				Name: data.name,
-				Percent: data.description,
-				price: data.price,
-				imageURL: data.imageURL,
-				storeId: storeId,
+				Percent: data.percent,
+				StoreId: storeId,
+				Image: data.imageURL,
+				IdFoods: listInt,
 			};
 			axios
-				.post("/api/Food/AddCombo", newFood)
+				.post("/api/Food/CreateCombo", newCombo)
 				.then(() => {
 					toast.success("Thêm món ăn mới thành công!");
 					reload();
@@ -202,7 +209,10 @@ const AddCombo = ({ reload, storeId, foodList }) => {
 
 									<div className=" p-5 text-center">
 										<button
-											onClick={handleAddFood}
+											onClick={() => {
+												handleAddFood();
+												closeModal();
+											}}
 											className="bg-primary text-white w-[50%] h-10 rounded-xl"
 										>
 											Thêm

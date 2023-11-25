@@ -24,13 +24,17 @@ namespace FFS.Application.Controllers {
         private readonly IStoreRepository _storeRepository;
         private readonly IFoodRepository _foodRepository;
         private readonly ICommentRepository _commentRepository;
+		private readonly IComboRepository _comboRepository;
 
-        public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository)
+		
+
+		public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository, IComboRepository comboRepository)
         {
             _mapper = mapper;
             _storeRepository = storeRepository;
             _foodRepository = foodRepository;
             _commentRepository = commentRepository;
+			_comboRepository = comboRepository;
         }
 
         [HttpGet]
@@ -166,8 +170,10 @@ namespace FFS.Application.Controllers {
             try
             {
                 StoreInforDTO storeInforDTO = await _storeRepository.GetDetailStore(id);
+				List<Combo> combos = await _comboRepository.GetList(x => x.StoreId == id && x.IsDelete == false);
+				storeInforDTO.Combos = combos;
 
-                return Ok(storeInforDTO);
+				return Ok(storeInforDTO);
             }
             catch (Exception ex)
             {

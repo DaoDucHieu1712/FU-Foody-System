@@ -1,28 +1,21 @@
-﻿using FFS.Application.Data;
-using FFS.Application.DTOs.Auth;
-using FFS.Application.Entities;
-using Microsoft.AspNetCore.Identity;
-using FFS.Application.Constant;
-using FFS.Application.DTOs.Common;
-using FFS.Application.DTOs.Email;
-using FFS.Application.Entities;
-using FFS.Application.Helper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+﻿using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Org.BouncyCastle.Asn1.Ocsp;
-using Microsoft.EntityFrameworkCore;
-using FFS.Application.Entities.Constant;
-using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Bibliography;
 using Dapper;
-using FFS.Application.DTOs.QueryParametter;
-using System.Data;
+using FFS.Application.Constant;
+using FFS.Application.Data;
+using FFS.Application.DTOs.Auth;
+using FFS.Application.DTOs.Common;
+using FFS.Application.DTOs.Email;
+using FFS.Application.Entities;
+using FFS.Application.Entities.Constant;
 using FFS.Application.Entities.Enum;
-using FFS.Application.DTOs.Post;
+using FFS.Application.Helper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -156,8 +149,8 @@ namespace FFS.Application.Repositories.Impls
 					PhoneNumber = storeRegisterDTO.PhoneNumber,
 				};
 
-				await _context.Stores.AddAsync(NewStore);
-				await _context.SaveChangesAsync();
+				_ = await _context.Stores.AddAsync(NewStore);
+				_ = await _context.SaveChangesAsync();
 
 			}
 			catch (Exception ex)
@@ -243,6 +236,10 @@ namespace FFS.Application.Repositories.Impls
 			{
 				var token = await GenerateToken(userExist);
 				var roles = await _userManager.GetRolesAsync(userExist);
+				if (userExist.Allow == false)
+				{
+					throw new Exception("Tài khoản của bạn tạm thời bị khóa! Xin vui lòng liên hệ admin để biết thêm chi tiết!");
+				}
 				return new UserClientDTO
 				{
 					UserId = userExist.Id,
@@ -265,7 +262,7 @@ namespace FFS.Application.Repositories.Impls
 					};
 
 					IdentityResult check = await _userManager.CreateAsync(user, "123456aA@");
-					await _userManager.AddToRoleAsync(user, "User");
+					_ = await _userManager.AddToRoleAsync(user, "User");
 					//await transaction.CommitAsync();
 
 					var _user = await _userManager.FindByEmailAsync(user.Email);
@@ -340,8 +337,8 @@ namespace FFS.Application.Repositories.Impls
 					UserId = shipper.Id,
 					RoleId = role.Id
 				};
-				await _context.UserRoles.AddAsync(userRole);
-				await _context.SaveChangesAsync();
+				_ = await _context.UserRoles.AddAsync(userRole);
+				_ = await _context.SaveChangesAsync();
 				await transaction.CommitAsync();
 			}
 			catch (Exception ex)
@@ -376,8 +373,8 @@ namespace FFS.Application.Repositories.Impls
 				_user.Gender = userCommandDTO.Gender;
 				_user.Avatar = userCommandDTO.Avatar;
 				_context.Entry(_user).State = EntityState.Modified;
-				await _userManager.UpdateAsync(_user);
-				await _context.SaveChangesAsync();
+				_ = await _userManager.UpdateAsync(_user);
+				_ = await _context.SaveChangesAsync();
 			}
 			catch (Exception ex)
 			{

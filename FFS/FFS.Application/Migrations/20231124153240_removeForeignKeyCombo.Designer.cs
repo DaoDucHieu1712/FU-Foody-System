@@ -4,6 +4,7 @@ using FFS.Application.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FFS.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231124153240_removeForeignKeyCombo")]
+    partial class removeForeignKeyCombo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,11 +150,12 @@ namespace FFS.Application.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FormUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("FromUserId")
                         .IsRequired()
@@ -163,18 +166,16 @@ namespace FFS.Application.Migrations
 
                     b.Property<string>("ToUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("FormUserId");
 
                     b.HasIndex("FromUserId");
-
-                    b.HasIndex("ToUserId");
 
                     b.ToTable("Chat");
                 });
@@ -632,9 +633,6 @@ namespace FFS.Application.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ChatId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -653,8 +651,6 @@ namespace FFS.Application.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
 
                     b.HasIndex("UserId");
 
@@ -1316,19 +1312,15 @@ namespace FFS.Application.Migrations
 
             modelBuilder.Entity("FFS.Application.Entities.Chat", b =>
                 {
-                    b.HasOne("FFS.Application.Entities.ApplicationUser", null)
-                        .WithMany("Chats")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("FFS.Application.Entities.ApplicationUser", "FormUser")
                         .WithMany()
-                        .HasForeignKey("FromUserId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .HasForeignKey("FormUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FFS.Application.Entities.ApplicationUser", "ToUser")
                         .WithMany()
-                        .HasForeignKey("ToUserId")
+                        .HasForeignKey("FromUserId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
@@ -1509,19 +1501,11 @@ namespace FFS.Application.Migrations
 
             modelBuilder.Entity("FFS.Application.Entities.Message", b =>
                 {
-                    b.HasOne("FFS.Application.Entities.Chat", "Chat")
-                        .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
-                        .IsRequired();
-
                     b.HasOne("FFS.Application.Entities.ApplicationUser", "User")
-                        .WithMany("Messages")
+                        .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Chat");
 
                     b.Navigation("User");
                 });
@@ -1732,13 +1716,9 @@ namespace FFS.Application.Migrations
 
             modelBuilder.Entity("FFS.Application.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("Chats");
-
                     b.Navigation("Comments");
 
                     b.Navigation("Locations");
-
-                    b.Navigation("Messages");
 
                     b.Navigation("Notifications");
 
@@ -1754,11 +1734,6 @@ namespace FFS.Application.Migrations
             modelBuilder.Entity("FFS.Application.Entities.Category", b =>
                 {
                     b.Navigation("Foods");
-                });
-
-            modelBuilder.Entity("FFS.Application.Entities.Chat", b =>
-                {
-                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("FFS.Application.Entities.Comment", b =>
