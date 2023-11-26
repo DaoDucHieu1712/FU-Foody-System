@@ -30,6 +30,15 @@ const OrderService = {
 		const url = "/api/Order/FindById/" + id;
 		return axiosConfig.get(url);
 	},
+	async AcceptOrderWithShipper(id) {
+		const url = "/api/Order/AcceptOrderWithShipper/" + id;
+		return axiosConfig.put(url);
+	},
+	async CancelOrderWithCustomer(id, reason) {
+		const url =
+			"/api/Order/CancelOrderWithCustomer/" + id + `?CancelReason=${reason}`;
+		return axiosConfig.put(url);
+	},
 };
 
 export default OrderService;

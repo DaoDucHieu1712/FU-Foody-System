@@ -259,6 +259,7 @@ namespace FFS.Application.Repositories.Impls
 						Email = userRegisterDTO.email,
 						UserName = CommonService.ExtractUsername(userRegisterDTO.email),
 						Avatar = userRegisterDTO.Avatar,
+						Status = StatusUser.Accept
 					};
 
 					IdentityResult check = await _userManager.CreateAsync(user, "123456aA@");

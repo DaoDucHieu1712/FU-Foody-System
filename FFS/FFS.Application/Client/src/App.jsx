@@ -36,23 +36,26 @@ import StoreList from "./app/(public)/StoreList";
 import ShipperLayout from "./app/(shipper)/ShipperLayout";
 import OrderAvailablePage from "./app/(shipper)/OrderAvailablePage";
 import OrderShippingPage from "./app/(shipper)/OrderShippingPage";
-
 import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 import UserDetails from "./app/(public)/UserDetails";
 import ShipperRegisterPage from "./app/(public)/ShipperRegister";
-import MyOrderDetail from "./app/(auth)/MyOrderDetail";
+// import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 import AccessDenied from "./app/(public)/AccessDenied";
 import NotFoundPage from "./app/NotFoundPage";
 import PaymentPage from "./app/(auth)/PaymentPage";
-import OrderDetail from "./app/(store)/OrderDetail";
+import ConfirmPaymentPage from "./app/(public)/ConfirmPaymentPage";
+// import OrderDetail from "./app/(store)/OrderDetail";
 // import MyOrderDetail from "./app/(auth)/MyOrderDetail";
+import OrderDetail from "./app/(store)/OrderDetail";
+import ViewApplicationPage from "./app/(admin)/ViewApplicationPage";
 
 function App() {
 	return (
 		<>
 			<Routes>
 				<Route path="/" element={<Layout />}>
+					<Route path="/confirm-payment" element={<ConfirmPaymentPage />} />
 					<Route path="/" element={<HomePage />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/location" element={<Location />} />
@@ -74,10 +77,9 @@ function App() {
 					<Route path="/food-list" element={<FoodList />} />
 					<Route path="/store-list" element={<StoreList />} />
 					<Route path="/wishlist" element={<Wishlist />} />
-					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
-					<Route path="/store/flash-sale" element={<FlashSale />} />
+
 					<Route path="/user-detail/:id" element={<UserDetails />} />
-					<Route path="/my-order/:id" element={<MyOrderDetail />} />
+					{/* <Route path="/my-order/:id" element={<MyOrderDetail />} /> */}
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
 				</Route>
 				<Route element={<ShipperLayout></ShipperLayout>}>
@@ -100,23 +102,28 @@ function App() {
 					/>
 				</Route>
 				<Route element={<StoreLayout></StoreLayout>}>
-					{/* <Route path="/food" element={<Food />} /> */}
 					<Route path="/store/order" element={<OrderList />} />
-					{/* <Route path="/inventory" element={<Inventory />} /> */}
-					{/* <Route path="/category" element={<Category />} /> */}
 					<Route path="/store/food" element={<Food />} />
 					<Route path="/store/inventory" element={<Inventory />} />
 					<Route path="/store/category" element={<Category />} />
 					<Route path="/store/discount" element={<Discount />} />
 					<Route path="/store/order/:id" element={<OrderDetail />} />
+					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
+					<Route path="/store/flash-sale" element={<FlashSale />} />
 				</Route>
 				<Route element={<AdminLayout></AdminLayout>}>
 					<Route path="/admin/report" element={<ReportPage />} />
+					{/* <Route path="/admin/manage-post" element={<PostManagePage />} /> */}
+
 					<Route path="/admin/dashboard" element={<DashboardPage />} />
 					<Route path="/admin/manage-acoount" element={<AccountManagePage />} />
 					<Route
 						path="/admin/request-account"
 						element={<RequestAccountPage />}
+					/>
+					<Route
+						path="/admin/application/:id"
+						element={<ViewApplicationPage />}
 					/>
 				</Route>
 				<Route path="*" element={<NotFoundPage />}></Route>

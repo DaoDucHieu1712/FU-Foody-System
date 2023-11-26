@@ -7,5 +7,6 @@
         public int FoodId { get; set; }
         public string FoodName { get; set; }
         public string CategoryName { get; set; }
-    }
+		public DateTime CreatedAt { get; set; }
+	}
 }

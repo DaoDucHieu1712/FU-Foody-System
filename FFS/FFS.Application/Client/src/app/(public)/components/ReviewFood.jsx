@@ -39,11 +39,11 @@ const ReviewFood = ({ idUser, idFood }) => {
             const newRating = {
                 userId: idUser,
                 foodId: idFood,
-                rate: data.star,
+                rate: star,
                 content: data.reviewfood
             };
             axios
-                .get(`/api/Food/RatingFood`, newRating)
+                .post(`/api/Food/RatingFood`, newRating)
                 .then(() => {
                     setOpen(false);
                     setOpenThank(true);

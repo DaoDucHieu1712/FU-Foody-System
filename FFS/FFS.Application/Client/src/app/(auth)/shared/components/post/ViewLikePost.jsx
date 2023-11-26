@@ -60,7 +60,7 @@ const ViewLikePost = ({ likeNumber, likedBy }) => {
                                 <li className="flex justify-between items-center p-1" key={user.userId}>
                                     <div className="flex gap-2 items-center">
                                         <img
-                                            src={user.avatar}
+                                            src={user.avartar}
                                             alt={user.username}
                                             className="h-10 w-10 object-cover rounded-full"
                                         />

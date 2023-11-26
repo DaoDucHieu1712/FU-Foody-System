@@ -1,7 +1,10 @@
 import { Button } from "@material-tailwind/react";
 import propTypes from "prop-types";
+import ReviewFood from "../../../(public)/components/ReviewFood";
+import CookieService from "../../../../shared/helper/cookieConfig";
 
 const OrderItem = ({ item }) => {
+	const uid = CookieService.getToken("fu_foody_id"); 
 	return (
 		<>
 			<div className="w-full cart-item flex justify-between rounded-lg gap-x-3 p-3 border border-gray-200">
@@ -20,9 +23,10 @@ const OrderItem = ({ item }) => {
 					</div>
 				</div>
 				<div className="flex items-center justify-center">
-					<Button size="sm" className="bg-primary">
+					{/* <Button size="sm" className="bg-primary">
 						đánh giá
-					</Button>
+					</Button> */}
+					<ReviewFood idUser={uid} idFood={item.foodId}></ReviewFood>
 				</div>
 			</div>
 		</>

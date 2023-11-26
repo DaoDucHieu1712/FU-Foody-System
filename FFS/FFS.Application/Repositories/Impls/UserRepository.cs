@@ -2,6 +2,7 @@
 using System.Drawing;
 using Dapper;
 using FFS.Application.Data;
+using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Entities.Enum;
@@ -83,7 +84,7 @@ namespace FFS.Application.Repositories.Impls
 					worksheet.Cells[cell].Value = "Username";
 
 					cell = string.Format($"C{index}");
-					worksheet.Cells[cell].Value = "Emmail";
+					worksheet.Cells[cell].Value = "Email";
 
 					cell = string.Format($"D{index}");
 					worksheet.Cells[cell].Value = "Số điện thoại";
@@ -309,6 +310,28 @@ namespace FFS.Application.Repositories.Impls
 
 				throw new Exception(ex.Message);
 			}
+		}
+
+		public List<AccountStatistic> AccountsStatistic()
+		{
+			try
+			{
+				var accountStatistic = _context.ApplicationUsers.GroupBy(user => user.Status).Select(group => new AccountStatistic
+				{
+					UserType = group.Key,
+					NumberOfAccount = group.Count()
+				})
+	.ToList();
+				return accountStatistic;
+			} catch (Exception ex)
+			{
+				throw new Exception(ex.Message);	
+			}
+		}
+
+		public int CountTotalUsers()
+		{
+			return _context.ApplicationUsers.Count();
 		}
 	}
 }

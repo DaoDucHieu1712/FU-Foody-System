@@ -1,6 +1,8 @@
 ﻿using System.Data;
 using Dapper;
+using DocumentFormat.OpenXml.InkML;
 using FFS.Application.Data;
+using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Entities.Enum;
@@ -181,5 +183,33 @@ namespace FFS.Application.Repositories.Impls
 			}
 		}
 
+		
+
+		public List<ReportStatistic> ReportStatistics(int year)
+		{
+			try
+			{
+				var reportsByMonth = _context.Reports
+	.Where(r => r.CreatedAt.Year == year ) 
+	.GroupBy(r =>  r.CreatedAt.Month)
+	.Select(group => new ReportStatistic
+	{
+		Month = group.Key,
+		NumberOfReport = group.Count()
+	})
+	.OrderBy(group => group.Month)
+	.ToList();
+				return reportsByMonth;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+
+		public int CountAllReportInYear(int year)
+		{
+			return _context.Reports.Where(x=>x.CreatedAt.Year == year).Count();
+		}
 	}
 }

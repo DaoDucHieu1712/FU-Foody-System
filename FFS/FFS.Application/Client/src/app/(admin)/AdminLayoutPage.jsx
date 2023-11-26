@@ -124,7 +124,7 @@ const AdminLayout = () => {
 											CookieService.removeToken("fu_foody_id");
 											CookieService.removeToken("fu_foody_email");
 											dispatch(setAccessToken(null));
-											navigate("/Login"); // Redirect to the login page
+											window.location.href = "/login"; // Redirect to the login page
 										}}
 									>
 										<span className="flex-1 ml-3 whitespace-nowrap">
