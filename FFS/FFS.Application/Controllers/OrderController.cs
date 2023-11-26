@@ -339,6 +339,39 @@ namespace FFS.Application.Controllers
             }
         }
 
+		[HttpPut("{id}")]
+		public async Task<IActionResult> AcceptOrderWithShipper(int id)
+		{
+			try
+			{
+				var order = await _orderRepository.FindSingle(x => x.Id == id);
+				order.OrderStatus = OrderStatus.Finish;
+				await _orderRepository.Update(order);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPut("{id}")]
+		public async Task<IActionResult> CancelOrderWithCustomer(int id, string CancelReason)
+		{
+			try
+			{
+				var order = await _orderRepository.FindSingle(x => x.Id == id);
+				order.OrderStatus = OrderStatus.Cancel;
+				order.CancelReason = CancelReason;
+				await _orderRepository.Update(order);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
         [HttpPost]
         public async Task<IActionResult> GetOrderFinish(Parameters parameters)
         {
