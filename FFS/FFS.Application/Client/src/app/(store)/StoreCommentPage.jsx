@@ -165,7 +165,7 @@ const StoreCommentPage = () => {
                 <div className="flex justify-center items-center">
                   <div className="rounded-full bg-primary h-12 w-12 flex justify-center items-center">
                     <span className="h-full flex items-center font-semibold text-white text-2xl">
-                      {rate.rateAvg}
+                    {rate.rateAvg ?? 0}
                     </span>
                   </div>
                 </div>

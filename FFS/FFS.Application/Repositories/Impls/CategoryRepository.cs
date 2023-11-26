@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Drawing;
+using System.IO.Packaging;
+using AutoMapper;
 using ClosedXML.Excel;
 using FFS.Application.Data;
 using FFS.Application.DTOs.Category;
@@ -9,6 +11,7 @@ using FFS.Application.Entities;
 using FFS.Application.Helper;
 using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -33,17 +36,70 @@ namespace FFS.Application.Repositories.Impls
 
                 var exportCategories = _mapper.Map<List<CategoryDTO>>(categories);
 
-                using (var workbook = new XLWorkbook())
+                using (var package = new ExcelPackage())
                 {
-                    ExcelConfiguration.ExportCategory(exportCategories, workbook);
+					var workbook = package.Workbook;
+					var worksheet = workbook.Worksheets.Add("Danh mục");
+					int index = 1;
+					string cell = string.Format($"A{index}:C{index}");
+					worksheet.Cells[cell].Value = "Báo cáo Danh mục";
+					worksheet.Cells[cell].Merge = true;
+					worksheet.Cells[cell].Style.Font.Size = 20;
+					worksheet.Cells[cell].Style.Font.Bold = true;
+					worksheet.Cells[cell].Style.Fill.SetBackground(ColorTranslator.FromHtml("#FE5303"));
+					worksheet.Cells[cell].Style.Font.Color.SetColor(System.Drawing.Color.White);
+					worksheet.Cells[cell].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+					worksheet.Cells[cell].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+					index++;
 
-                    using (var stream = new MemoryStream())
-                    {
-                        workbook.SaveAs(stream);
-                        var content = stream.ToArray();
-                        return await Task.FromResult(stream.ToArray());
-                    }
-                }
+					cell = string.Format($"A{index}");
+					worksheet.Cells[cell].Value = "Mã danh mục";
+
+					cell = string.Format($"B{index}");
+					worksheet.Cells[cell].Value = "Tên danh mục";
+
+					cell = string.Format($"C{index}");
+					worksheet.Cells[cell].Value = "Ngày tạo";
+
+					cell = string.Format($"A{index}:C{index}");
+					worksheet.Cells[cell].Style.Font.Size = 14;
+					worksheet.Cells[cell].Style.Font.Bold = true;
+					worksheet.Cells[cell].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+					worksheet.Cells[cell].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+
+					index++;
+
+
+					int indexData = 0;
+
+					// Populate rows with data
+					for (int i = 0; i < exportCategories.Count; i++)
+					{
+						indexData = index + i;
+
+						cell = string.Format($"A{indexData}");
+						worksheet.Cells[cell].Value = exportCategories[i].Id;
+						worksheet.Cells[cell].Style.WrapText = true;
+
+						cell = string.Format($"B{indexData}");
+						worksheet.Cells[cell].Value = exportCategories[i].CategoryName;
+
+						cell = string.Format($"C{indexData}");
+						worksheet.Cells[cell].Value = exportCategories[i].CreatedAt.ToString("MM/dd/yyyy HH:mm:ss");
+
+
+						worksheet.Row(indexData).Height = 40;
+					}
+
+
+					cell = string.Format($"A{2}:C{indexData}");
+					worksheet.Cells[cell].Style.Font.Size = 14;
+					worksheet.Cells.AutoFitColumns();
+					worksheet.Column(1).Width = 85;
+
+
+					return package.GetAsByteArray();
+				}
             }
             catch (Exception ex)
             {

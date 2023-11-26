@@ -1,4 +1,5 @@
 ﻿using FFS.Application.Data;
+using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FFS.Application.Repositories.Impls
 {
-    public class PostRepository: EntityRepository<Post, int>, IPostRepository
+	public class PostRepository : EntityRepository<Post, int>, IPostRepository
     {
         public PostRepository(ApplicationDbContext context) : base(context)
         {
@@ -126,7 +127,27 @@ namespace FFS.Application.Repositories.Impls
             }
         }
 
+		public int CountAllPost()
+		{
+			return _context.Posts.Count();	
+		}
 
-
-    }
+		public List<PostStatistic> PostStatistics()
+		{
+			try
+			{
+				var postStatistic = _context.Posts.GroupBy(user => user.Status).Select(group => new PostStatistic
+				{
+					PostStatus = group.Key,
+					NumberOfPosts = group.Count()
+				})
+	.ToList();
+				return postStatistic;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+	}
 }
