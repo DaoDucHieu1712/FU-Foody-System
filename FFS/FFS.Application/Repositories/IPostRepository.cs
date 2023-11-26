@@ -14,7 +14,6 @@ namespace FFS.Application.Repositories
         Task<Post> CreatePost(Post post);
         Task<Post> UpdatePost(Post updatedPost);
         Task DeletePost(int postId);
-
         int CountAllPost();
 		List<PostStatistic> PostStatistics();
     }
