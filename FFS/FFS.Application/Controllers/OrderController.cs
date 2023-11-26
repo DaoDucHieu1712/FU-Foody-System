@@ -56,7 +56,26 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+		[HttpGet("{id}")]
+		public async Task<IActionResult> FindById(int id)
+		{
+			try
+			{
+				return Ok(_mapper.Map<OrderResponseDTO>(
+					await _orderRepository.FindAll(x => x.Id == id, x => x.Customer, x => x.Shipper)
+					.Include(x => x.OrderDetails).ThenInclude(x => x.Store)
+					.Include(x => x.OrderDetails).ThenInclude(x => x.Food)
+					.FirstOrDefaultAsync()
+					));
+			}
+			catch (Exception ex)
+			{
+
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet("{id}")]
         public async Task<IActionResult> MyOrder(string id, [FromQuery] OrderFilterDTO orderFilterDTO)
         {
             try
@@ -114,7 +133,7 @@ namespace FFS.Application.Controllers
 
                 int pageSize = Constant.Contants.PAGE_SIZE;
                 List<Order> orders = PagedList<Order>.ToPagedList(queryOrders, orderFilterDTO.PageIndex ?? 1, pageSize);
-                var TotalPages = (int)Math.Ceiling(orders.Count / (double)pageSize);
+                var TotalPages = (int)Math.Ceiling(queryOrders.Count() / (double)pageSize);
 
                 return Ok(new EntityFilter<OrderResponseDTO>()
                 {
@@ -230,7 +249,7 @@ namespace FFS.Application.Controllers
 
                 int pageSize = Constant.Contants.PAGE_SIZE;
                 List<OrderResponseDTO> orders = PagedList<OrderResponseDTO>.ToPagedList(queryOrders, orderFilterDTO.PageIndex ?? 1, pageSize);
-                var TotalPages = (int)Math.Ceiling(orders.Count / (double)pageSize);
+                var TotalPages = (int)Math.Ceiling(queryOrders.Count() / (double)pageSize);
 
                 return Ok(new EntityFilter<OrderResponseDTO>()
                 {
