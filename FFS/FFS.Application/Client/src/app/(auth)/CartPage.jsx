@@ -11,8 +11,10 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
+import CookieService from "../../shared/helper/cookieConfig";
 import CartService from "./shared/cart.service";
 import { cartActions } from "./shared/cartSlice";
 import CartItem from "./shared/components/cart/CartItem";
@@ -26,6 +28,7 @@ const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀ
 const cookies = new Cookies();
 
 const CartPage = () => {
+	const accesstoken = useSelector((state) => state.auth.accessToken);
 	const cart = useSelector((state) => state.cart);
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -128,7 +131,7 @@ const CartPage = () => {
 						storeId: item.storeId,
 						foodId: item.foodId,
 						quantity: item.quantity,
-						unitPrice: item.unitPrice,
+						unitPrice: item.price,
 					};
 				});
 
@@ -193,42 +196,52 @@ const CartPage = () => {
 			});
 	};
 
+	if (!accesstoken) {
+		return <Navigate to="/login" replace={true} />;
+	}
+
 	return (
 		<>
 			<div className="grid grid-cols-3 my-10 gap-x-3">
 				<div className="col-span-2 border border-borderpri rounded-lg">
 					<div className="heading">
-						<h1 className="font-medium uppercase text-lg p-3">Giỏ Hàng</h1>
+						<h1 className="font-medium uppercase text-xl p-3">Giỏ Hàng</h1>
 					</div>
-					<div className="w-full">
-						<Card className="h-full w-full rounded-none">
-							<table className="w-full min-w-max table-auto text-left">
-								<thead>
-									<tr>
-										{TABLE_HEAD.map((head) => (
-											<th
-												key={head}
-												className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-											>
-												<Typography
-													variant="small"
-													color="blue-gray"
-													className="font-normal leading-none opacity-70"
+					{cart?.list?.length !== 0 ? (
+						<div className="w-full">
+							<Card className="h-full w-full rounded-none">
+								<table className="w-full min-w-max table-auto text-left">
+									<thead>
+										<tr>
+											{TABLE_HEAD.map((head) => (
+												<th
+													key={head}
+													className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
 												>
-													{head}
-												</Typography>
-											</th>
+													<Typography
+														variant="small"
+														color="blue-gray"
+														className="font-normal leading-none opacity-70"
+													>
+														{head}
+													</Typography>
+												</th>
+											))}
+										</tr>
+									</thead>
+									<tbody>
+										{cart?.list?.map((item) => (
+											<CartItem key={item.foodId} item={item}></CartItem>
 										))}
-									</tr>
-								</thead>
-								<tbody>
-									{cart?.list?.map((item) => (
-										<CartItem key={item.foodId} item={item}></CartItem>
-									))}
-								</tbody>
-							</table>
-						</Card>
-					</div>
+									</tbody>
+								</table>
+							</Card>
+						</div>
+					) : (
+						<span className="p-3 text-lg font-medium text-gray-700">
+							Chưa có gì trong giỏ của bạn á !!
+						</span>
+					)}
 				</div>
 				<div className="flex flex-col gap-y-5">
 					<div className="border-borderpri border pb-5 rounded-lg">

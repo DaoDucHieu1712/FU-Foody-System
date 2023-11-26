@@ -1,4 +1,5 @@
-﻿using FFS.Application.DTOs.Common;
+﻿using FFS.Application.DTOs.Admin;
+using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
@@ -13,5 +14,7 @@ namespace FFS.Application.Repositories
         Task<Post> CreatePost(Post post);
         Task<Post> UpdatePost(Post updatedPost);
         Task DeletePost(int postId);
+        int CountAllPost();
+		List<PostStatistic> PostStatistics();
     }
 }

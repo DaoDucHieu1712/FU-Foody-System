@@ -1,4 +1,6 @@
-﻿using FFS.Application.DTOs.QueryParametter;
+﻿using AutoMapper.Configuration.Conventions;
+using FFS.Application.DTOs.Admin;
+using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 
 namespace FFS.Application.Infrastructure.Interfaces
@@ -9,5 +11,7 @@ namespace FFS.Application.Infrastructure.Interfaces
         Task<byte[]> ExportReport();
         IEnumerable<dynamic> GetReports(ReportParameters reportParameters);
         int CountGetReports(ReportParameters reportParameters);
+		int CountAllReportInYear(int year);
+		List<ReportStatistic> ReportStatistics(int year);
     }
 }

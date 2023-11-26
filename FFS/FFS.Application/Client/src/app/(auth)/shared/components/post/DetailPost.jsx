@@ -159,7 +159,7 @@ const DetailPost = () => {
 											</MenuList>
 										) : (
 											<MenuList>
-												<MenuItem><ReportUser uId={userId} sId={post.userId}></ReportUser></MenuItem>
+												<ReportUser uId={userId} sId={post.userId}></ReportUser>
 											</MenuList>
 										)}
 									</Menu>

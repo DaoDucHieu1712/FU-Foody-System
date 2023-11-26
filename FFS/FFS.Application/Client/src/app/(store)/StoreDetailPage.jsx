@@ -117,6 +117,16 @@ const StoreDetailPage = () => {
 		window.location = `/store/comment/${id}`;
 	};
 
+	const handleCreateBoxChat = async () => {
+		await ChatService.CreateChatBox({
+			fromUserId: cookies.get("fu_foody_id"),
+			toUserId: storeData.userId,
+		}).then(() => {
+			location.reload();
+		});
+		dispatch(chatActions.Update(true));
+	};
+
 	return (
 		<>
 			{loading == false ? (
@@ -161,8 +171,14 @@ const StoreDetailPage = () => {
 									<i className="fal fa-clock mr-2"></i>Hoạt động từ:
 								</span>
 								<span>
-									{storeData.timeStart} : {storeData.timeEnd}
+									{storeData.timeStart.slice(11, 16)} :{" "}
+									{storeData.timeEnd.slice(11, 16)}
 								</span>
+							</div>
+							<div className="">
+								<Button className="bg-primary" onClick={handleCreateBoxChat}>
+									Chat Ngay
+								</Button>
 							</div>
 						</div>
 					</div>

@@ -1,5 +1,7 @@
 ﻿using System.Data;
 
+﻿using System.Drawing;
+using System.IO.Packaging;
 using AutoMapper;
 using ClosedXML.Excel;
 
@@ -14,6 +16,7 @@ using FFS.Application.Entities;
 using FFS.Application.Helper;
 using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 using OfficeOpenXml;
 
