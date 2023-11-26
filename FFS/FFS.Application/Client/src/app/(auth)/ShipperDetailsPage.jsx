@@ -32,7 +32,7 @@ const ShipperDetailsPage = () => {
 	const GetShipperInformation = async () => {
 		try {
 			axios
-				.get(`/api/Authenticate/GetShipperById/${id}`)
+				.get(`/api/Authenticate/GetUserInformation/${id}`)
 				.then((response) => {
 					console.log(response);
 					setShipperData(response);
@@ -78,7 +78,7 @@ const ShipperDetailsPage = () => {
 									className="w-32 h-32 bg-gray-300 rounded-full mb-3 shrink-0"
 								></img>
 								<h1 className="text-xl font-bold">
-									{shipperData.firstName} {shipperData.lastName}
+									{shipperData.userName}
 								</h1>
 
 								<div className="mt-3 flex flex-wrap gap-4 justify-center">
@@ -97,10 +97,10 @@ const ShipperDetailsPage = () => {
 									Hoạt động cá nhân
 								</span>
 								<ul>
-									{/* <li className="mb-2">Đã đăng {user.totalPost} bài viết</li>
+									<li className="mb-2">Đã đăng {shipperData.totalPost} bài viết</li>
 									<li className="mb-2">
-										Đã có {user.totalRecentComments} bình luận trong tuần qua
-									</li> */}
+										Đã có {shipperData.totalRecentComments} bình luận trong tuần qua
+									</li>
 								</ul>
 							</div>
 						</div>
@@ -135,7 +135,9 @@ const ShipperDetailsPage = () => {
 									{reviews.map((review, index) => (
 										<div key={index} className="mb-4 relative">
 											{/* Three dots menu icon */}
-											<div className="absolute top-2 right-3">
+
+											
+											{/* <div className="absolute top-2 right-3">
 												<Menu>
 													<MenuHandler>
 														<button
@@ -150,7 +152,7 @@ const ShipperDetailsPage = () => {
 														<MenuItem>Báo cáo đánh giá</MenuItem>
 													</MenuList>
 												</Menu>
-											</div>
+											</div> */}
 											<div className="w-full mx-auto rounded-lg bg-white border border-gray-200 p-5 text-black font-light mb-6">
 												<div className="w-full flex items-center">
 													<div className="flex items-center mb-4">

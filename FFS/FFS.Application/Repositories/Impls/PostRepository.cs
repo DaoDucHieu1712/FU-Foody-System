@@ -107,8 +107,10 @@ namespace FFS.Application.Repositories.Impls
             }
         }
 
+		
 
-        public async Task DeletePost(int postId)
+
+		public async Task DeletePost(int postId)
         {
             try
             {
@@ -118,7 +120,12 @@ namespace FFS.Application.Repositories.Impls
                 {
                     throw new Exception("Bài viết không tồn tại !");
                 }
-                await Remove(existingPost);
+				var comments = _context.Comments.Where(c => c.PostId == postId);
+				_context.Comments.RemoveRange(comments);
+				var reacts = _context.ReactPosts.Where(c => c.PostId == postId);
+				_context.ReactPosts.RemoveRange(reacts);
+
+				await Remove(existingPost);
 
             }
             catch (Exception ex)

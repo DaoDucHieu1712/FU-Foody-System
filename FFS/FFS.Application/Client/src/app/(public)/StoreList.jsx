@@ -33,7 +33,7 @@ const StoreList = () => {
   const GetListCategory = async () => {
     try {
       axios
-        .get("/api/Category/ListTop5PopularCategory")
+        .get("/api/Category/ListTop8PopularCategory")
         .then((response) => {
           setCategory([{ id: "", categoryName: "Tất cả" }, ...response]);
         })

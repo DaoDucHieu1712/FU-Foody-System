@@ -92,6 +92,7 @@ const DetailPost = () => {
 	};
 	return (
 		<>
+		
 			<div className="container mt-8 p-11">
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-14">
 					{/* Column 1 */}
