@@ -16,5 +16,7 @@ namespace FFS.Application.Repositories {
         void ApproveUser(string id, string action);
 		List<AccountStatistic> AccountsStatistic();
 		int CountTotalUsers();
+		int CountGetPosts(UserParameters userParameters);
+		IEnumerable<dynamic> GetPosts(UserParameters userParameters);
 	}
 }

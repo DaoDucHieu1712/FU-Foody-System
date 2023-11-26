@@ -81,7 +81,28 @@ namespace FFS.Application.Controllers {
             }
         }
 
-        [Authorize]
+		[Authorize]
+		[HttpPost]
+		public IActionResult GetPosts([FromBody] UserParameters userParameters)
+		{
+			try
+			{
+				IEnumerable<dynamic> data = _userRepository.GetPosts(userParameters);
+				int total = _userRepository.CountGetPosts(userParameters);
+				var res = new
+				{
+					data = data,
+					total = total,
+				};
+				return Ok(res);
+			}
+			catch (Exception ex)
+			{
+				throw;
+			}
+		}
+
+		[Authorize]
         [HttpGet]
         public IActionResult GetRoles()
         {

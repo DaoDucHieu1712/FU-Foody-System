@@ -11,6 +11,7 @@ const navigations = [
 	{ href: "/admin/dashboard", name: "Dashboard" },
 	{ href: "/admin/report", name: "Báo cáo" },
 	{ href: "/admin/manage-acoount", name: "Quản lí tài khoản" },
+	{ href: "/admin/manage-post", name: "Quản lí bài đăng" },
 	{ href: "/admin/request-account", name: "Yêu cầu tạo tài khoản" },
 ];
 

@@ -5,7 +5,7 @@
         public string Email { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
         public string Action { get; set; } = string.Empty;
-
-        public int? Status { get; set; }
+		public string Title { get; set; } = string.Empty;
+		public int? Status { get; set; }
     }
 }
