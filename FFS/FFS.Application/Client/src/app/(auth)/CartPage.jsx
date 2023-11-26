@@ -1,7 +1,6 @@
 import {
 	Button,
 	Card,
-	Checkbox,
 	Input,
 	Option,
 	Radio,
@@ -80,6 +79,7 @@ const CartPage = () => {
 	const handleSelectLocation = async (location) => {
 		setPhone(location.phoneNumber);
 		setNote(location.description);
+		setLocation(location.address);
 		const items = cart.list.map(({ foodName, quantity }) => ({
 			name: foodName,
 			quantity: quantity,
@@ -296,7 +296,7 @@ const CartPage = () => {
 						</div>
 						<div className="p-3 flex justify-between">
 							<p className="font-medium text-lg ">Tổng</p>
-							<span>{totalPrice} đ</span>
+							<span>{cart.totalPrice} đ</span>
 						</div>
 						<div className="p-3 w-full">
 							<div>

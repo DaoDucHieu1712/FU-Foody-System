@@ -46,7 +46,7 @@ import NotFoundPage from "./app/NotFoundPage";
 import PaymentPage from "./app/(auth)/PaymentPage";
 import ConfirmPaymentPage from "./app/(public)/ConfirmPaymentPage";
 // import OrderDetail from "./app/(store)/OrderDetail";
-// import MyOrderDetail from "./app/(auth)/MyOrderDetail";
+import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 import OrderDetail from "./app/(store)/OrderDetail";
 import ViewApplicationPage from "./app/(admin)/ViewApplicationPage";
 
@@ -79,7 +79,7 @@ function App() {
 					<Route path="/wishlist" element={<Wishlist />} />
 
 					<Route path="/user-detail/:id" element={<UserDetails />} />
-					{/* <Route path="/my-order/:id" element={<MyOrderDetail />} /> */}
+					<Route path="/my-order/:id" element={<MyOrderDetail />} />
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
 				</Route>
 				<Route element={<ShipperLayout></ShipperLayout>}>
@@ -87,7 +87,7 @@ function App() {
 						path="/shipper/order-pending"
 						element={<OrderShippingPage />}
 					/>
-			
+
 					<Route
 						path="/shipper/order-available"
 						element={<OrderAvailablePage />}
