@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-
+using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities.Constant;
 using FFS.Application.Infrastructure.Interfaces;
@@ -16,17 +16,19 @@ namespace FFS.Application.Controllers {
 
         private readonly IReportRepository _reportRepository;
         private readonly IUserRepository _userRepository;
+		private readonly IPostRepository _postRepository;
 
-        private readonly IMapper _mapper;
+		private readonly IMapper _mapper;
 
-        public AdminController(IReportRepository reportRepository, IMapper mapper, IUserRepository userRepository)
-        {
-            _reportRepository = reportRepository;
-            _mapper = mapper;
-            _userRepository = userRepository;
-        }
+		public AdminController(IReportRepository reportRepository, IUserRepository userRepository, IPostRepository postRepository, IMapper mapper)
+		{
+			_reportRepository = reportRepository;
+			_userRepository = userRepository;
+			_postRepository = postRepository;
+			_mapper = mapper;
+		}
 
-        [HttpPost]
+		[HttpPost]
         [Authorize(Roles = $"Admin")]
         public IActionResult GetReports([FromBody]ReportParameters reportParameters)
         {
@@ -192,9 +194,68 @@ namespace FFS.Application.Controllers {
             }
         }
 
-        
+		[HttpGet]
+		public IActionResult AccountsStatistic()
+		{
+			try
+			{
+				List<AccountStatistic> AccountsStatistic = _userRepository.AccountsStatistic();
+				return Ok(new
+				{
+					TotalAccount = _userRepository.CountTotalUsers(),
+					AccountsStatistic = AccountsStatistic
+				});
+			} catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+			
+		}
 
+		[HttpGet("{year}")]
+		public IActionResult ReportsStatistic(int year = default)
+		{
+			if (year == default)
+			{
+				year = DateTime.Now.Year;
+			}
 
+			try
+			{
+				List<ReportStatistic> reportsStatistic = _reportRepository.ReportStatistics(year);
+				int TotalReportYear = _reportRepository.CountAllReportInYear(year);
 
-    }
+				var result = new
+				{
+					TotalAccount = TotalReportYear,
+					ReportsStatistic = reportsStatistic
+				};
+
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+		}
+		[HttpGet]
+		public IActionResult PostsStatistic()
+		{
+			try
+			{
+				List<PostStatistic> postStatistics = _postRepository.PostStatistics();
+				return Ok(new
+				{
+					TotalPost = _postRepository.CountAllPost(),
+					PostsStatistic = postStatistics
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+
+		}
+
+	}
 }

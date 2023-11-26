@@ -8,9 +8,12 @@ import CookieService from "../../shared/helper/cookieConfig";
 import { setAccessToken } from "../../redux/auth";
 
 const navigations = [
-	{ href: "/store/manager", name: "Cửa hàng của tôi" },
+	{ href: "/store/manager", name: "Thống kê cửa hàng" },
+	{ href: "/store/inventory", name: "Kho món ăn của tôi" },
 	{ href: "/store/category", name: "Danh mục của tôi" },
 	{ href: "/store/food", name: "Thực phẩm" },
+	{ href: "/store/discount", name: "Mã giảm giá"},
+	{ href: "/store/flash-sale", name: "Chương trình Flashsale"},
 	{ href: "/store/order", name: "Đơn hàng" },
 ];
 

@@ -73,8 +73,7 @@ function App() {
 					<Route path="/food-list" element={<FoodList />} />
 					<Route path="/store-list" element={<StoreList />} />
 					<Route path="/wishlist" element={<Wishlist />} />
-					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
-					<Route path="/store/flash-sale" element={<FlashSale />} />
+					
 					<Route path="/user-detail/:id" element={<UserDetails />} />
 					<Route path="/my-order/:id" element={<MyOrderDetail />} />
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
@@ -104,6 +103,8 @@ function App() {
 					<Route path="/store/category" element={<Category />} />
 					<Route path="/store/discount" element={<Discount />} />
 					<Route path="/store/order/:id" element={<OrderDetail />} />
+					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
+					<Route path="/store/flash-sale" element={<FlashSale />} />
 				</Route>
 				<Route element={<AdminLayout></AdminLayout>}>
 					<Route path="/admin/report" element={<ReportPage />} />

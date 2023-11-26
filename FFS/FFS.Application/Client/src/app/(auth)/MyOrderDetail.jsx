@@ -14,6 +14,8 @@ import OrderItem from "../(store)/components/order/OrderItem";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import ReviewStore from "../(public)/components/ReviewStore";
+import CookieService from "../../shared/helper/cookieConfig";
 
 const MyOrderDetail = () => {
 	const [open, setOpen] = useState(false);
@@ -36,6 +38,8 @@ const MyOrderDetail = () => {
 			location.reload();
 		});
 	};
+	const email = CookieService.getToken("fu_foody_email");
+	const role = CookieService.getToken("fu_foody_role");
 
 	return (
 		<>
@@ -47,7 +51,7 @@ const MyOrderDetail = () => {
 						hàng #{orderQuery.data?.id}
 					</p>
 					<>
-						<div className="flex flex-col gap-y-5 cart mt-8 border-1 rounded-md border-gray-400">
+						<div className="m-10 flex flex-col gap-y-5 cart mt-8 border-1 rounded-md border-gray-400">
 							{orderQuery.isLoading ? (
 								<Spinner />
 							) : (
@@ -57,6 +61,16 @@ const MyOrderDetail = () => {
 							)}
 						</div>
 					</>
+					{role !== "StoreOwner" ? (
+						<ReviewStore
+							email={email}
+							idStore={orderQuery.data?.orderDetails[0].storeId}
+							idShipper={orderQuery.data?.shipperId}
+							storeName={orderQuery.data?.orderDetails[0].storeName }
+						/>
+					) : (
+						<></>
+					)}
 				</div>
 				<div className="flex flex-col gap-y-4">
 					<h1 className="pb-3 border-b font-bold text-2xl border-gray-200">
@@ -83,7 +97,7 @@ const MyOrderDetail = () => {
 					<div className="flex justify-between items-center border-b pb-3 border-gray-200">
 						<p className="font-bold text-lg">Ngày đặt :</p>
 						<p className="text-red-500  font-bold text-lg">
-							{orderQuery.data?.createdAt.toString().slice(0, 10)} $
+							{orderQuery.data?.createdAt.toString().slice(0, 10)}
 						</p>
 					</div>
 					<div className="my-3 flex justify-between items-center gap-x-3">

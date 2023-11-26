@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Drawing;
 using System.Globalization;
 using System.Text;
 using AutoMapper;
@@ -21,6 +22,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using OfficeOpenXml;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -48,18 +50,89 @@ namespace FFS.Application.Repositories.Impls
 
                 var exportFoodDTOs = _mapper.Map<List<ExportFoodDTO>>(foodsOfStore);
 
-                using (var workbook = new XLWorkbook())
-                {
-                    ExcelConfiguration.ExportFood(exportFoodDTOs, workbook);
+				using (var package = new ExcelPackage())
+				{
+					var workbook = package.Workbook;
+					var worksheet = workbook.Worksheets.Add("Món ăn");
+					int index = 1;
+					string cell = string.Format($"A{index}:F{index}");
+					worksheet.Cells[cell].Value = "Báo cáo món ăn";
+					worksheet.Cells[cell].Merge = true;
+					worksheet.Cells[cell].Style.Font.Size = 20;
+					worksheet.Cells[cell].Style.Font.Bold = true;
+					worksheet.Cells[cell].Style.Fill.SetBackground(ColorTranslator.FromHtml("#FE5303"));
+					worksheet.Cells[cell].Style.Font.Color.SetColor(System.Drawing.Color.White);
+					worksheet.Cells[cell].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+					worksheet.Cells[cell].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+					index++;
 
-                    using (var stream = new MemoryStream())
-                    {
-                        workbook.SaveAs(stream);
-                        var content = stream.ToArray();
-                        return await Task.FromResult(stream.ToArray());
-                    }
-                }
-            }
+					cell = string.Format($"A{index}");
+					worksheet.Cells[cell].Value = "Mã món ăn";
+
+					cell = string.Format($"B{index}");
+					worksheet.Cells[cell].Value = "Tên món";
+
+					cell = string.Format($"C{index}");
+					worksheet.Cells[cell].Value = "Mô tả";
+
+					cell = string.Format($"D{index}");
+					worksheet.Cells[cell].Value = "Giá";
+
+					cell = string.Format($"E{index}");
+					worksheet.Cells[cell].Value = "Lọai món ăn";
+
+					cell = string.Format($"F{index}");
+					worksheet.Cells[cell].Value = "Ngày tạo";
+
+					cell = string.Format($"A{index}:F{index}");
+					worksheet.Cells[cell].Style.Font.Size = 14;
+					worksheet.Cells[cell].Style.Font.Bold = true;
+					worksheet.Cells[cell].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+					worksheet.Cells[cell].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+
+					index++;
+
+
+					int indexData = 0;
+
+					// Populate rows with data
+					for (int i = 0; i < exportFoodDTOs.Count; i++)
+					{
+						indexData = index + i;
+
+						cell = string.Format($"A{indexData}");
+						worksheet.Cells[cell].Value = exportFoodDTOs[i].Id;
+						worksheet.Cells[cell].Style.WrapText = true;
+
+						cell = string.Format($"B{indexData}");
+						worksheet.Cells[cell].Value = exportFoodDTOs[i].FoodName;
+
+						cell = string.Format($"C{indexData}");
+						worksheet.Cells[cell].Value = exportFoodDTOs[i].Description;
+
+						cell = string.Format($"D{indexData}");
+						worksheet.Cells[cell].Value = exportFoodDTOs[i].Price;
+
+						cell = string.Format($"E{indexData}");
+						worksheet.Cells[cell].Value = exportFoodDTOs[i].CategoryName;
+
+						cell = string.Format($"F{indexData}");
+						worksheet.Cells[cell].Value = exportFoodDTOs[i].CreatedAt.ToString("MM/dd/yyyy HH:mm:ss");
+
+
+						worksheet.Row(indexData).Height = 40;
+					}
+
+
+					cell = string.Format($"A{2}:F{indexData}");
+					worksheet.Cells[cell].Style.Font.Size = 14;
+					worksheet.Cells.AutoFitColumns();
+					worksheet.Column(1).Width = 85;
+
+
+					return package.GetAsByteArray();
+				}
+			}
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
@@ -77,18 +150,89 @@ namespace FFS.Application.Repositories.Impls
 
                 var exportInventoryDTOs = _mapper.Map<List<ExportInventoryDTO>>(inventoriesOfStore);
 
-                using (var workbook = new XLWorkbook())
-                {
-                    ExcelConfiguration.ExportInventory(exportInventoryDTOs, workbook);
+				using (var package = new ExcelPackage())
+				{
+					var workbook = package.Workbook;
+					var worksheet = workbook.Worksheets.Add("Kho");
+					int index = 1;
+					string cell = string.Format($"A{index}:F{index}");
+					worksheet.Cells[cell].Value = "Báo cáo Kho";
+					worksheet.Cells[cell].Merge = true;
+					worksheet.Cells[cell].Style.Font.Size = 20;
+					worksheet.Cells[cell].Style.Font.Bold = true;
+					worksheet.Cells[cell].Style.Fill.SetBackground(ColorTranslator.FromHtml("#FE5303"));
+					worksheet.Cells[cell].Style.Font.Color.SetColor(System.Drawing.Color.White);
+					worksheet.Cells[cell].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+					worksheet.Cells[cell].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+					index++;
 
-                    using (var stream = new MemoryStream())
-                    {
-                        workbook.SaveAs(stream);
-                        var content = stream.ToArray();
-                        return await Task.FromResult(stream.ToArray());
-                    }
-                }
-            }
+					cell = string.Format($"A{index}");
+					worksheet.Cells[cell].Value = "Mã kho";
+
+					cell = string.Format($"B{index}");
+					worksheet.Cells[cell].Value = "Tên món ăn";
+
+					cell = string.Format($"C{index}");
+					worksheet.Cells[cell].Value = "Mã món ăn";
+
+					cell = string.Format($"D{index}");
+					worksheet.Cells[cell].Value = "Loại món ăn";
+
+					cell = string.Format($"E{index}");
+					worksheet.Cells[cell].Value = "Số lượng trong kho";
+
+					cell = string.Format($"F{index}");
+					worksheet.Cells[cell].Value = "Ngày tạo";
+
+					cell = string.Format($"A{index}:F{index}");
+					worksheet.Cells[cell].Style.Font.Size = 14;
+					worksheet.Cells[cell].Style.Font.Bold = true;
+					worksheet.Cells[cell].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+					worksheet.Cells[cell].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+
+					index++;
+
+
+					int indexData = 0;
+
+					// Populate rows with data
+					for (int i = 0; i < exportInventoryDTOs.Count; i++)
+					{
+						indexData = index + i;
+
+						cell = string.Format($"A{indexData}");
+						worksheet.Cells[cell].Value = exportInventoryDTOs[i].Id;
+						worksheet.Cells[cell].Style.WrapText = true;
+
+						cell = string.Format($"B{indexData}");
+						worksheet.Cells[cell].Value = exportInventoryDTOs[i].FoodName;
+
+						cell = string.Format($"C{indexData}");
+						worksheet.Cells[cell].Value = exportInventoryDTOs[i].FoodId;
+
+						cell = string.Format($"D{indexData}");
+						worksheet.Cells[cell].Value = exportInventoryDTOs[i].CategoryName;
+
+						cell = string.Format($"E{indexData}");
+						worksheet.Cells[cell].Value = exportInventoryDTOs[i].quantity;
+
+						cell = string.Format($"F{indexData}");
+						worksheet.Cells[cell].Value = exportInventoryDTOs[i].CreatedAt.ToString("MM/dd/yyyy HH:mm:ss");
+
+
+						worksheet.Row(indexData).Height = 40;
+					}
+
+
+					cell = string.Format($"A{2}:F{indexData}");
+					worksheet.Cells[cell].Style.Font.Size = 14;
+					worksheet.Cells.AutoFitColumns();
+					worksheet.Column(1).Width = 85;
+
+
+					return package.GetAsByteArray();
+				}
+			}
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
