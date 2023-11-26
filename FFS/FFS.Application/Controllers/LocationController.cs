@@ -3,6 +3,8 @@ using FFS.Application.Data;
 using FFS.Application.DTOs.Location;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
+using FFS.Application.Repositories;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +16,15 @@ namespace FFS.Application.Controllers
     public class LocationController : ControllerBase
     {
         private readonly ILocationRepository _locaRepo;
-        private readonly IMapper _mapper;
+		private readonly IStoreRepository _storeRepository;
 
-        public LocationController(ILocationRepository locaRepo, IMapper mapper)
+		private readonly IMapper _mapper;
+
+        public LocationController(ILocationRepository locaRepo, IMapper mapper, IStoreRepository storeRepository)
         {
             _locaRepo = locaRepo;
             _mapper = mapper;
+			_storeRepository = storeRepository;
         }
 
         [HttpGet]
@@ -37,13 +42,11 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Location>> AddLocation([FromBody] LocationDTO locationDTO)
+        public async Task<ActionResult<Location>> AddLocation([FromBody] Location locationDTO)
         {
             try
             {
-                var locationEntity = _mapper.Map<Location>(locationDTO);
-                var locations = _locaRepo.FindAll(x => x.User.Email == locationDTO.Email);
-                await _locaRepo.Add(locationEntity);
+                await _locaRepo.Add(locationDTO);
                 return Ok("Thêm thành công");
             }
             catch (Exception ex)
@@ -53,7 +56,7 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateLocation(int id, LocationDTO locationDTO)
+        public async Task<ActionResult> UpdateLocation(int id, Location locationDTO)
         {
             try
             {
@@ -91,7 +94,30 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+		[HttpGet("{storeId}")]
+		public async Task<IActionResult> GetLocation(int storeId)
+		{
+			try
+			{
+				var store = await _storeRepository.FindSingle(x => x.Id == storeId);
+				if(store != null)
+				{
+					var location = await _locaRepo.FindSingle(x => x.UserId == store.UserId);
+					if(location == null)
+					{
+						return NotFound();
+					}
+					return Ok(location);
+				}
+				return NotFound();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPut("{id}")]
         public async Task<ActionResult> UpdateDefaultLocation(int id, string email)
         {
             try

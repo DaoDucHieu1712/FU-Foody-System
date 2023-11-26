@@ -40,10 +40,13 @@ import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 import UserDetails from "./app/(public)/UserDetails";
 import ShipperRegisterPage from "./app/(public)/ShipperRegister";
-import MyOrderDetail from "./app/(auth)/MyOrderDetail";
+// import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 import AccessDenied from "./app/(public)/AccessDenied";
 import NotFoundPage from "./app/NotFoundPage";
 import PaymentPage from "./app/(auth)/PaymentPage";
+import ConfirmPaymentPage from "./app/(public)/ConfirmPaymentPage";
+// import OrderDetail from "./app/(store)/OrderDetail";
+// import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 import OrderDetail from "./app/(store)/OrderDetail";
 import ViewApplicationPage from "./app/(admin)/ViewApplicationPage";
 
@@ -52,6 +55,7 @@ function App() {
 		<>
 			<Routes>
 				<Route path="/" element={<Layout />}>
+					<Route path="/confirm-payment" element={<ConfirmPaymentPage />} />
 					<Route path="/" element={<HomePage />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/location" element={<Location />} />
@@ -73,9 +77,9 @@ function App() {
 					<Route path="/food-list" element={<FoodList />} />
 					<Route path="/store-list" element={<StoreList />} />
 					<Route path="/wishlist" element={<Wishlist />} />
-					
+
 					<Route path="/user-detail/:id" element={<UserDetails />} />
-					<Route path="/my-order/:id" element={<MyOrderDetail />} />
+					{/* <Route path="/my-order/:id" element={<MyOrderDetail />} /> */}
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
 				</Route>
 				<Route element={<ShipperLayout></ShipperLayout>}>
@@ -108,6 +112,8 @@ function App() {
 				</Route>
 				<Route element={<AdminLayout></AdminLayout>}>
 					<Route path="/admin/report" element={<ReportPage />} />
+					{/* <Route path="/admin/manage-post" element={<PostManagePage />} /> */}
+
 					<Route path="/admin/dashboard" element={<DashboardPage />} />
 					<Route path="/admin/manage-acoount" element={<AccountManagePage />} />
 					<Route

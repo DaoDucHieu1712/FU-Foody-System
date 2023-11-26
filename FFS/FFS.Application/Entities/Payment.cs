@@ -1,4 +1,6 @@
 ﻿using FFS.Application.Entities.Common;
+using FFS.Application.Entities.Enum;
+
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FFS.Application.Entities
@@ -8,8 +10,6 @@ namespace FFS.Application.Entities
     {
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; }
-        public string TransactionCode { get; set; }
-        public int Status { get; set; }
-
+        public PaymentStatus Status { get; set; }
     }
 }

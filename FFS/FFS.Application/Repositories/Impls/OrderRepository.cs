@@ -6,10 +6,13 @@ using Dapper;
 
 using DocumentFormat.OpenXml.Office2010.Excel;
 
+using FFS.Application.Controllers;
 using FFS.Application.Data;
 using FFS.Application.DTOs.Order;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace FFS.Application.Repositories.Impls {
     public class OrderRepository : EntityRepository<Order, int>, IOrderRepository
@@ -116,5 +119,46 @@ namespace FFS.Application.Repositories.Impls {
                 throw new Exception(ex.Message);
             }
         }
-    }
+
+		public async Task CreatePayment(Payment payment)
+		{
+			await _context.AddAsync(payment);
+			await _context.SaveChangesAsync();
+		}
+
+		public async Task ConfirmPayment(OrderController.Confirm confirm)
+		{
+			try
+			{
+				Order? order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == confirm.OrderId);
+				if(order == null)
+				{
+					throw new Exception("Đơn hàng không tồn tại");
+				}
+				int? paymentId = order.PaymentId;
+				if(paymentId == null)
+				{
+					throw new Exception("Giao dịch không tồn tại");
+				}
+				Payment? payment = await _context.Payments.FirstOrDefaultAsync(x => x.Id == paymentId);
+				if(payment != null)
+				{
+					if(confirm.Response == 0)
+					{
+						payment.Status = Entities.Enum.PaymentStatus.Completed;
+					}
+					else
+					{
+						payment.Status = Entities.Enum.PaymentStatus.Cancel;
+					}
+					await _context.SaveChangesAsync();
+				}
+			}
+			catch (Exception ex)
+			{
+
+				throw;
+			}
+		}
+	}
 }
