@@ -1,4 +1,5 @@
-﻿using FFS.Application.DTOs.QueryParametter;
+﻿using FFS.Application.DTOs.Admin;
+using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 
@@ -13,5 +14,7 @@ namespace FFS.Application.Repositories {
         void BanAccount(string idBan);
         void UnBanAccount(string idUnBan);
         void ApproveUser(string id, string action);
-    }
+		List<AccountStatistic> AccountsStatistic();
+		int CountTotalUsers();
+	}
 }

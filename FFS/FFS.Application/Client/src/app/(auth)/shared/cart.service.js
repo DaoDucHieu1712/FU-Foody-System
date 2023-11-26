@@ -1,3 +1,4 @@
+import axios from "axios";
 import axiosConfig from "../../../shared/api/axiosConfig";
 
 const CartService = {
@@ -21,6 +22,31 @@ const CartService = {
 		const url =
 			"/api/Discount/UseDiscount?" + `Code=${code}&` + `UserId=${userId}`;
 		return axiosConfig.get(url);
+	},
+
+	async CalcFeeShip(fromDistrictId, toDistrictID, toWardCode, item) {
+		const headers = {
+			Token: "6c942378-8c0f-11ee-a6e6-e60958111f48",
+			ShopId: 190398,
+		};
+		const url =
+			"https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee";
+		const data = {
+			service_id: 53320,
+			from_district_id: fromDistrictId,
+			to_district_id: toDistrictID,
+			to_ward_code: toWardCode,
+			weight: 10,
+			items: item,
+		};
+		return axios
+			.post(url, data, { headers: headers })
+			.then((response) => {
+				return response;
+			})
+			.catch((error) => {
+				console.error(error);
+			});
 	},
 };
 
