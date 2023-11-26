@@ -45,7 +45,7 @@ import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 import AccessDenied from "./app/(public)/AccessDenied";
 import NotFoundPage from "./app/NotFoundPage";
 import PaymentPage from "./app/(auth)/PaymentPage";
-// import OrderDetail from "./app/(store)/OrderDetail";
+import OrderDetail from "./app/(store)/OrderDetail";
 // import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 
 function App() {
@@ -107,6 +107,7 @@ function App() {
 					<Route path="/store/inventory" element={<Inventory />} />
 					<Route path="/store/category" element={<Category />} />
 					<Route path="/store/discount" element={<Discount />} />
+					<Route path="/store/order/:id" element={<OrderDetail />} />
 				</Route>
 				<Route element={<AdminLayout></AdminLayout>}>
 					<Route path="/admin/report" element={<ReportPage />} />
