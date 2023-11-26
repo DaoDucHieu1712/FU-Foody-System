@@ -40,7 +40,7 @@ const Wishlist = () => {
 
   
 
-  const handleAddToCart = (cartItem) => {
+  const handleAddToCart =  async (cartItem) => {
     console.log(cartItem);
     console.log("ok");
     const item = {
@@ -51,7 +51,16 @@ const Wishlist = () => {
       price: cartItem.price,
       quantity: 1,
     };
-    dispatch(cartActions.addToCart(item));
+    try {
+      // Dispatch action to add to cart
+      dispatch(cartActions.addToCart(item)); 
+      await axios.delete(
+        `/api/Wishlist/RemoveFromWishlistv2/${userId}/${cartItem.foodId}`
+      );
+      await fetchWishlist();
+    } catch (error) {
+      console.error("An error occurred while adding to the cart: ", error);
+    }
   };
 
   return (

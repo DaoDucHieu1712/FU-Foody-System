@@ -92,6 +92,7 @@ const DetailPost = () => {
 	};
 	return (
 		<>
+		
 			<div className="container mt-8 p-11">
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-14">
 					{/* Column 1 */}
@@ -159,7 +160,7 @@ const DetailPost = () => {
 											</MenuList>
 										) : (
 											<MenuList>
-												<MenuItem><ReportUser uId={userId} sId={post.userId}></ReportUser></MenuItem>
+												<ReportUser uId={userId} sId={post.userId}></ReportUser>
 											</MenuList>
 										)}
 									</Menu>

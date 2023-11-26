@@ -1,4 +1,4 @@
-import { Checkbox, Dialog, Textarea, Typography } from "@material-tailwind/react";
+import { Checkbox, Dialog, Textarea, Typography,MenuItem, } from "@material-tailwind/react";
 import { useState } from "react";
 import axios from "../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
@@ -73,7 +73,7 @@ const ReportUser = ({ uId, sId }) => {
 
     return (
         <>
-            <Typography className="text-orange-900 font-semibold cursor-pointer hover:underline hover:text-orange-700" onClick={handleOpen}>Báo cáo</Typography>
+         <MenuItem onClick={handleOpen}>Báo cáo</MenuItem>
             <Dialog
                 size="md"
                 open={open}

@@ -16,6 +16,7 @@ import { setAccessToken } from "../../redux/auth";
 import { useDispatch } from "react-redux";
 
 const ShipperLayout = () => {
+	const userId = CookieService.getToken("fu_foody_id");
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [email, setEmail] = useState();
@@ -68,7 +69,7 @@ const ShipperLayout = () => {
 						</div>
 						<div className="list flex flex-col  items-start gap-y-8 text-md font-medium text-white">
 							<NavLink
-								to="/shipper/details/:id"
+								 to={`/shipper/details/${userId}`}
 								className="uppercase flex items-center"
 							>
 								<User />
