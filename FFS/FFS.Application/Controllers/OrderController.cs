@@ -420,7 +420,7 @@ namespace FFS.Application.Controllers
 			string vnpTxnRef = order.Id.ToString();
 			string vnpOrderInfo = $"Thanh toán đơn hàng cho cửa hàng ${store.StoreName} tại ${store.Address} ";
 			string vnpOrderType = "100000";	
-			long vnpAmount = Convert.ToInt64(order.TotalPrice);
+			long vnpAmount = Convert.ToInt64(order.TotalPrice) * 100;
 			string vnpLocal = "vn";
 			string vnpIpAdd = HttpContext.Connection.RemoteIpAddress.ToString();
 
