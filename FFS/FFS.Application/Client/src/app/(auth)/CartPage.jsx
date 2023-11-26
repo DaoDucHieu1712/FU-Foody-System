@@ -19,8 +19,6 @@ import CartService from "./shared/cart.service";
 import { cartActions } from "./shared/cartSlice";
 import CartItem from "./shared/components/cart/CartItem";
 import LocationService from "./shared/location.service";
-import { useNavigate } from "react-router-dom";
-import CookieService from "../../shared/helper/cookieConfig";
 import axiosConfig from "../../shared/api/axiosConfig";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
