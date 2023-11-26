@@ -36,7 +36,6 @@ import StoreList from "./app/(public)/StoreList";
 import ShipperLayout from "./app/(shipper)/ShipperLayout";
 import OrderAvailablePage from "./app/(shipper)/OrderAvailablePage";
 import OrderShippingPage from "./app/(shipper)/OrderShippingPage";
-
 import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 import UserDetails from "./app/(public)/UserDetails";
@@ -46,7 +45,7 @@ import AccessDenied from "./app/(public)/AccessDenied";
 import NotFoundPage from "./app/NotFoundPage";
 import PaymentPage from "./app/(auth)/PaymentPage";
 import OrderDetail from "./app/(store)/OrderDetail";
-// import MyOrderDetail from "./app/(auth)/MyOrderDetail";
+import ViewApplicationPage from "./app/(admin)/ViewApplicationPage";
 
 function App() {
 	return (
@@ -99,10 +98,7 @@ function App() {
 					/>
 				</Route>
 				<Route element={<StoreLayout></StoreLayout>}>
-					{/* <Route path="/food" element={<Food />} /> */}
 					<Route path="/store/order" element={<OrderList />} />
-					{/* <Route path="/inventory" element={<Inventory />} /> */}
-					{/* <Route path="/category" element={<Category />} /> */}
 					<Route path="/store/food" element={<Food />} />
 					<Route path="/store/inventory" element={<Inventory />} />
 					<Route path="/store/category" element={<Category />} />
@@ -116,6 +112,10 @@ function App() {
 					<Route
 						path="/admin/request-account"
 						element={<RequestAccountPage />}
+					/>
+					<Route
+						path="/admin/application/:id"
+						element={<ViewApplicationPage />}
 					/>
 				</Route>
 				<Route path="*" element={<NotFoundPage />}></Route>
