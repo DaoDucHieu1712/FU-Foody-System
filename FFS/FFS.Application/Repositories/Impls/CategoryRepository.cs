@@ -1,5 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Data;
+
+using AutoMapper;
 using ClosedXML.Excel;
+
+using Dapper;
+
 using FFS.Application.Data;
 using FFS.Application.DTOs.Category;
 using FFS.Application.DTOs.Common;
@@ -9,6 +14,8 @@ using FFS.Application.Entities;
 using FFS.Application.Helper;
 using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+
+using OfficeOpenXml;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -25,31 +32,96 @@ namespace FFS.Application.Repositories.Impls
 
         public async Task<byte[]> ExportCategory(int id)
         {
-            try
-            {
-                List<Category> categories = await _context.Categories
-                    .Where(x => x.StoreId == id && x.IsDelete == false)
-                    .ToListAsync();
+			try
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("storeId", id);
+				using var db = _context.Database.GetDbConnection();
 
-                var exportCategories = _mapper.Map<List<CategoryDTO>>(categories);
+				dynamic exportFoods = db.Query<dynamic>("ExportCategory", parameters, commandType: CommandType.StoredProcedure);
+				db.Close();
 
-                using (var workbook = new XLWorkbook())
-                {
-                    ExcelConfiguration.ExportCategory(exportCategories, workbook);
+				using (var package = new ExcelPackage())
+				{
+					var workbook = package.Workbook;
+					var worksheet = workbook.Worksheets.Add("Foods");
 
-                    using (var stream = new MemoryStream())
-                    {
-                        workbook.SaveAs(stream);
-                        var content = stream.ToArray();
-                        return await Task.FromResult(stream.ToArray());
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+
+					int index = 1;
+					string cell = string.Format($"A{index}:E{index}");
+					worksheet.Cells[cell].Value = "Báo cáo doanh mục thực phẩm";
+					worksheet.Cells[cell].Merge = true;
+					worksheet.Cells[cell].Style.Font.Size = 20;
+					worksheet.Cells[cell].Style.Font.Bold = true;
+					worksheet.Cells[cell].Style.Fill.SetBackground(System.Drawing.ColorTranslator.FromHtml("#FE5303"));
+					worksheet.Cells[cell].Style.Font.Color.SetColor(System.Drawing.Color.White);
+					worksheet.Cells[cell].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+					worksheet.Cells[cell].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+					index++;
+
+					cell = string.Format($"A{index}");
+					worksheet.Cells[cell].Value = "Tên danh mục";
+
+					cell = string.Format($"B{index}");
+					worksheet.Cells[cell].Value = "Tên cửa hàng";
+
+					cell = string.Format($"C{index}");
+					worksheet.Cells[cell].Value = "Số lượng sản phẩm";
+
+					cell = string.Format($"D{index}");
+					worksheet.Cells[cell].Value = "Ngày tạo";
+
+					cell = string.Format($"E{index}");
+					worksheet.Cells[cell].Value = "Lần cập nhật cuối cùng";
+
+
+					cell = string.Format($"A{index}:E{index}");
+					worksheet.Cells[cell].Style.Font.Size = 14;
+					worksheet.Cells[cell].Style.Font.Bold = true;
+					worksheet.Cells[cell].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+					worksheet.Cells[cell].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+
+					index++;
+
+
+					int indexData = 0;
+
+					// Populate rows with data
+					for (int i = 0; i < exportFoods.Count; i++)
+					{
+						indexData = index + i;
+						cell = string.Format($"A{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].CategoryName;
+
+						cell = string.Format($"B{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].StoreName;
+
+						cell = string.Format($"C{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].totalFoods;
+
+						cell = string.Format($"D{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].CreatedAt;
+
+						cell = string.Format($"E{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].UpdatedAt;
+
+						worksheet.Row(indexData).Height = 30;
+				
+					}
+
+					cell = string.Format($"A{2}:E{indexData}");
+					worksheet.Cells[cell].Style.Font.Size = 14;
+
+					worksheet.Cells.AutoFitColumns();
+
+					return package.GetAsByteArray();
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
 
         public DTOs.Common.PagedList<Category> GetCategoriesByStoreId(CategoryParameters categoryParameters)
         {

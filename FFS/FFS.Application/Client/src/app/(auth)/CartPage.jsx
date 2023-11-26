@@ -1,8 +1,10 @@
 import {
 	Button,
 	Card,
+	Checkbox,
 	Input,
 	Option,
+	Radio,
 	Select,
 	Textarea,
 	Typography,
@@ -17,6 +19,7 @@ import CartItem from "./shared/components/cart/CartItem";
 import LocationService from "./shared/location.service";
 import { useNavigate } from "react-router-dom";
 import CookieService from "../../shared/helper/cookieConfig";
+import axiosConfig from "../../shared/api/axiosConfig";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
@@ -31,12 +34,15 @@ const CartPage = () => {
 	const [phone, setPhone] = useState("");
 	const [note, setNote] = useState("");
 	const [code, setCode] = useState("");
+	const [feeShip, setFeeShip] = useState("");
+	const [totalPrice, setTotalPrice] = useState(cart.totalPrice);
+
+	const [selectedType, setSelectedType] = useState("Thanh toán khi nhận hàng");
 
 	const getLocations = async () => {
 		const email = cookies.get("fu_foody_email");
 		await LocationService.getAll(email).then((res) => {
 			setLocations(res);
-			console.log(res);
 		});
 	};
 
@@ -70,6 +76,41 @@ const CartPage = () => {
 			});
 	};
 
+	const handleSelectLocation = async (location) => {
+		setPhone(location.phoneNumber);
+		setNote(location.description);
+		const items = cart.list.map(({ foodName, quantity }) => ({
+			name: foodName,
+			quantity: quantity,
+		}));
+
+		var storeId = cart.list[0].storeId;
+		await getLocationByUserId(storeId)
+			.then(async (res) => {
+				console.log(res);
+				await CartService.CalcFeeShip(
+					res.districtID,
+					location.districtID,
+					location.wardCode,
+					items
+				)
+					.then((res) => {
+						console.log(res.data.data.total);
+						setFeeShip(res.data.data.total);
+						setTotalPrice(cart.totalPrice + res.data.data.total);
+					})
+					.catch((err) => {
+						toast.error(err.data);
+					});
+			})
+			.catch((err) => {
+				toast.error(err.data);
+			});
+	};
+	const getLocationByUserId = (id) => {
+		return axiosConfig.get("/api/Location/GetLocation/" + id);
+	};
+
 	const CheckoutHandler = async () => {
 		await CartService.CreateOrder({
 			customerId: cookies.get("fu_foody_id"),
@@ -90,12 +131,53 @@ const CartPage = () => {
 						unitPrice: item.unitPrice,
 					};
 				});
+
 				await CartService.AddOrderItem(items)
 					.then((res) => {
 						console.log(res);
-						toast.success("Đặt hàng thành công");
-						dispatch(cartActions.clearCart());
-						navigate("/");
+						if (selectedType == "Chuyển khoản") {
+							const data = {
+								PaymentMethod: selectedType,
+								OrderId: items[0].orderId,
+								Status: 1,
+							};
+							axiosConfig
+								.post("/api/Order/CreatePayment", data)
+								.then((res) => {
+									console.log(res);
+									toast.success("Đặt hàng thành công");
+									dispatch(cartActions.clearCart());
+
+									axiosConfig
+										.get("/api/Order/GetUrlPayment/" + items[0].orderId)
+										.then((res) => {
+											window.open(res, "_blank");
+										})
+										.catch((err) => {
+											toast.error(err);
+										});
+								})
+								.catch((err) => {
+									toast.error(err);
+								});
+						} else {
+							const data = {
+								PaymentMethod: selectedType,
+								OrderId: items[0].orderId,
+								Status: 2,
+							};
+							axiosConfig
+								.post("/api/Order/CreatePayment", data)
+								.then((res) => {
+									console.log(res);
+									toast.success("Đặt hàng thành công");
+									dispatch(cartActions.clearCart());
+									navigate("/");
+								})
+								.catch((err) => {
+									toast.error(err);
+								});
+						}
 					})
 					.catch((err) => {
 						console.log(err.response.data);
@@ -158,11 +240,16 @@ const CartPage = () => {
 								label="Số điện thoại"
 								type="number"
 								onChange={(e) => setPhone(e.target.value)}
+								defaultValue={phone}
+								disabled
 							></Input>
-							<Select label="Địa chỉ" onChange={(e) => setLocation(e)}>
+							<Select
+								label="Địa chỉ"
+								onChange={(item) => handleSelectLocation(item)}
+							>
 								{locations.map((item) => {
 									return (
-										<Option key={item.id} value={item.address}>
+										<Option key={item.id} value={item}>
 											{item.address}
 										</Option>
 									);
@@ -172,6 +259,7 @@ const CartPage = () => {
 								label="Ghi chú"
 								className="h-[185px]"
 								onChange={(e) => setNote(e.target.value)}
+								defaultValue={note}
 							/>
 						</div>
 					</div>
@@ -188,7 +276,7 @@ const CartPage = () => {
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>
-								<span>Free</span>
+								<span>{feeShip} đ</span>
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Giảm giá</p>
@@ -197,9 +285,22 @@ const CartPage = () => {
 						</div>
 						<div className="p-3 flex justify-between">
 							<p className="font-medium text-lg ">Tổng</p>
-							<span>{cart.totalPrice} đ</span>
+							<span>{totalPrice} đ</span>
 						</div>
 						<div className="p-3 w-full">
+							<div>
+								<Radio
+									name="type"
+									label="Chuyển khoản"
+									onChange={() => setSelectedType("Chuyển khoản")}
+								/>
+								<Radio
+									name="type"
+									label="Thanh toán khi nhận hàng"
+									defaultChecked
+									onChange={() => setSelectedType("Thanh toán khi nhận hàng")}
+								/>
+							</div>
 							<Button className="bg-primary w-full" onClick={CheckoutHandler}>
 								Thanh toán
 							</Button>
