@@ -42,6 +42,14 @@ const BestRatingHome = () => {
                                 alt={bestRatingItem.foodName}
                                 className="h-28 w-44 object-cover group-hover:opacity-40"
                             />
+                            {bestRatingItem.salePercent > 0 ?
+                                (
+                                    <div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
+                                        <Typography className="text-white font-semibold">{bestRatingItem.salePercent}%</Typography>
+                                    </div>
+                                ) : (
+                                    null
+                                )}
                             <div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
                             <AddToWishlist foodId={bestRatingItem.id} />
                                 <FoodCart></FoodCart>
@@ -67,12 +75,56 @@ const BestRatingHome = () => {
                         </div>
                         <div className="w-2/5">
                             <Typography variant="h6" className="pointer-events-none">{bestRatingItem.foodName}</Typography>
-                            <Typography color="blue" className="pb-2 relative w-fit pointer-events-none">
-                                {bestRatingItem.price}.000
-                                <span className="absolute font-normal top-0 -right-2 text-xs">
-                                    đ
-                                </span>
-                            </Typography>
+                            {bestRatingItem.price > 0 ?
+                                (
+                                    <>
+                                        <Typography
+                                            color="gray"
+                                            className="relative w-fit line-through pointer-events-none"
+                                        >
+                                            {bestRatingItem.price}.000
+                                            <span className="absolute font-normal top-0 -right-2 text-xs">
+                                                đ
+                                            </span>
+                                        </Typography>
+                                        <Typography
+                                            color="blue"
+                                            className="relative w-fit pointer-events-none"
+                                        >
+                                            {bestRatingItem.priceAfterSale}.000
+                                            <span className="absolute font-normal top-0 -right-2 text-xs">
+                                                đ
+                                            </span>
+                                        </Typography>
+                                    </>
+                                ) : (
+                                    null
+                                )}
+                            {bestRatingItem.salePercent > 0 ?
+                                (
+                                    <>
+                                        <Typography
+                                            color="gray"
+                                            className="relative w-fit line-through pointer-events-none"
+                                        >
+                                            {bestRatingItem.price}.000
+                                            <span className="absolute font-normal top-0 -right-2 text-xs">
+                                                đ
+                                            </span>
+                                        </Typography>
+                                        <Typography
+                                            color="blue"
+                                            className="relative w-fit pointer-events-none"
+                                        >
+                                            {bestRatingItem.price - (bestRatingItem.price * bestRatingItem.salePercent)}.000
+                                            <span className="absolute font-normal top-0 -right-2 text-xs">
+                                                đ
+                                            </span>
+                                        </Typography>
+                                    </>
+                                ) : (
+                                    null
+                                )}
                         </div>
                     </div>
                 ))

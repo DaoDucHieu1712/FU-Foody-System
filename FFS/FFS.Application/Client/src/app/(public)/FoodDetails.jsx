@@ -14,7 +14,7 @@ import CookieService from "../../shared/helper/cookieConfig";
 import { toast } from "react-toastify";
 import AddToWishlist from "./components/wishlist/AddToWishlist";
 import WishlistDetails from "./components/wishlist/WishlistDetails";
-import ReviewStore from "./components/ReviewStore"; 
+import ReviewStore from "./components/ReviewStore";
 
 
 const FoodDetails = () => {
@@ -25,8 +25,6 @@ const FoodDetails = () => {
   const [foodList, setFoodList] = useState([]);
   const [categoryId, setCategoryId] = useState(0);
   const [openComment, setOpenComment] = useState(false);
-  const [api1Completed, setApi1Completed] = useState(false);
-  
 
   const increaseValue = () => {
     setValue(value + 1);
@@ -49,7 +47,6 @@ const FoodDetails = () => {
         .then((response) => {
           setFoodData(response.data.result);
           setCategoryId(response.data.result.categoryId);
-          setApi1Completed((cur) => !cur);
         })
         .catch((error) => {
           console.log(error);
@@ -74,16 +71,14 @@ const FoodDetails = () => {
     }
   };
 
-
-
   useEffect(() => {
     GetFoodData();
   }, [id]);
 
   useEffect(() => {
     GetFoodByCategoryId();
-  }, [api1Completed]);
-  
+  }, [categoryId]);
+
   return (
     <>
       {foodData ? (
@@ -243,8 +238,8 @@ const FoodDetails = () => {
                         </Typography>
                       </div>
                       <div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
-                      <AddToWishlist foodId={food.id} />
-                        
+                        <AddToWishlist foodId={food.id} />
+
                         <Tooltip content="Thêm giỏ hàng">
                           <IconButton
                             variant="text"
@@ -365,7 +360,7 @@ const FoodDetails = () => {
                       <Typography
                         variant="small"
                         className="cursor-pointer hover:text-orange-900"
-                        onClick={handleopenComent}
+                        onClick={() => handleopenComent()}
                       >
                         <i className="fal fa-angle-double-up p-1"></i>Ẩn bình
                         luận
@@ -374,7 +369,7 @@ const FoodDetails = () => {
                       <Typography
                         variant="small"
                         className="cursor-pointer hover:text-orange-900"
-                        onClick={handleopenComent}
+                        onClick={() => handleopenComent()}
                       >
                         <i className="fal fa-angle-double-down p-1"></i>Xem bình
                         luận
@@ -428,8 +423,6 @@ const FoodDetails = () => {
             {/* END COMMENT */}
           </div>
           {/* END COMMENT */}
-
-          <ReviewStore></ReviewStore>
         </div>
       ) : (
         <Spinner></Spinner>
