@@ -50,6 +50,14 @@ const NewestFoodHome = () => {
                 alt={newFoodItem.foodName}
                 className="h-28 w-44 object-cover group-hover:opacity-40"
               />
+              {newFoodItem.salePercent > 0 ?
+                (
+                  <div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
+                    <Typography className="text-white font-semibold">{newFoodItem.salePercent}%</Typography>
+                  </div>
+                ) : (
+                  null
+                )}
               <div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
                 <AddToWishlist foodId={newFoodItem.id} />
                 <FoodCart></FoodCart>
@@ -75,15 +83,56 @@ const NewestFoodHome = () => {
               <Typography variant="h6" className="pointer-events-none">
                 {newFoodItem.foodName}
               </Typography>
-              <Typography
-                color="blue"
-                className="pb-2 relative w-fit pointer-events-none"
-              >
-                {newFoodItem.price}.000
-                <span className="absolute font-normal top-0 -right-2 text-xs">
-                  đ
-                </span>
-              </Typography>
+              {newFoodItem.price > 0 ?
+                (
+                  <>
+                    <Typography
+                      color="gray"
+                      className="relative w-fit line-through pointer-events-none"
+                    >
+                      {newFoodItem.price}.000
+                      <span className="absolute font-normal top-0 -right-2 text-xs">
+                        đ
+                      </span>
+                    </Typography>
+                    <Typography
+                      color="blue"
+                      className="relative w-fit pointer-events-none"
+                    >
+                      {newFoodItem.priceAfterSale}.000
+                      <span className="absolute font-normal top-0 -right-2 text-xs">
+                        đ
+                      </span>
+                    </Typography>
+                  </>
+                ) : (
+                  null
+                )}
+              {newFoodItem.salePercent > 0 ?
+                (
+                  <>
+                    <Typography
+                      color="gray"
+                      className="relative w-fit line-through pointer-events-none"
+                    >
+                      {newFoodItem.price}.000
+                      <span className="absolute font-normal top-0 -right-2 text-xs">
+                        đ
+                      </span>
+                    </Typography>
+                    <Typography
+                      color="blue"
+                      className="relative w-fit pointer-events-none"
+                    >
+                      {newFoodItem.price - (newFoodItem.price * newFoodItem.salePercent)}.000
+                      <span className="absolute font-normal top-0 -right-2 text-xs">
+                        đ
+                      </span>
+                    </Typography>
+                  </>
+                ) : (
+                  null
+                )}
             </div>
           </div>
         ))
