@@ -6,6 +6,7 @@
         public string Role { get; set; } = string.Empty;
         public string Action { get; set; } = string.Empty;
 		public string Title { get; set; } = string.Empty;
+		public int? IdPost { get; set; }
 		public int? Status { get; set; }
     }
 }
