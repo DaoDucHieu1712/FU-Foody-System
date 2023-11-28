@@ -38,7 +38,7 @@ const PieChart = ({ data }) => {
     }
   }, [data]);
 
-  return <canvas ref={chartRef} width="200" height="200"></canvas>;
+  return <canvas  id="pieChart" ref={chartRef} width="200" height="200"></canvas>;
 };
 PieChart.propTypes = {
   data: PropTypes.shape({

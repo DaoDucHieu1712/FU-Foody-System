@@ -88,7 +88,10 @@ const ShipperDetailsPage = () => {
 									>
 										Nhắn tin
 									</a>
+									<a >
 									<ReportShipper uId={userId} sId={id}></ReportShipper>
+									</a>
+									
 								</div>
 							</div>
 							<hr className="my-6 border-t border-gray-300" />

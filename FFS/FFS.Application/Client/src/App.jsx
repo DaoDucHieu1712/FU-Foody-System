@@ -49,7 +49,11 @@ import ConfirmPaymentPage from "./app/(public)/ConfirmPaymentPage";
 import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 import OrderDetail from "./app/(store)/OrderDetail";
 import ViewApplicationPage from "./app/(admin)/ViewApplicationPage";
+
 import Checkout from "./app/(auth)/Checkout";
+
+import PostManagePage from "./app/(admin)/PostManagePage";
+
 
 function App() {
 	return (
@@ -79,6 +83,7 @@ function App() {
 					<Route path="/post-details/:postId" element={<DetailPost />} />
 					<Route path="/store/comment/:id" element={<StoreCommentPage />} />
 					<Route path="/my-order" element={<MyOrder />} />
+					<Route path="/food-list/:foodNameSearch" element={<FoodList />} />
 					<Route path="/food-list" element={<FoodList />} />
 					<Route path="/store-list" element={<StoreList />} />
 					<Route path="/wishlist" element={<Wishlist />} />
@@ -117,7 +122,7 @@ function App() {
 				</Route>
 				<Route element={<AdminLayout></AdminLayout>}>
 					<Route path="/admin/report" element={<ReportPage />} />
-					{/* <Route path="/admin/manage-post" element={<PostManagePage />} /> */}
+					<Route path="/admin/manage-post" element={<PostManagePage />} />
 
 					<Route path="/admin/dashboard" element={<DashboardPage />} />
 					<Route path="/admin/manage-acoount" element={<AccountManagePage />} />

@@ -1,6 +1,6 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useSelector } from "react-redux";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Cart from "../../shared/components/icon/Cart";
 import Heart from "../../shared/components/icon/Heart";
 import Logo from "../../shared/components/logo/Logo";
@@ -20,6 +20,8 @@ export function LazyLoadComponent({ children }) {
 
 const Layout = () => {
 	const accesstoken = useSelector((state) => state.auth.accessToken);
+	const navigate = useNavigate();
+	const [foodNameSearch, setFoodNameSearch] = useState('');
 
 	return (
 		<>
@@ -35,6 +37,13 @@ const Layout = () => {
 									type="text"
 									className="focus:none border-none outline-none w-full"
 									placeholder="hôm nay ăn gì ...."
+									value={foodNameSearch}
+									onChange={(e) => setFoodNameSearch(e.target.value)}
+									onKeyUp={(event) => {
+										if (event.key === 'Enter') {
+											navigate(`/food-list/${foodNameSearch}`)
+										}
+									}}
 								/>
 								<svg
 									width="20"

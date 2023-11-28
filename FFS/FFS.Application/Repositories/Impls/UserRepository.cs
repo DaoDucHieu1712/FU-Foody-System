@@ -333,5 +333,57 @@ namespace FFS.Application.Repositories.Impls
 		{
 			return _context.ApplicationUsers.Count();
 		}
+
+		public int CountGetPosts(UserParameters userParameters)
+		{
+			try
+			{
+				dynamic returnData = null;
+				var parameters = new DynamicParameters();
+				//parameters.Add("userId", reportParameters.uId);
+				parameters.Add("username", userParameters.Username);
+				parameters.Add("status", userParameters.Status);
+				parameters.Add("title", userParameters.Title);
+
+
+
+
+				using var db = _dapperContext.connection;
+
+				returnData = db.QuerySingle<int>("CountGetPosts", parameters, commandType: CommandType.StoredProcedure);
+				db.Close();
+				return returnData;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+
+		public IEnumerable<dynamic> GetPosts(UserParameters userParameters)
+		{
+			try
+			{
+				dynamic returnData = null;
+				var parameters = new DynamicParameters();
+				//parameters.Add("userId", reportParameters.uId);
+				parameters.Add("username", userParameters.Username);
+				parameters.Add("status", userParameters.Status);
+				parameters.Add("title", userParameters.Title);
+
+				parameters.Add("pageNumber", userParameters.PageNumber);
+				parameters.Add("pageSize", userParameters.PageSize);
+
+				using var db = _dapperContext.connection;
+
+				returnData = db.Query<dynamic>("GetPosts", parameters, commandType: CommandType.StoredProcedure);
+				db.Close();
+				return returnData;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
 	}
 }

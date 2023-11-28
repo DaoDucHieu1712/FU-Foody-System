@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "../../shared/api/axiosConfig";
 import AddToWishlist from "./components/wishlist/AddToWishlist";
+import { useNavigate, useParams } from "react-router-dom";
 
 const filter = [
 	{ id: "", name: "Tất cả" },
@@ -23,8 +24,10 @@ const filter = [
 ];
 
 const FoodList = () => {
+	const { foodNameSearch } = useParams();
+	const navigate = useNavigate();
 	const [foodList, setFoodList] = useState([]);
-	const [foodNameFilter, setFoodNameFilter] = useState("");
+	const [foodNameFilter, setFoodNameFilter] = useState('');
 	const [foodFilter, setFoodFilter] = useState("");
 	const [pageNumber, setPageNumber] = useState(1);
 	const pageSize = 12;
@@ -108,6 +111,10 @@ const FoodList = () => {
 		selectedCategory,
 		pageNumber,
 	]);
+
+	useEffect(() => {
+		setFoodNameFilter(foodNameSearch || '');
+	}, [foodNameSearch]);
 
 	return (
 		<div className="flex gap-5 my-16">
@@ -244,11 +251,14 @@ const FoodList = () => {
 										alt="image 1"
 										className="h-36 w-80 object-cover lg:w-64 group-hover:opacity-40"
 									/>
-									<div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
-										<Typography className="text-white font-semibold">
-											HOT
-										</Typography>
-									</div>
+									{food.salePercent > 0 ?
+										(
+											<div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
+												<Typography className="text-white font-semibold">{food.salePercent}%</Typography>
+											</div>
+										) : (
+											null
+										)}
 									<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
 										<AddToWishlist foodId={food.id} />
 										<Tooltip content="Thêm giỏ hàng">
@@ -285,6 +295,7 @@ const FoodList = () => {
 											<IconButton
 												variant="text"
 												className="bg-white rounded-full"
+												onClick={() => navigate(`/food-details/${food.id}`)}
 											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
@@ -302,9 +313,56 @@ const FoodList = () => {
 									<Typography variant="h6" className="w-36 pointer-events-none">
 										{food.foodName}
 									</Typography>
-									<Typography color="blue" className="pb-2 pointer-events-none">
-										{food.price}.000đ
-									</Typography>
+									{food.price > 0 ?
+										(
+											<div className="flex gap-5">
+												<Typography
+													color="gray"
+													className="relative w-fit line-through pointer-events-none"
+												>
+													{food.price}.000
+													<span className="absolute font-normal top-0 -right-2 text-xs">
+														đ
+													</span>
+												</Typography>
+												<Typography
+													color="blue"
+													className="relative w-fit pointer-events-none"
+												>
+													{food.priceAfterSale}.000
+													<span className="absolute font-normal top-0 -right-2 text-xs">
+														đ
+													</span>
+												</Typography>
+											</div>
+										) : (
+											null
+										)}
+									{food.salePercent > 0 ?
+										(
+											<div className="flex gap-5">
+												<Typography
+													color="gray"
+													className="relative w-fit line-through pointer-events-none"
+												>
+													{food.price}.000
+													<span className="absolute font-normal top-0 -right-2 text-xs">
+														đ
+													</span>
+												</Typography>
+												<Typography
+													color="blue"
+													className="relative w-fit pointer-events-none"
+												>
+													{food.price - (food.price * food.salePercent)}.000
+													<span className="absolute font-normal top-0 -right-2 text-xs">
+														đ
+													</span>
+												</Typography>
+											</div>
+										) : (
+											null
+										)}
 								</div>
 							</div>
 						))

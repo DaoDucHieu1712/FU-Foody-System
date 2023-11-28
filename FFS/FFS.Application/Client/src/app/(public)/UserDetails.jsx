@@ -88,12 +88,15 @@ const UserDetails = () => {
 								></img>
 								<h1 className="text-xl font-bold">{user.userName}</h1>
 
-								<div className="mt-3 flex flex-wrap gap-4 justify-center">
+								<div className="mt-3 flex flex-wrap gap-4 justify-center items-center">
 									<a
 										href="#"
 										className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
 									>
 										Nhắn tin
+									</a>
+									<a >
+									<ReportUser uId={userId} sId={id}></ReportUser>
 									</a>
 									{/* <a
 										href="#"
@@ -101,7 +104,6 @@ const UserDetails = () => {
 									>
 										Báo cáo
 									</a> */}
-									<ReportUser uId={userId} sId={id}></ReportUser>
 								</div>
 							</div>
 							<hr className="my-6 border-t border-gray-300" />
@@ -119,7 +121,7 @@ const UserDetails = () => {
 						</div>
 					</div>
 					<div className="col-span-4 sm:col-span-9">
-						{user.posts &&
+						{user.posts && user.posts.length > 0 ? (
 							user.posts.map((post) => (
 								<div key={post.id} className="bg-white shadow rounded-lg mb-4">
 									<div className="md:col-span-2 py-4 px-6">
@@ -150,7 +152,10 @@ const UserDetails = () => {
 														</button>
 													</MenuHandler>
 													<MenuList>
-														<MenuItem><ReportUser uId={userId} sId={post.userId}></ReportUser></MenuItem>
+														<ReportUser
+															uId={userId}
+															sId={post.userId}
+														></ReportUser>
 													</MenuList>
 												</Menu>
 											</div>
@@ -308,7 +313,12 @@ const UserDetails = () => {
 										{/* // END POST */}
 									</div>
 								</div>
-							))}
+							))
+						) : (
+							<div className="bg-white shadow rounded-lg p-6 text-center">
+								Chưa có bài viết
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

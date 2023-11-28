@@ -50,9 +50,14 @@ const BestSellerHome = () => {
                 alt={bestSellerItem.foodName}
                 className="h-28 w-44 object-cover group-hover:opacity-40"
               />
-              <div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
-                <Typography className="text-white font-semibold">HOT</Typography>
-              </div>
+              {bestSellerItem.salePercent > 0 ?
+                (
+                  <div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
+                    <Typography className="text-white font-semibold">{bestSellerItem.salePercent}%</Typography>
+                  </div>
+                ) : (
+                  null
+                )}
               <div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
                 <AddToWishlist foodId={bestSellerItem.id} />
                 <FoodCart></FoodCart>
@@ -80,15 +85,56 @@ const BestSellerHome = () => {
               <Typography variant="h6" className="pointer-events-none">
                 {bestSellerItem.foodName}
               </Typography>
-              <Typography
-                color="blue"
-                className="pb-2 relative w-fit pointer-events-none"
-              >
-                {bestSellerItem.price}.000
-                <span className="absolute font-normal top-0 -right-2 text-xs">
-                  đ
-                </span>
-              </Typography>
+              {bestSellerItem.price > 0 ?
+                (
+                  <>
+                    <Typography
+                      color="gray"
+                      className="relative w-fit line-through pointer-events-none"
+                    >
+                      {bestSellerItem.price}.000
+                      <span className="absolute font-normal top-0 -right-2 text-xs">
+                        đ
+                      </span>
+                    </Typography>
+                    <Typography
+                      color="blue"
+                      className="relative w-fit pointer-events-none"
+                    >
+                      {bestSellerItem.priceAfterSale}.000
+                      <span className="absolute font-normal top-0 -right-2 text-xs">
+                        đ
+                      </span>
+                    </Typography>
+                  </>
+                ) : (
+                  null
+                )}
+              {bestSellerItem.salePercent > 0 ?
+                (
+                  <>
+                    <Typography
+                      color="gray"
+                      className="relative w-fit line-through pointer-events-none"
+                    >
+                      {bestSellerItem.price}.000
+                      <span className="absolute font-normal top-0 -right-2 text-xs">
+                        đ
+                      </span>
+                    </Typography>
+                    <Typography
+                      color="blue"
+                      className="relative w-fit pointer-events-none"
+                    >
+                      {bestSellerItem.price - (bestSellerItem.price * bestSellerItem.salePercent)}.000
+                      <span className="absolute font-normal top-0 -right-2 text-xs">
+                        đ
+                      </span>
+                    </Typography>
+                  </>
+                ) : (
+                  null
+                )}
             </div>
           </div>
         ))
