@@ -2,9 +2,11 @@ import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Input } from "@material-tailwind/react";
+import { useNavigate   } from "react-router-dom";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -32,7 +34,15 @@ const ForgotPasswordPage = () => {
             "Yêu cầu đã được gửi thành công, vui lòng kiểm tra email!"
           );
         } else {
-          toast.error(data.data);
+          if(data.message === "Email is an FPT emai"){
+            toast.error(data.data);
+            setTimeout(() => {
+              navigate("/login");
+            }, 5000);
+          }
+          else{
+            toast.error(data.data);
+          }
         }
       } else {
         toast.error("Đã xảy ra lỗi khi gửi yêu cầu!");

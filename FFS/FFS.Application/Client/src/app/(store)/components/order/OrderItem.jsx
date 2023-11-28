@@ -1,10 +1,22 @@
-import { Button } from "@material-tailwind/react";
+import { useQuery } from "@tanstack/react-query";
+import OrderService from "../../shared/order.service";
 import propTypes from "prop-types";
 import ReviewFood from "../../../(public)/components/ReviewFood";
 import CookieService from "../../../../shared/helper/cookieConfig";
+import { useParams } from "react-router-dom";
+
 
 const OrderItem = ({ item }) => {
 	const uid = CookieService.getToken("fu_foody_id"); 
+	const role = CookieService.getToken("fu_foody_role");
+	const { id } = useParams();
+
+	const orderQuery = useQuery({
+		queryKey: ["my-order-detail"],
+		queryFn: async () => {
+			return await OrderService.GetOrderDetail(id);
+		},
+	});
 	return (
 		<>
 			<div className="w-full cart-item flex justify-between rounded-lg gap-x-3 p-3 border border-gray-200">
@@ -23,10 +35,11 @@ const OrderItem = ({ item }) => {
 					</div>
 				</div>
 				<div className="flex items-center justify-center">
-					{/* <Button size="sm" className="bg-primary">
-						đánh giá
-					</Button> */}
+				{role !== "StoreOwner" && orderQuery.data?.orderStatus === 3 ? (
 					<ReviewFood idUser={uid} idFood={item.foodId}></ReviewFood>
+					) : (
+						<></>
+					)}
 				</div>
 			</div>
 		</>
