@@ -1,4 +1,5 @@
-﻿using FFS.Application.Entities;
+﻿using FFS.Application.DTOs.FlashSale;
+using FFS.Application.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FFS.Application.DTOs.Food
@@ -15,5 +16,9 @@ namespace FFS.Application.DTOs.Food
         public int? StoreId { get; set; }
         public ICollection<Entities.Comment>? Comments { get; set; }
         public ICollection<OrderDetail>? OrderDetails { get; set; }
-    }
+		public decimal? PriceAfterSale { get; set; }
+		public int? SalePercent { get; set; }
+		//public DateTime? Start { get; set; }
+		//public DateTime? End { get; set; }
+	}
 }

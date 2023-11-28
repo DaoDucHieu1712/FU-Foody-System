@@ -17,14 +17,16 @@ namespace FFS.Application.Controllers {
         private readonly IReportRepository _reportRepository;
         private readonly IUserRepository _userRepository;
 		private readonly IPostRepository _postRepository;
+		private readonly IOrderRepository _orderRepository;
 
 		private readonly IMapper _mapper;
 
-		public AdminController(IReportRepository reportRepository, IUserRepository userRepository, IPostRepository postRepository, IMapper mapper)
+		public AdminController(IReportRepository reportRepository, IUserRepository userRepository, IPostRepository postRepository, IOrderRepository orderRepository, IMapper mapper)
 		{
 			_reportRepository = reportRepository;
 			_userRepository = userRepository;
 			_postRepository = postRepository;
+			_orderRepository = orderRepository;
 			_mapper = mapper;
 		}
 
@@ -270,6 +272,57 @@ namespace FFS.Application.Controllers {
 					TotalPost = _postRepository.CountAllPost(),
 					PostsStatistic = postStatistics
 				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+
+		}
+
+		[HttpGet("{storeId}")]
+		public IActionResult OrderStatistic(int storeId)
+		{
+			try
+			{
+				List<OrderStatistic> orderStatistics = _orderRepository.OrderStatistic(storeId);
+				return Ok(new
+				{
+					TotalOrder = _orderRepository.CountTotalOrder(storeId),
+					OrdersStatistic = orderStatistics
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+
+		}
+
+		[HttpGet("{storeId}")]
+		public IActionResult GetFoodDetailStatistics(int storeId)
+		{
+			try
+			{
+				List<FoodDetailStatistic> foodDetailStatistics = _orderRepository.FoodDetailStatistics(storeId);
+				return Ok(foodDetailStatistics);
+
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+
+		}
+
+		[HttpGet("{storeId}/{year}")]
+		public IActionResult GetFoodDetailStatistics(int storeId, int year)
+		{
+			try
+			{
+				List<RevenuePerMonth> revenuePerMonths = _orderRepository.RevenuePerMonth(storeId, year);
+				return Ok(revenuePerMonths);
+
 			}
 			catch (Exception ex)
 			{
