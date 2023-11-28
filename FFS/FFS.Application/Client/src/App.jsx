@@ -49,6 +49,7 @@ import ConfirmPaymentPage from "./app/(public)/ConfirmPaymentPage";
 import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 import OrderDetail from "./app/(store)/OrderDetail";
 import ViewApplicationPage from "./app/(admin)/ViewApplicationPage";
+import Checkout from "./app/(auth)/Checkout";
 
 function App() {
 	return (
@@ -67,6 +68,10 @@ function App() {
 					<Route path="/reset-password" element={<ResetPasswordPage />} />
 					<Route path="/food-details/:id" element={<FoodDetails />} />
 					<Route path="/cart" element={<CartPage />} />
+					<Route
+						path="/checkout/:location/:phoneNumber/:note/:fee/:percent"
+						element={<Checkout />}
+					/>
 					<Route path="/payment" element={<PaymentPage />} />
 					<Route path="/store-profile/:id" element={<StoreProfilePage />} />
 					<Route path="/store/detail/:id" element={<StoreDetailPage />} />
@@ -77,7 +82,6 @@ function App() {
 					<Route path="/food-list" element={<FoodList />} />
 					<Route path="/store-list" element={<StoreList />} />
 					<Route path="/wishlist" element={<Wishlist />} />
-
 					<Route path="/user-detail/:id" element={<UserDetails />} />
 					<Route path="/my-order/:id" element={<MyOrderDetail />} />
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />

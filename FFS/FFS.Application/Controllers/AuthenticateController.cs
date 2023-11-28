@@ -200,19 +200,6 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		//[HttpPost]
-		//public async Task<IActionResult> RegisterUser(UserRegisterDTO userRegisterDTO)
-		//{
-		//    try
-		//    {
-		//        await _authRepository.UserRegister(userRegisterDTO);
-		//        return NoContent();
-		//    }
-		//    catch (Exception ex)
-		//    {
-		//        return StatusCode(500, ex.Message);
-		//    }
-		//}
 		[HttpPost("testsendmail")]
 		public async Task<APIResponseModel> TestSendMail(EmailModel emailModel)
 		{
@@ -337,8 +324,6 @@ namespace FFS.Application.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-
-
 
 		private async Task<EmailModel> GetEmailForResetPassword(string emailReceive, string resetpasswordLink)
 		{
