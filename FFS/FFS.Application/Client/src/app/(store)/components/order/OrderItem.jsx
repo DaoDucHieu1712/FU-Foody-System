@@ -1,5 +1,8 @@
+
+
 import { useQuery } from "@tanstack/react-query";
 import OrderService from "../../shared/order.service";
+
 import propTypes from "prop-types";
 import ReviewFood from "../../../(public)/components/ReviewFood";
 import CookieService from "../../../../shared/helper/cookieConfig";
@@ -7,6 +10,7 @@ import { useParams } from "react-router-dom";
 
 
 const OrderItem = ({ item }) => {
+
 	const uid = CookieService.getToken("fu_foody_id"); 
 	const role = CookieService.getToken("fu_foody_role");
 	const { id } = useParams();
@@ -17,6 +21,7 @@ const OrderItem = ({ item }) => {
 			return await OrderService.GetOrderDetail(id);
 		},
 	});
+
 	return (
 		<>
 			<div className="w-full cart-item flex justify-between rounded-lg gap-x-3 p-3 border border-gray-200">

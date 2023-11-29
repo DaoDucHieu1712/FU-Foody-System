@@ -1,7 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import CookieService from "../../shared/helper/cookieConfig";
-import OrderService from "../(store)/shared/order.service";
-import { useState } from "react";
 import {
 	Button,
 	IconButton,
@@ -10,9 +6,13 @@ import {
 	Select,
 	Typography,
 } from "@material-tailwind/react";
-import OrderStatus from "../(store)/components/order/OrderStatus";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import ReviewStore from "../(public)/components/ReviewStore";
+import OrderStatus from "../(store)/components/order/OrderStatus";
+import OrderService from "../(store)/shared/order.service";
+import CookieService from "../../shared/helper/cookieConfig";
+import PaymentStatus from "../(store)/components/order/PaymentStatus";
 
 const TABLE_HEAD = [
 	"Mã Đơn hàng",
@@ -33,7 +33,7 @@ const MyOrder = () => {
 	const [sortType, setSortType] = useState("");
 	const [status, setStatus] = useState("");
 	const [orderId, setOrderId] = useState("");
-	const email = CookieService.getToken("fu_foody_email");
+	// const email = CookieService.getToken("fu_foody_email");
 	const ordersQuery = useQuery({
 		queryKey: ["my-order", page, startDate, endDate, status, sortType, orderId],
 		queryFn: async (context) => {
@@ -88,8 +88,8 @@ const MyOrder = () => {
 								<Option value="">Tất cả</Option>
 								<Option value="1">Đang chờ</Option>
 								<Option value="2">Đang giao</Option>
-								<Option value="3">Đã hủy</Option>
-								<Option value="4">Đã nhận hàng</Option>
+								<Option value="4">Đã hủy</Option>
+								<Option value="3">Đã nhận hàng</Option>
 							</Select>
 						</div>
 
@@ -158,18 +158,31 @@ const MyOrder = () => {
 												</span>
 											</div>
 										</td>
-										<td className={classes}>{item.location}</td>
+										<td className={classes}>
+											<p className="w-[120px] text-ellipsis">{item.location}</p>
+										</td>
 										<td className={classes}>
 											{item.shipperName && (
-												<>
+												<div className="flex flex-col gap-y-2">
 													<span>{item.shipperName}</span>
-												</>
+													<Link
+														to="/shipper-profile"
+														className="px-6 py-2 text-light-blue-500 font-medium rounded-lg cursor-pointer"
+													>
+														xem
+													</Link>
+												</div>
+												
 											)}
 										</td>
 										<td className={classes}>
 											<OrderStatus status={item.orderStatus}></OrderStatus>
 										</td>
-										<td className={classes}>{item.totalPrice} $</td>
+										<td className={classes}>
+											<p>{item.totalPrice} $</p>
+											<p>{item.paymentMethod}</p>
+											<PaymentStatus status={item.paymentStatus} />
+										</td>
 										<td className={classes}>
 											<div className="flex gap-x-3">
 												<Link
@@ -178,6 +191,12 @@ const MyOrder = () => {
 												>
 													chi tiết đơn hàng
 												</Link>
+
+												{/* {item.shipperName && (
+													<ReviewStore email={email} idStore={or}></ReviewStore>
+											)} */}
+
+
 											</div>
 										</td>
 									</tr>

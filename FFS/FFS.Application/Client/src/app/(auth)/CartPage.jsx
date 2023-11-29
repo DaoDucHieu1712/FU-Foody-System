@@ -3,14 +3,13 @@ import {
 	Card,
 	Input,
 	Option,
-	Radio,
 	Select,
 	Textarea,
 	Typography,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 import axiosConfig from "../../shared/api/axiosConfig";
@@ -26,17 +25,12 @@ const cookies = new Cookies();
 const CartPage = () => {
 	const accesstoken = useSelector((state) => state.auth.accessToken);
 	const cart = useSelector((state) => state.cart);
-	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const [locations, setLocations] = useState([]);
 	const [location, setLocation] = useState("");
 	const [phone, setPhone] = useState("");
 	const [note, setNote] = useState("");
-	const [code, setCode] = useState("");
 	const [feeShip, setFeeShip] = useState();
-	const [percent, setPercent] = useState();
-
-	const [selectedType, setSelectedType] = useState("Thanh toán khi nhận hàng");
 
 	const getLocations = async () => {
 		const email = cookies.get("fu_foody_email");
@@ -96,9 +90,9 @@ const CartPage = () => {
 		return axiosConfig.get("/api/Location/GetLocation/" + id);
 	};
 
-	// if (!accesstoken) {
-	// 	return <Navigate to="/login" replace={true} />;
-	// }
+	if (!accesstoken) {
+		return <Navigate to="/login" replace={true} />;
+	}
 
 	return (
 		<>
@@ -195,14 +189,6 @@ const CartPage = () => {
 									<span>Chưa có thông tin</span>
 								)}
 							</div>
-							<div className="flex justify-between">
-								<p className="font-medium text-lg text-gray-500">Giảm giá</p>
-								{percent ? (
-									<span>{percent} %</span>
-								) : (
-									<span>Chưa có thông tin</span>
-								)}
-							</div>
 						</div>
 						<div className="p-3 flex justify-between">
 							<p className="font-medium text-lg ">Tổng</p>
@@ -222,9 +208,7 @@ const CartPage = () => {
 									onChange={() => setSelectedType("Thanh toán khi nhận hàng")}
 								/>
 							</div> */}
-							<Link
-								to={`/checkout/${location}/${phone}/${note}/${feeShip}/${percent}`}
-							>
+							<Link to={`/checkout/${location}/${phone}/${note}/${feeShip}`}>
 								<Button className="bg-primary w-full">Thanh toán</Button>
 							</Link>
 						</div>
