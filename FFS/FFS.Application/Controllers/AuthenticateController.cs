@@ -200,19 +200,6 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		//[HttpPost]
-		//public async Task<IActionResult> RegisterUser(UserRegisterDTO userRegisterDTO)
-		//{
-		//    try
-		//    {
-		//        await _authRepository.UserRegister(userRegisterDTO);
-		//        return NoContent();
-		//    }
-		//    catch (Exception ex)
-		//    {
-		//        return StatusCode(500, ex.Message);
-		//    }
-		//}
 		[HttpPost("testsendmail")]
 		public async Task<APIResponseModel> TestSendMail(EmailModel emailModel)
 		{
@@ -245,42 +232,61 @@ namespace FFS.Application.Controllers
 		[AllowAnonymous]
 		public async Task<APIResponseModel> ForgotPassword([Required] string email)
 		{
-			var user = await _userManager.FindByEmailAsync(email);
-			if (user != null)
+			try
 			{
-				var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-				var resetPasswordLink = "http://127.0.0.1:5173/reset-password?token=" + HttpUtility.UrlEncode(token) + "&email=" + HttpUtility.UrlEncode(user.Email);
-				var emailModel = await GetEmailForResetPassword(email, resetPasswordLink);
-				try
-				{
-					await _emailService.SendEmailAsync(emailModel);
-					return new APIResponseModel()
-					{
-						Code = 200,
-						Message = "OK",
-						IsSucceed = true,
-						Data = "Email đã được gửi thành công"
-					};
-
-				}
-				catch (Exception ex)
+				if (CommonService.IsEmailFPT(email))
 				{
 					return new APIResponseModel()
 					{
 						Code = 400,
-						Message = "Error: " + ex.Message,
+						Message = "Email is an FPT email",
 						IsSucceed = false,
-						Data = ex.ToString(),
+						Data = "Email của bạn thuộc hệ thống FPT! Vui lòng đăng nhập với tài khoản Google để truy cập vào hệ thống!",
 					};
+
 				}
+				var user = await _userManager.FindByEmailAsync(email);
+				if (user != null)
+				{
+					var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+					var resetPasswordLink = "http://127.0.0.1:5173/reset-password?token=" + HttpUtility.UrlEncode(token) + "&email=" + HttpUtility.UrlEncode(user.Email);
+					var emailModel = await GetEmailForResetPassword(email, resetPasswordLink);
+					try
+					{
+						await _emailService.SendEmailAsync(emailModel);
+						return new APIResponseModel()
+						{
+							Code = 200,
+							Message = "OK",
+							IsSucceed = true,
+							Data = "Email đã được gửi thành công"
+						};
+
+					}
+					catch (Exception ex)
+					{
+						return new APIResponseModel()
+						{
+							Code = 400,
+							Message = "Error: " + ex.Message,
+							IsSucceed = false,
+							Data = ex.ToString(),
+						};
+					}
+				}
+				return new APIResponseModel()
+				{
+					Code = 400,
+					Message = "Error: email not found!",
+					IsSucceed = false,
+					Data = "Email không tồn tại trong hệ thống, vui lòng nhập lại!",
+				};
 			}
-			return new APIResponseModel()
+			catch (Exception ex)
 			{
-				Code = 400,
-				Message = "Error: email not found!",
-				IsSucceed = false,
-				Data = "Email không tồn tại trong hệ thống, vui lòng nhập lại!",
-			};
+				throw new Exception(ex.Message);
+			}
+
 		}
 
 		[HttpPost]
@@ -288,39 +294,47 @@ namespace FFS.Application.Controllers
 		[Route("reset-password")]
 		public async Task<APIResponseModel> ResetPassword(ResetPasswordDTO model)
 		{
-			var user = await _userManager.FindByEmailAsync(model.Email);
-			if (user != null)
+			try
 			{
-				var resetPassResult = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
-				if (!resetPassResult.Succeeded)
+				var user = await _userManager.FindByEmailAsync(model.Email);
+				if (user != null)
 				{
-					foreach (var error in resetPassResult.Errors)
+					var resetPassResult = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+					if (!resetPassResult.Succeeded)
 					{
-						ModelState.AddModelError(error.Code, error.Description);
+						foreach (var error in resetPassResult.Errors)
+						{
+							ModelState.AddModelError(error.Code, error.Description);
+						}
+						return new APIResponseModel()
+						{
+							Code = 400,
+							Message = "Token đã hết hạn",
+							IsSucceed = false,
+							Data = ModelState
+						};
 					}
-					return new APIResponseModel()
+					return new APIResponseModel
 					{
-						Code = 400,
-						Message = "Token đã hết hạn",
-						IsSucceed = false,
-						Data = ModelState
+						Code = 200,
+						Message = "OK",
+						IsSucceed = true,
+						Data = "Đổi mật khẩu thành công!"
 					};
 				}
-				return new APIResponseModel
+				return new APIResponseModel()
 				{
-					Code = 200,
-					Message = "OK",
-					IsSucceed = true,
-					Data = "Đổi mật khẩu thành công!"
+					Code = 400,
+					Message = "Link invalid",
+					IsSucceed = false,
+					Data = "Link invalid",
 				};
 			}
-			return new APIResponseModel()
+			catch (Exception ex)
 			{
-				Code = 400,
-				Message = "Link invalid",
-				IsSucceed = false,
-				Data = "Link invalid",
-			};
+				throw new Exception(ex.Message);
+			}
+
 		}
 
 
@@ -337,8 +351,6 @@ namespace FFS.Application.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-
-
 
 		private async Task<EmailModel> GetEmailForResetPassword(string emailReceive, string resetpasswordLink)
 		{

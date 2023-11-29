@@ -14,7 +14,7 @@ using FFS.Application.Helper;
 
 namespace FFS.Application.Repositories.Impls
 {
-    public class FoodRepository : EntityRepository<Food, int>, IFoodRepository
+	public class FoodRepository : EntityRepository<Food, int>, IFoodRepository
     {
         private readonly DapperContext _dapperContext;
         public FoodRepository(ApplicationDbContext _dbContext, DapperContext dapperContext) : base(_dbContext)
@@ -173,7 +173,7 @@ namespace FFS.Application.Repositories.Impls
             try
             {
                 var food = await _context.Foods.Include(x => x.Category).Include(x => x.Inventories).Include
-                (x => x.Store).Include(x => x.Comments).FirstOrDefaultAsync(x => x.Id == id);
+                (x => x.Store).Include(x => x.Comments).Include(x=>x.FlashSaleDetails).ThenInclude(x => x.FlashSale).FirstOrDefaultAsync(x => x.Id == id);
                 return food;
             }
             catch (Exception ex)
@@ -181,5 +181,5 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
-    }
+	}
 }

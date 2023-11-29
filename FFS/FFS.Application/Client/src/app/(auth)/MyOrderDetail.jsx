@@ -61,7 +61,7 @@ const MyOrderDetail = () => {
 							)}
 						</div>
 					</>
-					{role !== "StoreOwner" ? (
+					{role !== "StoreOwner" && orderQuery.data?.orderStatus === 3 ? (
 						<ReviewStore
 							email={email}
 							idStore={orderQuery.data?.orderDetails[0].storeId}

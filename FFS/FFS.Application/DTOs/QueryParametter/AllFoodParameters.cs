@@ -8,7 +8,7 @@ namespace FFS.Application.DTOs.QueryParametter
         //Search by food and category
         public string? Search { get; set; }
         public decimal? PriceMin { get; set; } = 0;
-        public decimal? PriceMax { get; set; } = 9999;
+        public decimal? PriceMax { get; set; } = 999999999;
         public FilterFood? FilterFood { get; set; }
 
     }

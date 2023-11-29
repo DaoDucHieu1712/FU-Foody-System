@@ -319,7 +319,7 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
-                List<Food> foods = await _context.Foods.Where(x => x.StoreId == idShop && x.CategoryId == idCategory).ToListAsync();
+                List<Food> foods = await _context.Foods.Where(x => x.StoreId == idShop && x.CategoryId == idCategory).Include(x=>x.FlashSaleDetails).ThenInclude(x=>x.FlashSale).ToListAsync();
                 if (foods.Count == 0)
                 {
                     throw new Exception();
