@@ -1,10 +1,9 @@
-import { Button } from "@material-tailwind/react";
 import propTypes from "prop-types";
 import ReviewFood from "../../../(public)/components/ReviewFood";
 import CookieService from "../../../../shared/helper/cookieConfig";
 
 const OrderItem = ({ item }) => {
-	const uid = CookieService.getToken("fu_foody_id"); 
+	const uid = CookieService.getToken("fu_foody_id");
 	return (
 		<>
 			<div className="w-full cart-item flex justify-between rounded-lg gap-x-3 p-3 border border-gray-200">

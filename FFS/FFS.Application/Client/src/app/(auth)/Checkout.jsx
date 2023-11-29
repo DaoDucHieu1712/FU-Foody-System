@@ -21,11 +21,13 @@ var cookies = new Cookies();
 
 const Checkout = () => {
 	const cart = useSelector((state) => state.cart);
-	const { location, phoneNumber, note, fee, percent } = useParams();
+	const { location, phoneNumber, note, fee } = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [selectedType, setSelectedType] = useState("Thanh toán khi nhận hàng");
 	const [code, setCode] = useState("");
+	const [discount, setDiscount] = useState();
+
 	const [totalPrice, setTotalPrice] = useState(cart.totalPrice);
 	useEffect(() => {
 		dispatch(cartActions.getCartTotal());
@@ -49,6 +51,7 @@ const Checkout = () => {
 			.then((res) => {
 				console.log(res);
 				toast.success(`Dùng mã thành công !!`);
+				setDiscount(res.discount * 100);
 				setTotalPrice(totalPrice - res.discount * totalPrice);
 			})
 			.catch((err) => {
@@ -233,8 +236,8 @@ const Checkout = () => {
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Giảm giá</p>
-								{percent === undefined ? (
-									<span>{percent} %</span>
+								{discount ? (
+									<span>{discount} %</span>
 								) : (
 									<span>Chưa có thông tin</span>
 								)}

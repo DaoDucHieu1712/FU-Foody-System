@@ -6,6 +6,8 @@ namespace FFS.Application.DTOs.Order
     {
         public int Id { get; set; }
         public int? PaymentId { get; set; }
+		public string? PaymentMethod { get; set; }
+		public PaymentStatus? PaymentStatus { get; set; }
         public string? CustomerId { get; set; }
         public string? ShipperId { get; set; }
         public string? CustomerName { get; set; }

@@ -138,6 +138,8 @@ namespace FFS.Application.DTOs
 			CreateMap<Entities.Order, OrderResponseDTO>()
 				.ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.UserName))
 				.ForMember(dest => dest.ShipperName, opt => opt.MapFrom(src => src.Shipper.FirstName + " " + src.Shipper.LastName))
+				.ForMember(dest => dest.PaymentMethod , opt => opt.MapFrom(src => src.Payment.PaymentMethod))
+				.ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Payment.Status))
 				.ReverseMap();
 			CreateMap<OrderDetail, OrderDetailResponseDTO>()
 				.ForMember(dest => dest.FoodName, opt => opt.MapFrom(src => src.Food.FoodName))

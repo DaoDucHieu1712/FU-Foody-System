@@ -1,4 +1,5 @@
 import axiosConfig from "../../../shared/api/axiosConfig";
+import CookieService from "../../../shared/helper/cookieConfig";
 
 const OrderService = {
 	async FindByUser(id, ctx) {
@@ -38,6 +39,19 @@ const OrderService = {
 		const url =
 			"/api/Order/CancelOrderWithCustomer/" + id + `?CancelReason=${reason}`;
 		return axiosConfig.put(url);
+	},
+	async GetOrderPendingWithShipper() {
+		const uid = CookieService.getToken("fu_foody_id");
+		const url = "/api/Order/GetOrderPendingWithShipper/" + uid;
+		return axiosConfig.get(url);
+	},
+	async GetOrderIdel(page) {
+		const url = "/api/Order/GetOrderIdel?" + `PageIndex=${page}`;
+		return axiosConfig.get(url);
+	},
+	async CheckReceiverOrder(id) {
+		const url = "/api/Order/CheckReceiverOrder/" + id;
+		return axiosConfig.get(url);
 	},
 };
 

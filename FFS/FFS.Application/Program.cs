@@ -155,6 +155,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.MapHub<NotificationHub>("/notificationHub");
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<OrderIdelHub>("/orderHub");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
