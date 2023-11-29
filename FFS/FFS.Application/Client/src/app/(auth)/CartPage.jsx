@@ -10,15 +10,14 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
-import CookieService from "../../shared/helper/cookieConfig";
+import axiosConfig from "../../shared/api/axiosConfig";
 import CartService from "./shared/cart.service";
 import { cartActions } from "./shared/cartSlice";
 import CartItem from "./shared/components/cart/CartItem";
 import LocationService from "./shared/location.service";
-import axiosConfig from "../../shared/api/axiosConfig";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
@@ -34,8 +33,8 @@ const CartPage = () => {
 	const [phone, setPhone] = useState("");
 	const [note, setNote] = useState("");
 	const [code, setCode] = useState("");
-	const [feeShip, setFeeShip] = useState("");
-	const [totalPrice, setTotalPrice] = useState(cart.totalPrice);
+	const [feeShip, setFeeShip] = useState();
+	const [percent, setPercent] = useState();
 
 	const [selectedType, setSelectedType] = useState("Thanh toán khi nhận hàng");
 
@@ -54,27 +53,6 @@ const CartPage = () => {
 		});
 		console.log(items);
 	}, [cart]);
-
-	const useDiscountHandler = async () => {
-		console.log("use discount");
-		var storeIds = cart.list.map((item) => {
-			return Number(item.storeId);
-		});
-		await CartService.CheckDiscount(
-			code,
-			CookieService.getToken("fu_foody_id"),
-			cart.totalPrice,
-			storeIds
-		)
-			.then((res) => {
-				console.log(res);
-				toast.success(`Dùng mã thành công !!`);
-				dispatch(cartActions.useDiscount(res));
-			})
-			.catch((err) => {
-				toast.error(err.response.data);
-			});
-	};
 
 	const handleSelectLocation = async (location) => {
 		setPhone(location.phoneNumber);
@@ -98,7 +76,12 @@ const CartPage = () => {
 					.then((res) => {
 						console.log(res.data.data.total);
 						setFeeShip(res.data.data.total);
-						setTotalPrice(cart.totalPrice + res.data.data.total);
+						dispatch(
+							cartActions.updateTotalPrice(
+								cart.totalPrice + res.data.data.total
+							)
+						);
+						// setTotalPrice(cart.totalPrice + res.data.data.total);
 					})
 					.catch((err) => {
 						toast.error(err.data);
@@ -108,95 +91,14 @@ const CartPage = () => {
 				toast.error(err.data);
 			});
 	};
+
 	const getLocationByUserId = (id) => {
 		return axiosConfig.get("/api/Location/GetLocation/" + id);
 	};
 
-	const CheckoutHandler = async () => {
-		await CartService.CreateOrder({
-			customerId: cookies.get("fu_foody_id"),
-			location: location,
-			phoneNumber: phone,
-			note: note,
-			totalPrice: cart.totalPrice,
-			orderStatus: 1,
-		})
-			.then(async (res) => {
-				console.log(res);
-				var items = cart.list.map((item) => {
-					return {
-						orderId: res.id,
-						storeId: item.storeId,
-						foodId: item.foodId,
-						quantity: item.quantity,
-						unitPrice: item.price,
-					};
-				});
-
-				await CartService.AddOrderItem(items)
-					.then((res) => {
-						console.log(res);
-						if (selectedType == "Chuyển khoản") {
-							const data = {
-								PaymentMethod: selectedType,
-								OrderId: items[0].orderId,
-								Status: 1,
-							};
-							axiosConfig
-								.post("/api/Order/CreatePayment", data)
-								.then((res) => {
-									console.log(res);
-									toast.success("Đặt hàng thành công");
-									dispatch(cartActions.clearCart());
-
-									axiosConfig
-										.get("/api/Order/GetUrlPayment/" + items[0].orderId)
-										.then((res) => {
-											window.open(res, "_blank");
-										})
-										.catch((err) => {
-											toast.error(err);
-										});
-								})
-								.catch((err) => {
-									toast.error(err);
-								});
-						} else {
-							const data = {
-								PaymentMethod: selectedType,
-								OrderId: items[0].orderId,
-								Status: 2,
-							};
-							axiosConfig
-								.post("/api/Order/CreatePayment", data)
-								.then((res) => {
-									console.log(res);
-									toast.success("Đặt hàng thành công");
-									dispatch(cartActions.clearCart());
-									navigate("/");
-								})
-								.catch((err) => {
-									toast.error(err);
-								});
-						}
-					})
-					.catch((err) => {
-						console.log(err.response.data);
-					});
-				await CartService.UseDiscount(
-					code,
-					CookieService.getToken("fu_foody_id")
-				);
-			})
-			.catch((err) => {
-				console.log(err);
-				toast.error("Đã có lỗi xảy ra, vui lòng đặt lại !");
-			});
-	};
-
-	if (!accesstoken) {
-		return <Navigate to="/login" replace={true} />;
-	}
+	// if (!accesstoken) {
+	// 	return <Navigate to="/login" replace={true} />;
+	// }
 
 	return (
 		<>
@@ -287,11 +189,19 @@ const CartPage = () => {
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>
-								<span>{feeShip} đ</span>
+								{feeShip ? (
+									<span>{feeShip}</span>
+								) : (
+									<span>Chưa có thông tin</span>
+								)}
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Giảm giá</p>
-								<span>chưa có thông tin</span>
+								{percent ? (
+									<span>{percent} %</span>
+								) : (
+									<span>Chưa có thông tin</span>
+								)}
 							</div>
 						</div>
 						<div className="p-3 flex justify-between">
@@ -299,7 +209,7 @@ const CartPage = () => {
 							<span>{cart.totalPrice} đ</span>
 						</div>
 						<div className="p-3 w-full">
-							<div>
+							{/* <div>
 								<Radio
 									name="type"
 									label="Chuyển khoản"
@@ -311,14 +221,16 @@ const CartPage = () => {
 									defaultChecked
 									onChange={() => setSelectedType("Thanh toán khi nhận hàng")}
 								/>
-							</div>
-							<Button className="bg-primary w-full" onClick={CheckoutHandler}>
-								Thanh toán
-							</Button>
+							</div> */}
+							<Link
+								to={`/checkout/${location}/${phone}/${note}/${feeShip}/${percent}`}
+							>
+								<Button className="bg-primary w-full">Thanh toán</Button>
+							</Link>
 						</div>
 					</div>
 
-					<div className="border-borderpri border pb-5 rounded-lg">
+					{/* <div className="border-borderpri border pb-5 rounded-lg">
 						<div className="p-3 border-b border-borderpri">
 							<h1 className="font-medium">Mã Giảm giá</h1>
 						</div>
@@ -334,7 +246,7 @@ const CartPage = () => {
 								Sử dụng mã giảm giá
 							</Button>
 						</div>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</>

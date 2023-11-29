@@ -163,12 +163,6 @@ const MyOrder = () => {
 											{item.shipperName && (
 												<>
 													<span>{item.shipperName}</span>
-													<Link
-														href="link danh gia"
-														className="px-6 py-2 text-light-blue-500 font-medium rounded-lg cursor-pointer"
-													>
-														đánh giá
-													</Link>
 												</>
 											)}
 										</td>
@@ -184,9 +178,6 @@ const MyOrder = () => {
 												>
 													chi tiết đơn hàng
 												</Link>
-												{item.shipperName && (
-													<ReviewStore email={email} idStore={or}></ReviewStore>
-											)}
 											</div>
 										</td>
 									</tr>

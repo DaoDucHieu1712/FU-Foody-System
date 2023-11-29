@@ -85,17 +85,21 @@ const cartSlice = createSlice({
 			localStorage.setItem(cartfood, JSON.stringify(state.list));
 		},
 		useDiscount: (state, action) => {
-			state.list = state.list.map((item) => {
-				if (item.storeId == action.payload.storeId) {
-					return {
-						...item,
-						price: item.price - item.price * action.payload.discount,
-					};
-				} else {
-					return item;
-				}
-			});
-			localStorage.setItem(cartfood, JSON.stringify(state.list));
+			// state.list = state.list.map((item) => {
+			// 	if (item.storeId == action.payload.storeId) {
+			// 		return {
+			// 			...item,
+			// 			price: item.price - item.price * action.payload.discount,
+			// 		};
+			// 	} else {
+			// 		return item;
+			// 	}
+			// });
+			// localStorage.setItem(cartfood, JSON.stringify(state.list));
+			state.totalPrice = state.totalPrice * action.payload.discount;
+		},
+		updateTotalPrice: (state, action) => {
+			state.totalPrice = action.payload;
 		},
 	},
 });

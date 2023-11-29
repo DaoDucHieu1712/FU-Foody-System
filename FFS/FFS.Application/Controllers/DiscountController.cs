@@ -178,14 +178,20 @@ namespace FFS.Application.Controllers
 					IsUse = false,
 				});
 
-                return Ok(new
+				discount.Quantity = discount.Quantity - 1;
+				await _discountRepository.Update(discount);
+
+				await _userDiscountRepository.Add(new UserDiscount
+				{
+					DiscountId = discount.Id,
+					UserId = UserId
+				});
+
+				return Ok(new
 				{
 					msg = "Mã hợp lệ <3 ",
 					discount = (decimal)discount.Percent / 100,
 					storeId  = discount.StoreId,
-					//test = storeIds,
-					//gi = storeIds.Length,
-					//a = storeIds[0],
 					IsUse = true,
 				});
             }
