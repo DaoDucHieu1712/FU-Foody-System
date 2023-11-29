@@ -72,12 +72,12 @@ namespace FFS.Application.Controllers
 
 				if(check != null)
 				{
-					await _hubChatContext.Clients.All.SendAsync("FuFoodySendMessage");
+					await _hubChatContext.Clients.All.SendAsync("FuFoodyCreateBox");
 					return StatusCode(500, "...");
 				}
 
 				await _chatRepository.Add(_mapper.Map<Chat>(chatRequestDTO));
-				await _hubChatContext.Clients.All.SendAsync("FuFoodySendMessage");
+				await _hubChatContext.Clients.All.SendAsync("FuFoodyCreateBox");
 				return Ok();
 			}
 			catch (Exception ex)
