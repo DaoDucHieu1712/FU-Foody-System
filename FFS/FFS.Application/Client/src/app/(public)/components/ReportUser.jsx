@@ -1,17 +1,19 @@
-import { Checkbox, Dialog, Textarea, Typography,MenuItem, } from "@material-tailwind/react";
+import { Checkbox, Dialog, Textarea, Typography, } from "@material-tailwind/react";
 import { useState } from "react";
 import axios from "../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 import propTypes from "prop-types";
+import { FaExclamationCircle } from "react-icons/fa";
+import CheckLogin from "./CheckLogin";
 
 
 const ReportUser = ({ uId, sId }) => {
 
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen((cur) => !cur);
     const [selectedReasons, setSelectedReasons] = useState([]);
     const [otherReason, setOtherReason] = useState('');
     const [isOtherReasonChecked, setIsOtherReasonChecked] = useState(false);
+    const [isLogged, setIsLogged] = useState(true);
 
     const handleCheckboxChange = (event) => {
         const value = event.target.value;
@@ -28,6 +30,18 @@ const ReportUser = ({ uId, sId }) => {
 
     const handleOtherReasonCheckboxChange = (event) => {
         setIsOtherReasonChecked(event.target.checked);
+    };
+
+    const handleOpen = () => {
+        if (uId != null || uId != undefined) {
+            setOpen((cur) => !cur)
+            setIsLogged(true);
+        } else {
+            setIsLogged((cur) => !cur);
+            setTimeout(() => {
+                setIsLogged(true);
+            }, 5000);
+        }
     };
 
     const onSubmit = async () => {
@@ -73,7 +87,10 @@ const ReportUser = ({ uId, sId }) => {
 
     return (
         <>
-         <MenuItem onClick={handleOpen}>Báo cáo</MenuItem>
+         <Typography className="text-orange-900 font-semibold cursor-pointer hover:underline hover:text-orange-700" onClick={handleOpen}> <span className="flex items-center">
+                <FaExclamationCircle className="ml-2" />Báo cáo
+            </span></Typography>
+            {isLogged ? null : <CheckLogin></CheckLogin>}
             <Dialog
                 size="md"
                 open={open}

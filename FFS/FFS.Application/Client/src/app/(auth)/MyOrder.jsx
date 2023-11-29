@@ -172,6 +172,7 @@ const MyOrder = () => {
 														xem
 													</Link>
 												</div>
+												
 											)}
 										</td>
 										<td className={classes}>
@@ -190,9 +191,12 @@ const MyOrder = () => {
 												>
 													chi tiết đơn hàng
 												</Link>
+
 												{/* {item.shipperName && (
 													<ReviewStore email={email} idStore={or}></ReviewStore>
 											)} */}
+
+
 											</div>
 										</td>
 									</tr>

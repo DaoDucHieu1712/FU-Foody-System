@@ -44,7 +44,7 @@ const ReviewStore = ({ email, idStore, idShipper, storeName }) => {
 			const newRating = {
 				email: email,
 				storeId: idStore,
-				rate: data.star,  
+				rate: star,  
 				content: data.reviewstore,
 				shipperId: idShipper,
 				noteForShipper: data.reviewshipper,
