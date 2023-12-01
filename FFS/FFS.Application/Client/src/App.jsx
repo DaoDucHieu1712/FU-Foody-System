@@ -52,6 +52,7 @@ import Checkout from "./app/(auth)/Checkout";
 
 import PostManagePage from "./app/(admin)/PostManagePage";
 import OrderIdelDetail from "./app/(shipper)/OrderIdelDetail";
+import ShipperProfile from "./app/(shipper)/ShipperProfile";
 
 function App() {
 	return (
@@ -93,6 +94,10 @@ function App() {
 					<Route
 						path="/shipper/order-pending"
 						element={<OrderShippingPage />}
+					/>
+					<Route
+						path="/shipper/profile"
+						element={<ShipperProfile />}
 					/>
 
 					<Route

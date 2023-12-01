@@ -266,7 +266,7 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 		}
-
+		
 		public void UnBanAccount(string idUnBan)
 		{
 			try
@@ -311,7 +311,31 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 		}
+		public void ApprovePost(int postId, string action)
+		{
+			try
+			{
+				var post = _context.Posts.FirstOrDefault(x => x.Id == postId);
+				if (post is null)
+				{
+					throw new Exception("Bài viết không tồn tại, xin vui lòng kiểm tra lại!");
+				}
+				if (action == "Accept")
+				{
+					post.Status = StatusPost.Accept;
+				}
+				if (action == "Reject")
+				{
+					post.Status = StatusPost.Reject;
+				}
+				_ = _context.SaveChanges();
+			}
+			catch (Exception ex)
+			{
 
+				throw new Exception(ex.Message);
+			}
+		}
 		public List<AccountStatistic> AccountsStatistic()
 		{
 			try

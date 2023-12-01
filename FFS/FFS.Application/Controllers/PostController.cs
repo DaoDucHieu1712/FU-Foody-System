@@ -10,6 +10,7 @@ using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -22,16 +23,19 @@ namespace FFS.Application.Controllers
 		private readonly IPostRepository _postRepository;
 		private readonly IReactPostRepository _reactPostRepository;
 		private readonly IMapper _mapper;
+		private readonly IAuthRepository _authRepository;
 		private readonly IHubContext<NotificationHub> _hubContext;
 		private readonly INotificationRepository _notifyRepository;
-
-		public PostController(IPostRepository postRepository, ApplicationDbContext db, INotificationRepository notifyRepository, IReactPostRepository reactPostRepository, IMapper mapper, IHubContext<NotificationHub> hubContext)
+		private readonly ApplicationDbContext _db;
+		public PostController(IPostRepository postRepository, ApplicationDbContext db, IAuthRepository authRepository,INotificationRepository notifyRepository, IReactPostRepository reactPostRepository, IMapper mapper, IHubContext<NotificationHub> hubContext)
 		{
 			_postRepository = postRepository;
 			_reactPostRepository = reactPostRepository;
 			_mapper = mapper;
 			_hubContext = hubContext;
 			_notifyRepository = notifyRepository;
+			_authRepository = authRepository;
+			_db=db;
 		}
 
 		[HttpGet]
@@ -136,13 +140,17 @@ namespace FFS.Application.Controllers
 
 				var notification = new Notification
 				{
+					CreatedAt = DateTime.Now,
+					UpdatedAt = DateTime.Now,
+					IsDelete = false,
 					UserId = post.UserId,
 					Title = "Bài viết mới",
 					Content = $"Bài viết {post.Title} đang chờ được phê duyệt!"
 				};
 
 				await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
-				await _notifyRepository.AddNotification(notification);
+				await _notifyRepository.Add(notification);
+
 				return Ok();
 			}
 			catch (Exception ex)
@@ -195,6 +203,14 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				var reactingUser = await _authRepository.GetUser(reactPostDTO.UserId);
+
+				if (reactingUser == null)
+				{
+					
+					return BadRequest("Reacting user not found");
+				}
+				var postAuthor = await _postRepository.GetUserIdByPostId((int)reactPostDTO.PostId);
 				var reactPost = await _reactPostRepository.FindSingle(x => x.PostId == reactPostDTO.PostId && x.UserId == reactPostDTO.UserId);
 				if (reactPost == null)
 				{
@@ -207,19 +223,26 @@ namespace FFS.Application.Controllers
 						UpdatedAt = DateTime.Now,
 						IsDelete = false
 					});
-					//var postAuthor = _postRepository.GetUserIdByPostId((int)reactPostDTO.PostId);
-					//if (postAuthor != null)
-					//{
-					//	var notification = new Notification
-					//	{
-					//		UserId = postAuthor.ToString(),
-					//		Title = "New Reaction",
-					//		Content = $" \"{reactPostDTO.UserId}\" đã thích bài viết của bạn."
-					//	};
+				
 
-					//	await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
-					//	await _notifyRepository.AddNotification(notification);
-					//}
+
+					if (postAuthor != null && reactPostDTO.UserId != postAuthor)
+					{
+
+						var notification = new Notification
+						{
+							CreatedAt = DateTime.Now,
+							UpdatedAt = DateTime.Now,
+							IsDelete = false,
+							UserId = postAuthor,
+							Title = "Hoạt động mới",
+							Content = $"{reactingUser.firstName} {reactingUser.lastName} đã thích bài viết của bạn."
+						};
+
+						await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+						await _notifyRepository.Add(notification);
+					}
+
 
 				}
 				else

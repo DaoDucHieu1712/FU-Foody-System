@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import PieChart from "./Piechart";
 import axios from "../../shared/api/axiosConfig";
+import ReportChart from "./ReportChart";
 const DashboardPage = () => {
 	const [apiData, setApiData] = useState(null);
 	const [apiPostData, setApiPostData] = useState(null);
@@ -79,6 +80,7 @@ const DashboardPage = () => {
 
 	return (
 		<>
+		
 			<div className="flex flex-wrap justify-center items-center">
 				<div className="m-4 p-4 bg-gray-200 rounded-lg">
 					<h3 className="text-center text-lg font-bold mb-2">
@@ -107,7 +109,22 @@ const DashboardPage = () => {
 						bài viết
 					</h5>
 				</div>
+
+				{/* <div className="m-4 p-4 bg-gray-200 rounded-lg">
+					<h3 className="text-center text-lg font-bold mb-2">
+						Thống kê báo cáo
+					</h3>
+					<ReportChart></ReportChart>
+					<h5 className="text-gray-500 text-center">
+						Tổng số:{" "}
+						<span className="font-bold text-primary">
+            {apiPostData ? apiPostData.totalPost : 0}
+						</span>{" "}
+						bài viết
+					</h5>
+				</div> */}
 			</div>
+			
 		</>
 	);
 };
