@@ -52,6 +52,7 @@ import Checkout from "./app/(auth)/Checkout";
 
 import PostManagePage from "./app/(admin)/PostManagePage";
 import OrderIdelDetail from "./app/(shipper)/OrderIdelDetail";
+import StoreDashboardPage from "./app/(store)/StoreDashboard";
 import ShipperProfile from "./app/(shipper)/ShipperProfile";
 
 function App() {
@@ -126,6 +127,7 @@ function App() {
 					<Route path="/store/order/:id" element={<OrderDetail />} />
 					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
 					<Route path="/store/flash-sale" element={<FlashSale />} />
+					<Route path="/store/manager" element={<StoreDashboardPage />} />
 				</Route>
 				<Route element={<AdminLayout></AdminLayout>}>
 					<Route path="/admin/report" element={<ReportPage />} />

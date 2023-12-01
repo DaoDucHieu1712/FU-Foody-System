@@ -11,6 +11,7 @@ using FFS.Application.Data;
 using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.Order;
 using FFS.Application.DTOs.QueryParametter;
+using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -202,16 +203,16 @@ namespace FFS.Application.Repositories.Impls
 		{
 			try
 			{
-				var foodDetailStatistics = _context.OrderDetails.Include(x=>x.Order)
+				var foodDetailStatistics = _context.OrderDetails.Include(x => x.Order)
 					.Include(x => x.Food)
 					.ThenInclude(x => x.Comments)
-					.Where(x => x.StoreId == storeId && x.Order.PaymentId!=null)
+					.Where(x => x.StoreId == storeId && x.Order.PaymentId != null)
 					.GroupBy(x => new { x.Food.FoodName, x.FoodId })
 					.Select(g => new FoodDetailStatistic
 					{
 						FoodName = g.Key.FoodName,
 						RateAverage = g.FirstOrDefault(x => x.Food.RateAverage != null).Food.RateAverage,
-						RatingCount = g.Sum(x => x.Food.RateAverage != null ? x.Food.RatingCount : 0),
+						RatingCount = g.FirstOrDefault(x => x.Food.RateAverage != null).Food.RatingCount,
 						QuantityOfSell = g.Sum(x => x.Quantity)
 					})
 					.ToList();
@@ -228,16 +229,22 @@ namespace FFS.Application.Repositories.Impls
 		{
 			try
 			{
-				var revenuePerMonth = _context.Orders.Include(x=>x.Payment).Where(x=>x.PaymentId != null).GroupBy(x => new { x.UpdatedAt.Year, x.UpdatedAt.Month })
-					.Select(g=> new RevenuePerMonth
+				var monthNames = new[] { "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" };
+				var distinctOrderIds = _context.OrderDetails
+							.Where(od => od.StoreId == storeId)
+							.Select(od => od.OrderId)
+							.Distinct()
+							.ToList();
+				var revenuePerMonth = Enumerable.Range(1, 12)
+					.Select(month => new RevenuePerMonth
 					{
-						Year = g.Key.Year,
-						Month = g.Key.Month,
-						Revenue = g.Sum(x=>x.TotalPrice)
+						Month = monthNames[month - 1],
+						Revenue = _context.Orders
+							.Where(o => o.PaymentId != null && o.CreatedAt.Year == year && o.CreatedAt.Month == month && distinctOrderIds.Contains(o.Id))
+							.Sum(x => x.TotalPrice)
 					})
-					.Where(x=>x.Year == year)
-			.OrderBy(x => x.Month)
-	.ToList();
+					.ToList();
+
 				return revenuePerMonth;
 			}
 			catch (Exception ex)

@@ -1,18 +1,31 @@
 import { useState, useEffect } from "react";
-import PieChart from "./Piechart";
+import PieChartAccount from "./PieChartAccount";
+import PieChartPost from "./PieChartPost";
+import VerticalBarChart from "./VerticalBarChart";
 import axios from "../../shared/api/axiosConfig";
-import ReportChart from "./ReportChart";
+import { Option, Select } from "@material-tailwind/react";
+
 const DashboardPage = () => {
 	const [apiData, setApiData] = useState(null);
 	const [apiPostData, setApiPostData] = useState(null);
+	const [apiReportData, setApiReportData] = useState(null);
+	const currentYear = new Date().getFullYear();
+	const [selectedYear, setSelectedYear] =useState(currentYear.toString());
+	const fetchDataReport = async (year) => {
+		try {
+			const response = await axios.get(`/api/Admin/ReportsStatistic/${year}`);
+			const data = response; // Use response.data to get the actual data
+			setApiReportData(data);
+		} catch (error) {
+			console.error("Error fetching data from API:", error);
+		}
+	};
 
 	useEffect(() => {
-		// Fetch data from the API
 		const fetchData = async () => {
 			try {
 				const response = await axios.get("/api/Admin/AccountsStatistic");
-				const data = await response;
-				console.log(response);
+				const data = response;
 				setApiData(data);
 			} catch (error) {
 				console.error("Error fetching data from API:", error);
@@ -22,8 +35,7 @@ const DashboardPage = () => {
 		const fetchDataPost = async () => {
 			try {
 				const response = await axios.get("/api/Admin/PostsStatistic");
-				const data = await response;
-				console.log(response);
+				const data = response;
 				setApiPostData(data);
 			} catch (error) {
 				console.error("Error fetching data from API:", error);
@@ -32,51 +44,12 @@ const DashboardPage = () => {
 
 		fetchData();
 		fetchDataPost();
-	}, []);
+		fetchDataReport(selectedYear);
+	}, [selectedYear]);
 
-	// Render loading state if data is still being fetched
 	if (!apiData) {
 		return <div>Loading...</div>;
 	}
-
-	// Process API data to match the PieChart component's expected format
-	const chartData = {
-		labels: apiData.accountsStatistic.map((statistic) => {
-			switch (statistic.userType) {
-				case 1:
-					return "Đang chờ duyệt";
-				case 2:
-					return "Đang hoạt động";
-				case 3:
-					return "Từ chối yêu cầu";
-				default:
-					return "Unknown";
-			}
-		}),
-		values: apiData.accountsStatistic.map(
-			(statistic) => statistic.numberOfAccount
-		),
-	};
-
-	const chartDataPost = apiPostData
-  ? {
-      labels: apiPostData.postsStatistic.map((statistic) => {
-        switch (statistic.postStatus) {
-          case 1:
-            return "Đang chờ duyệt";
-          case 2:
-            return "Đang hoạt động";
-          case 3:
-            return "Từ chối yêu cầu";
-          default:
-            return "Unknown";
-        }
-      }),
-      values: apiPostData.postsStatistic.map(
-        (statistic) => statistic.numberOfPosts
-      ),
-    }
-  : { labels: [], values: [] };
 
 	return (
 		<>
@@ -86,7 +59,7 @@ const DashboardPage = () => {
 					<h3 className="text-center text-lg font-bold mb-2">
 						Thống kê tài khoản
 					</h3>
-					<PieChart data={chartData} width={300} height={300} />
+					<PieChartAccount></PieChartAccount>
 					<h5 className="text-gray-500 text-center">
 						Tổng số:{" "}
 						<span className="font-bold text-primary">
@@ -100,31 +73,43 @@ const DashboardPage = () => {
 					<h3 className="text-center text-lg font-bold mb-2">
 						Thống kê bài viết
 					</h3>
-					<PieChart data={chartDataPost} width={300} height={300} />
+					<PieChartPost></PieChartPost>
 					<h5 className="text-gray-500 text-center">
 						Tổng số:{" "}
 						<span className="font-bold text-primary">
-            {apiPostData ? apiPostData.totalPost : 0}
+							{apiPostData ? apiPostData.totalPost : 0}
 						</span>{" "}
 						bài viết
 					</h5>
 				</div>
-
-				{/* <div className="m-4 p-4 bg-gray-200 rounded-lg">
-					<h3 className="text-center text-lg font-bold mb-2">
-						Thống kê báo cáo
-					</h3>
-					<ReportChart></ReportChart>
-					<h5 className="text-gray-500 text-center">
-						Tổng số:{" "}
-						<span className="font-bold text-primary">
-            {apiPostData ? apiPostData.totalPost : 0}
-						</span>{" "}
-						bài viết
-					</h5>
-				</div> */}
 			</div>
-			
+
+			<div className="m-4 p-4 bg-gray-100 rounded-lg">
+				<h3 className="text-center text-lg font-bold mb-2">Thống kê báo cáo</h3>
+				<div className="flex items-center justify-center mx-auto w-4/12 whitespace-nowrap m-10">
+					<span className="mr-2">Chọn năm </span>
+					<Select
+						value={selectedYear.toString()}
+						onChange={(e) => setSelectedYear(e)}
+						className="mt-2"
+					>
+						<Option value="2020">2020</Option>
+						<Option value="2021">2021</Option>
+						<Option value="2022">2022</Option>
+						<Option value="2023">2023</Option>
+					</Select>
+				</div>
+
+				<VerticalBarChart year={selectedYear}></VerticalBarChart>
+
+				<h5 className="text-gray-500 text-center">
+					Tổng số:{" "}
+					<span className="font-bold text-primary">
+						{apiReportData ? apiReportData.totalReportYear : 0}
+					</span>{" "}
+					báo cáo
+				</h5>
+			</div>
 		</>
 	);
 };
