@@ -115,6 +115,7 @@ builder.Services.AddTransient<IFlashSaleDetailRepository, FlashSaleDetailReposit
 builder.Services.AddTransient<IUserDiscountRepository, UserDiscountRepository>();
 builder.Services.AddTransient<IChatRepository, ChatRepository>();
 builder.Services.AddTransient<IMessageRepository, MessageRepository>();
+builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
 
 
 #endregion
