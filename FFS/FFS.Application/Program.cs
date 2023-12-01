@@ -25,6 +25,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddCors();
 
+builder.Services.AddDbContext<ApplicationDbContext>(options => {
+	options.UseSqlServer(
+		builder.Configuration.GetConnectionString("DefaultConnection"));
+}, ServiceLifetime.Transient);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

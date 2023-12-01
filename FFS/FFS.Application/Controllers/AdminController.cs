@@ -105,6 +105,23 @@ namespace FFS.Application.Controllers {
 		}
 
 		[Authorize]
+		[HttpPost]
+		public IActionResult ApprovePost([FromBody] UserParameters userParameters)
+		{
+			try
+			{
+				int id = Convert.ToInt32(userParameters.id);
+				_userRepository.ApprovePost(id, userParameters.Action);
+				return Ok($"Duyệt thành công bài viết {userParameters.Title}");
+			}
+			catch (Exception ex)
+			{
+				throw;
+			}
+		}
+		
+
+		[Authorize]
         [HttpGet]
         public IActionResult GetRoles()
         {
@@ -216,6 +233,9 @@ namespace FFS.Application.Controllers {
                 throw;
             }
         }
+
+
+		
 
 		[HttpGet]
 		public IActionResult AccountsStatistic()

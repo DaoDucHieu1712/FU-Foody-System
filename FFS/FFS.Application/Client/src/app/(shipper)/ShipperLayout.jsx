@@ -69,7 +69,7 @@ const ShipperLayout = () => {
 						</div>
 						<div className="list flex flex-col  items-start gap-y-8 text-md font-medium text-white">
 							<NavLink
-								 to={`/shipper/details/${userId}`}
+								 to="/shipper/profile"
 								className="uppercase flex items-center"
 							>
 								<User />

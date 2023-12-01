@@ -74,7 +74,10 @@ namespace FFS.Application.Repositories.Impls
             }
         }
 
-        public async Task<Post> UpdatePost(Post updatedPost)
+
+		
+
+		public async Task<Post> UpdatePost(Post updatedPost)
         {
             try
             {

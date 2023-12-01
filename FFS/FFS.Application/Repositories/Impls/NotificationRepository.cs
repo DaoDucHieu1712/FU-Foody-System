@@ -22,9 +22,6 @@ namespace FFS.Application.Repositories.Impls
 			}
 		}
 
-		public async Task AddNotification(Notification notification)
-		{
-			await Add(notification);
-		}
+		
 	}
 }

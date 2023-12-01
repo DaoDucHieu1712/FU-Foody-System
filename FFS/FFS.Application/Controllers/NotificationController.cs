@@ -14,13 +14,13 @@ namespace FFS.Application.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
-        private readonly ApplicationDbContext _db;
-        private readonly IMapper _mapper;
+      
+     
 		private readonly INotificationRepository _notifyRepository;
 
-		public NotificationController(ApplicationDbContext db, INotificationRepository notifyRepository )
+		public NotificationController(INotificationRepository notifyRepository )
         {
-            _db = db;
+            
 			_notifyRepository = notifyRepository;
         }
 
@@ -32,12 +32,6 @@ namespace FFS.Application.Controllers
 			return Ok(notifications);
         }
 
-		[HttpPost]
-		public IActionResult CreateNotification(Notification notification)
-		{
-			var createdNotify = _notifyRepository.AddNotification(notification);
-
-			return Ok(createdNotify);
-		}
+		
 	}
 }

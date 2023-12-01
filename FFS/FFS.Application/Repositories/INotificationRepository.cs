@@ -6,7 +6,7 @@ namespace FFS.Application.Repositories
 	public interface INotificationRepository : IRepository<Notification, int>
 	{
 		Task<List<Notification>> GetNotificationsByUserId(string userId);
-		Task AddNotification(Notification notification);
+		
 	}
 	
 }
