@@ -5,13 +5,31 @@ import Cookies from "universal-cookie";
 import ChatService from "./shared/chat.service";
 import { chatActions } from "./shared/chatSlice";
 import BoxMain from "./shared/components/chat/BoxMain";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 var cookie = new Cookies();
 
 const ChatPage = () => {
-	const [currentBox, setCurrentBox] = useState();
 	const chatSelector = useSelector((state) => state.chat);
+	const [currentBox, setCurrentBox] = useState();
 	const dispatch = useDispatch();
+	const url = import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL + "/chatHub";
+	var connection = new HubConnectionBuilder().withUrl(url).build();
+
+	connection.on("FuFoodyCreateBox", function (userbox) {
+		var currentUser = cookie.get("fu_foody_id");
+		if (currentUser === userbox.toUser || currentUser === userbox.fromUser) {
+			dispatch(chatActions.Update(true));
+			boxsQuery.refetch();
+		}
+	});
+
+	connection
+		.start()
+		.then()
+		.catch(function (err) {
+			return console.error(err.toString());
+		});
 
 	const boxsQuery = useQuery({
 		queryKey: ["boxs-by-user"],
