@@ -2,6 +2,7 @@
 using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using FFS.Application.DTOs.Store;
 using FFS.Application.Entities.Constant;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
@@ -10,8 +11,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FFS.Application.Controllers {
-    [Route("api/[controller]/[action]")]
+namespace FFS.Application.Controllers
+{
+	[Route("api/[controller]/[action]")]
     [ApiController]
     public class AdminController : ControllerBase {
 
@@ -285,7 +287,7 @@ namespace FFS.Application.Controllers {
 
 				var result = new
 				{
-					TotalAccount = TotalReportYear,
+					TotalReportYear = TotalReportYear,
 					ReportsStatistic = reportsStatistic
 				};
 
@@ -312,59 +314,6 @@ namespace FFS.Application.Controllers {
 			{
 				return StatusCode(500, "Internal Server Error");
 			}
-
 		}
-
-		[HttpGet("{storeId}")]
-		public IActionResult OrderStatistic(int storeId)
-		{
-			try
-			{
-				List<OrderStatistic> orderStatistics = _orderRepository.OrderStatistic(storeId);
-				return Ok(new
-				{
-					TotalOrder = _orderRepository.CountTotalOrder(storeId),
-					OrdersStatistic = orderStatistics
-				});
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, "Internal Server Error");
-			}
-
-		}
-
-		[HttpGet("{storeId}")]
-		public IActionResult GetFoodDetailStatistics(int storeId)
-		{
-			try
-			{
-				List<FoodDetailStatistic> foodDetailStatistics = _orderRepository.FoodDetailStatistics(storeId);
-				return Ok(foodDetailStatistics);
-
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, "Internal Server Error");
-			}
-
-		}
-
-		[HttpGet("{storeId}/{year}")]
-		public IActionResult GetFoodDetailStatistics(int storeId, int year)
-		{
-			try
-			{
-				List<RevenuePerMonth> revenuePerMonths = _orderRepository.RevenuePerMonth(storeId, year);
-				return Ok(revenuePerMonths);
-
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, "Internal Server Error");
-			}
-
-		}
-
 	}
 }
