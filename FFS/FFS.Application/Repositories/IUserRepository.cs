@@ -14,6 +14,8 @@ namespace FFS.Application.Repositories {
         void BanAccount(string idBan);
         void UnBanAccount(string idUnBan);
         void ApproveUser(string id, string action);
+
+		void ApprovePost(int postId, string action);
 		List<AccountStatistic> AccountsStatistic();
 		int CountTotalUsers();
 		int CountGetPosts(UserParameters userParameters);

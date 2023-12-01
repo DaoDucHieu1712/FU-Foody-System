@@ -75,7 +75,23 @@ const BestRatingHome = () => {
                         </div>
                         <div className="w-2/5">
                             <Typography variant="h6" className="pointer-events-none">{bestRatingItem.foodName}</Typography>
-                            {bestRatingItem.price > 0 ?
+                            {bestRatingItem.priceAfterSale <= 0 && bestRatingItem.salePercent <= 0 ?
+                                (
+                                    <>
+                                        <Typography
+                                            color="blue"
+                                            className="relative w-fit pointer-events-none"
+                                        >
+                                            {bestRatingItem.price}.000
+                                            <span className="absolute font-normal top-0 -right-2 text-xs">
+                                                đ
+                                            </span>
+                                        </Typography>
+                                    </>
+                                ) : (
+                                    null
+                                )}
+                            {bestRatingItem.priceAfterSale > 0 ?
                                 (
                                     <>
                                         <Typography
@@ -116,7 +132,7 @@ const BestRatingHome = () => {
                                             color="blue"
                                             className="relative w-fit pointer-events-none"
                                         >
-                                            {bestRatingItem.price - (bestRatingItem.price * bestRatingItem.salePercent)}.000
+                                            {bestRatingItem.price - (bestRatingItem.price * bestRatingItem.salePercent / 100)}.000
                                             <span className="absolute font-normal top-0 -right-2 text-xs">
                                                 đ
                                             </span>

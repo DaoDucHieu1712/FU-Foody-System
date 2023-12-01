@@ -83,7 +83,23 @@ const NewestFoodHome = () => {
               <Typography variant="h6" className="pointer-events-none">
                 {newFoodItem.foodName}
               </Typography>
-              {newFoodItem.price > 0 ?
+              {newFoodItem.priceAfterSale <= 0 && newFoodItem.salePercent <= 0 ?
+                (
+                  <>
+                    <Typography
+                      color="blue"
+                      className="relative w-fit pointer-events-none"
+                    >
+                      {newFoodItem.price}.000
+                      <span className="absolute font-normal top-0 -right-2 text-xs">
+                        đ
+                      </span>
+                    </Typography>
+                  </>
+                ) : (
+                  null
+                )}
+              {newFoodItem.priceAfterSale > 0 ?
                 (
                   <>
                     <Typography
@@ -124,7 +140,7 @@ const NewestFoodHome = () => {
                       color="blue"
                       className="relative w-fit pointer-events-none"
                     >
-                      {newFoodItem.price - (newFoodItem.price * newFoodItem.salePercent)}.000
+                      {newFoodItem.price - (newFoodItem.price * newFoodItem.salePercent / 100)}.000
                       <span className="absolute font-normal top-0 -right-2 text-xs">
                         đ
                       </span>
