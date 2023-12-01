@@ -9,10 +9,8 @@ import {
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import OrderService from "../(store)/shared/order.service";
-import axios from "../../shared/api/axiosConfig";
 import PaymentStatus from "../(store)/components/order/PaymentStatus";
+import OrderService from "../(store)/shared/order.service";
 
 const TABLE_HEAD = [
 	"Id",

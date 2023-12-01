@@ -95,8 +95,8 @@ const UserDetails = () => {
 									>
 										Nhắn tin
 									</a>
-									<a >
-									<ReportUser uId={userId} sId={id}></ReportUser>
+									<a>
+										<ReportUser uId={userId} sId={id}></ReportUser>
 									</a>
 									{/* <a
 										href="#"
@@ -196,12 +196,14 @@ const UserDetails = () => {
 										<div className="py-2 px-8">
 											<div className="border border-gray-200 border-l-0 border-r-0 py-1">
 												<div className="flex space-x-2">
-													<div className="w-1/2 flex space-x-2 justify-center items-center hover:bg-gray-100 text-xl py-2 rounded-lg cursor-pointer text-gray-500">
+													<div
+														onClick={() => handleReactPost(post.id)}
+														className="w-1/2 flex space-x-2 justify-center items-center hover:bg-gray-100 text-xl py-2 rounded-lg cursor-pointer text-gray-500"
+													>
 														{postIdToCheck === post.id && isReact ? (
 															<span
 																className="flex gap-1 items-center text-orange-900
                         text-sm font-semibold"
-																onClick={() => handleReactPost(post.id)}
 															>
 																<svg
 																	xmlns="http://www.w3.org/2000/svg"
@@ -216,10 +218,7 @@ const UserDetails = () => {
 																Thích
 															</span>
 														) : (
-															<span
-																className="text-sm font-semibold"
-																onClick={() => handleReactPost(post.id)}
-															>
+															<span className="text-sm font-semibold">
 																Thích
 															</span>
 														)}

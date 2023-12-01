@@ -23,15 +23,15 @@ namespace FFS.Application.Controllers
 		private readonly IReactPostRepository _reactPostRepository;
 		private readonly IMapper _mapper;
 		private readonly IHubContext<NotificationHub> _hubContext;
-		private readonly ApplicationDbContext _db;
+		private readonly INotificationRepository _notifyRepository;
 
-		public PostController(IPostRepository postRepository, ApplicationDbContext db, IReactPostRepository reactPostRepository, IMapper mapper, IHubContext<NotificationHub> hubContext)
+		public PostController(IPostRepository postRepository, ApplicationDbContext db, INotificationRepository notifyRepository, IReactPostRepository reactPostRepository, IMapper mapper, IHubContext<NotificationHub> hubContext)
 		{
 			_postRepository = postRepository;
 			_reactPostRepository = reactPostRepository;
 			_mapper = mapper;
 			_hubContext = hubContext;
-			_db = db;
+			_notifyRepository = notifyRepository;
 		}
 
 		[HttpGet]
@@ -85,6 +85,26 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[HttpGet("{postId}")]
+		public async Task<ActionResult<Post>> GetUserByPost(int postId)
+		{
+			try
+			{
+				var post = await _postRepository.GetUserIdByPostId(postId);
+
+				if (post == null)
+				{
+					return NotFound();
+				}
+				
+				return Ok(post);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
 		[HttpGet()]
 		public async Task<ActionResult<List<Post>>> GetTop3NewestPosts()
 		{
@@ -122,10 +142,7 @@ namespace FFS.Application.Controllers
 				};
 
 				await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
-
-
-				_db.Notifications.Add(notification);
-				await _db.SaveChangesAsync();
+				await _notifyRepository.AddNotification(notification);
 				return Ok();
 			}
 			catch (Exception ex)
@@ -190,9 +207,20 @@ namespace FFS.Application.Controllers
 						UpdatedAt = DateTime.Now,
 						IsDelete = false
 					});
+					//var postAuthor = _postRepository.GetUserIdByPostId((int)reactPostDTO.PostId);
+					//if (postAuthor != null)
+					//{
+					//	var notification = new Notification
+					//	{
+					//		UserId = postAuthor.ToString(),
+					//		Title = "New Reaction",
+					//		Content = $" \"{reactPostDTO.UserId}\" đã thích bài viết của bạn."
+					//	};
 
-					
-					
+					//	await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+					//	await _notifyRepository.AddNotification(notification);
+					//}
+
 				}
 				else
 				{

@@ -134,6 +134,23 @@ namespace FFS.Application.Repositories.Impls
             }
         }
 
+		public async Task<string> GetUserIdByPostId(int postId)
+		{
+			try
+			{
+				var userId = await _context.Posts
+					.Where(post => post.Id == postId)
+					.Select(post => post.UserId)
+					.FirstOrDefaultAsync();
+
+				return userId;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+
 		public int CountAllPost()
 		{
 			return _context.Posts.Count();	
