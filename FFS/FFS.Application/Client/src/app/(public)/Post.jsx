@@ -131,7 +131,8 @@ const Post = () => {
             </div>
             <div className="list_post mt-8">
               <div className="grid grid-cols-2 gap-4">
-                {posts.map((post) => (
+              {posts && posts.length != 0 ? (
+                posts.map((post) => (
                   <Card
                     key={post.id}
                     className="w-96 border rounded-none shadow-none"
@@ -187,7 +188,12 @@ const Post = () => {
                       </Button>
                     </CardFooter>
                   </Card>
-                ))}
+                ))
+                ) : (
+                  <Typography variant="h5" className="mt-5 ml-5">
+                    Không có bài viết nào!
+                  </Typography>
+                )}
               </div>
 
               <div className="flex items-center justify-center gap-4 mt-7">

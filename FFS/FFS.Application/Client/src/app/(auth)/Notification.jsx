@@ -69,8 +69,8 @@ const Notification = () => {
 		};
 		// Remove event click outside
 	}, [dispatch, userId]);
-  const reversedNotifications = [...notifications].reverse();
-  
+	const reversedNotifications = [...notifications].reverse();
+
 	//css
 	// Inline styles for the tooltip and triangle
 	const tooltipStyle = {
@@ -111,7 +111,7 @@ const Notification = () => {
 					<div style={triangleStyle} />
 					<h3 className="text-base mb-2">Thông Báo Mới Nhận</h3>
 					<ul>
-          {reversedNotifications.map((notification, index) => (
+						{reversedNotifications.map((notification, index) => (
 							<li key={index} className="mb-2 p-2 rounded-lg hover:bg-gray-100">
 								<div className="font-bold uppercase">{notification.title}</div>
 								<div className="text-sm">{notification.content}</div>

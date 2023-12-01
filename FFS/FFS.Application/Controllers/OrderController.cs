@@ -543,6 +543,7 @@ namespace FFS.Application.Controllers
 			await _orderRepository.CreatePayment(p);
 			order.PaymentId = p.Id;
 			await _orderRepository.Update(order);
+
 			return Ok(p);
 		}
 

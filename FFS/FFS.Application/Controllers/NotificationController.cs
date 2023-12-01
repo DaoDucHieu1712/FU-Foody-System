@@ -2,6 +2,8 @@
 using DocumentFormat.OpenXml.InkML;
 using FFS.Application.Data;
 using FFS.Application.Entities;
+using FFS.Application.Repositories;
+using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,29 +16,28 @@ namespace FFS.Application.Controllers
     {
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
+		private readonly INotificationRepository _notifyRepository;
 
-        public NotificationController(ApplicationDbContext db)
+		public NotificationController(ApplicationDbContext db, INotificationRepository notifyRepository )
         {
             _db = db;
+			_notifyRepository = notifyRepository;
         }
 
         [HttpGet("{userId}")]
         public async Task<ActionResult<IEnumerable<Notification>>> GetNotificationsByUserId(string userId)
-        {
-            var notifications = await _db.Notifications
-                .Where(n => n.UserId == userId)
-                .ToListAsync();
+		{
+			var notifications = await _notifyRepository.GetNotificationsByUserId(userId);
 
-            return Ok(notifications);
+			return Ok(notifications);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateNotification(Notification notification)
-        {
-            _db.Notifications.Add(notification);
-            await _db.SaveChangesAsync();
+		[HttpPost]
+		public IActionResult CreateNotification(Notification notification)
+		{
+			var createdNotify = _notifyRepository.AddNotification(notification);
 
-            return Ok(notification);
-        }
-    }
+			return Ok(createdNotify);
+		}
+	}
 }
