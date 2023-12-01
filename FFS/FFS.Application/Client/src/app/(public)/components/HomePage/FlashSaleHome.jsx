@@ -80,7 +80,20 @@ const FlashSaleHome = () => {
 							<Typography variant="h6" className="pointer-events-none">
 								{flashSaleItem.foodName}
 							</Typography>
-							{flashSaleItem.price > 0 ? (
+							{flashSaleItem.priceAfterSale <= 0 && flashSaleItem.salePercent <= 0 ? (
+								<>
+									<Typography
+										color="blue"
+										className="relative w-fit pointer-events-none"
+									>
+										{flashSaleItem.price}.000
+										<span className="absolute font-normal top-0 -right-2 text-xs">
+											đ
+										</span>
+									</Typography>
+								</>
+							) : null}
+							{flashSaleItem.priceAfterSale > 0 ? (
 								<>
 									<Typography
 										color="gray"
@@ -118,7 +131,7 @@ const FlashSaleHome = () => {
 										className="relative w-fit pointer-events-none"
 									>
 										{flashSaleItem.price -
-											flashSaleItem.price * flashSaleItem.salePercent}
+											flashSaleItem.price * flashSaleItem.salePercent / 100}
 										.000
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ

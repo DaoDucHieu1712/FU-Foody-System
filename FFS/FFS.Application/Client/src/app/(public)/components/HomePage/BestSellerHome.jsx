@@ -85,7 +85,20 @@ const BestSellerHome = () => {
 							<Typography variant="h6" className="pointer-events-none">
 								{bestSellerItem.foodName}
 							</Typography>
-							{bestSellerItem.price > 0 ? (
+							{bestSellerItem.priceAfterSale <= 0 && bestSellerItem.salePercent <= 0 ? (
+								<>
+									<Typography
+										color="blue"
+										className="relative w-fit pointer-events-none"
+									>
+										{bestSellerItem.price}.000
+										<span className="absolute font-normal top-0 -right-2 text-xs">
+											đ
+										</span>
+									</Typography>
+								</>
+							) : null}
+							{bestSellerItem.priceAfterSale > 0 ? (
 								<>
 									<Typography
 										color="gray"
@@ -123,7 +136,7 @@ const BestSellerHome = () => {
 										className="relative w-fit pointer-events-none"
 									>
 										{bestSellerItem.price -
-											bestSellerItem.price * bestSellerItem.salePercent}
+											bestSellerItem.price * bestSellerItem.salePercent / 100}
 										.000
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ

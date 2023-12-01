@@ -21,13 +21,34 @@ namespace FFS.Application.Repositories.Impls
         //{
         //    await Update(inventory);
         //}
-        public async Task UpdateInventoryByStoreAndFoodId(int storeId, int foodId, int newQuantity)
+        public async Task UpdateInventoryByStoreAndFoodId(int storeId, int foodId)
         {
             var inventory = await FindSingle(i => i.StoreId == storeId && i.FoodId == foodId);
 
             if (inventory != null)
             {
-                inventory.quantity = newQuantity;
+                await Update(inventory);
+            }
+        }
+		
+		public async Task ImportInventory(int storeId, int foodId, int quantity)
+        {
+            var inventory = await FindSingle(i => i.StoreId == storeId && i.FoodId == foodId);
+
+            if (inventory != null)
+            {
+                inventory.quantity += quantity;
+                await Update(inventory);
+            }
+        }
+		
+		public async Task ExportInventory(int storeId, int foodId, int quantity)
+        {
+            var inventory = await FindSingle(i => i.StoreId == storeId && i.FoodId == foodId);
+
+            if (inventory != null && inventory.quantity >= quantity)
+            {
+                inventory.quantity -= quantity;
                 await Update(inventory);
             }
         }

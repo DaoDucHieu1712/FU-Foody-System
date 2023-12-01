@@ -22,6 +22,5 @@ namespace FFS.Application.Repositories.Impls
 			}
 		}
 
-		
 	}
 }

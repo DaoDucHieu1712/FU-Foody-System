@@ -150,6 +150,7 @@ namespace FFS.Application.Controllers
 
 				await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
 				await _notifyRepository.Add(notification);
+
 				return Ok();
 			}
 			catch (Exception ex)
@@ -222,6 +223,8 @@ namespace FFS.Application.Controllers
 						UpdatedAt = DateTime.Now,
 						IsDelete = false
 					});
+				
+
 
 					if (postAuthor != null && reactPostDTO.UserId != postAuthor)
 					{
