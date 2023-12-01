@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.QueryParametter;
+using FFS.Application.Entities;
 using FFS.Application.Entities.Constant;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
@@ -83,6 +84,8 @@ namespace FFS.Application.Controllers {
             }
         }
 
+
+
 		[Authorize]
 		[HttpPost]
 		public IActionResult GetPosts([FromBody] UserParameters userParameters)
@@ -106,20 +109,32 @@ namespace FFS.Application.Controllers {
 
 		[Authorize]
 		[HttpPost]
-		public IActionResult ApprovePost([FromBody] UserParameters userParameters)
+		public async Task<IActionResult> ApprovePost([FromBody] UserParameters userParameters)
 		{
 			try
 			{
-				int id = Convert.ToInt32(userParameters.id);
-				_userRepository.ApprovePost(id, userParameters.Action);
-				return Ok($"Duyệt thành công bài viết {userParameters.Title}");
+				int idPost = Convert.ToInt32(userParameters.IdPost);
+				Post post = await _postRepository.FindById(idPost, null);
+				if(post != null)
+				{
+					if(userParameters.Status == 2)
+					{
+						post.Status = Entities.Enum.StatusPost.Accept;
+					}
+					if (userParameters.Status == 3)
+					{
+						post.Status = Entities.Enum.StatusPost.Reject;
+					}
+					await _postRepository.Update(post);
+					return Ok("Duyệt thành công!");
+				}
+				return BadRequest("Bài viết không tồn tại! Xin vui lòng thử lại sau");
 			}
 			catch (Exception ex)
 			{
 				throw;
 			}
 		}
-		
 
 		[Authorize]
         [HttpGet]
