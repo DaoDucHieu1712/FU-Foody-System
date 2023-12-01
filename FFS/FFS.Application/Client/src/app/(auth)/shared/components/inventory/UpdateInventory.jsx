@@ -11,6 +11,7 @@ import {
   DialogBody,
   DialogFooter,
   IconButton,
+  Tooltip,
 } from "@material-tailwind/react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -21,7 +22,7 @@ import ErrorText from "../../../../../shared/components/text/ErrorText";
 const schema = yup.object({
   quantity: yup
     .number()
-    .positive("Số lượng tồn kho phải lớn hơn 0 !")
+    .positive("Số lượng nhập kho phải lớn hơn 0 !")
     .default(null)
     .typeError("Hãy nhập số lượng !"),
 });
@@ -48,7 +49,7 @@ const UpdateInventory = ({
     try {
       // Send the update request with the entered quantity
       await axios.put(
-        `/api/Inventory/UpdateInventoryByStoreAndFoodId/update/${storeId}/${foodId}/${data.quantity}`
+        `/api/Inventory/ImportInventory/${storeId}/${foodId}/${data.quantity}`
       );
       toast.success("Cập nhật kho thành công!");
       // Close the dialog after a successful update
@@ -62,16 +63,18 @@ const UpdateInventory = ({
 
   return (
     <>
-      <IconButton variant="text" onClick={handleOpen}>
-        <i className="fas fa-pencil" />
-      </IconButton>
+      <Tooltip content="Nhập kho">
+        <IconButton variant="text" onClick={handleOpen}>
+          <i className="fa fa-plus"></i>
+        </IconButton>
+      </Tooltip>
 
       <Dialog open={open} size="sm" handler={handleOpen}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex items-center justify-between">
             <DialogHeader className="flex flex-col items-start">
               <Typography className="mb-1" variant="h4">
-                Chỉnh sửa kho món ăn
+                Nhập kho món ăn
               </Typography>
             </DialogHeader>
             <svg
@@ -99,9 +102,16 @@ const UpdateInventory = ({
                 />
               </div>
               <Input
+                label="Tồn kho"
+                type="number"
+                defaultValue={quantity || 0}
+                readOnly
+              />
+              <Input
                 label="Số lượng"
                 type="number"
-                defaultValue={quantity || null}
+                min={0}
+                defaultValue={1}
                 {...register("quantity")}
               />
             </div>
@@ -123,6 +133,7 @@ const UpdateInventory = ({
   );
 };
 UpdateInventory.propTypes = {
+  storeId: propTypes.any.isRequired,
   foodId: propTypes.any.isRequired,
   reloadInventory: propTypes.any.isRequired,
   foodName: propTypes.any.isRequired,
