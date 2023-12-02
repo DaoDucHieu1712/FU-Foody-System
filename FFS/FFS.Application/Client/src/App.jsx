@@ -73,7 +73,7 @@ function App() {
 					<Route path="/food-details/:id" element={<FoodDetails />} />
 					<Route path="/cart" element={<CartPage />} />
 					<Route
-						path="/checkout/:location/:phoneNumber/:note/:fee/:percent"
+						path="/checkout/:location/:phoneNumber/:note/:fee"
 						element={<Checkout />}
 					/>
 					<Route path="/payment" element={<PaymentPage />} />
@@ -96,10 +96,7 @@ function App() {
 						path="/shipper/order-pending"
 						element={<OrderShippingPage />}
 					/>
-					<Route
-						path="/shipper/profile"
-						element={<ShipperProfile />}
-					/>
+					<Route path="/shipper/profile" element={<ShipperProfile />} />
 
 					<Route
 						path="/shipper/order-available"

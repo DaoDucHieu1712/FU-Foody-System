@@ -97,6 +97,7 @@ const StoreDetailPage = () => {
 			console.error("An error occurred", error);
 		}
 	};
+
 	const handleSearchCombo = () => {
 		try {
 			axios
@@ -274,6 +275,22 @@ const StoreDetailPage = () => {
 														<Typography variant="paragraph" className="py-2">
 															{item.description}
 														</Typography>
+
+														{/* {item.inventories[0].quantity === 0 ? (
+															<Typography
+																variant="paragraph"
+																className="py-2 text-red-500"
+															>
+																hết hàng
+															</Typography>
+														) : (
+															<Typography
+																variant="paragraph"
+																className="py-2 text-green-500"
+															>
+																còn hàng
+															</Typography>
+														)} */}
 													</div>
 													<div className="col-span-1">
 														<Typography

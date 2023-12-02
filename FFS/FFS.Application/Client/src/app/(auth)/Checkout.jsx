@@ -35,6 +35,10 @@ const Checkout = () => {
 			return Number(item.storeId);
 		});
 		console.log(items);
+		if (cart.list.length === 0) {
+			toast.error("Giỏ hàng trống nên không thể thanh toán");
+			window.location.href = "/";
+		}
 	}, [cart]);
 
 	const useDiscountHandler = async () => {

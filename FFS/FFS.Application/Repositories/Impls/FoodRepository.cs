@@ -26,7 +26,7 @@ namespace FFS.Application.Repositories.Impls
             try
             {
                 // Filter the food items by the provided StoreId
-                var foodList = await GetList(f => f.StoreId == storeId);
+                var foodList = await GetList(f => f.StoreId == storeId, x => x.Inventories);
                 return foodList;
             }
             catch (Exception ex)
