@@ -20,6 +20,7 @@ import {
 	MenuList,
 	Typography,
 	MenuItem,
+	Spinner,
 } from "@material-tailwind/react";
 import LastestPost from "../../../../(public)/components/post/LastestPost";
 import UpdatePost from "./UpdatePost";
@@ -87,8 +88,10 @@ const DetailPost = () => {
 	const handleopenComent = () => {
 		setOpenComment((cur) => !cur);
 	};
+	
 	return (
 		<>
+		{post ? (
 			<div className="container mt-8 p-11">
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-x-14">
 					{/* Column 1 */}
@@ -311,6 +314,9 @@ const DetailPost = () => {
 					</div>
 				</div>
 			</div>
+			) : (
+				<Spinner></Spinner>
+			)}
 		</>
 	);
 };

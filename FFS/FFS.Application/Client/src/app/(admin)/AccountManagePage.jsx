@@ -9,7 +9,7 @@ import {
 	Button,
 } from "@material-tailwind/react";
 import axios from "../../shared/api/axiosConfig";
-import ReportChart from "./ReportChart";
+
 
 const AccountManagePage = () => {
 	const [dataSearch, setDateSearch] = useState({

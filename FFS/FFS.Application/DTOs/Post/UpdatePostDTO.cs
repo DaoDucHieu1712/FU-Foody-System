@@ -1,4 +1,6 @@
-﻿    namespace FFS.Application.DTOs.Post
+﻿using FFS.Application.Entities.Enum;
+
+namespace FFS.Application.DTOs.Post
     {
 
         public class UpdatePostDTO
@@ -9,8 +11,9 @@
             public string Content { get; set; }
             public string UserId { get; set; }
             public DateTime UpdatedAt { get; set; }
-        
-        }
+			public StatusPost Status { get; set; }
+
+	}
 
        
     }
