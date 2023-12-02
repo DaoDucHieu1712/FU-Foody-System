@@ -55,7 +55,6 @@ const FlashSaleHome = () => {
 							) : null}
 							<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
 								<AddToWishlist foodId={flashSaleItem.id} />
-								<FoodCart></FoodCart>
 								<Tooltip content="Xem chi tiết món ăn">
 									<IconButton
 										variant="text"
@@ -80,7 +79,8 @@ const FlashSaleHome = () => {
 							<Typography variant="h6" className="pointer-events-none">
 								{flashSaleItem.foodName}
 							</Typography>
-							{flashSaleItem.priceAfterSale <= 0 && flashSaleItem.salePercent <= 0 ? (
+							{flashSaleItem.priceAfterSale <= 0 &&
+							flashSaleItem.salePercent <= 0 ? (
 								<>
 									<Typography
 										color="blue"
@@ -131,7 +131,7 @@ const FlashSaleHome = () => {
 										className="relative w-fit pointer-events-none"
 									>
 										{flashSaleItem.price -
-											flashSaleItem.price * flashSaleItem.salePercent / 100}
+											(flashSaleItem.price * flashSaleItem.salePercent) / 100}
 										.000
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ

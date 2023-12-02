@@ -14,6 +14,7 @@ namespace FFS.Application.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
+
       
      
 		private readonly INotificationRepository _notifyRepository;
@@ -21,6 +22,7 @@ namespace FFS.Application.Controllers
 		public NotificationController(INotificationRepository notifyRepository )
         {
             
+
 			_notifyRepository = notifyRepository;
         }
 
@@ -32,6 +34,6 @@ namespace FFS.Application.Controllers
 			return Ok(notifications);
         }
 
-		
+
 	}
 }

@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import axios from "../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
-import { Button, Input, Typography } from "@material-tailwind/react";
+import {
+	Button,
+	Dialog,
+	DialogBody,
+	DialogFooter,
+	DialogHeader,
+	Input,
+	Typography,
+} from "@material-tailwind/react";
 import Pagination from "../../shared/components/Pagination";
-import { Link } from "react-router-dom";
 
 const PostManagePage = () => {
 	const [postList, setPostList] = useState([]);
+	const [openDetailPost, setOpenDetailPage] = useState();
+	const [detailPost, setDetailPost] = useState({});
 	const [totalPage, setTotalPage] = useState(0);
 	const [dataSearch, setDateSearch] = useState({
 		pageNumber: 1,
@@ -85,6 +94,36 @@ const PostManagePage = () => {
 	useEffect(() => {
 		GetPosts();
 	}, []);
+
+	const handleOpenDialog = (post) => {
+		setOpenDetailPage(!openDetailPost);
+		if (post != null) {
+			setDetailPost(post);
+			console.log(post);
+		}
+	};
+
+	const handleApprovePost = async (post, status) => {
+		const data = {
+			IdPost: post.id,
+			Status: status,
+		};
+
+		try {
+			await axios
+				.post(`/api/Admin/ApprovePost`, data)
+				.then((res) => {
+					toast.success(res);
+					GetPosts();
+				})
+				.catch((error) => {
+					toast.error("Có lỗi xảy ra!");
+					console.log(error);
+				});
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	return (
 		<>
@@ -175,6 +214,7 @@ const PostManagePage = () => {
 											variant="outlined"
 											size="sm"
 											className="border-primary hover:bg-primary hover:text-white"
+											onClick={() => handleOpenDialog(post)}
 										>
 											xem
 										</Button>
@@ -186,6 +226,7 @@ const PostManagePage = () => {
 											variant="outlined"
 											size="sm"
 											className="border-primary hover:bg-primary hover:text-white"
+											onClick={() => handleApprovePost(post, 2)}
 										>
 											Chấp thuận
 										</Button>
@@ -194,6 +235,7 @@ const PostManagePage = () => {
 											size="sm"
 											variant="outlined"
 											className="border-primary hover:bg-primary hover:text-white"
+											onClick={() => handleApprovePost(post, 3)}
 										>
 											Từ chối
 										</Button>
@@ -211,6 +253,38 @@ const PostManagePage = () => {
 						handleClick={changePage}
 					></Pagination>
 				</div>
+
+				<Dialog open={openDetailPost} handler={handleOpenDialog}>
+					<DialogHeader>
+						<div>{detailPost.Title}</div>
+					</DialogHeader>
+					<DialogBody
+						dangerouslySetInnerHTML={{ __html: detailPost.Content }}
+					></DialogBody>
+					<DialogFooter>
+						<Button
+							variant="text"
+							color="red"
+							onClick={() => {
+								handleOpenDialog();
+								handleApprovePost(detailPost, 3);
+							}}
+							className="mr-1"
+						>
+							<span>Từ chối</span>
+						</Button>
+						<Button
+							variant="gradient"
+							color="green"
+							onClick={() => {
+								handleOpenDialog();
+								handleApprovePost(detailPost, 2);
+							}}
+						>
+							<span>Chấp thuận</span>
+						</Button>
+					</DialogFooter>
+				</Dialog>
 			</div>
 		</>
 	);

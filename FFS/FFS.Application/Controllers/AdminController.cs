@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.QueryParametter;
+using FFS.Application.Entities;
+using FFS.Application.DTOs.Store;
 using FFS.Application.Entities.Constant;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
@@ -9,8 +11,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FFS.Application.Controllers {
-    [Route("api/[controller]/[action]")]
+namespace FFS.Application.Controllers
+{
+	[Route("api/[controller]/[action]")]
     [ApiController]
     public class AdminController : ControllerBase {
 
@@ -83,6 +86,8 @@ namespace FFS.Application.Controllers {
             }
         }
 
+
+
 		[Authorize]
 		[HttpPost]
 		public IActionResult GetPosts([FromBody] UserParameters userParameters)
@@ -106,20 +111,32 @@ namespace FFS.Application.Controllers {
 
 		[Authorize]
 		[HttpPost]
-		public IActionResult ApprovePost([FromBody] UserParameters userParameters)
+		public async Task<IActionResult> ApprovePost([FromBody] UserParameters userParameters)
 		{
 			try
 			{
-				int id = Convert.ToInt32(userParameters.id);
-				_userRepository.ApprovePost(id, userParameters.Action);
-				return Ok($"Duyệt thành công bài viết {userParameters.Title}");
+				int idPost = Convert.ToInt32(userParameters.IdPost);
+				Post post = await _postRepository.FindById(idPost, null);
+				if(post != null)
+				{
+					if(userParameters.Status == 2)
+					{
+						post.Status = Entities.Enum.StatusPost.Accept;
+					}
+					if (userParameters.Status == 3)
+					{
+						post.Status = Entities.Enum.StatusPost.Reject;
+					}
+					await _postRepository.Update(post);
+					return Ok("Duyệt thành công!");
+				}
+				return BadRequest("Bài viết không tồn tại! Xin vui lòng thử lại sau");
 			}
 			catch (Exception ex)
 			{
 				throw;
 			}
 		}
-		
 
 		[Authorize]
         [HttpGet]
@@ -270,7 +287,7 @@ namespace FFS.Application.Controllers {
 
 				var result = new
 				{
-					TotalAccount = TotalReportYear,
+					TotalReportYear = TotalReportYear,
 					ReportsStatistic = reportsStatistic
 				};
 
@@ -297,59 +314,6 @@ namespace FFS.Application.Controllers {
 			{
 				return StatusCode(500, "Internal Server Error");
 			}
-
 		}
-
-		[HttpGet("{storeId}")]
-		public IActionResult OrderStatistic(int storeId)
-		{
-			try
-			{
-				List<OrderStatistic> orderStatistics = _orderRepository.OrderStatistic(storeId);
-				return Ok(new
-				{
-					TotalOrder = _orderRepository.CountTotalOrder(storeId),
-					OrdersStatistic = orderStatistics
-				});
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, "Internal Server Error");
-			}
-
-		}
-
-		[HttpGet("{storeId}")]
-		public IActionResult GetFoodDetailStatistics(int storeId)
-		{
-			try
-			{
-				List<FoodDetailStatistic> foodDetailStatistics = _orderRepository.FoodDetailStatistics(storeId);
-				return Ok(foodDetailStatistics);
-
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, "Internal Server Error");
-			}
-
-		}
-
-		[HttpGet("{storeId}/{year}")]
-		public IActionResult GetFoodDetailStatistics(int storeId, int year)
-		{
-			try
-			{
-				List<RevenuePerMonth> revenuePerMonths = _orderRepository.RevenuePerMonth(storeId, year);
-				return Ok(revenuePerMonths);
-
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, "Internal Server Error");
-			}
-
-		}
-
 	}
 }

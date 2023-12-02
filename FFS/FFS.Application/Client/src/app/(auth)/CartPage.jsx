@@ -195,42 +195,11 @@ const CartPage = () => {
 							<span>{cart.totalPrice} đ</span>
 						</div>
 						<div className="p-3 w-full">
-							{/* <div>
-								<Radio
-									name="type"
-									label="Chuyển khoản"
-									onChange={() => setSelectedType("Chuyển khoản")}
-								/>
-								<Radio
-									name="type"
-									label="Thanh toán khi nhận hàng"
-									defaultChecked
-									onChange={() => setSelectedType("Thanh toán khi nhận hàng")}
-								/>
-							</div> */}
 							<Link to={`/checkout/${location}/${phone}/${note}/${feeShip}`}>
 								<Button className="bg-primary w-full">Thanh toán</Button>
 							</Link>
 						</div>
 					</div>
-
-					{/* <div className="border-borderpri border pb-5 rounded-lg">
-						<div className="p-3 border-b border-borderpri">
-							<h1 className="font-medium">Mã Giảm giá</h1>
-						</div>
-						<div className="p-3 flex flex-col gap-y-3">
-							<Input
-								label="Mã giảm giá"
-								onChange={(e) => setCode(e.target.value)}
-							></Input>
-							<Button
-								className="bg-blue-500 w-full"
-								onClick={useDiscountHandler}
-							>
-								Sử dụng mã giảm giá
-							</Button>
-						</div>
-					</div> */}
 				</div>
 			</div>
 		</>
