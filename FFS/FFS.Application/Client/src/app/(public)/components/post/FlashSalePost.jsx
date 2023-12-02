@@ -18,7 +18,7 @@ const FlashSalePost = () => {
 	const GetListFilterFood = async () => {
 		try {
 			axios
-				.get(`/api/Food/ListAllFood?FilterFood=1&PageNumber=1&PageSize=3`)
+				.get(`/api/Food/ListAllFood?FilterFood=2&PageNumber=1&PageSize=3`)
 				.then((response) => {
 					setFlashSale(response.foodDTOs);
 				})
@@ -30,6 +30,7 @@ const FlashSalePost = () => {
 			console.error("Category: " + error);
 		}
 	};
+	
 
 	useEffect(() => {
 		GetListFilterFood();
@@ -38,7 +39,7 @@ const FlashSalePost = () => {
 	return (
 		<>
 			<div className="food_newest border p-4 mt-6">
-				<h1 className="text-lg font-bold uppercase">Flash Sale</h1>
+				<h1 className="text-lg font-bold uppercase">Món ăn yêu thích</h1>
 				{flashSale ? (
 					flashSale.map((flashSaleItem) => (
 						<div

@@ -55,7 +55,7 @@ const UpdatePost = forwardRef(({ post, reloadPost }, ref) => {
 				id: post.id,
 				title: data.title,
 				content: editorContent,
-				image: data.image,
+				image: data.image ? data.image : post.image,
 				userId: userId,
 			};
 			console.log(updatePost);

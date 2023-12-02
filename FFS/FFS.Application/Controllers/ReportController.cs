@@ -34,19 +34,6 @@ namespace FFS.Application.Controllers
             }
         }
 
-		[HttpGet("GetTotalReportsByType")]
-		public async Task<ActionResult> GetTotalReportsByType()
-		{
-			try
-			{
-				var result = await _reportRepository.GetReportsPerMonth();
-				return Ok(result);
-			}
-			catch (Exception ex)
-			{
-				// Log the exception or handle it as needed
-				return StatusCode(500, "Internal server error");
-			}
-		}
+		
 	}
 }
