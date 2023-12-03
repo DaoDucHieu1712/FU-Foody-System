@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Globalization;
 using Dapper;
 using DocumentFormat.OpenXml.InkML;
 using FFS.Application.Data;
@@ -183,22 +184,23 @@ namespace FFS.Application.Repositories.Impls
 			}
 		}
 
-		
+
 
 		public List<ReportStatistic> ReportStatistics(int year)
 		{
 			try
 			{
-				var reportsByMonth = _context.Reports
-	.Where(r => r.CreatedAt.Year == year ) 
-	.GroupBy(r =>  r.CreatedAt.Month)
-	.Select(group => new ReportStatistic
-	{
-		Month = group.Key,
-		NumberOfReport = group.Count()
-	})
-	.OrderBy(group => group.Month)
-	.ToList();
+				var monthNames = new[] { "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" };
+
+				var reportsByMonth = Enumerable.Range(1, 12)
+					.Select(month => new ReportStatistic
+					{
+						Month = monthNames[month - 1],
+						NumberOfReport = _context.Reports
+							.Count(r => r.CreatedAt.Year == year && r.CreatedAt.Month == month)
+					})
+					.ToList();
+
 				return reportsByMonth;
 			}
 			catch (Exception ex)
@@ -211,5 +213,8 @@ namespace FFS.Application.Repositories.Impls
 		{
 			return _context.Reports.Where(x=>x.CreatedAt.Year == year).Count();
 		}
+
+
+
 	}
 }

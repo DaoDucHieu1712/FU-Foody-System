@@ -2,6 +2,7 @@
 using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using static FFS.Application.Repositories.Impls.ReportRepository;
 
 namespace FFS.Application.Infrastructure.Interfaces
 {
@@ -13,5 +14,7 @@ namespace FFS.Application.Infrastructure.Interfaces
         int CountGetReports(ReportParameters reportParameters);
 		int CountAllReportInYear(int year);
 		List<ReportStatistic> ReportStatistics(int year);
-    }
+		
+
+	}
 }

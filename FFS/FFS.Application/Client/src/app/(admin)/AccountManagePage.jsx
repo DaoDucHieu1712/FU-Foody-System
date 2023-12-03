@@ -10,6 +10,7 @@ import {
 } from "@material-tailwind/react";
 import axios from "../../shared/api/axiosConfig";
 
+
 const AccountManagePage = () => {
 	const [dataSearch, setDateSearch] = useState({
 		pageNumber: 1,
@@ -299,6 +300,7 @@ const AccountManagePage = () => {
 						handleClick={changePage}
 					></Pagination>
 				</div>
+				
 			</div>
 		</>
 	);

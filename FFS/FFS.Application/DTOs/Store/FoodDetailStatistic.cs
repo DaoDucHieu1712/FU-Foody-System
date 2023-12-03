@@ -1,4 +1,4 @@
-﻿namespace FFS.Application.DTOs.Admin
+﻿namespace FFS.Application.DTOs.Store
 {
 	public class FoodDetailStatistic
 	{

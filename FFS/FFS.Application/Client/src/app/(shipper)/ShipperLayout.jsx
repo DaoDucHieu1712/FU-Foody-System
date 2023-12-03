@@ -62,14 +62,14 @@ const ShipperLayout = () => {
 				<div className="flex">
 					<div className="fixed p-4 flex flex-col gap-y-12 h-[100vh] shadow-md w-[20vw] bg-primary">
 						<div className="flex items-center justify-center border-b pb-8 border-gray-300">
-							<a href="/shipper/manager" className="flex items-center">
+							<a href="/shipper/view-statistic" className="flex items-center">
 								<Wind />
 								<LogoShipper />
 							</a>
 						</div>
 						<div className="list flex flex-col  items-start gap-y-8 text-md font-medium text-white">
 							<NavLink
-								 to={`/shipper/details/${userId}`}
+								 to="/shipper/profile"
 								className="uppercase flex items-center"
 							>
 								<User />
@@ -101,7 +101,7 @@ const ShipperLayout = () => {
 								className="uppercase flex items-center"
 							>
 								<Revenue />
-								<span className="p-2">Báo cáo doanh thu</span>
+								<span className="p-2">Thống kê</span>
 							</NavLink>
 
 							<button

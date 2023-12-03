@@ -3,7 +3,6 @@ using System.Security.Cryptography;
 using System.Text;
 
 using AutoMapper;
-
 using DocumentFormat.OpenXml.Spreadsheet;
 
 using FFS.Application.DTOs.Admin;
@@ -14,10 +13,13 @@ using FFS.Application.DTOs.Others;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Entities.Enum;
+using FFS.Application.Hubs;
+using FFS.Application.Migrations;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
 
@@ -31,14 +33,17 @@ namespace FFS.Application.Controllers
         private readonly IOrderDetailRepository _orderDetailRepository;
 		private readonly IStoreRepository _storeRepository;
         private readonly IMapper _mapper;
-
-        public OrderController(IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IStoreRepository storeRepository, IMapper mapper)
+		private readonly IHubContext<NotificationHub> _hubContext;
+		private readonly INotificationRepository _notifyRepository;
+		public OrderController(IOrderRepository orderRepository, IHubContext<NotificationHub> hubContext, IOrderDetailRepository orderDetailRepository, INotificationRepository notifyRepository, IStoreRepository storeRepository, IMapper mapper)
         {
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
             _mapper = mapper;
 			_storeRepository = storeRepository;
-        }
+			_hubContext = hubContext;
+			_notifyRepository = notifyRepository;
+		}
 
         [HttpPost]
         public async Task<IActionResult> CreaterOrder(OrderRequestDTO orderRequestDTO)
@@ -46,7 +51,9 @@ namespace FFS.Application.Controllers
             try
             {
                 var order = await _orderRepository.CreateOrder(orderRequestDTO);
-                return Ok(order);
+
+				
+				return Ok(order);
             }
             catch (Exception ex)
             {
@@ -54,13 +61,40 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPost]
+		[HttpGet("{orderId}")]
+		public async Task<IActionResult> GetStoreIdByOrderId(int orderId)
+		{
+			try
+			{
+				var storeId = await _orderRepository.GetStoreIdByOrderId(orderId);
+				if (storeId.HasValue)
+				{
+					return Ok(new { StoreId = storeId.Value });
+				}
+				else
+				{
+					return NotFound($"Store not found for OrderId: {orderId}");
+				}
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+
+
+
+		[HttpPost]
         public async Task<IActionResult> AddOrderItem(List<OrderDetailDTO> items)
         {
             try
             {
+				
                 await _orderRepository.AddOrder(items);
-                return NoContent();
+
+				
+				return NoContent();
             }
             catch (Exception ex)
             {
@@ -342,6 +376,7 @@ namespace FFS.Application.Controllers
 				{
 					return Ok(false);
 				}
+				
 				return Ok(true);
 			}
 			catch (Exception ex)
@@ -397,9 +432,47 @@ namespace FFS.Application.Controllers
 				}
 				order.ShipperId = idShipper;
                 order.OrderStatus = OrderStatus.Booked;
+				
 
                 await _orderRepository.Update(order);
-                return Ok("Nhận đơn hàng thành công!");
+
+				
+
+				var storeId = await _orderRepository.GetStoreIdByOrderId(order.Id);
+
+
+				if (!storeId.HasValue)
+				{
+					return NotFound($"Store not found for OrderId: {order.Id}");
+				}
+
+				var storeinfor = await _storeRepository.GetInformationStore(storeId.Value);
+				//var notification = new Notification
+				//{
+				//	CreatedAt = DateTime.Now,
+				//	UpdatedAt = DateTime.Now,
+				//	IsDelete = false,
+				//	UserId = storeinfor.UserId,
+				//	Title = "Cập nhật đơn hàng",
+				//	Content = $"Mã đơn hàng: #{order.Id} đã được shipper nhận giao."
+				//};
+				//await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+				//await _notifyRepository.Add(notification);
+				var customerNotification = new Notification
+				{
+					CreatedAt = DateTime.Now,
+					UpdatedAt = DateTime.Now,
+					IsDelete = false,
+					UserId = order.CustomerId,
+					Title = "Cập nhật đơn hàng",
+					Content = $"Đơn hàng của bạn đã được chấp nhận và đang trên đường giao. Mã đơn hàng: #{order.Id}"
+				};
+
+				await _hubContext.Clients.All.SendAsync("ReceiveNotification", customerNotification);
+				await _notifyRepository.Add(customerNotification);
+
+				
+				return Ok("Nhận đơn hàng thành công!");
             }
             catch (Exception ex)
             {
@@ -416,6 +489,19 @@ namespace FFS.Application.Controllers
 				order.OrderStatus = OrderStatus.Finish;
 				order.ShipDate= DateTime.Now;
 				await _orderRepository.Update(order);
+				var notification = new Notification
+				{
+					CreatedAt = DateTime.Now,
+					UpdatedAt = DateTime.Now,
+					IsDelete = false,
+					UserId = order.CustomerId,
+					Title = "Cập nhật đơn hàng",
+					Content = $"Đơn hàng của bạn #{order.Id} đã giao thành công"
+				};
+
+				await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+				await _notifyRepository.Add(notification);
+
 				return NoContent();
 			}
 			catch (Exception ex)
@@ -541,8 +627,40 @@ namespace FFS.Application.Controllers
 			}
 
 			await _orderRepository.CreatePayment(p);
+
 			order.PaymentId = p.Id;
 			await _orderRepository.Update(order);
+
+
+			var storeId = await _orderRepository.GetStoreIdByOrderId(order.Id);
+
+
+			if (!storeId.HasValue)
+			{
+				return NotFound($"Store not found for OrderId: {order.Id}");
+			}
+
+			var storeinfor = await _storeRepository.GetInformationStore(storeId.Value);
+
+			// Ensure storeinfor is valid before proceeding
+			if (storeinfor == null)
+			{
+				return NotFound($"Store information not found for StoreId: {storeId}");
+			}
+
+			var notification = new Notification
+			{
+				CreatedAt = DateTime.Now,
+				UpdatedAt = DateTime.Now,
+				IsDelete = false,
+				UserId = storeinfor.UserId,
+				Title = "Đơn hàng mới",
+				Content = $"Bạn có đơn hàng mới mã #{order.Id}"
+			};
+
+			await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+			await _notifyRepository.Add(notification);
+
 
 			return Ok(p);
 		}

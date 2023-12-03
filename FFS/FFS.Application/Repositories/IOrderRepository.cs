@@ -1,17 +1,19 @@
 ﻿using FFS.Application.Controllers;
-using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.Order;
 using FFS.Application.DTOs.QueryParametter;
+using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 
 namespace FFS.Application.Repositories
 {
-    public interface IOrderRepository : IRepository<Order, int>
+	public interface IOrderRepository : IRepository<Order, int>
     {
         Task<OrderDTO> CreateOrder(OrderRequestDTO orderRequestDTO);
         Task AddOrder(List<OrderDetailDTO> orderDetailDTOs);
-        Task<List<dynamic>> GetOrder(Parameters parameters);
+		Task<int?> GetStoreIdByOrderId(int orderId);
+
+		Task<List<dynamic>> GetOrder(Parameters parameters);
         Task<int> CountGetOrder(Parameters parameters);
         Task<dynamic> GetOrderDetail(int id);
 		Task CreatePayment(Payment payment);

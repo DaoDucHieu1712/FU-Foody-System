@@ -52,6 +52,8 @@ import Checkout from "./app/(auth)/Checkout";
 
 import PostManagePage from "./app/(admin)/PostManagePage";
 import OrderIdelDetail from "./app/(shipper)/OrderIdelDetail";
+import StoreDashboardPage from "./app/(store)/StoreDashboard";
+import ShipperProfile from "./app/(shipper)/ShipperProfile";
 
 function App() {
 	return (
@@ -71,7 +73,7 @@ function App() {
 					<Route path="/food-details/:id" element={<FoodDetails />} />
 					<Route path="/cart" element={<CartPage />} />
 					<Route
-						path="/checkout/:location/:phoneNumber/:note/:fee/:percent"
+						path="/checkout/:location/:phoneNumber/:note/:fee"
 						element={<Checkout />}
 					/>
 					<Route path="/payment" element={<PaymentPage />} />
@@ -94,6 +96,7 @@ function App() {
 						path="/shipper/order-pending"
 						element={<OrderShippingPage />}
 					/>
+					<Route path="/shipper/profile" element={<ShipperProfile />} />
 
 					<Route
 						path="/shipper/order-available"
@@ -121,6 +124,7 @@ function App() {
 					<Route path="/store/order/:id" element={<OrderDetail />} />
 					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
 					<Route path="/store/flash-sale" element={<FlashSale />} />
+					<Route path="/store/manager" element={<StoreDashboardPage />} />
 				</Route>
 				<Route element={<AdminLayout></AdminLayout>}>
 					<Route path="/admin/report" element={<ReportPage />} />

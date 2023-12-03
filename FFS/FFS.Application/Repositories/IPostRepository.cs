@@ -12,6 +12,7 @@ namespace FFS.Application.Repositories
 		Task<List<Post>> GetTop3NewestPosts();
 		Task<Post> GetPostByPostId(int postId);
 		Task<Post> CreatePost(Post post);
+		
 		Task<Post> UpdatePost(Post updatedPost);
 		Task DeletePost(int postId);
 		Task<string> GetUserIdByPostId(int postId);

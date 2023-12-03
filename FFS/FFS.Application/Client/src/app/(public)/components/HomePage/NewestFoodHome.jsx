@@ -61,7 +61,6 @@ const NewestFoodHome = () => {
                 )}
               <div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
                 <AddToWishlist foodId={newFoodItem.id} />
-                <FoodCart></FoodCart>
                 <Tooltip content="Xem chi tiết món ăn">
                   <IconButton
                     variant="text"

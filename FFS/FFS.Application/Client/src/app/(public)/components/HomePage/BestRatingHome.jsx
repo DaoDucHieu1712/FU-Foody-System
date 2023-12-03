@@ -1,35 +1,40 @@
-import { IconButton, Spinner, Tooltip, Typography } from '@material-tailwind/react';
-import { useEffect, useState } from 'react';
-import FoodCart from './FoodCart';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import {
+	IconButton,
+	Spinner,
+	Tooltip,
+	Typography,
+} from "@material-tailwind/react";
+import { useEffect, useState } from "react";
+import FoodCart from "./FoodCart";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import axios from "../../../../shared/api/axiosConfig";
 import AddToWishlist from '../wishlist/AddToWishlist';
 import FormatPriceHelper from '../../../../shared/components/format/FormatPriceHelper';
 
 const BestRatingHome = () => {
-    const navigate = useNavigate();
-    const [bestRating, setBestRating] = useState([]);
+	const navigate = useNavigate();
+	const [bestRating, setBestRating] = useState([]);
 
-    const GetListFilterFood = async () => {
-        try {
-            axios
-                .get(`/api/Food/ListAllFood?FilterFood=3&PageNumber=1&PageSize=5`)
-                .then((response) => {
-                    setBestRating(response.foodDTOs);
-                })
-                .catch((error) => {
-                    console.log(error);
-                    toast.error("Lấy sản phẩm đánh giá hàng đầu thất bại!");
-                });
-        } catch (error) {
-            console.error("Category: " + error);
-        }
-    };
+	const GetListFilterFood = async () => {
+		try {
+			axios
+				.get(`/api/Food/ListAllFood?FilterFood=3&PageNumber=1&PageSize=5`)
+				.then((response) => {
+					setBestRating(response.foodDTOs);
+				})
+				.catch((error) => {
+					console.log(error);
+					toast.error("Lấy sản phẩm đánh giá hàng đầu thất bại!");
+				});
+		} catch (error) {
+			console.error("Category: " + error);
+		}
+	};
 
-    useEffect(() => {
-        GetListFilterFood();
-    }, []);
+	useEffect(() => {
+		GetListFilterFood();
+	}, []);
 
     return (
         <>
