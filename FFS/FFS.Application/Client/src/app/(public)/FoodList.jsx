@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import axios from "../../shared/api/axiosConfig";
 import AddToWishlist from "./components/wishlist/AddToWishlist";
 import { useNavigate, useParams } from "react-router-dom";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const filter = [
 	{ id: "", name: "Tất cả" },
@@ -162,28 +163,28 @@ const FoodList = () => {
 					<Radio
 						label="Dưới 35.000đ"
 						checked={priceRange === "range1"}
-						onChange={() => handlePriceRangeChange("range1", 0, 35)}
+						onChange={() => handlePriceRangeChange("range1", 0, 35000)}
 					/>
 				</div>
 				<div>
 					<Radio
 						label="35.000đ - 50.000đ"
 						checked={priceRange === "range2"}
-						onChange={() => handlePriceRangeChange("range2", 35, 50)}
+						onChange={() => handlePriceRangeChange("range2", 35000, 50000)}
 					/>
 				</div>
 				<div>
 					<Radio
 						label="50.000đ - 100.000đ"
 						checked={priceRange === "range3"}
-						onChange={() => handlePriceRangeChange("range3", 50, 100)}
+						onChange={() => handlePriceRangeChange("range3", 50000, 100000)}
 					/>
 				</div>
 				<div>
 					<Radio
 						label="Trên 100.000đ"
 						checked={priceRange === "range4"}
-						onChange={() => handlePriceRangeChange("range4", 100, 999999999)}
+						onChange={() => handlePriceRangeChange("range4", 100000, 999999999)}
 					/>
 				</div>
 			</div>
@@ -320,7 +321,7 @@ const FoodList = () => {
 													color="blue"
 													className="relative w-fit pointer-events-none"
 												>
-													{food.price}.000
+													{FormatPriceHelper(food.price)}
 													<span className="absolute font-normal top-0 -right-2 text-xs">
 														đ
 													</span>
@@ -336,7 +337,7 @@ const FoodList = () => {
 													color="gray"
 													className="relative w-fit line-through pointer-events-none"
 												>
-													{food.price}.000
+													{FormatPriceHelper(food.price)}
 													<span className="absolute font-normal top-0 -right-2 text-xs">
 														đ
 													</span>
@@ -345,7 +346,7 @@ const FoodList = () => {
 													color="blue"
 													className="relative w-fit pointer-events-none"
 												>
-													{food.priceAfterSale}.000
+													{ FormatPriceHelper(food.priceAfterSale)}
 													<span className="absolute font-normal top-0 -right-2 text-xs">
 														đ
 													</span>
@@ -361,7 +362,7 @@ const FoodList = () => {
 													color="gray"
 													className="relative w-fit line-through pointer-events-none"
 												>
-													{food.price}.000
+													{FormatPriceHelper(food.price)}
 													<span className="absolute font-normal top-0 -right-2 text-xs">
 														đ
 													</span>
@@ -370,7 +371,7 @@ const FoodList = () => {
 													color="blue"
 													className="relative w-fit pointer-events-none"
 												>
-													{food.price - (food.price * food.salePercent / 100)}.000
+													{FormatPriceHelper(food.price - (food.price * food.salePercent / 100))}
 													<span className="absolute font-normal top-0 -right-2 text-xs">
 														đ
 													</span>
