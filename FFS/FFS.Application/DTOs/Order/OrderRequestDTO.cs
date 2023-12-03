@@ -18,5 +18,7 @@ namespace FFS.Application.DTOs.Order
         public decimal TotalPrice { get; set; }
         public OrderStatus OrderStatus { get; set; }
 
-    }
+
+
+	}
 }

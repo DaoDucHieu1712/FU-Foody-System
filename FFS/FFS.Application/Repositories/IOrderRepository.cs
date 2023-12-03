@@ -11,7 +11,9 @@ namespace FFS.Application.Repositories
     {
         Task<OrderDTO> CreateOrder(OrderRequestDTO orderRequestDTO);
         Task AddOrder(List<OrderDetailDTO> orderDetailDTOs);
-        Task<List<dynamic>> GetOrder(Parameters parameters);
+		Task<int?> GetStoreIdByOrderId(int orderId);
+
+		Task<List<dynamic>> GetOrder(Parameters parameters);
         Task<int> CountGetOrder(Parameters parameters);
         Task<dynamic> GetOrderDetail(int id);
 		Task CreatePayment(Payment payment);
