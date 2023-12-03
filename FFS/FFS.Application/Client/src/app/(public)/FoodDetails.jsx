@@ -155,7 +155,7 @@ const FoodDetails = () => {
                     </svg>
                   </span>
                   <span className="text-blue-500">
-                    {foodData.price}.000 VND
+                    {foodData.price} VND
                   </span>
                 </p>
 
@@ -299,7 +299,7 @@ const FoodDetails = () => {
                         color="blue"
                         className="relative w-fit pointer-events-none"
                       >
-                        {food.price}.000
+                        {food.price}
                         <span className="absolute font-normal top-0 -right-2 text-xs">
                           đ
                         </span>

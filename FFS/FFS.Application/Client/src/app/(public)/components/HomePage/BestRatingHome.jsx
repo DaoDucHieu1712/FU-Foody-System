@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from "../../../../shared/api/axiosConfig";
 import AddToWishlist from '../wishlist/AddToWishlist';
+import FormatPriceHelper from '../../../../shared/components/format/FormatPriceHelper';
 
 const BestRatingHome = () => {
     const navigate = useNavigate();
@@ -51,7 +52,7 @@ const BestRatingHome = () => {
                                     null
                                 )}
                             <div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
-                            <AddToWishlist foodId={bestRatingItem.id} />
+                                <AddToWishlist foodId={bestRatingItem.id} />
                                 <FoodCart></FoodCart>
                                 <Tooltip content="Xem chi tiết món ăn">
                                     <IconButton
@@ -82,7 +83,7 @@ const BestRatingHome = () => {
                                             color="blue"
                                             className="relative w-fit pointer-events-none"
                                         >
-                                            {bestRatingItem.price}.000
+                                            {FormatPriceHelper(bestRatingItem.price)}
                                             <span className="absolute font-normal top-0 -right-2 text-xs">
                                                 đ
                                             </span>
@@ -98,7 +99,7 @@ const BestRatingHome = () => {
                                             color="gray"
                                             className="relative w-fit line-through pointer-events-none"
                                         >
-                                            {bestRatingItem.price}.000
+                                            {FormatPriceHelper(bestRatingItem.price)}
                                             <span className="absolute font-normal top-0 -right-2 text-xs">
                                                 đ
                                             </span>
@@ -107,7 +108,7 @@ const BestRatingHome = () => {
                                             color="blue"
                                             className="relative w-fit pointer-events-none"
                                         >
-                                            {bestRatingItem.priceAfterSale}.000
+                                            {FormatPriceHelper(bestRatingItem.priceAfterSale)}
                                             <span className="absolute font-normal top-0 -right-2 text-xs">
                                                 đ
                                             </span>
@@ -123,7 +124,7 @@ const BestRatingHome = () => {
                                             color="gray"
                                             className="relative w-fit line-through pointer-events-none"
                                         >
-                                            {bestRatingItem.price}.000
+                                            {FormatPriceHelper(bestRatingItem.price)}
                                             <span className="absolute font-normal top-0 -right-2 text-xs">
                                                 đ
                                             </span>
@@ -132,7 +133,7 @@ const BestRatingHome = () => {
                                             color="blue"
                                             className="relative w-fit pointer-events-none"
                                         >
-                                            {bestRatingItem.price - (bestRatingItem.price * bestRatingItem.salePercent / 100)}.000
+                                            {FormatPriceHelper(bestRatingItem.price - (bestRatingItem.price * bestRatingItem.salePercent / 100))}
                                             <span className="absolute font-normal top-0 -right-2 text-xs">
                                                 đ
                                             </span>
