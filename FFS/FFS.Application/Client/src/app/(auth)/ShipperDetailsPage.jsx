@@ -13,12 +13,14 @@ import {
 	Avatar,
 	Button,
 	Typography,
-  Menu, MenuHandler, MenuList, MenuItem,
+	Menu,
+	MenuHandler,
+	MenuList,
+	MenuItem,
 } from "@material-tailwind/react";
 import Elips from "../../shared/components/icon/Elips";
 import CookieService from "../../shared/helper/cookieConfig";
 import ReportShipper from "../(public)/components/ReportShipper";
-
 
 const ShipperDetailsPage = () => {
 	moment.locale("vi");
@@ -27,7 +29,6 @@ const ShipperDetailsPage = () => {
 	const [reviews, setReviews] = useState([]);
 	const [shipperData, setShipperData] = useState([]);
 	const userId = CookieService.getToken("fu_foody_id");
-
 
 	const GetShipperInformation = async () => {
 		try {
@@ -77,9 +78,7 @@ const ShipperDetailsPage = () => {
 									src={shipperData.avatar}
 									className="w-32 h-32 bg-gray-300 rounded-full mb-3 shrink-0"
 								></img>
-								<h1 className="text-xl font-bold">
-									{shipperData.userName}
-								</h1>
+								<h1 className="text-xl font-bold">{shipperData.userName}</h1>
 
 								<div className="mt-3 flex flex-wrap gap-4 justify-center">
 									<a
@@ -88,10 +87,9 @@ const ShipperDetailsPage = () => {
 									>
 										Nhắn tin
 									</a>
-									<a >
-									<ReportShipper uId={userId} sId={id}></ReportShipper>
+									<a>
+										<ReportShipper uId={userId} sId={id}></ReportShipper>
 									</a>
-									
 								</div>
 							</div>
 							<hr className="my-6 border-t border-gray-300" />
@@ -100,9 +98,12 @@ const ShipperDetailsPage = () => {
 									Hoạt động cá nhân
 								</span>
 								<ul>
-									<li className="mb-2">Đã đăng {shipperData.totalPost} bài viết</li>
 									<li className="mb-2">
-										Đã có {shipperData.totalRecentComments} bình luận trong tuần qua
+										Đã đăng {shipperData.totalPost} bài viết
+									</li>
+									<li className="mb-2">
+										Đã có {shipperData.totalRecentComments} bình luận trong tuần
+										qua
 									</li>
 								</ul>
 							</div>
@@ -130,17 +131,21 @@ const ShipperDetailsPage = () => {
 									onClick={() => setActiveTab("overview")}
 									className={activeTab === "overview" ? "text-orange-900" : ""}
 								>
-									Tổng quan
+									Giới thiệu
 								</Tab>
 							</TabsHeader>
 							<TabsBody>
 								<TabPanel value="reviews">
-									{reviews.map((review, index) => (
-										<div key={index} className="mb-4 relative">
-											{/* Three dots menu icon */}
+									{reviews.length === 0 ? (
+										<p className="text-center text-gray-500">
+											Shipper này chưa có đánh giá nào.
+										</p>
+									) : (
+										reviews.map((review, index) => (
+											<div key={index} className="mb-4 relative">
+												{/* Three dots menu icon */}
 
-											
-											{/* <div className="absolute top-2 right-3">
+												{/* <div className="absolute top-2 right-3">
 												<Menu>
 													<MenuHandler>
 														<button
@@ -156,30 +161,31 @@ const ShipperDetailsPage = () => {
 													</MenuList>
 												</Menu>
 											</div> */}
-											<div className="w-full mx-auto rounded-lg bg-white border border-gray-200 p-5 text-black font-light mb-6">
-												<div className="w-full flex items-center">
-													<div className="flex items-center mb-4">
-														<img
-															className="w-10 h-10 me-2 rounded-full"
-															src={review.avatar}
-															alt=""
-														/>
-														<div className="font-medium dark:text-white">
-															<p>
-																{review.username}{" "}
-																<span className="block text-xs text-gray-500 dark:text-gray-400">
-																	{moment(review.createdAt).fromNow()}
-																</span>
-															</p>
+												<div className="w-full mx-auto rounded-lg bg-white border border-gray-200 p-5 text-black font-light mb-6">
+													<div className="w-full flex items-center">
+														<div className="flex items-center mb-4">
+															<img
+																className="w-10 h-10 me-2 rounded-full"
+																src={review.avatar}
+																alt=""
+															/>
+															<div className="font-medium dark:text-white">
+																<p>
+																	{review.username}{" "}
+																	<span className="block text-xs text-gray-500 dark:text-gray-400">
+																		{moment(review.createdAt).fromNow()}
+																	</span>
+																</p>
+															</div>
 														</div>
 													</div>
-												</div>
-												<div className="w-full">
-													<p className="text-base">{review.noteForShipper}</p>
+													<div className="w-full">
+														<p className="text-base">{review.noteForShipper}</p>
+													</div>
 												</div>
 											</div>
-										</div>
-									))}
+										))
+									)}
 								</TabPanel>
 							</TabsBody>
 						</Tabs>

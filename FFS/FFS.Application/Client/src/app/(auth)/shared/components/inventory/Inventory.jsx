@@ -19,6 +19,7 @@ import FormatDateString from "../../../../../shared/components/format/FormatDate
 import ArrowRight from "../../../../../shared/components/icon/ArrowRight";
 import ArrowLeft from "../../../../../shared/components/icon/ArrowLeft";
 import CookieService from "../../../../../shared/helper/cookieConfig";
+import ExportInventory from "./ExportInventory";
 
 const TABLE_HEAD = [
   "Ảnh món ăn",
@@ -250,6 +251,13 @@ const Inventory = () => {
                       </td>
                       <td className={classes}>
                         <UpdateInventory
+                          storeId={storeId}
+                          foodId={foodId}
+                          foodName={foodName}
+                          quantity={quantity}
+                          reloadInventory={reloadInventory}
+                        />
+                        <ExportInventory
                           storeId={storeId}
                           foodId={foodId}
                           foodName={foodName}

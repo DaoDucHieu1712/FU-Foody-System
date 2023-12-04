@@ -25,6 +25,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddCors();
 
+builder.Services.AddDbContext<ApplicationDbContext>(options => {
+	options.UseSqlServer(
+		builder.Configuration.GetConnectionString("DefaultConnection"));
+}, ServiceLifetime.Transient);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -115,6 +119,7 @@ builder.Services.AddTransient<IFlashSaleDetailRepository, FlashSaleDetailReposit
 builder.Services.AddTransient<IUserDiscountRepository, UserDiscountRepository>();
 builder.Services.AddTransient<IChatRepository, ChatRepository>();
 builder.Services.AddTransient<IMessageRepository, MessageRepository>();
+builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
 
 
 #endregion
@@ -155,6 +160,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.MapHub<NotificationHub>("/notificationHub");
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<OrderIdelHub>("/orderHub");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

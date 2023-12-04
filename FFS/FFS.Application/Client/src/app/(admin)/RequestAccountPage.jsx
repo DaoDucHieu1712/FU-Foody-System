@@ -110,6 +110,7 @@ const RequestAccountPage = () => {
 				username: username,
 				action: action,
 			};
+			
 			try {
 				await axios
 					.post(`/api/Admin/ApproveUser`, data)

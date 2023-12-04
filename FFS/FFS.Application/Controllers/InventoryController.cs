@@ -76,19 +76,47 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("update/{storeId}/{foodId}/{newQuantity}")]
-        public async Task<IActionResult> UpdateInventoryByStoreAndFoodId(int storeId, int foodId, int newQuantity)
-        {
-            try
-            {
-                await _inventoryRepository.UpdateInventoryByStoreAndFoodId(storeId, foodId, newQuantity);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpPut("update/{storeId}/{foodId}")]
+        //public async Task<IActionResult> UpdateInventoryByStoreAndFoodId(int storeId, int foodId)
+        //{
+        //    try
+        //    {
+        //        await _inventoryRepository.UpdateInventoryByStoreAndFoodId(storeId, foodId);
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
+
+		[HttpPut("{storeId}/{foodId}/{quantity}")]
+		public async Task<IActionResult> ImportInventory(int storeId, int foodId, int quantity)
+		{
+			try
+			{
+				await _inventoryRepository.ImportInventory(storeId, foodId, quantity);
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpPut("{storeId}/{foodId}/{quantity}")]
+		public async Task<IActionResult> ExportInventory(int storeId, int foodId, int quantity)
+		{
+			try
+			{
+				await _inventoryRepository.ExportInventory(storeId, foodId, quantity);
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
 
         [HttpDelete("{inventoryId}")]
         public async Task<IActionResult> DeleteInventoryByInventoryId(int inventoryId)

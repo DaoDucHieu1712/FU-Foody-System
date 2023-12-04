@@ -33,7 +33,11 @@ namespace FFS.Application.Controllers
 			try
 			{
 				var boxs = await _chatRepository
-					.FindAll(x => x.ToUserId == UserId || x.FromUserId == UserId ,x => x.ToUser , x => x.FormUser)
+					.FindAll(x => x.ToUserId == UserId || x.FromUserId == UserId,
+					x => x.ToUser,
+					x => x.FormUser,
+					x => x.Messages.OrderByDescending(m => m.CreatedAt))
+					.OrderByDescending(x => x.Messages.FirstOrDefault().CreatedAt)
 					.ToListAsync();
 				return Ok(_mapper.Map<List<ChatResponseDTO>>(boxs));
 			}
@@ -64,20 +68,23 @@ namespace FFS.Application.Controllers
 			try
 			{
 				var check = await _chatRepository.FindSingle(
-			    x => x.ToUserId == chatRequestDTO.ToUserId &&
+				x => x.ToUserId == chatRequestDTO.ToUserId &&
 				x.FromUserId == chatRequestDTO.FromUserId ||
 				x.ToUserId == chatRequestDTO.FromUserId &&
-				x.FromUserId == chatRequestDTO.ToUserId 
+				x.FromUserId == chatRequestDTO.ToUserId
 				);
 
-				if(check != null)
+				if (check != null)
 				{
-					await _hubChatContext.Clients.All.SendAsync("FuFoodySendMessage");
+					await _hubChatContext.Clients.All.SendAsync("FuFoodyCreateBox");
 					return StatusCode(500, "...");
 				}
 
 				await _chatRepository.Add(_mapper.Map<Chat>(chatRequestDTO));
-				await _hubChatContext.Clients.All.SendAsync("FuFoodySendMessage");
+				await _hubChatContext.Clients.All.SendAsync("FuFoodyCreateBox" , new {
+				   ToUser = chatRequestDTO.ToUserId,
+				   FromUser = chatRequestDTO.FromUserId
+				});
 				return Ok();
 			}
 			catch (Exception ex)
@@ -92,7 +99,11 @@ namespace FFS.Application.Controllers
 			try
 			{
 				await _messageRepositoy.Add(_mapper.Map<Message>(messageRequestDTO));
-				await _hubChatContext.Clients.All.SendAsync("FuFoodySendMessage" , "ok");
+				await _hubChatContext.Clients.All.SendAsync("FuFoodySendMessage", new
+				{
+					Ok = "oK1",
+					Ok2 = "Ok2"
+				});
 				return Ok();
 			}
 			catch (Exception ex)

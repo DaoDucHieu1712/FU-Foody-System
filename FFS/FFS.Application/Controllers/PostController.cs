@@ -10,6 +10,7 @@ using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -22,16 +23,19 @@ namespace FFS.Application.Controllers
 		private readonly IPostRepository _postRepository;
 		private readonly IReactPostRepository _reactPostRepository;
 		private readonly IMapper _mapper;
+		private readonly IAuthRepository _authRepository;
 		private readonly IHubContext<NotificationHub> _hubContext;
+		private readonly INotificationRepository _notifyRepository;
 		private readonly ApplicationDbContext _db;
-
-		public PostController(IPostRepository postRepository, ApplicationDbContext db, IReactPostRepository reactPostRepository, IMapper mapper, IHubContext<NotificationHub> hubContext)
+		public PostController(IPostRepository postRepository, ApplicationDbContext db, IAuthRepository authRepository,INotificationRepository notifyRepository, IReactPostRepository reactPostRepository, IMapper mapper, IHubContext<NotificationHub> hubContext)
 		{
 			_postRepository = postRepository;
 			_reactPostRepository = reactPostRepository;
 			_mapper = mapper;
 			_hubContext = hubContext;
-			_db = db;
+			_notifyRepository = notifyRepository;
+			_authRepository = authRepository;
+			_db=db;
 		}
 
 		[HttpGet]
@@ -85,6 +89,26 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[HttpGet("{postId}")]
+		public async Task<ActionResult<Post>> GetUserByPost(int postId)
+		{
+			try
+			{
+				var post = await _postRepository.GetUserIdByPostId(postId);
+
+				if (post == null)
+				{
+					return NotFound();
+				}
+				
+				return Ok(post);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
 		[HttpGet()]
 		public async Task<ActionResult<List<Post>>> GetTop3NewestPosts()
 		{
@@ -116,16 +140,17 @@ namespace FFS.Application.Controllers
 
 				var notification = new Notification
 				{
+					CreatedAt = DateTime.Now,
+					UpdatedAt = DateTime.Now,
+					IsDelete = false,
 					UserId = post.UserId,
 					Title = "Bài viết mới",
 					Content = $"Bài viết {post.Title} đang chờ được phê duyệt!"
 				};
 
 				await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+				await _notifyRepository.Add(notification);
 
-
-				_db.Notifications.Add(notification);
-				await _db.SaveChangesAsync();
 				return Ok();
 			}
 			catch (Exception ex)
@@ -178,6 +203,14 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				var reactingUser = await _authRepository.GetUser(reactPostDTO.UserId);
+
+				if (reactingUser == null)
+				{
+					
+					return BadRequest("Reacting user not found");
+				}
+				var postAuthor = await _postRepository.GetUserIdByPostId((int)reactPostDTO.PostId);
 				var reactPost = await _reactPostRepository.FindSingle(x => x.PostId == reactPostDTO.PostId && x.UserId == reactPostDTO.UserId);
 				if (reactPost == null)
 				{
@@ -190,9 +223,27 @@ namespace FFS.Application.Controllers
 						UpdatedAt = DateTime.Now,
 						IsDelete = false
 					});
+				
 
-					
-					
+
+					if (postAuthor != null && reactPostDTO.UserId != postAuthor)
+					{
+
+						var notification = new Notification
+						{
+							CreatedAt = DateTime.Now,
+							UpdatedAt = DateTime.Now,
+							IsDelete = false,
+							UserId = postAuthor,
+							Title = "Hoạt động mới",
+							Content = $"{reactingUser.firstName} {reactingUser.lastName} đã thích bài viết của bạn."
+						};
+
+						await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+						await _notifyRepository.Add(notification);
+					}
+
+
 				}
 				else
 				{

@@ -40,12 +40,10 @@ import ShipperStatisticPage from "./app/(shipper)/ShipperStatisticPage";
 import OrderFinishedPage from "./app/(shipper)/OrderFinishedPage";
 import UserDetails from "./app/(public)/UserDetails";
 import ShipperRegisterPage from "./app/(public)/ShipperRegister";
-// import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 import AccessDenied from "./app/(public)/AccessDenied";
 import NotFoundPage from "./app/NotFoundPage";
 import PaymentPage from "./app/(auth)/PaymentPage";
 import ConfirmPaymentPage from "./app/(public)/ConfirmPaymentPage";
-// import OrderDetail from "./app/(store)/OrderDetail";
 import MyOrderDetail from "./app/(auth)/MyOrderDetail";
 import OrderDetail from "./app/(store)/OrderDetail";
 import ViewApplicationPage from "./app/(admin)/ViewApplicationPage";
@@ -53,7 +51,8 @@ import ViewApplicationPage from "./app/(admin)/ViewApplicationPage";
 import Checkout from "./app/(auth)/Checkout";
 
 import PostManagePage from "./app/(admin)/PostManagePage";
-
+import OrderIdelDetail from "./app/(shipper)/OrderIdelDetail";
+import ShipperProfile from "./app/(shipper)/ShipperProfile";
 
 function App() {
 	return (
@@ -96,10 +95,18 @@ function App() {
 						path="/shipper/order-pending"
 						element={<OrderShippingPage />}
 					/>
+					<Route
+						path="/shipper/profile"
+						element={<ShipperProfile />}
+					/>
 
 					<Route
 						path="/shipper/order-available"
 						element={<OrderAvailablePage />}
+					/>
+					<Route
+						path="/shipper/order-available/:id"
+						element={<OrderIdelDetail />}
 					/>
 					<Route
 						path="/shipper/view-statistic"

@@ -24,6 +24,7 @@ const PostManagePage = () => {
 		username: "",
 		title: "",
 	});
+	
 
 	const GetPosts = async () => {
 		try {
@@ -43,6 +44,39 @@ const PostManagePage = () => {
 			console.log("Food error: " + error);
 		}
 	};
+	const handleClickBtn = async (id, title, action) => {
+		var txt = "";
+		if (action == "Accept") {
+			txt = `Bạn có chắc chắn duyệt bài viết ${title}!`;
+		} else {
+			txt = `Bạn có chắc chắn hủy duyệt bài viết ${title}!`;
+		}
+		const check = confirm(txt);
+		if (check) {
+			const data = {
+				id: id,
+				title: title,
+				action: action,
+			  };
+			  console.log(data);
+			try {
+				await axios
+					.post(`/api/Admin/ApprovePost`, data)
+					.then((res) => {
+						toast.success(res);
+						GetPosts();
+					})
+					.catch((error) => {
+						toast.error("Có lỗi xảy ra!");
+						console.log(error);
+					});
+			} catch (error) {
+				console.log("Food error: " + error);
+			}
+		}
+	};
+
+	
 
 	const handleOnChange = async (e) => {
 		dataSearch[e.target.name] = e.target.value;
@@ -184,7 +218,11 @@ const PostManagePage = () => {
 										>
 											xem
 										</Button>
+										
 										<Button
+										 onClick={() =>
+											handleClickBtn(post.id, post.Title, "Accept")
+										}
 											variant="outlined"
 											size="sm"
 											className="border-primary hover:bg-primary hover:text-white"
@@ -193,6 +231,7 @@ const PostManagePage = () => {
 											Chấp thuận
 										</Button>
 										<Button
+										onClick={() => handleClickBtn(post.id, post.Title, "Reject")}
 											size="sm"
 											variant="outlined"
 											className="border-primary hover:bg-primary hover:text-white"

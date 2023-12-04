@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import OrderStatus from "./components/order/OrderStatus";
 import StoreService from "./shared/store.service";
 import CookieService from "../../shared/helper/cookieConfig";
+import PaymentStatus from "./components/order/PaymentStatus";
 
 const TABLE_HEAD = [
 	"Mã Đơn hàng",
@@ -196,12 +197,18 @@ const OrderList = () => {
 												</span>
 											</div>
 										</td>
-										<td className={classes}>{item.location}</td>
+										<td className={classes}>
+											<p className="w-[120px] text-ellipsis">{item.location}</p>
+										</td>
 										<td className={classes}>{item.shipperName}</td>
 										<td className={classes}>
 											<OrderStatus status={item.orderStatus}></OrderStatus>
 										</td>
-										<td className={classes}>{item.totalPrice} $</td>
+										<td className={classes}>
+											<p>{item.totalPrice} $</p>
+											<p>{item.paymentMethod}</p>
+											<PaymentStatus status={item.paymentStatus} />
+										</td>
 										<td className={classes}>
 											<div className="flex gap-x-3">
 												<Link

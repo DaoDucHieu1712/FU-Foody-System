@@ -3,7 +3,11 @@ using System.Security.Cryptography;
 using System.Text;
 
 using AutoMapper;
+
+using DocumentFormat.OpenXml.Spreadsheet;
+
 using FFS.Application.DTOs.Admin;
+
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Order;
 using FFS.Application.DTOs.Others;
@@ -70,7 +74,7 @@ namespace FFS.Application.Controllers
 			try
 			{
 				return Ok(_mapper.Map<OrderResponseDTO>(
-					await _orderRepository.FindAll(x => x.Id == id, x => x.Customer, x => x.Shipper)
+					await _orderRepository.FindAll(x => x.Id == id, x => x.Customer, x => x.Shipper, x => x.Payment)
 					.Include(x => x.OrderDetails).ThenInclude(x => x.Store)
 					.Include(x => x.OrderDetails).ThenInclude(x => x.Food)
 					.FirstOrDefaultAsync()
@@ -88,7 +92,7 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var queryOrders = _orderRepository.FindAll(x => x.CustomerId == id, x => x.Customer, x => x.Shipper);
+                var queryOrders = _orderRepository.FindAll(x => x.CustomerId == id, x => x.Customer, x => x.Shipper, x => x.Payment);
 
                 if (orderFilterDTO.SortType != null)
                 {
@@ -167,6 +171,8 @@ namespace FFS.Application.Controllers
                     .ThenInclude(x => x.Customer)
                     .Include(x => x.Order)
                     .ThenInclude(x => x.Shipper)
+					.Include(x => x.Order)
+					.ThenInclude(x => x.Payment)
                     .GroupBy(x => new
                     {
                         Id = x.OrderId,
@@ -181,8 +187,11 @@ namespace FFS.Application.Controllers
                         PhoneNumber = x.Order.PhoneNumber,
                         TotalPrice = x.Order.TotalPrice,
                         OrderStatus = x.Order.OrderStatus,
+						PaymentMethod = x.Order!.Payment!.PaymentMethod,
+						PaymentStatus = x.Order!.Payment!.Status,
                         CreatedAt = x.Order.CreatedAt,
                         UpdatedAt = x.Order.UpdatedAt,
+						ShipDate = x.Order.ShipDate,
                     })
                     .Select(x => new OrderResponseDTO
                     {
@@ -198,8 +207,11 @@ namespace FFS.Application.Controllers
                         OrderStatus = x.Key.OrderStatus,
                         TotalPrice = x.Key.TotalPrice,
                         PaymentId = x.Key.PaymentId,
+						PaymentMethod = x.Key!.PaymentMethod,
+						PaymentStatus = x.Key!.PaymentStatus,
                         CreatedAt = x.Key.CreatedAt,
-                    });
+						ShipDate = x.Key.ShipDate,
+					});
 
                 if(orderFilterDTO.SortType != null)
                 {
@@ -287,7 +299,7 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetOrderUnBook(Parameters parameters)
+        public async Task<IActionResult> GetOrderUnBook(DTOs.QueryParametter.Parameters parameters)
         {
             try
             {
@@ -320,22 +332,70 @@ namespace FFS.Application.Controllers
             }
         }
 
+		[HttpGet("{id}")]
+		public async Task<IActionResult> CheckReceiverOrder(string id)
+		{
+			try
+			{
+				List<Order> check = _orderRepository.FindAll(x => x.OrderStatus == OrderStatus.Booked && x.ShipperId == id).ToList();
+				if (check.Count > 0)
+				{
+					return Ok(false);
+				}
+				return Ok(true);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> GetOrderIdel(int? PageIndex, int? PageSize)
+		{
+			try
+			{
+				var productsQuery = _orderRepository
+					.FindAll(x => x.OrderStatus == OrderStatus.Unbooked ,x => x.Customer, x => x.Payment)
+					.Include(x => x.OrderDetails).ThenInclude(x => x.Store)
+					.Include(x => x.OrderDetails).ThenInclude(x => x.Food)
+					.OrderByDescending(x => x.CreatedAt);
+
+				PagedList<Order> orderPaged = PagedList<Order>.ToPagedList(productsQuery, PageIndex ?? 1, PageSize ?? 7);
+
+				return Ok(new
+				{
+					List = _mapper.Map<List<OrderResponseDTO>>(orderPaged),
+					PageIndex = orderPaged.CurrentPage,
+					PageSize = orderPaged.PageSize,
+					TotalPages = orderPaged.TotalPages,
+					Total = orderPaged.TotalCount,
+					HasPrevious = orderPaged.HasPrevious,
+					HasNext = orderPaged.HasNext,
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
         [HttpPut("{idShipper}/{idOrder}")]
         public async Task<IActionResult> ReceiveOrderUnbook(string idShipper, int idOrder)
         {
             try
             {
                 var order = await _orderRepository.FindById(idOrder,null);
-                if(order.ShipperId != null)
-                {
-                    throw new Exception("Đơn hàng đã có shipper khác nhận. Xin vui lòng thử lại!");
-                }
-                List<Order> check = _orderRepository.FindAll(x => x.ShipperId == idShipper && x.OrderStatus == OrderStatus.Booked, null).ToList();
-                if (check.Count > 0)
-                {
-                    throw new Exception("Bạn đang có đơn hàng chưa hoàn thành!");
-                }
-                order.ShipperId = idShipper;
+				if (order.ShipperId != null)
+				{
+					throw new Exception("Đơn hàng đã có shipper khác nhận. Xin vui lòng thử lại!");
+				}
+				List<Order> check = _orderRepository.FindAll(x => x.ShipperId == idShipper && x.OrderStatus == OrderStatus.Booked, null).ToList();
+				if (check.Count > 0)
+				{
+					throw new Exception("Bạn đang có đơn hàng chưa hoàn thành!");
+				}
+				order.ShipperId = idShipper;
                 order.OrderStatus = OrderStatus.Booked;
 
                 await _orderRepository.Update(order);
@@ -354,6 +414,7 @@ namespace FFS.Application.Controllers
 			{
 				var order = await _orderRepository.FindSingle(x => x.Id == id);
 				order.OrderStatus = OrderStatus.Finish;
+				order.ShipDate= DateTime.Now;
 				await _orderRepository.Update(order);
 				return NoContent();
 			}
@@ -381,7 +442,7 @@ namespace FFS.Application.Controllers
 		}
 
         [HttpPost]
-        public async Task<IActionResult> GetOrderFinish(Parameters parameters)
+        public async Task<IActionResult> GetOrderFinish(DTOs.QueryParametter.Parameters parameters)
         {
             try
             {
@@ -482,6 +543,7 @@ namespace FFS.Application.Controllers
 			await _orderRepository.CreatePayment(p);
 			order.PaymentId = p.Id;
 			await _orderRepository.Update(order);
+
 			return Ok(p);
 		}
 
@@ -513,6 +575,26 @@ namespace FFS.Application.Controllers
 		private Dictionary<string, string> SortDictionary(Dictionary<string, string> dictionary)
 		{
 			return new Dictionary<string, string>(dictionary.OrderBy(kvp => kvp.Key));
+		}
+
+		[HttpGet("{id}")]
+		public async Task<IActionResult> GetOrderPendingWithShipper(string id)
+		{
+			try
+			{
+				var orders = await _orderRepository
+					.FindAll(x => x.ShipperId == id, x => x.Customer, x => x.Shipper , x => x.Payment)
+					.Include(x => x.OrderDetails).ThenInclude(x => x.Food)
+					.Include(x => x.OrderDetails).ThenInclude(x => x.Store)
+					.Where(x => x.OrderStatus == OrderStatus.Booked)
+					.ToListAsync();
+				var order = orders.FirstOrDefault();
+				return Ok(_mapper.Map<OrderResponseDTO>(order));
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
 		}
 
 	}

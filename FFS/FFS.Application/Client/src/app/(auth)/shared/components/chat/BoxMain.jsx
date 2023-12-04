@@ -43,6 +43,7 @@ const BoxMain = ({ boxid }) => {
 	}, [boxid]);
 
 	const handleMsg = async () => {
+		if (msg.length === 0) return;
 		var data = {
 			chatId: boxid,
 			userId: cookie.get("fu_foody_id"),
@@ -63,7 +64,7 @@ const BoxMain = ({ boxid }) => {
 					</p>
 				</div>
 				<div className="box-main h-[500px] overflow-y-scroll" ref={mesRef}>
-					{box?.messages.map((item) => {
+					{box?.messages?.map((item) => {
 						return (
 							<Message
 								key={item.id}

@@ -183,7 +183,7 @@ const FoodList = () => {
 					<Radio
 						label="Trên 100.000đ"
 						checked={priceRange === "range4"}
-						onChange={() => handlePriceRangeChange("range4", 100, 9999999)}
+						onChange={() => handlePriceRangeChange("range4", 100, 999999999)}
 					/>
 				</div>
 			</div>
@@ -313,7 +313,23 @@ const FoodList = () => {
 									<Typography variant="h6" className="w-36 pointer-events-none">
 										{food.foodName}
 									</Typography>
-									{food.price > 0 ?
+									{food.priceAfterSale <= 0 && food.salePercent <= 0 ?
+										(
+											<div className="flex gap-5">
+												<Typography
+													color="blue"
+													className="relative w-fit pointer-events-none"
+												>
+													{food.price}.000
+													<span className="absolute font-normal top-0 -right-2 text-xs">
+														đ
+													</span>
+												</Typography>
+											</div>
+										) : (
+											null
+										)}
+									{food.priceAfterSale > 0 ?
 										(
 											<div className="flex gap-5">
 												<Typography
@@ -354,7 +370,7 @@ const FoodList = () => {
 													color="blue"
 													className="relative w-fit pointer-events-none"
 												>
-													{food.price - (food.price * food.salePercent)}.000
+													{food.price - (food.price * food.salePercent / 100)}.000
 													<span className="absolute font-normal top-0 -right-2 text-xs">
 														đ
 													</span>

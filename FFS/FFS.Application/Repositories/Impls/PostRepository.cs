@@ -74,7 +74,10 @@ namespace FFS.Application.Repositories.Impls
             }
         }
 
-        public async Task<Post> UpdatePost(Post updatedPost)
+
+		
+
+		public async Task<Post> UpdatePost(Post updatedPost)
         {
             try
             {
@@ -133,6 +136,23 @@ namespace FFS.Application.Repositories.Impls
                 throw new Exception(ex.Message);
             }
         }
+
+		public async Task<string> GetUserIdByPostId(int postId)
+		{
+			try
+			{
+				var userId = await _context.Posts
+					.Where(post => post.Id == postId)
+					.Select(post => post.UserId)
+					.FirstOrDefaultAsync();
+
+				return userId;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
 
 		public int CountAllPost()
 		{

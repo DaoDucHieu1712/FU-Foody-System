@@ -9,7 +9,7 @@ const PieChart = ({ data }) => {
     // Ensure the chartRef is not null before attempting to create the chart
     if (chartRef.current) {
       const ctx = chartRef.current.getContext("2d");
-
+      Chart.getChart(ctx)?.destroy();
       new Chart(ctx, {
         type: "pie",
         data: {
@@ -35,6 +35,7 @@ const PieChart = ({ data }) => {
           ],
         },
       });
+
     }
   }, [data]);
 
