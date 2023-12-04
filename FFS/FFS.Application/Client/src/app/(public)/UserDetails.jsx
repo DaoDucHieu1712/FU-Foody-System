@@ -89,12 +89,20 @@ const UserDetails = () => {
 								<h1 className="text-xl font-bold">{user.userName}</h1>
 
 								<div className="mt-3 flex flex-wrap gap-4 justify-center items-center">
+								{userId !== null && userId !== undefined ? (
 									<a
 										href="#"
 										className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
 									>
 										Nhắn tin
 									</a>
+							) : null}
+									{/* <a
+										href="#"
+										className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
+									>
+										Nhắn tin
+									</a> */}
 									<a>
 										<ReportUser uId={userId} sId={id}></ReportUser>
 									</a>

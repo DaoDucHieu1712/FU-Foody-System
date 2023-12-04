@@ -50,14 +50,19 @@ const UpdateDiscount = ({ reload, discountData }) => {
             axios
                 .put(`/api/Discount/UpdateDiscount?id=${discountData.id}`, newDiscount)
                 .then(() => {
-                    toast.success("Cập nhật ưu đãi thành công!");
+                    toast.success("Cập nhật ưu đãi mới thành công!");
                     reload();
                     setOpen(false);
                 })
                 .catch((error) => {
-                    toast.error("Cập nhật ưu đãi thất bại!");
+                    if (error.response && error.response.status === 400) {
+                        // Handle the specific error when the discount code already exists
+                        toast.error(error.response.data);
+                    } else {
+                        // Handle other errors
+                        toast.error("Cập nhật ưu đãi mới thất bại!");
+                    }
                     setOpen(false);
-                    console.log(error);
                 });
         } catch (error) {
             console.error("Error occur: ", error);

@@ -72,6 +72,10 @@ namespace FFS.Application.Controllers
         {
             try
             {
+				var discountExist = await _discountRepository.FindSingle(x=>x.Code == discountDTO.Code);
+				if(discountExist != null) {
+					return BadRequest($"Mã giảm giá {discountExist.Code} đã tồn tại. Vui lòng tạo mã khác!");
+				}
                 await _discountRepository.Add(_mapper.Map<Discount>(discountDTO));
                 return Ok();
             }
@@ -90,6 +94,11 @@ namespace FFS.Application.Controllers
 				if (discountUpdate == null)
 				{
 					return NotFound();
+				}
+				var discountNameExist = await _discountRepository.FindSingle(x => x.Code == discountDTO.Code);
+				if (discountNameExist != null)
+				{
+					return BadRequest($"Mã giảm giá {discountNameExist.Code} đã tồn tại. Vui lòng chọn mã khác!");
 				}
 				discountDTO.Id = id;
 				discountDTO.StoreId = discountUpdate.StoreId;

@@ -238,6 +238,35 @@ namespace FFS.Application.Controllers
 			}
 
 		}
+
+		[HttpGet("{storeId}")]
+		public async Task<IActionResult> ListFlashSaleInTimeByStore(int storeId)
+		{
+			try
+			{
+				var flashSales = await _fsRepo.ListFoodFlashSaleInTimeByStore(storeId);
+
+				var flashSaleDTOs = _mapper.Map<List<FlashSaleDTO>>(flashSales);
+				foreach (var flashSaleDTO in flashSaleDTOs)
+				{
+					flashSaleDTO.NoOfParticipateFoodSale = flashSaleDTO.FlashSaleDetails
+													   ?.Select(detail => detail.FoodId)
+													   .Distinct()
+													   .Count() ?? 0;
+					flashSaleDTO.FlashSaleStatus = GetFlashSaleStatus(flashSaleDTO.Start, flashSaleDTO.End);
+				}
+				return Ok(
+				new
+				{
+					flashSaleDTOs,
+				});
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+
+		}
 		private string GetFlashSaleStatus(DateTime start, DateTime end)
 		{
 			DateTime oneDayBeforeNow = DateTime.Now.AddDays(-1);

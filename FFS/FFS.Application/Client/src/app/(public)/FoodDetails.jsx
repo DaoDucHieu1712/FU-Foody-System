@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import AddToWishlist from "./components/wishlist/AddToWishlist";
 import WishlistDetails from "./components/wishlist/WishlistDetails";
 import ReviewStore from "./components/ReviewStore";
+import NotFoundPage from "../NotFoundPage";
 
 const FoodDetails = () => {
 	const { id } = useParams();
