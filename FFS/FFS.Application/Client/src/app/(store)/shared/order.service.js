@@ -40,6 +40,11 @@ const OrderService = {
 			"/api/Order/CancelOrderWithCustomer/" + id + `?CancelReason=${reason}`;
 		return axiosConfig.put(url);
 	},
+	async CancelOrderWithShipper(id, reason) {
+		const url =
+			"/api/Order/CancelOrderWithShipper/" + id + `?CancelReason=${reason}`;
+		return axiosConfig.put(url);
+	},
 	async GetOrderPendingWithShipper() {
 		const uid = CookieService.getToken("fu_foody_id");
 		const url = "/api/Order/GetOrderPendingWithShipper/" + uid;

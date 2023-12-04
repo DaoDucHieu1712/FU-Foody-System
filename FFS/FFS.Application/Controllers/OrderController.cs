@@ -100,7 +100,6 @@ namespace FFS.Application.Controllers
 		}
 
 		[HttpPost]
-
 		public async Task<IActionResult> AddOrderItem(List<OrderDetailDTO> items)
 		{
 			try
@@ -529,6 +528,23 @@ namespace FFS.Application.Controllers
 
 		[HttpPut("{id}")]
 		public async Task<IActionResult> CancelOrderWithCustomer(int id, string CancelReason)
+		{
+			try
+			{
+				var order = await _orderRepository.FindSingle(x => x.Id == id);
+				order.OrderStatus = OrderStatus.Cancel;
+				order.CancelReason = CancelReason;
+				await _orderRepository.Update(order);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPut("{id}")]
+		public async Task<IActionResult> CancelOrderWithShipper(int id, string CancelReason)
 		{
 			try
 			{
