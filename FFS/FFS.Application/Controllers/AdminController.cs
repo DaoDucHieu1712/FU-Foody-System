@@ -2,6 +2,7 @@
 using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
+using FFS.Application.DTOs.Store;
 using FFS.Application.Entities.Constant;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
@@ -9,9 +10,12 @@ using FFS.Application.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using FFS.Application.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
-namespace FFS.Application.Controllers {
-    [Route("api/[controller]/[action]")]
+namespace FFS.Application.Controllers
+{
+	[Route("api/[controller]/[action]")]
     [ApiController]
     public class AdminController : ControllerBase {
 
@@ -19,16 +23,21 @@ namespace FFS.Application.Controllers {
         private readonly IUserRepository _userRepository;
 		private readonly IPostRepository _postRepository;
 		private readonly IOrderRepository _orderRepository;
+		private readonly IAuthRepository _authRepository;
+		private readonly IHubContext<NotificationHub> _hubContext;
+		private readonly INotificationRepository _notifyRepository;
 
 		private readonly IMapper _mapper;
 
-		public AdminController(IReportRepository reportRepository, IUserRepository userRepository, IPostRepository postRepository, IOrderRepository orderRepository, IMapper mapper)
+		public AdminController(IReportRepository reportRepository, IHubContext<NotificationHub> hubContext,INotificationRepository notifyRepository,IUserRepository userRepository, IPostRepository postRepository, IOrderRepository orderRepository, IMapper mapper)
 		{
 			_reportRepository = reportRepository;
 			_userRepository = userRepository;
 			_postRepository = postRepository;
 			_orderRepository = orderRepository;
 			_mapper = mapper;
+			_hubContext = hubContext;
+			_notifyRepository = notifyRepository;
 		}
 
 		[HttpPost]
@@ -120,12 +129,29 @@ namespace FFS.Application.Controllers {
 					if(userParameters.Status == 2)
 					{
 						post.Status = Entities.Enum.StatusPost.Accept;
+
 					}
 					if (userParameters.Status == 3)
 					{
 						post.Status = Entities.Enum.StatusPost.Reject;
 					}
 					await _postRepository.Update(post);
+
+					if (post.UserId != null)
+					{
+						var notification = new Notification
+						{
+							CreatedAt = DateTime.Now,
+							UpdatedAt = DateTime.Now,
+							IsDelete = false,
+							UserId = post.UserId,
+							Title = "Phê duyệt bài viết",
+							Content = $"Bài viết {post.Title} {(post.Status == Entities.Enum.StatusPost.Accept ? "đã được phê duyệt" : "bị từ chối")}."
+						};
+
+						await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+						await _notifyRepository.Add(notification);
+					}
 					return Ok("Duyệt thành công!");
 				}
 				return BadRequest("Bài viết không tồn tại! Xin vui lòng thử lại sau");
@@ -285,7 +311,7 @@ namespace FFS.Application.Controllers {
 
 				var result = new
 				{
-					TotalAccount = TotalReportYear,
+					TotalReportYear = TotalReportYear,
 					ReportsStatistic = reportsStatistic
 				};
 
@@ -312,59 +338,6 @@ namespace FFS.Application.Controllers {
 			{
 				return StatusCode(500, "Internal Server Error");
 			}
-
 		}
-
-		[HttpGet("{storeId}")]
-		public IActionResult OrderStatistic(int storeId)
-		{
-			try
-			{
-				List<OrderStatistic> orderStatistics = _orderRepository.OrderStatistic(storeId);
-				return Ok(new
-				{
-					TotalOrder = _orderRepository.CountTotalOrder(storeId),
-					OrdersStatistic = orderStatistics
-				});
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, "Internal Server Error");
-			}
-
-		}
-
-		[HttpGet("{storeId}")]
-		public IActionResult GetFoodDetailStatistics(int storeId)
-		{
-			try
-			{
-				List<FoodDetailStatistic> foodDetailStatistics = _orderRepository.FoodDetailStatistics(storeId);
-				return Ok(foodDetailStatistics);
-
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, "Internal Server Error");
-			}
-
-		}
-
-		[HttpGet("{storeId}/{year}")]
-		public IActionResult GetFoodDetailStatistics(int storeId, int year)
-		{
-			try
-			{
-				List<RevenuePerMonth> revenuePerMonths = _orderRepository.RevenuePerMonth(storeId, year);
-				return Ok(revenuePerMonths);
-
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, "Internal Server Error");
-			}
-
-		}
-
 	}
 }

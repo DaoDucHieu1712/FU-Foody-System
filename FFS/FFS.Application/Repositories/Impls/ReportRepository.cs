@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Globalization;
 using Dapper;
 using DocumentFormat.OpenXml.InkML;
 using FFS.Application.Data;
@@ -183,22 +184,23 @@ namespace FFS.Application.Repositories.Impls
 			}
 		}
 
-		
+
 
 		public List<ReportStatistic> ReportStatistics(int year)
 		{
 			try
 			{
-				var reportsByMonth = _context.Reports
-	.Where(r => r.CreatedAt.Year == year ) 
-	.GroupBy(r =>  r.CreatedAt.Month)
-	.Select(group => new ReportStatistic
-	{
-		Month = group.Key,
-		NumberOfReport = group.Count()
-	})
-	.OrderBy(group => group.Month)
-	.ToList();
+				var monthNames = new[] { "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" };
+
+				var reportsByMonth = Enumerable.Range(1, 12)
+					.Select(month => new ReportStatistic
+					{
+						Month = monthNames[month - 1],
+						NumberOfReport = _context.Reports
+							.Count(r => r.CreatedAt.Year == year && r.CreatedAt.Month == month)
+					})
+					.ToList();
+
 				return reportsByMonth;
 			}
 			catch (Exception ex)
@@ -212,62 +214,6 @@ namespace FFS.Application.Repositories.Impls
 			return _context.Reports.Where(x=>x.CreatedAt.Year == year).Count();
 		}
 
-		public class ReportTypeCount
-		{
-			public int Year { get; set; }
-			public int Month { get; set; }
-			public ReportType ReportType { get; set; }
-			public int TotalReports { get; set; }
-		}
-		//public async Task<List<ReportTypeCount>> GetTotalReportsByTypeAsync()
-		//{
-		//	DateTime today = DateTime.Now;
-		//	DateTime firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
-		//	DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-
-		//	var result = await _context.Reports
-		//		.Where(r => r.CreatedAt >= firstDayOfMonth && r.CreatedAt <= lastDayOfMonth)
-		//		.GroupBy(r => r.ReportType)
-		//		.Select(g => new ReportTypeCount
-		//		{
-		//			ReportType = g.Key,
-		//			TotalReports = g.Count()
-		//		})
-		//		.ToListAsync();
-		//	//	var reportsPerMonth = _context.Reports
-		//	//.GroupBy(report => new { Year = report.CreatedAt.Year, Month = report.CreatedAt.Month, report.ReportType })
-		//	//.Select(group => new
-		//	//{
-		//	//	Year = group.Key.Year,
-		//	//	Month = group.Key.Month,
-		//	//	ReportType = group.Key.ReportType,
-		//	//	TotalReports = group.Count()
-		//	//})
-		//	//.OrderBy(group => group.Year)
-		//	//.ThenBy(group => group.Month)
-		//	//.ThenBy(group => group.ReportType)
-		//	//.ToList();
-
-		//	return result;
-		//}
-		public async Task<List<ReportTypeCount>> GetReportsPerMonth()
-		{
-			var reportsPerMonth = _context.Reports
-				.GroupBy(report => new { Year = report.CreatedAt.Year, Month = report.CreatedAt.Month, report.ReportType })
-				.Select(group => new ReportTypeCount
-				{
-					Year = group.Key.Year,
-					Month = group.Key.Month,
-					ReportType = group.Key.ReportType,
-					TotalReports = group.Count()
-				})
-				.OrderBy(group => group.Year)
-				.ThenBy(group => group.Month)
-				.ThenBy(group => group.ReportType)
-				.ToList();
-
-			return reportsPerMonth;
-		}
 
 
 	}

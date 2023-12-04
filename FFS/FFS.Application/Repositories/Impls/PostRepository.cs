@@ -52,7 +52,7 @@ namespace FFS.Application.Repositories.Impls
 
         public async Task<List<Post>> GetTop3NewestPosts()
         {
-            return await _context.Posts.Include(x => x.User).Include(x => x.Comments).ThenInclude(x => x.User).Include(x => x.ReactPosts).ThenInclude(x => x.User)
+            return await _context.Posts.Where(x=>x.Status ==StatusPost.Accept).Include(x => x.User).Include(x => x.Comments).ThenInclude(x => x.User).Include(x => x.ReactPosts).ThenInclude(x => x.User)
 			.OrderByDescending(post => post.Comments.Count)
 			.Take(3)
 			.ToListAsync();
@@ -86,8 +86,9 @@ namespace FFS.Application.Repositories.Impls
                 _context.Entry(originalPost).State = EntityState.Detached;
 
                 updatedPost.CreatedAt = originalPost.CreatedAt;
+				updatedPost.Status = originalPost.Status;
 
-                _context.Entry(updatedPost).State = EntityState.Modified;
+				_context.Entry(updatedPost).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 return updatedPost;
             }

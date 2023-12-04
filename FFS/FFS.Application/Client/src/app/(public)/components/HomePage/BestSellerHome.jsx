@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "../../../../shared/api/axiosConfig";
 import AddToWishlist from "../wishlist/AddToWishlist";
+import FormatPriceHelper from "../../../../shared/components/format/FormatPriceHelper";
 
 const BestSellerHome = () => {
 	const navigate = useNavigate();
@@ -60,7 +61,6 @@ const BestSellerHome = () => {
 							) : null}
 							<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
 								<AddToWishlist foodId={bestSellerItem.id} />
-								<FoodCart></FoodCart>
 								<Tooltip content="Xem chi tiết món ăn">
 									<IconButton
 										variant="text"
@@ -91,7 +91,7 @@ const BestSellerHome = () => {
 										color="blue"
 										className="relative w-fit pointer-events-none"
 									>
-										{bestSellerItem.price}.000
+										{FormatPriceHelper(bestSellerItem.price)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>
@@ -104,7 +104,7 @@ const BestSellerHome = () => {
 										color="gray"
 										className="relative w-fit line-through pointer-events-none"
 									>
-										{bestSellerItem.price}.000
+										{FormatPriceHelper(bestSellerItem.price)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>
@@ -113,7 +113,7 @@ const BestSellerHome = () => {
 										color="blue"
 										className="relative w-fit pointer-events-none"
 									>
-										{bestSellerItem.priceAfterSale}.000
+										{FormatPriceHelper(bestSellerItem.priceAfterSale)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>
@@ -126,7 +126,7 @@ const BestSellerHome = () => {
 										color="gray"
 										className="relative w-fit line-through pointer-events-none"
 									>
-										{bestSellerItem.price}.000
+										{FormatPriceHelper(bestSellerItem.price)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>
@@ -135,9 +135,7 @@ const BestSellerHome = () => {
 										color="blue"
 										className="relative w-fit pointer-events-none"
 									>
-										{bestSellerItem.price -
-											bestSellerItem.price * bestSellerItem.salePercent / 100}
-										.000
+										{FormatPriceHelper(bestSellerItem.price - bestSellerItem.price * bestSellerItem.salePercent / 100)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>

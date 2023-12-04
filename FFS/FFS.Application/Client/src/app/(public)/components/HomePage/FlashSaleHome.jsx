@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "../../../../shared/api/axiosConfig";
 import AddToWishlist from "../wishlist/AddToWishlist";
+import FormatPriceHelper from "../../../../shared/components/format/FormatPriceHelper";
 
 const FlashSaleHome = () => {
 	const navigate = useNavigate();
@@ -55,7 +56,6 @@ const FlashSaleHome = () => {
 							) : null}
 							<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
 								<AddToWishlist foodId={flashSaleItem.id} />
-								<FoodCart></FoodCart>
 								<Tooltip content="Xem chi tiết món ăn">
 									<IconButton
 										variant="text"
@@ -80,13 +80,14 @@ const FlashSaleHome = () => {
 							<Typography variant="h6" className="pointer-events-none">
 								{flashSaleItem.foodName}
 							</Typography>
-							{flashSaleItem.priceAfterSale <= 0 && flashSaleItem.salePercent <= 0 ? (
+							{flashSaleItem.priceAfterSale <= 0 &&
+							flashSaleItem.salePercent <= 0 ? (
 								<>
 									<Typography
 										color="blue"
 										className="relative w-fit pointer-events-none"
 									>
-										{flashSaleItem.price}.000
+										{FormatPriceHelper(flashSaleItem.price)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>
@@ -99,7 +100,7 @@ const FlashSaleHome = () => {
 										color="gray"
 										className="relative w-fit line-through pointer-events-none"
 									>
-										{flashSaleItem.price}.000
+										{FormatPriceHelper(flashSaleItem.price)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>
@@ -108,7 +109,7 @@ const FlashSaleHome = () => {
 										color="blue"
 										className="relative w-fit pointer-events-none"
 									>
-										{flashSaleItem.priceAfterSale}.000
+										{FormatPriceHelper(flashSaleItem.priceAfterSale)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>
@@ -121,7 +122,7 @@ const FlashSaleHome = () => {
 										color="gray"
 										className="relative w-fit line-through pointer-events-none"
 									>
-										{flashSaleItem.price}.000
+										{FormatPriceHelper(flashSaleItem.price)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>
@@ -130,9 +131,7 @@ const FlashSaleHome = () => {
 										color="blue"
 										className="relative w-fit pointer-events-none"
 									>
-										{flashSaleItem.price -
-											flashSaleItem.price * flashSaleItem.salePercent / 100}
-										.000
+										{FormatPriceHelper(flashSaleItem.price - flashSaleItem.price * flashSaleItem.salePercent / 100)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>

@@ -25,19 +25,19 @@ namespace FFS.Application.Controllers {
         private readonly IFoodRepository _foodRepository;
         private readonly ICommentRepository _commentRepository;
 		private readonly IComboRepository _comboRepository;
+		private readonly IOrderRepository _orderRepository;
 
-		
-
-		public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository, IComboRepository comboRepository)
-        {
-            _mapper = mapper;
-            _storeRepository = storeRepository;
-            _foodRepository = foodRepository;
-            _commentRepository = commentRepository;
+		public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository, IComboRepository comboRepository, IOrderRepository orderRepository)
+		{
+			_mapper = mapper;
+			_storeRepository = storeRepository;
+			_foodRepository = foodRepository;
+			_commentRepository = commentRepository;
 			_comboRepository = comboRepository;
-        }
+			_orderRepository = orderRepository;
+		}
 
-        [HttpGet]
+		[HttpGet]
         public IActionResult ListAllStore([FromQuery] AllStoreParameters allStoreParameters)
         {
             try
@@ -272,5 +272,54 @@ namespace FFS.Application.Controllers {
                 return BadRequest(ex.Message);
             }
         }
-    }
+		[HttpGet("{storeId}")]
+		public IActionResult OrderStatistic(int storeId)
+		{
+			try
+			{
+				List<OrderStatistic> orderStatistics = _orderRepository.OrderStatistic(storeId);
+				return Ok(new
+				{
+					TotalOrder = _orderRepository.CountTotalOrder(storeId),
+					OrdersStatistic = orderStatistics
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+
+		}
+
+		[HttpGet("{storeId}")]
+		public IActionResult GetFoodDetailStatistics(int storeId)
+		{
+			try
+			{
+				List<FoodDetailStatistic> foodDetailStatistics = _orderRepository.FoodDetailStatistics(storeId);
+				return Ok(foodDetailStatistics);
+
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+
+		}
+
+		[HttpGet("{storeId}/{year}")]
+		public IActionResult GetRevenuePerMonth(int storeId, int year)
+		{
+			try
+			{
+				List<RevenuePerMonth> revenuePerMonths = _orderRepository.RevenuePerMonth(storeId, year);
+				return Ok(revenuePerMonths);
+
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+		}
+	}
 }

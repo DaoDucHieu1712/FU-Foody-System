@@ -1,11 +1,11 @@
 import {
-  Button,
-  IconButton,
-  Rating,
-  Spinner,
-  Textarea,
-  Tooltip,
-  Typography,
+	Button,
+	IconButton,
+	Rating,
+	Spinner,
+	Textarea,
+	Tooltip,
+	Typography,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,230 +16,229 @@ import AddToWishlist from "./components/wishlist/AddToWishlist";
 import WishlistDetails from "./components/wishlist/WishlistDetails";
 import ReviewStore from "./components/ReviewStore";
 
-
 const FoodDetails = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [value, setValue] = useState(0);
-  const [foodData, setFoodData] = useState(null);
-  const [foodList, setFoodList] = useState([]);
-  const [categoryId, setCategoryId] = useState(0);
-  const [openComment, setOpenComment] = useState(false);
+	const { id } = useParams();
+	const navigate = useNavigate();
+	const [value, setValue] = useState(0);
+	const [foodData, setFoodData] = useState(null);
+	const [foodList, setFoodList] = useState([]);
+	const [categoryId, setCategoryId] = useState(0);
+	const [openComment, setOpenComment] = useState(false);
 
-  const increaseValue = () => {
-    setValue(value + 1);
-  };
+	const increaseValue = () => {
+		setValue(value + 1);
+	};
 
-  const decreaseValue = () => {
-    if (value > 0) {
-      setValue(value - 1);
-    }
-  };
+	const decreaseValue = () => {
+		if (value > 0) {
+			setValue(value - 1);
+		}
+	};
 
-  const handleopenComent = () => {
-    setOpenComment((cur) => !cur);
-  };
+	const handleopenComent = () => {
+		setOpenComment((cur) => !cur);
+	};
 
-  const GetFoodData = async () => {
-    try {
-      await axios
-        .get(`/api/Food/GetFoodById/${id}`)
-        .then((response) => {
-          setFoodData(response.data.result);
-          setCategoryId(response.data.result.categoryId);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      console.error("An error occurred food detail!", error);
-    }
-  };
+	const GetFoodData = async () => {
+		try {
+			await axios
+				.get(`/api/Food/GetFoodById/${id}`)
+				.then((response) => {
+					setFoodData(response.data.result);
+					setCategoryId(response.data.result.categoryId);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("An error occurred food detail!", error);
+		}
+	};
 
-  const GetFoodByCategoryId = async () => {
-    try {
-      await axios
-        .get(`/api/Food/GetFoodByCategoryid/${categoryId}`)
-        .then((response) => {
-          setFoodList(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      console.error("An error occurred food detail!", error);
-    }
-  };
+	const GetFoodByCategoryId = async () => {
+		try {
+			await axios
+				.get(`/api/Food/GetFoodByCategoryid/${categoryId}`)
+				.then((response) => {
+					setFoodList(response);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("An error occurred food detail!", error);
+		}
+	};
 
-  useEffect(() => {
-    GetFoodData();
-  }, [id]);
+	useEffect(() => {
+		GetFoodData();
+	}, [id]);
 
-  useEffect(() => {
-    GetFoodByCategoryId();
-  }, [categoryId]);
+	useEffect(() => {
+		GetFoodByCategoryId();
+	}, [categoryId]);
 
-  return (
-    <>
-      {foodData ? (
-        <div className="container mt-8 mb-8 px-12 py-4">
-          <Typography variant="h4" className="pb-3">
-            Thông tin món ăn
-          </Typography>
-          <div className="grid grid-cols-[4fr,6fr] gap-12">
-            <div className="Sidebar">
-              <img
-                className="h-72 w-full object-fill object-center"
-                src={foodData.imageURL}
-                alt={foodData.foodName}
-              />
-            </div>
-            <div className="content-food">
-              <div className="flex gap-2 items-center">
-                <Typography className="font-semibold">Cửa hàng: </Typography>
-                <Typography
-                  color="orange"
-                  variant="h5"
-                  className="cursor-pointer"
-                  onClick={() => navigate(`/store/detail/${foodData.store.id}`)}
-                >
-                  {foodData.store.storeName}
-                </Typography>
-              </div>
-              {foodData.rateAverage !== 0 ? (
-                <div className="flex items-center gap-2 font-bold pointer-events-none">
-                  Đánh giá:
-                  <Rating value={Math.round(foodData.rateAverage)} readonly />
-                  <Typography className="font-semibold">
-                    {foodData.rateAverage} Sao
-                  </Typography>
-                </div>
-              ) : (
-                <div
-                  className="font-bold pointer-events-none"
-                  style={{ color: "gray" }}
-                >
-                  Chưa có đánh giá
-                </div>
-              )}
-              <div className="food-name">
-                <Typography variant="h2">{foodData.foodName}</Typography>
-                <p className="text-base">
-                  Phân loại: {foodData.category.categoryName}
-                </p>
-                <p className="flex gap-1 text-base">
-                  Tình trạng:{" "}
-                  {foodData.inventories[0] != null && foodData.inventories[0].quantity > 0 ? (
-                    <p className="text-green-800 font-bold">còn hàng</p>
-                  ) : (
-                    <p className="text-red-800 font-bold">hết hàng</p>
-                  )}
-                </p>
-                <p className="text-base">Mô tả: {foodData.description}</p>
-                <p className="my-1 text-base font-bold flex items-center ">
-                  <span className="rounded-full">
-                    <svg
-                      className="w-4 h-4 text-blue-500 dark:text-white"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 11 20"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M1.75 15.363a4.954 4.954 0 0 0 2.638 1.574c2.345.572 4.653-.434 5.155-2.247.502-1.813-1.313-3.79-3.657-4.364-2.344-.574-4.16-2.551-3.658-4.364.502-1.813 2.81-2.818 5.155-2.246A4.97 4.97 0 0 1 10 5.264M6 17.097v1.82m0-17.5v2.138"
-                      />
-                    </svg>
-                  </span>
-                  <span className="text-blue-500">
-                    {foodData.price}.000 VND
-                  </span>
-                </p>
+	return (
+		<>
+			{foodData ? (
+				<div className="container mt-8 mb-8 px-12 py-4">
+					<Typography variant="h4" className="pb-3">
+						Thông tin món ăn
+					</Typography>
+					<div className="grid grid-cols-[4fr,6fr] gap-12">
+						<div className="Sidebar">
+							<img
+								className="h-72 w-full object-fill object-center"
+								src={foodData.imageURL}
+								alt={foodData.foodName}
+							/>
+						</div>
+						<div className="content-food">
+							<div className="flex gap-2 items-center">
+								<Typography className="font-semibold">Cửa hàng: </Typography>
+								<Typography
+									color="orange"
+									variant="h5"
+									className="cursor-pointer"
+									onClick={() => navigate(`/store/detail/${foodData.store.id}`)}
+								>
+									{foodData.store.storeName}
+								</Typography>
+							</div>
+							{foodData.rateAverage !== 0 ? (
+								<div className="flex items-center gap-2 font-bold pointer-events-none">
+									Đánh giá:
+									<Rating value={Math.round(foodData.rateAverage)} readonly />
+									<Typography className="font-semibold">
+										{foodData.rateAverage} Sao
+									</Typography>
+								</div>
+							) : (
+								<div
+									className="font-bold pointer-events-none"
+									style={{ color: "gray" }}
+								>
+									Chưa có đánh giá
+								</div>
+							)}
+							<div className="food-name">
+								<Typography variant="h2">{foodData.foodName}</Typography>
+								<p className="text-base">
+									Phân loại: {foodData.category.categoryName}
+								</p>
+								<p className="flex gap-1 text-base">
+									Tình trạng:{" "}
+									{foodData.inventories[0] != null &&
+									foodData.inventories[0].quantity > 0 ? (
+										<p className="text-green-800 font-bold">còn hàng</p>
+									) : (
+										<p className="text-red-800 font-bold">hết hàng</p>
+									)}
+								</p>
+								<p className="text-base">Mô tả: {foodData.description}</p>
+								<p className="my-1 text-base font-bold flex items-center ">
+									<span className="rounded-full">
+										<svg
+											className="w-4 h-4 text-blue-500 dark:text-white"
+											aria-hidden="true"
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 11 20"
+										>
+											<path
+												stroke="currentColor"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												d="M1.75 15.363a4.954 4.954 0 0 0 2.638 1.574c2.345.572 4.653-.434 5.155-2.247.502-1.813-1.313-3.79-3.657-4.364-2.344-.574-4.16-2.551-3.658-4.364.502-1.813 2.81-2.818 5.155-2.246A4.97 4.97 0 0 1 10 5.264M6 17.097v1.82m0-17.5v2.138"
+											/>
+										</svg>
+									</span>
+									<span className="text-blue-500">
+										{foodData.price}.000 VND
+									</span>
+								</p>
 
-                <hr></hr>
-                <div className="flex items-center space-x-3 mt-3">
-                  <div className="h-10 w-28">
-                    <div className="flex flex-row h-10 w-full relative bg-transparent border border-gray-300">
-                      <button
-                        className="h-full w-20 rounded-sm cursor-pointer outline-none"
-                        onClick={decreaseValue}
-                      >
-                        <span className="m-auto text-2xl font-thin">−</span>
-                      </button>
-                      <input
-                        type="number"
-                        className="text-center w-full font-semibold text-md hover:text-black focus:text-black cursor-default flex items-center outline-none"
-                        value={value}
-                        readOnly
-                      />
-                      <button
-                        className="h-full w-20 rounded-sm cursor-pointer outline-none"
-                        onClick={increaseValue}
-                      >
-                        <span className="m-auto text-2xl font-thin">+</span>
-                      </button>
-                    </div>
-                  </div>
+								<hr></hr>
+								<div className="flex items-center space-x-3 mt-3">
+									{/* <div className="h-10 w-28">
+										<div className="flex flex-row h-10 w-full relative bg-transparent border border-gray-300">
+											<button
+												className="h-full w-20 rounded-sm cursor-pointer outline-none"
+												onClick={decreaseValue}
+											>
+												<span className="m-auto text-2xl font-thin">−</span>
+											</button>
+											<input
+												type="number"
+												className="text-center w-full font-semibold text-md hover:text-black focus:text-black cursor-default flex items-center outline-none"
+												value={value}
+												readOnly
+											/>
+											<button
+												className="h-full w-20 rounded-sm cursor-pointer outline-none"
+												onClick={increaseValue}
+											>
+												<span className="m-auto text-2xl font-thin">+</span>
+											</button>
+										</div>
+									</div> */}
 
-                  <div className="">
-                    <button
-                      type="submit"
-                      className="flex items-center space-x-2  text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-sm text-sm w-full px-5 py-2.5 text-center"
-                    >
-                      THÊM VÀO GIỎ HÀNG
-                      <svg
-                        className="w-4 h-4 text-white ml-1"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 18 20"
-                      >
-                        <path
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          width="2"
-                          d="M6 15a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 0h8m-8 0-1-4m9 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-9-4h10l2-7H3m2 7L3 4m0 0-.792-3H1"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2 mt-3">
-                  <div className="h-10 w-28"></div>
+									<div className="">
+										<button
+											type="submit"
+											className="flex items-center space-x-2  text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-sm text-sm w-full px-5 py-2.5 text-center"
+											disabled={foodData.inventories[0].quantity <= 0}
+										>
+											THÊM VÀO GIỎ HÀNG
+											<svg
+												className="w-4 h-4 text-white ml-1"
+												aria-hidden="true"
+												xmlns="http://www.w3.org/2000/svg"
+												fill="none"
+												viewBox="0 0 18 20"
+											>
+												<path
+													stroke="currentColor"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													width="2"
+													d="M6 15a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 0h8m-8 0-1-4m9 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-9-4h10l2-7H3m2 7L3 4m0 0-.792-3H1"
+												/>
+											</svg>
+										</button>
+									</div>
+								</div>
+								<div className="flex items-center space-x-2 mt-3">
+									<div className="h-10 w-28"></div>
+									<div>
+										<WishlistDetails foodId={id}></WishlistDetails>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
-                  <div>
-                    <WishlistDetails foodId={id}></WishlistDetails>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* RECOMMENT FOOD */}
-          <div className="py-2">
-            <Typography variant="h4">Đồ ăn liên quan</Typography>
-            <div className="grid py-3 grid-flow-row-dense grid-cols-3 xl:grid-cols-6">
-              {foodList ? (
-                foodList.splice(0, 6).map((food, index) => (
-                  <div key={index} className="px-1 pt-1 border-solid border-2">
-                    <div className="group relative flex lg:flex-none">
-                      <img
-                        src={food.imageURL}
-                        alt={food.foodName}
-                        className="h-36 w-72 xl:w-60 object-cover group-hover:opacity-40"
-                      />
-                      <div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
-                        <Typography className="text-white font-semibold">
-                          HOT
-                        </Typography>
-                      </div>
-                      <div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
-                        <AddToWishlist foodId={food.id} />
-
+					{/* RECOMMENT FOOD */}
+					<div className="py-2">
+						<Typography variant="h4">Đồ ăn liên quan</Typography>
+						<div className="grid py-3 grid-flow-row-dense grid-cols-3 xl:grid-cols-6">
+							{foodList ? (
+								foodList.splice(0, 6).map((food, index) => (
+									<div key={index} className="px-1 pt-1 border-solid border-2">
+										<div className="group relative flex lg:flex-none">
+											<img
+												src={food.imageURL}
+												alt={food.foodName}
+												className="h-36 w-72 xl:w-60 object-cover group-hover:opacity-40"
+											/>
+											<div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
+												<Typography className="text-white font-semibold">
+													HOT
+												</Typography>
+											</div>
+											<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
+												<AddToWishlist foodId={food.id} />
                         <Tooltip content="Thêm giỏ hàng">
                           <IconButton
                             variant="text"
@@ -299,7 +298,7 @@ const FoodDetails = () => {
                         color="blue"
                         className="relative w-fit pointer-events-none"
                       >
-                        {food.price}.000
+                        {food.price}
                         <span className="absolute font-normal top-0 -right-2 text-xs">
                           đ
                         </span>
@@ -316,119 +315,119 @@ const FoodDetails = () => {
           </div>
           {/* END RECOMMENT FOOD */}
 
-          {/* COMMENT */}
-          <div>
-            <Typography variant="h4">Bình luận</Typography>
-            <form className="py-2" onSubmit={null}>
-              <Typography variant="small" className="pb-2">
-                Mô tả bình luận
-              </Typography>
-              <Textarea
-                className="shadow appearance-none border rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                size="md"
-                label="Bạn nghĩ gì về món ăn này..."
-              ></Textarea>
-              <Button type="submit" className="w-fit bg-primary">
-                Bình luận
-              </Button>
-            </form>
-            <div className="py-2">
-              <div className="flex justify-start gap-2">
-                <img
-                  src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
-                  alt="image 1"
-                  className="h-14 w-14 rounded-full object-cover"
-                ></img>
-                <div>
-                  <div className="flex gap-1">
-                    <Typography variant="small" className="font-bold">
-                      Tung NT
-                    </Typography>
-                    <Typography variant="small">- 30 Oct, 2023</Typography>
-                  </div>
-                  <Typography variant="paragraph">
-                    Cho bố cái địa chỉ
-                  </Typography>
-                  <div className="flex gap-2">
-                    <Typography
-                      variant="small"
-                      className="cursor-pointer hover:text-orange-900"
-                    >
-                      <i className="fal fa-heart pr-1"></i>Thích
-                    </Typography>
-                    {openComment ? (
-                      <Typography
-                        variant="small"
-                        className="cursor-pointer hover:text-orange-900"
-                        onClick={() => handleopenComent()}
-                      >
-                        <i className="fal fa-angle-double-up p-1"></i>Ẩn bình
-                        luận
-                      </Typography>
-                    ) : (
-                      <Typography
-                        variant="small"
-                        className="cursor-pointer hover:text-orange-900"
-                        onClick={() => handleopenComent()}
-                      >
-                        <i className="fal fa-angle-double-down p-1"></i>Xem bình
-                        luận
-                      </Typography>
-                    )}
-                  </div>
-                </div>
-              </div>
-              {/* SUB COMMENT */}
-              {openComment ? (
-                <div className="ml-10 border-[1px] p-3">
-                  <div className="flex justify-start gap-2">
-                    <img
-                      src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
-                      alt="image 1"
-                      className="h-14 w-14 rounded-full object-cover"
-                    ></img>
-                    <div>
-                      <div className="flex gap-1">
-                        <Typography variant="small" className="font-bold">
-                          Tung NT
-                        </Typography>
-                        <Typography variant="small">- 30 Oct, 2023</Typography>
-                      </div>
-                      <Typography variant="paragraph">
-                        Cho bố cái địa chỉ
-                      </Typography>
-                      <div className="flex gap-2">
-                        <Typography
-                          variant="small"
-                          className="cursor-pointer hover:text-orange-900"
-                        >
-                          <i className="fal fa-heart pr-1"></i>Thích
-                        </Typography>
-                        <Typography
-                          variant="small"
-                          className="cursor-pointer hover:text-orange-900"
-                        >
-                          <i className="fal fa-angle-double-right fa-rotate-90 p-1"></i>
-                          Xem bình luận
-                        </Typography>
-                      </div>
-                    </div>
-                  </div>
-                  <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
-                </div>
-              ) : null}
-              {/* END SUB COMMENT */}
-              <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
-            </div>
-            {/* END COMMENT */}
-          </div>
-          {/* END COMMENT */}
-        </div>
-      ) : (
-        <Spinner></Spinner>
-      )}
-    </>
-  );
+					{/* COMMENT */}
+					<div>
+						<Typography variant="h4">Bình luận</Typography>
+						<form className="py-2" onSubmit={null}>
+							<Typography variant="small" className="pb-2">
+								Mô tả bình luận
+							</Typography>
+							<Textarea
+								className="shadow appearance-none border rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+								size="md"
+								label="Bạn nghĩ gì về món ăn này..."
+							></Textarea>
+							<Button type="submit" className="w-fit bg-primary">
+								Bình luận
+							</Button>
+						</form>
+						<div className="py-2">
+							<div className="flex justify-start gap-2">
+								<img
+									src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+									alt="image 1"
+									className="h-14 w-14 rounded-full object-cover"
+								></img>
+								<div>
+									<div className="flex gap-1">
+										<Typography variant="small" className="font-bold">
+											Tung NT
+										</Typography>
+										<Typography variant="small">- 30 Oct, 2023</Typography>
+									</div>
+									<Typography variant="paragraph">
+										Cho bố cái địa chỉ
+									</Typography>
+									<div className="flex gap-2">
+										<Typography
+											variant="small"
+											className="cursor-pointer hover:text-orange-900"
+										>
+											<i className="fal fa-heart pr-1"></i>Thích
+										</Typography>
+										{openComment ? (
+											<Typography
+												variant="small"
+												className="cursor-pointer hover:text-orange-900"
+												onClick={() => handleopenComent()}
+											>
+												<i className="fal fa-angle-double-up p-1"></i>Ẩn bình
+												luận
+											</Typography>
+										) : (
+											<Typography
+												variant="small"
+												className="cursor-pointer hover:text-orange-900"
+												onClick={() => handleopenComent()}
+											>
+												<i className="fal fa-angle-double-down p-1"></i>Xem bình
+												luận
+											</Typography>
+										)}
+									</div>
+								</div>
+							</div>
+							{/* SUB COMMENT */}
+							{openComment ? (
+								<div className="ml-10 border-[1px] p-3">
+									<div className="flex justify-start gap-2">
+										<img
+											src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+											alt="image 1"
+											className="h-14 w-14 rounded-full object-cover"
+										></img>
+										<div>
+											<div className="flex gap-1">
+												<Typography variant="small" className="font-bold">
+													Tung NT
+												</Typography>
+												<Typography variant="small">- 30 Oct, 2023</Typography>
+											</div>
+											<Typography variant="paragraph">
+												Cho bố cái địa chỉ
+											</Typography>
+											<div className="flex gap-2">
+												<Typography
+													variant="small"
+													className="cursor-pointer hover:text-orange-900"
+												>
+													<i className="fal fa-heart pr-1"></i>Thích
+												</Typography>
+												<Typography
+													variant="small"
+													className="cursor-pointer hover:text-orange-900"
+												>
+													<i className="fal fa-angle-double-right fa-rotate-90 p-1"></i>
+													Xem bình luận
+												</Typography>
+											</div>
+										</div>
+									</div>
+									<hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+								</div>
+							) : null}
+							{/* END SUB COMMENT */}
+							<hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+						</div>
+						{/* END COMMENT */}
+					</div>
+					{/* END COMMENT */}
+				</div>
+			) : (
+				<Spinner></Spinner>
+			)}
+		</>
+	);
 };
 
 export default FoodDetails;

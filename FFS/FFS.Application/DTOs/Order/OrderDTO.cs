@@ -17,5 +17,6 @@ namespace FFS.Application.DTOs.Order
         public string PhoneNumber { get; set; }
         public decimal TotalPrice { get; set; }
         public OrderStatus OrderStatus { get; set; }
-    }
+		public List<OrderDetailResponseDTO> orderDetails { get; set; }
+	}
 }

@@ -175,7 +175,7 @@ const OrderFinishedPage = () => {
                         color="blue-gray"
                         className="font-medium"
                       >
-                        Edit
+                        Chi tiết
                       </Typography>
                     </td>
                   </tr>
