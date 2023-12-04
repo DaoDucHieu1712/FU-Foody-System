@@ -19,10 +19,16 @@ import {
 	MenuItem,
 } from "@material-tailwind/react";
 import Elips from "../../shared/components/icon/Elips";
+import { useDispatch } from "react-redux";
 import CookieService from "../../shared/helper/cookieConfig";
 import ReportShipper from "../(public)/components/ReportShipper";
+import ChatService from "./shared/chat.service";
+import { chatActions } from "./shared/chatSlice";
+import Cookies from "universal-cookie";
 
+const cookies = new Cookies();
 const ShipperDetailsPage = () => {
+	const dispatch = useDispatch();
 	moment.locale("vi");
 	const { id } = useParams();
 	const [activeTab, setActiveTab] = useState("reviews");
@@ -67,6 +73,14 @@ const ShipperDetailsPage = () => {
 		fetchData();
 	}, [id]);
 
+	const handleCreateBoxChat = async () => {
+		dispatch(chatActions.Update(true));
+		await ChatService.CreateChatBox({
+			fromUserId: cookies.get("fu_foody_id"),
+			toUserId: id,
+		});
+	};
+
 	return (
 		<>
 			<div className="container mx-auto  px-20 py-8">
@@ -83,7 +97,7 @@ const ShipperDetailsPage = () => {
 								<div className="mt-3 flex flex-wrap gap-4 justify-center">
 								{userId !== null && userId !== undefined ? (
 									<a
-										href="#"
+										onClick={handleCreateBoxChat}
 										className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
 									>
 										Nhắn tin

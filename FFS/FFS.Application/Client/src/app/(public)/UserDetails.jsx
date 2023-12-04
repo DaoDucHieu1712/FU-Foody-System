@@ -13,11 +13,18 @@ import { useEffect, useState } from "react";
 import CookieService from "../../shared/helper/cookieConfig";
 import moment from "moment";
 import "moment/dist/locale/vi";
+import { useDispatch } from "react-redux";
 import ReportUser from "./components/ReportUser";
+import ChatService from "../(auth)/shared/chat.service";
+import { chatActions } from "../(auth)/shared/chatSlice";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 moment.locale("vi");
 const UserDetails = () => {
 	const { id } = useParams();
+	const dispatch = useDispatch();
 	const [user, setUser] = useState([]);
 	const [isReact, setIsReact] = useState(false);
 	const [postIdToCheck, setPostIdToCheck] = useState(null);
@@ -75,6 +82,15 @@ const UserDetails = () => {
 	const handleopenComent = () => {
 		setOpenComment((cur) => !cur);
 	};
+
+	const handleCreateBoxChat = async () => {
+		dispatch(chatActions.Update(true));
+		await ChatService.CreateChatBox({
+			fromUserId: cookies.get("fu_foody_id"),
+			toUserId: id,
+		});
+	};
+
 	return (
 		<>
 			<div className="container mx-auto  px-20 py-8">
@@ -91,7 +107,7 @@ const UserDetails = () => {
 								<div className="mt-3 flex flex-wrap gap-4 justify-center items-center">
 								{userId !== null && userId !== undefined ? (
 									<a
-										href="#"
+										onClick={handleCreateBoxChat}
 										className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
 									>
 										Nhắn tin
