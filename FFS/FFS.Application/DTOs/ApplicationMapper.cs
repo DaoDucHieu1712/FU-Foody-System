@@ -112,8 +112,9 @@ namespace FFS.Application.DTOs
 				.ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.Avatar)).ReverseMap();
 
 			CreateMap<Entities.Food, AllFoodDTO>()
-				.ForMember(dest => dest.PriceAfterSale, opt => opt.MapFrom(src => src.FlashSaleDetails != null && src.FlashSaleDetails.Any() ? src.FlashSaleDetails.FirstOrDefault(x => x.FlashSale.Start <= DateTime.Now && x.FlashSale.End >= DateTime.Now).PriceAfterSale : default(decimal?)))
-				.ForMember(dest => dest.SalePercent, opt => opt.MapFrom(src => src.FlashSaleDetails != null && src.FlashSaleDetails.Any() ? src.FlashSaleDetails.FirstOrDefault(x => x.FlashSale.Start <= DateTime.Now && x.FlashSale.End >= DateTime.Now).SalePercent : default(int?)))
+				.ForMember(dest => dest.PriceAfterSale, opt => opt.MapFrom(src => src.FlashSaleDetails != null && src.FlashSaleDetails.Any() ? src.FlashSaleDetails.FirstOrDefault(x=>x.FlashSale.Start<=DateTime.Now&& x.FlashSale.End>=DateTime.Now).PriceAfterSale : 0))
+				.ForMember(dest => dest.SalePercent, opt => opt.MapFrom(src => src.FlashSaleDetails != null && src.FlashSaleDetails.Any() ? src.FlashSaleDetails.FirstOrDefault(x => x.FlashSale.Start <= DateTime.Now && x.FlashSale.End >= DateTime.Now).SalePercent : 0))
+				.ForMember(dest => dest.NumberOfProductSale, opt => opt.MapFrom(src => src.FlashSaleDetails != null && src.FlashSaleDetails.Any() ? src.FlashSaleDetails.FirstOrDefault(x => x.FlashSale.Start <= DateTime.Now && x.FlashSale.End >= DateTime.Now).NumberOfProductSale : 0))
 				.ReverseMap();
 
 			CreateMap<Discount, DiscountDTO>()

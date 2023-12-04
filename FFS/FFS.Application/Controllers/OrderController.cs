@@ -731,5 +731,67 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[HttpGet("{id}")]
+		public async Task<IActionResult> GetNumberOfOrder(string id)
+		{
+			try
+			{
+				DateTime currentDate = DateTime.Now.Date;
+
+				// Orders finished today
+				var ordersToday = await _orderRepository
+					.FindAll(x => x.ShipperId == id &&
+								   x.OrderStatus == OrderStatus.Finish &&
+								   x.UpdatedAt.Date == currentDate)
+					.ToListAsync();
+
+				// Orders finished this week
+				DateTime startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek);
+				var ordersThisWeek = await _orderRepository
+					.FindAll(x => x.ShipperId == id &&
+								   x.OrderStatus == OrderStatus.Finish &&
+								   x.UpdatedAt.Date >= startOfWeek)
+					.ToListAsync();
+
+				// Orders finished this month
+				var startOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+				var ordersThisMonth = await _orderRepository
+					.FindAll(x => x.ShipperId == id &&
+								   x.OrderStatus == OrderStatus.Finish &&
+								   x.UpdatedAt.Date >= startOfMonth)
+					.ToListAsync();
+
+				// Orders finished this year
+				DateTime startOfYear = new DateTime(currentDate.Year, 1, 1);
+				var ordersThisYear = await _orderRepository
+					.FindAll(x => x.ShipperId == id &&
+								   x.OrderStatus == OrderStatus.Finish &&
+								   x.UpdatedAt.Date >= startOfYear)
+					.ToListAsync();
+
+				// Number of orders for each period
+				int numberOfOrdersToday = ordersToday.Count;
+				int numberOfOrdersThisWeek = ordersThisWeek.Count;
+				int numberOfOrdersThisMonth = ordersThisMonth.Count;
+				int numberOfOrdersThisYear = ordersThisYear.Count;
+
+				// Return the results
+				var result = new
+				{
+					Today = numberOfOrdersToday,
+					ThisWeek = numberOfOrdersThisWeek,
+					ThisMonth = numberOfOrdersThisMonth,
+					ThisYear = numberOfOrdersThisYear
+				};
+
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+
 	}
 }

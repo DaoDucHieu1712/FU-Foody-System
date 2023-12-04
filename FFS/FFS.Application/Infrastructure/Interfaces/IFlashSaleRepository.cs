@@ -11,6 +11,6 @@ namespace FFS.Application.Infrastructure.Interfaces
 		PagedList<FlashSale> ListFlashSaleByStore(int storeId, FlashSaleParameter parameter);
 		Task DeleteFlashSale(int flashSaleId);
 		Task DeleteFlashSaleDetail(int flashSaleId, int foodId);
-
+		Task<List<FlashSale>> ListFoodFlashSaleInTimeByStore(int storeId);
     }
 }

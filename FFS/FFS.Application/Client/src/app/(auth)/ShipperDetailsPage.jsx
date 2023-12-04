@@ -81,12 +81,14 @@ const ShipperDetailsPage = () => {
 								<h1 className="text-xl font-bold">{shipperData.userName}</h1>
 
 								<div className="mt-3 flex flex-wrap gap-4 justify-center">
+								{userId !== null && userId !== undefined ? (
 									<a
 										href="#"
 										className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
 									>
 										Nhắn tin
 									</a>
+							) : null}
 									<a>
 										<ReportShipper uId={userId} sId={id}></ReportShipper>
 									</a>

@@ -10,12 +10,17 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CookieService from "../../shared/helper/cookieConfig";
 import ReportStore from "../(public)/components/ReportStore";
+import { useDispatch } from "react-redux";
+import { chatActions } from "../(auth)/shared/chatSlice";
+import ChatService from "../(auth)/shared/chat.service";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 const uId = cookies.get("fu_foody_id");
 
 const StoreCommentPage = () => {
+  const dispatch = useDispatch();
+
   const { id } = useParams();
   const [storeData, setStoreData] = useState(null);
   const [commentList, setCommentList] = useState([]);
@@ -145,6 +150,14 @@ const StoreCommentPage = () => {
       console.error("An error occurred", error);
     }
   };
+
+  const handleCreateBoxChat = async () => {
+		dispatch(chatActions.Update(true));
+		await ChatService.CreateChatBox({
+			fromUserId: cookies.get("fu_foody_id"),
+			toUserId: storeData.userId,
+		});
+	};
   return (
     <>
       {storeData ? (
@@ -217,12 +230,17 @@ const StoreCommentPage = () => {
               </span>
               <div className="flex items-center text-base gap-1">
                 <span>
-                  <i className="fal fa-clock mr-1"></i> Hoạt động từ:
+                  <i className="fal fa-clock mr-1"></i> Thời gian hoạt động:
                 </span>
                 <span>
                   {storeData.timeStart} : {storeData.timeEnd}
                 </span>
               </div>
+              <div className="">
+								<Button className="bg-primary" onClick={handleCreateBoxChat}>
+									Chat Ngay
+								</Button>
+							</div>
             </div>
           </div>
           <hr className="h-px my-4 bg-gray-400 border-0 dark:bg-gray-700"></hr>
