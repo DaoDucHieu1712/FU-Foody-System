@@ -11,9 +11,11 @@ using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Order;
 using FFS.Application.DTOs.Others;
 using FFS.Application.DTOs.QueryParametter;
+using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Entities.Enum;
 using FFS.Application.Hubs;
+using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Migrations;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
@@ -792,6 +794,19 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[HttpGet("{shipperId}/{year}")]
+		public IActionResult GetRevenueShipperPerMonth(string shipperId, int year)
+		{
+			try
+			{
+				List<RevenuePerMonth> revenuePerMonths = _orderRepository.RevenueShipperPerMonth(shipperId, year);
+				return Ok(revenuePerMonths);
 
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, "Internal Server Error");
+			}
+		}
 	}
 }

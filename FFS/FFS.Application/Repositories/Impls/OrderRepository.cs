@@ -283,5 +283,29 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 		}
+
+		public List<RevenuePerMonth> RevenueShipperPerMonth(string shipperId, int year)
+		{
+			try
+			{
+				var monthNames = new[] { "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" };
+				var revenuePerMonth = Enumerable.Range(1, 12)
+					.Select(month => new RevenuePerMonth
+					{
+						Month = monthNames[month - 1],
+						Revenue = _context.Orders
+							.Where(o => o.PaymentId != null && o.CreatedAt.Year == year && o.CreatedAt.Month == month && o.ShipperId.Equals(shipperId))
+							.Sum(x => x.ShipFee) ?? 0 
+					})
+					.ToList();
+
+				return revenuePerMonth;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+
 	}
 }

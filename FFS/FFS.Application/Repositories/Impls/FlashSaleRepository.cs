@@ -110,7 +110,13 @@ namespace FFS.Application.Repositories.Impls
 		{
 			try
 			{
-				var flashSales = await _context.FlashSales.Where(x => x.StoreId == storeId && x.End >= DateTime.Now).Include(x => x.FlashSaleDetails).ThenInclude(f => f.Food).ToListAsync();
+				var currentTime = DateTime.Now;
+
+				var flashSales = await _context.FlashSales
+							.Where(x => x.StoreId == storeId && x.End >= currentTime)
+							.Include(x => x.FlashSaleDetails)
+							.ThenInclude(f => f.Food)
+							.ToListAsync();
 				return flashSales;
 			}
 			catch (Exception ex)

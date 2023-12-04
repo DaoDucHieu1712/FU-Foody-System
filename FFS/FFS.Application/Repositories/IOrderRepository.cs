@@ -24,5 +24,6 @@ namespace FFS.Application.Repositories
 
 		List<FoodDetailStatistic> FoodDetailStatistics(int storeId);
 		List<RevenuePerMonth> RevenuePerMonth(int storeId, int year);
+		List<RevenuePerMonth> RevenueShipperPerMonth(string shipperId, int year);
 	}
 }
