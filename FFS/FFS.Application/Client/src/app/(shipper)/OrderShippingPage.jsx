@@ -11,6 +11,7 @@ import {
 } from "@material-tailwind/react";
 import OrderStatus from "../(store)/components/order/OrderStatus";
 import { toast } from "react-toastify";
+import CancelOrder from "./shared/components/CancelOrder";
 
 const OrderShippingPage = () => {
 	const [open, setOpen] = useState(false);
@@ -145,7 +146,10 @@ const OrderShippingPage = () => {
 						<div className="mt-3 border-gray-700  text-black rounded-md w-full">
 							{orderQuery.data?.orderStatus === 2 && (
 								<>
-									<Button onClick={handleOpen} className="bg-green-500 w-full">
+									<Button
+										onClick={handleOpen}
+										className="bg-green-500 w-full mb-2"
+									>
 										Xác nhận giao hàng
 									</Button>
 									<Dialog open={open} handler={handleOpen}>
@@ -174,6 +178,7 @@ const OrderShippingPage = () => {
 											</Button>
 										</DialogFooter>
 									</Dialog>
+									<CancelOrder id={orderQuery.data?.id} />
 								</>
 							)}
 						</div>
