@@ -63,7 +63,7 @@ const OrderShippingPage = () => {
 													/>
 													<div className="flex flex-col gap-y-1 text-sm">
 														<p className="font-bold w-[300px]">
-															{item.foodName}
+															{item.foodName || item.comboName}
 														</p>
 														<p>{item.unitPrice} $</p>
 													</div>
