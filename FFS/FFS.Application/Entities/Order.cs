@@ -22,6 +22,7 @@ namespace FFS.Application.Entities
         public string? Note { get; set; }
         public string? CancelReason { get; set; }
         public decimal TotalPrice { get; set; }
+		public decimal? ShipFee { get; set; }
         public DateTime? ShipDate { get; set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }
     }

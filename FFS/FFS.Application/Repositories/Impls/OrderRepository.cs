@@ -268,5 +268,20 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 		}
+
+		public async Task<OrderDTO> Order(CreateOrderDTO createOrderDTO)
+		{
+			try
+			{
+			    var NewOrder = await CreateAndGetEntity(_mapper.Map<Order>(createOrderDTO));
+				if (NewOrder == null) throw new Exception("Something wrong !");
+				return _mapper.Map<OrderDTO>(NewOrder);
+			}
+			catch (Exception ex)
+			{
+
+				throw new Exception(ex.Message);
+			}
+		}
 	}
 }

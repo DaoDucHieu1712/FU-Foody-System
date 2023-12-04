@@ -61,6 +61,17 @@ namespace FFS.Application.Controllers
             }
         }
 
+
+		[HttpPost]
+		public async Task<IActionResult> Order(CreateOrderDTO createOrderDTO)
+		{
+			try
+			{
+				return Ok(await _orderRepository.Order(createOrderDTO));
+			}
+			catch (Exception ex) 
+}
+}
 		[HttpGet("{orderId}")]
 		public async Task<IActionResult> GetStoreIdByOrderId(int orderId)
 		{
@@ -77,6 +88,7 @@ namespace FFS.Application.Controllers
 				}
 			}
 			catch (Exception ex)
+
 			{
 				return StatusCode(500, ex.Message);
 			}
@@ -85,7 +97,9 @@ namespace FFS.Application.Controllers
 
 
 
+
 		[HttpPost]
+
         public async Task<IActionResult> AddOrderItem(List<OrderDetailDTO> items)
         {
             try
@@ -111,6 +125,7 @@ namespace FFS.Application.Controllers
 					await _orderRepository.FindAll(x => x.Id == id, x => x.Customer, x => x.Shipper, x => x.Payment)
 					.Include(x => x.OrderDetails).ThenInclude(x => x.Store)
 					.Include(x => x.OrderDetails).ThenInclude(x => x.Food)
+					.Include(x => x.OrderDetails).ThenInclude(x => x.Combo)
 					.FirstOrDefaultAsync()
 					));
 			}
@@ -323,7 +338,7 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var orderItems = await _orderDetailRepository.FindAll(x => x.OrderId == id, x => x.Food, x => x.Store).ToListAsync();
+                var orderItems = await _orderDetailRepository.FindAll(x => x.OrderId == id, x => x.Food, x => x.Store, x => x.Combo).ToListAsync();
                 return Ok(_mapper.Map<List<OrderDetailResponseDTO>>(orderItems));
             }
             catch (Exception ex)

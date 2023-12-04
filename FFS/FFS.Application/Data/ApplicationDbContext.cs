@@ -54,7 +54,10 @@ namespace FFS.Application.Data
             builder.Entity<OrderDetail>().
                HasOne(c => c.Food).WithMany(c => c.OrderDetails).HasForeignKey(c => c.FoodId).OnDelete(DeleteBehavior.ClientNoAction);
 
-            builder.Entity<React>().
+			builder.Entity<OrderDetail>().
+			   HasOne(c => c.Combo).WithMany(c => c.OrderDetails).HasForeignKey(c => c.ComboId).OnDelete(DeleteBehavior.ClientNoAction);
+
+			builder.Entity<React>().
                HasOne(c => c.Comment).WithMany(c => c.Reacts).HasForeignKey(c => c.CommentId).OnDelete(DeleteBehavior.ClientNoAction);
 
             builder.Entity<React>().
@@ -108,6 +111,9 @@ namespace FFS.Application.Data
 			builder.Entity<Message>()
 				.HasOne(c => c.User).WithMany(c => c.Messages).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.ClientNoAction);
 
+			//builder.Entity<FoodCombo>().HasOne(c => c.Store).WithMany(c => c.FoodCombos).HasForeignKey(c => c.StoreId).OnDelete(DeleteBehavior.ClientNoAction);
+			//builder.Entity<FoodCombo>().HasOne(c => c.Food).WithMany(c => c.FoodCombos).HasForeignKey(c => c.FoodId).OnDelete(DeleteBehavior.ClientNoAction);
+			//builder.Entity<FoodCombo>().HasOne(c => c.Combo).WithMany(c => c.FoodCombos).HasForeignKey(c => c.ComboId).OnDelete(DeleteBehavior.ClientNoAction);
 		}
 
 		public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }

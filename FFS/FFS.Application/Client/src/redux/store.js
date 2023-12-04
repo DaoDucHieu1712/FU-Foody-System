@@ -3,6 +3,7 @@ import authSlice from "./auth";
 import cartReducer from "../app/(auth)/shared/cartSlice";
 import chatReducer from "../app/(auth)/shared/chatSlice";
 import notificationReducer from "../app/(auth)/shared/notificationSlice";
+import comboReducer from "../app/(auth)/shared/comboSlice";
 
 const store = configureStore({
 	reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
 		cart: cartReducer,
 		chat: chatReducer,
 		notification: notificationReducer,
+		combo: comboReducer,
 	},
 });
 
