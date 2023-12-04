@@ -86,9 +86,13 @@ const UpdateFlashSale = ({ fId, reload, dayStart, dayEnd, fsList }) => {
         e.preventDefault();
         try {
             const formDataArray = Object.values(formData);
+            const adjustedDateStart = new Date(dateStart);
+            adjustedDateStart.setHours(adjustedDateStart.getHours() + 7);
+            const adjustedDateEnd = new Date(dateEnd);
+            adjustedDateEnd.setHours(adjustedDateEnd.getHours() + 7);
             const dataPut = {
-                start: dateStart,
-                end: dateEnd,
+                start: adjustedDateStart.toISOString(),
+                end: adjustedDateEnd.toISOString(),
                 flashSaleDetails: formDataArray,
             }
             await axios.put(`/api/FlashSale/UpdateFlashSale/${fId}`, dataPut)

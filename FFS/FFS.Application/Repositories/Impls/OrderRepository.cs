@@ -35,6 +35,7 @@ namespace FFS.Application.Repositories.Impls
 			try
 			{
 				var items = _mapper.Map<List<OrderDetail>>(orderDetailDTOs);
+			
 				await _orderDetailRepository.AddMultiple(items);
 			}
 			catch (Exception ex)
@@ -58,7 +59,22 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 		}
+		public async Task<int?> GetStoreIdByOrderId(int orderId)
+		{
+			try
+			{
+				var order = await _context.Orders
+					.Where(o => o.Id == orderId)
+					.Select(o => o.OrderDetails.FirstOrDefault().StoreId)
+					.FirstOrDefaultAsync();
 
+				return order;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("Error retrieving StoreId by OrderId.", ex);
+			}
+		}
 		public async Task<dynamic> GetOrderDetail(int id)
 		{
 

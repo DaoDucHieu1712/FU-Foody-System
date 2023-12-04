@@ -19,5 +19,7 @@ namespace FFS.Application.DTOs.Order
 		public decimal? ShipFee { get; set; }
         public OrderStatus OrderStatus { get; set; }
 
-    }
+
+
+	}
 }

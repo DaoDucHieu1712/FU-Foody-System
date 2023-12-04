@@ -18,5 +18,6 @@ namespace FFS.Application.DTOs.Order
         public decimal TotalPrice { get; set; }
 		public decimal ShipFee { get; set; }
         public OrderStatus OrderStatus { get; set; }
-    }
+		public List<OrderDetailResponseDTO> orderDetails { get; set; }
+	}
 }

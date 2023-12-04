@@ -19,7 +19,7 @@ const Notification = () => {
 	const toggleTooltip = () => {
 		setShowTooltip(!showTooltip);
 	};
-
+	
 	useEffect(() => {
 		//Đóng thông báo khi click bên ngoài
 		const handleClickOutside = (event) => {
@@ -87,6 +87,10 @@ const Notification = () => {
 		zIndex: "1",
 		opacity: showTooltip ? "1" : "0",
 		transition: "opacity 0.2s ease-in-out",
+	 	maxHeight: "400px", 
+      overflowY: "auto",
+	  
+	  
 	};
 
 	const triangleStyle = {
@@ -111,12 +115,13 @@ const Notification = () => {
 					<div style={triangleStyle} />
 					<h3 className="text-base mb-2">Thông Báo Mới Nhận</h3>
 					<ul>
-						{reversedNotifications.map((notification, index) => (
+						 {reversedNotifications.map((notification, index)  => (
 							<li key={index} className="mb-2 p-2 rounded-lg hover:bg-gray-100">
 								<div className="font-bold uppercase">{notification.title}</div>
 								<div className="text-sm">{notification.content}</div>
 							</li>
 						))}
+						 
 					</ul>
 				</div>
 			)}

@@ -152,7 +152,7 @@ const Post = () => {
                       <Typography
                         variant="h5"
                         color="blue-gray"
-                        className="mb-2 two-line-text"
+                        className="mb-2 two-line-text min-h-[60px]"
                         style={{
                           display: "-webkit-box",
                           WebkitLineClamp: 2,
@@ -163,7 +163,7 @@ const Post = () => {
                         {post.title}
                       </Typography>
                       <Typography
-                        className="three-line-text"
+                        className="three-line-text min-h-[70px]"
                         style={{
                           display: "-webkit-box",
                           WebkitLineClamp: 3,

@@ -14,8 +14,7 @@ namespace FFS.Application.Infrastructure.Interfaces
         int CountGetReports(ReportParameters reportParameters);
 		int CountAllReportInYear(int year);
 		List<ReportStatistic> ReportStatistics(int year);
-		//Task<List<ReportTypeCount>> GetTotalReportsByTypeAsync();
-		Task<List<ReportTypeCount>> GetReportsPerMonth();
+		
 
 	}
 }
