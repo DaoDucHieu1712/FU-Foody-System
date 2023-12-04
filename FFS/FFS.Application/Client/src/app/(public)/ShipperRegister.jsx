@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const schema = yup.object({
-	avatarURL: yup.string().required(),
+	avatarURL: yup.string().required("Hãy chọn ảnh làm avartar của bạn!"),
 	phoneNumber: yup.string().required("Số điện thoại không thể để trống !"),
 	firstName: yup.string().required("Họ không thể để trống"),
 	lastName: yup.string().required("Tên không thể để trống"),
@@ -86,7 +86,7 @@ const ShipperRegisterPage = () => {
 						</div>
 						<div className="flex flex-col gap-4 w-full">
 							<div className="w-full">
-								<Input label="Hostline" {...register("phoneNumber")} />
+								<Input label="Số điện thoại" {...register("phoneNumber")} />
 								{errors.phoneNumber && (
 									<ErrorText text={errors.phoneNumber.message} />
 								)}

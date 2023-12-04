@@ -1,8 +1,10 @@
 // import BarChart from "./BarChart";
 import { useEffect, useState } from "react";
+import { Option, Select } from "@material-tailwind/react";
 import axios from "../../shared/api/axiosConfig";
 import { useSelector } from "react-redux";
 import propTypes from "prop-types";
+import BarChart from "./BarChart";
 const ShipperStatisticPage = () => {
   const userProfile = useSelector((state) => state.auth.userProfile);
   const [statisticData, setStatisticData] = useState({
@@ -11,6 +13,9 @@ const ShipperStatisticPage = () => {
     thisMonth: 0,
     thisYear: 0,
   });
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear.toString());
+
 
   const shipperId = userProfile?.id;
   useEffect(() => {
@@ -36,7 +41,21 @@ const ShipperStatisticPage = () => {
         <StatisticCard label="Tháng này" value={statisticData.thisMonth} />
         <StatisticCard label="Năm nay" value={statisticData.thisYear} />
       </div>
-      {/* <BarChart data={chartData} /> */}
+      <h2 className="text-xl font-semibold mb-6 mt-10">Thống kê doanh thu</h2>
+      <div className="flex items-center justify-center mx-auto w-4/12 whitespace-nowrap m-10">
+					<span className="mr-2">Chọn năm </span>
+					<Select
+						value={selectedYear.toString()}
+						onChange={(e) => setSelectedYear(e)}
+						className="mt-2"
+					>
+						<Option value="2020">2020</Option>
+						<Option value="2021">2021</Option>
+						<Option value="2022">2022</Option>
+						<Option value="2023">2023</Option>
+					</Select>
+				</div>
+      <BarChart shipperId={shipperId} year={selectedYear}></BarChart>
     </div>
   </div>
   );
