@@ -1,14 +1,15 @@
 import { Button, Input, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { cartActions } from "../(auth)/shared/cartSlice";
 import ChatService from "../(auth)/shared/chat.service";
+import { chatActions } from "../(auth)/shared/chatSlice";
 import ReportStore from "../(public)/components/ReportStore";
 import axios from "../../shared/api/axiosConfig";
 import Loading from "../../shared/components/Loading";
-import { chatActions } from "../(auth)/shared/chatSlice";
+import { comboActions } from "../(auth)/shared/comboSlice";
 
 const cookies = new Cookies();
 const uId = cookies.get("fu_foody_id");
@@ -124,6 +125,10 @@ const StoreDetailPage = () => {
 			fromUserId: cookies.get("fu_foody_id"),
 			toUserId: storeData.userId,
 		});
+	};
+
+	const handleAddToCartCombo = async (combo) => {
+		dispatch(comboActions.addToCart(combo));
 	};
 
 	return (
@@ -347,12 +352,37 @@ const StoreDetailPage = () => {
 															variant="paragraph"
 															className="relative w-fit"
 														>
+															Giảm giá{" "}
+															{item.detail.reduce(
+																(accum, item) =>
+																	accum + item.PriceAfterDiscount,
+																0
+															)}{" "}
+															đ
+														</Typography>
+														<Typography
+															variant="paragraph"
+															className="relative w-fit"
+														>
 															Giảm giá {item.combo.percent}%
 														</Typography>
 														<Button
 															size="sm"
 															className="bg-primary"
-															// onClick={() => handleAddToCartCombo(item.detail)}
+															onClick={() =>
+																handleAddToCartCombo({
+																	id: item.combo.id,
+																	storeId: item.combo.storeId,
+																	name: item.combo.name,
+																	image: item.combo.image,
+																	price: item.detail.reduce(
+																		(accum, item) =>
+																			accum + item.PriceAfterDiscount,
+																		0
+																	),
+																	quantity: 1,
+																})
+															}
 														>
 															Add to cart
 														</Button>

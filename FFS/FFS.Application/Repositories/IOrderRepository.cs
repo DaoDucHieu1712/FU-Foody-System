@@ -10,6 +10,7 @@ namespace FFS.Application.Repositories
 	public interface IOrderRepository : IRepository<Order, int>
     {
         Task<OrderDTO> CreateOrder(OrderRequestDTO orderRequestDTO);
+		Task<OrderDTO> Order(CreateOrderDTO createOrderDTO);
         Task AddOrder(List<OrderDetailDTO> orderDetailDTOs);
         Task<List<dynamic>> GetOrder(Parameters parameters);
         Task<int> CountGetOrder(Parameters parameters);

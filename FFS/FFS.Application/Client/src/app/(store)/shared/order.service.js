@@ -53,6 +53,10 @@ const OrderService = {
 		const url = "/api/Order/CheckReceiverOrder/" + id;
 		return axiosConfig.get(url);
 	},
+	async Order(data) {
+		const url = `/api/Order/Order`;
+		return axiosConfig.post(url, data);
+	},
 };
 
 export default OrderService;

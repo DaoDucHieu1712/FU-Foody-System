@@ -85,7 +85,7 @@ function App() {
 					<Route path="/my-order" element={<MyOrder />} />
 					<Route path="/food-list/:foodNameSearch" element={<FoodList />} />
 					<Route path="/food-list" element={<FoodList />} />
-					<Route path="/store-list" element={<StoreList />} />
+					<Route path="/store-list" element={<StoreList />} />s
 					<Route path="/wishlist" element={<Wishlist />} />
 					<Route path="/user-detail/:id" element={<UserDetails />} />
 					<Route path="/my-order/:id" element={<MyOrderDetail />} />

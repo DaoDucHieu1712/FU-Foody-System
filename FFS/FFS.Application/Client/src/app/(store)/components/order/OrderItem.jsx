@@ -1,5 +1,3 @@
-
-
 import { useQuery } from "@tanstack/react-query";
 import OrderService from "../../shared/order.service";
 
@@ -8,10 +6,8 @@ import ReviewFood from "../../../(public)/components/ReviewFood";
 import CookieService from "../../../../shared/helper/cookieConfig";
 import { useParams } from "react-router-dom";
 
-
 const OrderItem = ({ item }) => {
-
-	const uid = CookieService.getToken("fu_foody_id"); 
+	const uid = CookieService.getToken("fu_foody_id");
 	const role = CookieService.getToken("fu_foody_role");
 	const { id } = useParams();
 
@@ -28,7 +24,9 @@ const OrderItem = ({ item }) => {
 				<div className="flex gap-x-3">
 					<img src={item.imageURL} alt="" className="w-[100px] object-cover" />
 					<div className="flex flex-col gap-y-1 text-sm">
-						<p className="font-bold w-[300px]">{item.foodName}</p>
+						<p className="font-bold w-[300px]">
+							{item.foodName || item.comboName}
+						</p>
 						<p>{item.unitPrice} $</p>
 					</div>
 				</div>
@@ -40,8 +38,8 @@ const OrderItem = ({ item }) => {
 					</div>
 				</div>
 				<div className="flex items-center justify-center">
-				{role !== "StoreOwner" && orderQuery.data?.orderStatus === 3 ? (
-					<ReviewFood idUser={uid} idFood={item.foodId}></ReviewFood>
+					{role !== "StoreOwner" && orderQuery.data?.orderStatus === 3 ? (
+						<ReviewFood idUser={uid} idFood={item.foodId}></ReviewFood>
 					) : (
 						<></>
 					)}

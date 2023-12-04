@@ -112,7 +112,7 @@ namespace FFS.Application.DTOs
 				.ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User.Avatar)).ReverseMap();
 
 			CreateMap<Entities.Food, AllFoodDTO>()
-				.ForMember(dest => dest.PriceAfterSale, opt => opt.MapFrom(src => src.FlashSaleDetails != null && src.FlashSaleDetails.Any() ? src.FlashSaleDetails.FirstOrDefault(x=>x.FlashSale.Start<=DateTime.Now&& x.FlashSale.End>=DateTime.Now).PriceAfterSale : default(decimal?)))
+				.ForMember(dest => dest.PriceAfterSale, opt => opt.MapFrom(src => src.FlashSaleDetails != null && src.FlashSaleDetails.Any() ? src.FlashSaleDetails.FirstOrDefault(x => x.FlashSale.Start <= DateTime.Now && x.FlashSale.End >= DateTime.Now).PriceAfterSale : default(decimal?)))
 				.ForMember(dest => dest.SalePercent, opt => opt.MapFrom(src => src.FlashSaleDetails != null && src.FlashSaleDetails.Any() ? src.FlashSaleDetails.FirstOrDefault(x => x.FlashSale.Start <= DateTime.Now && x.FlashSale.End >= DateTime.Now).SalePercent : default(int?)))
 				.ReverseMap();
 
@@ -133,6 +133,7 @@ namespace FFS.Application.DTOs
 			CategoryMapper();
 			FlashSaleMapper();
 			ChatMapper();
+			ComboMapper();
 		}
 
 		public void OrderMapper()
@@ -141,15 +142,19 @@ namespace FFS.Application.DTOs
 			CreateMap<Entities.Order, OrderResponseDTO>()
 				.ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.UserName))
 				.ForMember(dest => dest.ShipperName, opt => opt.MapFrom(src => src.Shipper.FirstName + " " + src.Shipper.LastName))
-				.ForMember(dest => dest.PaymentMethod , opt => opt.MapFrom(src => src.Payment.PaymentMethod))
+				.ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.Payment.PaymentMethod))
 				.ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Payment.Status))
 				.ReverseMap();
 			CreateMap<OrderDetail, OrderDetailResponseDTO>()
 				.ForMember(dest => dest.FoodName, opt => opt.MapFrom(src => src.Food.FoodName))
-				.ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Food.ImageURL))
+				.ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.Name))
+				.ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src =>
+		src.Food != null ? src.Food.ImageURL : (src.Combo != null ? src.Combo.Image : null)
+	))
 				.ForMember(dest => dest.StoreName, opt => opt.MapFrom(src => src.Store.StoreName))
 				.ReverseMap();
 			CreateMap<OrderDetail, OrderDetailDTO>().ReverseMap();
+			CreateMap<Entities.Order, CreateOrderDTO>().ReverseMap();
 		}
 
 		public void CategoryMapper()
@@ -191,6 +196,13 @@ namespace FFS.Application.DTOs
 				opt => opt.MapFrom(src => src.Category.CategoryName))
 	 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Inventories != null && src.Inventories.Any() ? src.Inventories.Sum(inv => inv.quantity) : 0));
 
+		}
+
+
+		public void ComboMapper()
+		{
+			CreateMap<Combo, ComboResponseDTO>().ReverseMap();
+			CreateMap<Entities.Food, FoodCombo>().ReverseMap();
 		}
 	}
 }

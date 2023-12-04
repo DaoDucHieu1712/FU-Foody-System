@@ -16,6 +16,7 @@ namespace FFS.Application.DTOs.Order
         public string? CancelReason { get; set; }
         public string Note { get; set; }
         public decimal TotalPrice { get; set; }
+		public decimal? ShipFee { get; set; }
         public OrderStatus OrderStatus { get; set; }
 
     }
