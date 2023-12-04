@@ -49,14 +49,18 @@ const Checkout = () => {
 
 	const useDiscountHandler = async () => {
 		console.log("use discount");
-		var storeIds = cart.list.map((item) => {
+		var foodStore = cart.list.map((item) => {
+			return Number(item.storeId);
+		});
+
+		var comboStore = comboSelector.list.map((item) => {
 			return Number(item.storeId);
 		});
 		await CartService.CheckDiscount(
 			code,
 			CookieService.getToken("fu_foody_id"),
 			totalPrice,
-			storeIds
+			[...foodStore, ...comboStore]
 		)
 			.then((res) => {
 				console.log(res);

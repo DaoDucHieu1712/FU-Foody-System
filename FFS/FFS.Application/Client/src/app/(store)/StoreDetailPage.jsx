@@ -350,21 +350,24 @@ const StoreDetailPage = () => {
 													<div className="col-span-1">
 														<Typography
 															variant="paragraph"
-															className="relative w-fit"
+															className="relative w-fit line-through"
 														>
-															Giảm giá{" "}
 															{item.detail.reduce(
-																(accum, item) =>
-																	accum + item.PriceAfterDiscount,
+																(accum, item) => accum + item.Price,
 																0
 															)}{" "}
 															đ
 														</Typography>
 														<Typography
 															variant="paragraph"
-															className="relative w-fit"
+															className="relative w-fit text-red-500"
 														>
-															Giảm giá {item.combo.percent}%
+															{item.detail.reduce(
+																(accum, item) =>
+																	accum + item.PriceAfterDiscount,
+																0
+															)}{" "}
+															đ
 														</Typography>
 														<Button
 															size="sm"
