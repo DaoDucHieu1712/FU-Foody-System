@@ -1,4 +1,11 @@
-import { Button, Input, Radio, Textarea } from "@material-tailwind/react";
+import {
+	Button,
+	Input,
+	Option,
+	Radio,
+	Select,
+	Textarea,
+} from "@material-tailwind/react";
 import UploadImage from "../../shared/components/form/UploadImage";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,6 +14,8 @@ import ErrorText from "../../shared/components/text/ErrorText";
 import AuthServices from "./shared/auth.service";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axioss from "axios";
+import { useState } from "react";
 
 const schema = yup.object({
 	storeName: yup
@@ -45,6 +54,78 @@ const schema = yup.object({
 });
 
 const StoreRegisterPage = () => {
+	const [listProvince, setListProvince] = useState([]);
+	const [listDistrict, setListDistrict] = useState([]);
+	const [listWard, setListWard] = useState([]);
+
+	const defaultProvince = {
+		ProvinceID: 201,
+		ProvinceName: "Hà Nội",
+	};
+
+	const defaultDistrict = {
+		DistrictID: 1808,
+		DistrictName: "Huyện thạch thất",
+	};
+
+	const [province, setProvince] = useState(defaultProvince);
+	const [district, setDistrict] = useState(defaultDistrict);
+	const [ward, setWard] = useState();
+
+	const headers = {
+		Token: "6c942378-8c0f-11ee-a6e6-e60958111f48",
+	};
+
+	const getProvince = () => {
+		axioss
+			.get(
+				"https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province",
+				{ headers }
+			)
+			.then((res) => {
+				setListProvince(res.data.data);
+			})
+			.catch((err) => {
+				toast.error("Lấy danh sách tỉnh thất bại");
+			});
+	};
+	const getDistrict = () => {
+		console.log(province);
+		const data = {
+			province_id: province.ProvinceID,
+		};
+		axioss
+			.get(
+				"https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district",
+				{
+					params: data,
+					headers: headers,
+				}
+			)
+			.then((res) => {
+				setListDistrict(res.data.data);
+				console.log(res);
+			})
+			.catch((err) => {
+				toast.error("Lấy danh sách quận, huyện thất bại");
+			});
+	};
+	const getWard = () => {
+		axioss
+			.get(
+				"https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=" +
+					district.DistrictID,
+				{ headers }
+			)
+			.then((res) => {
+				console.log(res);
+				setListWard(res.data.data);
+			})
+			.catch((err) => {
+				toast.error("Lấy danh sách tỉnh thất bại");
+			});
+	};
+
 	const navigate = useNavigate();
 
 	const {
@@ -58,9 +139,19 @@ const StoreRegisterPage = () => {
 	});
 
 	const onSubmitHandler = async (data) => {
+		const newLocation = {
+			email: data.email,
+			...province,
+			...district,
+			...ward,
+			address: data.address + "-" + ward.WardName + "-Thạch Thất-Hà Nội",
+			description: data.description || null,
+			phoneNumber: data.phoneNumber,
+		};
 		console.log(data);
 		data.allow = true;
 		data.avatar = data.avatarURL;
+		data.location = newLocation;
 		AuthServices.storeRegister(data)
 			.then((res) => {
 				console.log(res);
@@ -97,9 +188,38 @@ const StoreRegisterPage = () => {
 									<ErrorText text={errors.avatarURL.message} />
 								)}
 							</div>
-							<div className="w-full">
-								<Input label="Địa chỉ" {...register("address")} />
-								{errors.address && <ErrorText text={errors.address.message} />}
+							<div className="inline-block relative mb-4">
+								<Select
+									className="block appearance-none w-full bg-white px-4 py-2 pr-8 shadow leading-tight focus:outline-none focus:shadow-outline"
+									onChange={(value) =>
+										setWard({
+											WardCode: value.WardCode,
+											WardName: value.WardName,
+										})
+									}
+									label="Chọn xã"
+									onClick={getWard}
+								>
+									{listWard.map((ward) => (
+										<Option key={ward.WardCode} value={ward}>
+											{ward.WardName}
+										</Option>
+									))}
+								</Select>
+								{errors.ward && (
+									<ErrorText text={errors.ward.message}></ErrorText>
+								)}
+							</div>
+							<div className="mb-4">
+								<Textarea
+									className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+									size="md"
+									label="Địa chỉ cụ thể (Trọ, Thôn)"
+									{...register("address")}
+								></Textarea>
+								{errors.address && (
+									<ErrorText text={errors.address.message}></ErrorText>
+								)}
 							</div>
 							<div className="w-full">
 								<Textarea

@@ -4,6 +4,7 @@ using FFS.Application.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FFS.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231205022047_updateLocation")]
+    partial class updateLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -610,6 +612,7 @@ namespace FFS.Application.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProvinceID")
@@ -620,7 +623,11 @@ namespace FFS.Application.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Receiver")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -638,6 +645,8 @@ namespace FFS.Application.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StoreId");
 
                     b.HasIndex("UserId");
 
@@ -1024,6 +1033,10 @@ namespace FFS.Application.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("AvatarURL")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1066,11 +1079,9 @@ namespace FFS.Application.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Store");
                 });
@@ -1520,6 +1531,10 @@ namespace FFS.Application.Migrations
 
             modelBuilder.Entity("FFS.Application.Entities.Location", b =>
                 {
+                    b.HasOne("FFS.Application.Entities.Store", null)
+                        .WithMany("Locations")
+                        .HasForeignKey("StoreId");
+
                     b.HasOne("FFS.Application.Entities.ApplicationUser", "User")
                         .WithMany("Locations")
                         .HasForeignKey("UserId")
@@ -1665,17 +1680,6 @@ namespace FFS.Application.Migrations
                         .IsRequired();
 
                     b.Navigation("Post");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FFS.Application.Entities.Store", b =>
-                {
-                    b.HasOne("FFS.Application.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -1864,6 +1868,8 @@ namespace FFS.Application.Migrations
                     b.Navigation("Foods");
 
                     b.Navigation("Inventories");
+
+                    b.Navigation("Locations");
                 });
 #pragma warning restore 612, 618
         }

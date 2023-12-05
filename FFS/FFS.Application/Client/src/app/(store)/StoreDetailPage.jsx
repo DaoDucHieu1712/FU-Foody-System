@@ -55,7 +55,6 @@ const StoreDetailPage = () => {
 				.get(`/api/Store/DetailStore/${id}`)
 				.then((response) => {
 					setStoreData(response);
-					setFoodList(response.foods);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -70,6 +69,7 @@ const StoreDetailPage = () => {
 
 	useEffect(() => {
 		GetStoreInformation();
+		handleSearchFood();
 	}, [id]);
 
 	const handleChangeCategory = (idCategory) => {
@@ -89,14 +89,14 @@ const StoreDetailPage = () => {
 	};
 
 	const handleSearchFood = (e) => {
-		var serachTxt = e.target.value;
+		var serachTxt = e?.target.value;
 		if (typeof serachTxt == "undefined") {
 			serachTxt = "";
 		}
 		setSearchFood(serachTxt);
 		try {
 			axios
-				.get(`/api/Store/GetFoodByName?name=${serachTxt}`)
+				.get(`/api/Food/GetFoodByStoreId/${id}`)
 				.then((response) => {
 					setFoodList(response);
 					setComboList([]);
@@ -312,39 +312,46 @@ const StoreDetailPage = () => {
 															{item.description}
 														</Typography>
 
-														{/* {item.inventories[0].quantity === 0 ? (
-															<Typography
-																variant="paragraph"
-																className="py-2 text-red-500"
-															>
-																hết hàng
-															</Typography>
-														) : (
+														{item.inventories.length > 0 &&
+														item.inventories[0]?.quantity != 0 ? (
 															<Typography
 																variant="paragraph"
 																className="py-2 text-green-500"
 															>
-																còn hàng
+																còn hàng ({item.inventories[0]?.quantity})
 															</Typography>
-														)} */}
+														) : (
+															<Typography
+																variant="paragraph"
+																className="py-2 text-red-500"
+															>
+																{item.inventories[0]?.quantity}
+																hết hàng
+															</Typography>
+														)}
 													</div>
 													<div className="col-span-1">
 														<Typography
 															variant="paragraph"
 															className="relative w-fit"
 														>
-															{item.price}.000
+															{item.price}
 															<span className="absolute font-normal top-0 -right-2 text-xs">
 																đ
 															</span>
 														</Typography>
-														<Button
-															size="sm"
-															className="bg-primary"
-															onClick={() => handleAddToCart(item)}
-														>
-															Thêm vào giỏ hàng
-														</Button>
+														{item.inventories.length > 0 &&
+														item.inventories[0]?.quantity != 0 ? (
+															<Button
+																size="sm"
+																className="bg-primary"
+																onClick={() => handleAddToCart(item)}
+															>
+																Add to cart
+															</Button>
+														) : (
+															<></>
+														)}
 													</div>
 												</div>
 											</li>
