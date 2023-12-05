@@ -3,6 +3,7 @@ using FFS.Application.Entities.Common;
 
 namespace FFS.Application.Entities
 {
+
 	[Table("Store")]
 	public class Store : BaseEntity<int>
 	{
@@ -26,4 +27,5 @@ namespace FFS.Application.Entities
 		public ICollection<FoodCombo> FoodCombos { get; set; }
 		public ICollection<FlashSale>? FlashSales { get; set; }
 	}
+
 }

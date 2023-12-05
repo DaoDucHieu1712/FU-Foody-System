@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Dapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using FFS.Application.Constant;
 using FFS.Application.Data;
 using FFS.Application.DTOs.Auth;
@@ -108,7 +109,6 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 		}
-
 		public async Task StoreRegister(StoreRegisterDTO storeRegisterDTO)
 		{
 			//using var transaction = await _context.Database.BeginTransactionAsync();
@@ -405,7 +405,6 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 		}
-
 		public async Task<ApplicationUser> GetShipperById(string userId)
 		{
 			try
@@ -424,7 +423,6 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 		}
-
 		public async Task<dynamic> GetUser(string userId)
 		{
 			try
@@ -444,7 +442,6 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 		}
-
 		public async Task<ApplicationUser> GetUserInformation(string userId)
 		{
 			try
@@ -476,6 +473,21 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 
+		}
+		public async Task<string> GetRoleWithUser(string id)
+		{
+			try
+			{
+				var user = await _context.ApplicationUsers.Where(x => x.Id == id).FirstOrDefaultAsync();
+				var role = await _userManager.GetRolesAsync(user);
+				return role[0];
+
+			}
+			catch (Exception ex)
+			{
+
+				throw new Exception(ex.Message);
+			}
 		}
 	}
 }
