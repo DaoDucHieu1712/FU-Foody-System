@@ -47,16 +47,22 @@ const AddDiscount = ({ reload, storeId }) => {
                 storeId: storeId,
             };
             axios
-                .post("/api/Discount/CreateDiscount", dataPost)
-                .then(() => {
-                    toast.success("Thêm ưu đãi mới thành công!");
-                    reload();
-                    setOpen(false);
-                })
-                .catch(() => {
+            .post("/api/Discount/CreateDiscount", dataPost)
+            .then(() => {
+                toast.success("Thêm ưu đãi mới thành công!");
+                reload();
+                setOpen(false);
+            })
+            .catch((error) => {
+                if (error.response && error.response.status === 400) {
+                    // Handle the specific error when the discount code already exists
+                    toast.error(error.response.data);
+                } else {
+                    // Handle other errors
                     toast.error("Thêm ưu đãi mới thất bại!");
-                    setOpen(false);
-                });
+                }
+                setOpen(false);
+            });
         } catch (error) {
             console.error("Error occur: ", error);
         }

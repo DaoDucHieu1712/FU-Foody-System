@@ -13,5 +13,5 @@ namespace FFS.Application.Infrastructure.Interfaces
         PagedList<Food> GetAllFoods(AllFoodParameters allFoodParameters);
 
         Task<Food> GetFoodById(int id);
-    }
+	}
 }

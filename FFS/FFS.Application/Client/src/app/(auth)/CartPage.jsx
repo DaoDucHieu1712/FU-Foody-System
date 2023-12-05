@@ -17,6 +17,8 @@ import CartService from "./shared/cart.service";
 import { cartActions } from "./shared/cartSlice";
 import CartItem from "./shared/components/cart/CartItem";
 import LocationService from "./shared/location.service";
+import ComboItem from "./shared/components/cart/ComboItem";
+import { comboActions } from "./shared/comboSlice";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
@@ -24,6 +26,7 @@ const cookies = new Cookies();
 
 const CartPage = () => {
 	const accesstoken = useSelector((state) => state.auth.accessToken);
+	const comboSelector = useSelector((state) => state.combo);
 	const cart = useSelector((state) => state.cart);
 	const dispatch = useDispatch();
 	const [locations, setLocations] = useState([]);
@@ -41,12 +44,13 @@ const CartPage = () => {
 
 	useEffect(() => {
 		dispatch(cartActions.getCartTotal());
+		dispatch(comboActions.getCartTotal());
 		getLocations();
 		var items = cart.list.map((item) => {
 			return Number(item.storeId);
 		});
 		console.log(items);
-	}, [cart]);
+	}, [cart, comboSelector]);
 
 	const handleSelectLocation = async (location) => {
 		setPhone(location.phoneNumber);
@@ -101,7 +105,7 @@ const CartPage = () => {
 					<div className="heading">
 						<h1 className="font-medium uppercase text-xl p-3">Giỏ Hàng</h1>
 					</div>
-					{cart?.list?.length !== 0 ? (
+					{cart?.list?.length !== 0 || comboSelector?.list?.length !== 0 ? (
 						<div className="w-full">
 							<Card className="h-full w-full rounded-none">
 								<table className="w-full min-w-max table-auto text-left">
@@ -126,6 +130,9 @@ const CartPage = () => {
 									<tbody>
 										{cart?.list?.map((item) => (
 											<CartItem key={item.foodId} item={item}></CartItem>
+										))}
+										{comboSelector.list.map((item) => (
+											<ComboItem key={item.id} item={item} />
 										))}
 									</tbody>
 								</table>
@@ -179,7 +186,7 @@ const CartPage = () => {
 								<p className="font-medium text-lg text-gray-500">
 									Tổng đơn hàng
 								</p>
-								<span>{cart.totalPrice} đ</span>
+								<span>{cart.totalPrice + comboSelector.totalPrice} đ</span>
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>
@@ -192,7 +199,7 @@ const CartPage = () => {
 						</div>
 						<div className="p-3 flex justify-between">
 							<p className="font-medium text-lg ">Tổng</p>
-							<span>{cart.totalPrice} đ</span>
+							<span>{cart.totalPrice + comboSelector.totalPrice} đ</span>
 						</div>
 						<div className="p-3 w-full">
 							<Link to={`/checkout/${location}/${phone}/${note}/${feeShip}`}>

@@ -11,7 +11,8 @@
         public int? StoreId { get; set; }
         public decimal? PriceAfterSale { get; set; }
         public int? SalePercent { get; set; }
-        //public DateTime? Start { get; set; }
-        //public DateTime? End { get; set; }
-    }
+		public int? NumberOfProductSale { get; set; }
+		//public DateTime? Start { get; set; }
+		//public DateTime? End { get; set; }
+	}
 }

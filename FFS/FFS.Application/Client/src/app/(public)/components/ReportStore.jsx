@@ -102,10 +102,9 @@ const ReportStore = ({ uId, sId }) => {
                 <div className="bg-white rounded px-4 py-4">
                     <Typography variant="h5" color="black">Báo cáo cửa hàng</Typography>
                     <div className="flex flex-col">
-                        <Checkbox label="Chưa nhận được đơn hàng" value="Chưa nhận được đơn hàng" onChange={handleCheckboxChange} />
-                        <Checkbox label="Đơn hàng giao thiếu/ giao nhầm" value="Đơn hàng giao thiếu/ giao nhầm" onChange={handleCheckboxChange} />
-                        <Checkbox label="Đơn hàng không đúng với mô tả" value="Đơn hàng không đúng với mô tả" onChange={handleCheckboxChange} />
-                        <Checkbox label="Đơn hàng không đảm bảo vệ sinh" value="Đơn hàng không đảm bảo vệ sinh" onChange={handleCheckboxChange} />
+                        <Checkbox label="Món ăn không đúng với mô tả" value="Món ăn không đúng với mô tả" onChange={handleCheckboxChange} />
+                        <Checkbox label="Đồ ăn không đảm bảo vệ sinh" value="Đồ ăn không đảm bảo vệ sinh" onChange={handleCheckboxChange} />
+                        <Checkbox label="Cửa hàng không phản hồi tin nhắn" value="Cửa hàng không phản hồi tin nhắn" onChange={handleCheckboxChange} />
                         <Checkbox
                             label="Lý do khác"
                             value="Ly do khac"

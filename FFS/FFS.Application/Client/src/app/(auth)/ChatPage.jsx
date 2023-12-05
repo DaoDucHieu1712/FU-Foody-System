@@ -55,7 +55,7 @@ const ChatPage = () => {
 			<div
 				className={`fixed ${
 					chatSelector.IsShow ? "hidden" : ""
-				} bottom-1 right-1 py-3 px-6 border bg-gray-300 border-gray-300 shadow-md flex items-center gap-x-3 cursor-pointer hover:opacity-70`}
+				} bottom-1 right-1 py-3 px-6 border z-50 bg-gray-300 border-gray-300 shadow-md flex items-center gap-x-3 cursor-pointer hover:opacity-70`}
 				onClick={ShowChatHandler}
 			>
 				<div className="text-primary font-bold ">

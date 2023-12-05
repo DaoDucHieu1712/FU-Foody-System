@@ -6,6 +6,12 @@ namespace FFS.Application.Entities
     [Table("Food")]
     public class Food : BaseEntity<int>
     {
+
+		//public Food() {
+
+		//	FoodCombos = new HashSet<FoodCombo>();
+		//}
+
         public string FoodName { get; set; }
         public string ImageURL { get; set; }
         public string Description { get; set; }
@@ -23,5 +29,6 @@ namespace FFS.Application.Entities
         public ICollection<OrderDetail>? OrderDetails { get; set; }
         public ICollection<Inventory>? Inventories { get; set; }
         public ICollection<FlashSaleDetail>? FlashSaleDetails { get; set; }
-    }
+		//public ICollection<FoodCombo> FoodCombos { get; set; }
+	}
 }

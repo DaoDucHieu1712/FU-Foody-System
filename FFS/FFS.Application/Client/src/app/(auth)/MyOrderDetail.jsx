@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import ReviewStore from "../(public)/components/ReviewStore";
 import CookieService from "../../shared/helper/cookieConfig";
+import { Link } from "react-router-dom";
 
 const MyOrderDetail = () => {
 	const [open, setOpen] = useState(false);
@@ -66,7 +67,7 @@ const MyOrderDetail = () => {
 							email={email}
 							idStore={orderQuery.data?.orderDetails[0].storeId}
 							idShipper={orderQuery.data?.shipperId}
-							storeName={orderQuery.data?.orderDetails[0].storeName }
+							storeName={orderQuery.data?.orderDetails[0].storeName}
 						/>
 					) : (
 						<></>
@@ -85,7 +86,13 @@ const MyOrderDetail = () => {
 					<div className="flex justify-between items-center border-b pb-3 border-gray-200">
 						<p className="font-bold text-lg">Nhân viên giao hàng :</p>
 						<p className="text-red-500  font-bold text-lg">
-							{orderQuery.data?.shipperName}
+							{/* {orderQuery.data?.shipperName} */}
+							<Link
+								to={`/shipper/details/${orderQuery.data?.shipperId}`}
+								className="px-6 py-2 text-blue-500 font-bold text-lg cursor-pointer"
+							>
+								{orderQuery.data?.shipperName}
+							</Link>
 						</p>
 					</div>
 					<div className="flex justify-between items-center border-b pb-3 border-gray-200">

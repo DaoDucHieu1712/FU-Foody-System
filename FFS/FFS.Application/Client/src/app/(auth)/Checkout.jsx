@@ -14,6 +14,8 @@ import axiosConfig from "../../shared/api/axiosConfig";
 import CartService from "./shared/cart.service";
 import Cookies from "universal-cookie";
 import CookieService from "../../shared/helper/cookieConfig";
+import OrderService from "../(store)/shared/order.service";
+import { comboActions } from "./shared/comboSlice";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
@@ -21,6 +23,7 @@ var cookies = new Cookies();
 
 const Checkout = () => {
 	const cart = useSelector((state) => state.cart);
+	const comboSelector = useSelector((state) => state.combo);
 	const { location, phoneNumber, note, fee } = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -28,29 +31,36 @@ const Checkout = () => {
 	const [code, setCode] = useState("");
 	const [discount, setDiscount] = useState();
 
-	const [totalPrice, setTotalPrice] = useState(cart.totalPrice);
+	const [totalPrice, setTotalPrice] = useState(
+		cart.totalPrice + comboSelector.totalPrice
+	);
+
 	useEffect(() => {
 		dispatch(cartActions.getCartTotal());
 		var items = cart.list.map((item) => {
 			return Number(item.storeId);
 		});
 		console.log(items);
-		if (cart.list.length === 0) {
-			toast.error("Giỏ hàng trống nên không thể thanh toán");
-			window.location.href = "/";
-		}
-	}, [cart]);
+		// if (cart.list.length === 0) {
+		// 	toast.error("Giỏ hàng trống nên không thể thanh toán");
+		// 	window.location.href = "/";
+		// }
+	}, [cart, comboSelector]);
 
 	const useDiscountHandler = async () => {
 		console.log("use discount");
-		var storeIds = cart.list.map((item) => {
+		var foodStore = cart.list.map((item) => {
+			return Number(item.storeId);
+		});
+
+		var comboStore = comboSelector.list.map((item) => {
 			return Number(item.storeId);
 		});
 		await CartService.CheckDiscount(
 			code,
 			CookieService.getToken("fu_foody_id"),
 			totalPrice,
-			storeIds
+			[...foodStore, ...comboStore]
 		)
 			.then((res) => {
 				console.log(res);
@@ -63,83 +73,79 @@ const Checkout = () => {
 			});
 	};
 
-	const CheckoutHandler = async () => {
-		await CartService.CreateOrder({
+	const CreateOrderHandler = async () => {
+		var foods = cart.list.map((item) => {
+			return {
+				storeId: item.storeId,
+				foodId: item.foodId,
+				quantity: item.quantity,
+				unitPrice: item.price,
+			};
+		});
+
+		var combos = comboSelector.list.map((item) => {
+			return {
+				storeId: item.storeId,
+				comboId: item.id,
+				quantity: item.quantity,
+				unitPrice: item.price,
+			};
+		});
+
+		await OrderService.Order({
 			customerId: cookies.get("fu_foody_id"),
 			location: location,
 			phoneNumber: phoneNumber,
 			note: note,
 			totalPrice: totalPrice,
+			shipFee: 20000,
 			orderStatus: 1,
-		})
-			.then(async (res) => {
-				console.log(res);
-				var items = cart.list.map((item) => {
-					return {
-						orderId: res.id,
-						storeId: item.storeId,
-						foodId: item.foodId,
-						quantity: item.quantity,
-						unitPrice: item.price,
-					};
-				});
-
-				await CartService.AddOrderItem(items)
+			orderdetails: [...combos, ...foods],
+		}).then((res) => {
+			if (selectedType == "Chuyển khoản") {
+				const data = {
+					PaymentMethod: selectedType,
+					OrderId: res.id,
+					Status: 1,
+				};
+				axiosConfig
+					.post("/api/Order/CreatePayment", data)
 					.then((res) => {
 						console.log(res);
-						if (selectedType == "Chuyển khoản") {
-							const data = {
-								PaymentMethod: selectedType,
-								OrderId: items[0].orderId,
-								Status: 1,
-							};
-							axiosConfig
-								.post("/api/Order/CreatePayment", data)
-								.then((res) => {
-									console.log(res);
-									toast.success("Đặt hàng thành công");
-									dispatch(cartActions.clearCart());
-									navigate("/");
-
-									axiosConfig
-										.get("/api/Order/GetUrlPayment/" + items[0].orderId)
-										.then((res) => {
-											window.open(res, "_blank");
-										})
-										.catch((err) => {
-											toast.error(err);
-										});
-								})
-								.catch((err) => {
-									toast.error(err);
-								});
-						} else {
-							const data = {
-								PaymentMethod: selectedType,
-								OrderId: items[0].orderId,
-								Status: 2,
-							};
-							axiosConfig
-								.post("/api/Order/CreatePayment", data)
-								.then((res) => {
-									console.log(res);
-									toast.success("Đặt hàng thành công");
-									dispatch(cartActions.clearCart());
-									navigate("/");
-								})
-								.catch((err) => {
-									toast.error(err);
-								});
-						}
+						toast.success("Đặt hàng thành công");
+						axiosConfig
+							.get("/api/Order/GetUrlPayment/" + res.id)
+							.then((res) => {
+								window.open(res, "_blank");
+							})
+							.catch((err) => {
+								toast.error(err);
+							});
 					})
 					.catch((err) => {
-						console.log(err.response.data);
+						toast.error(err);
 					});
-			})
-			.catch((err) => {
-				console.log(err);
-				toast.error("Đã có lỗi xảy ra, vui lòng đặt lại !");
-			});
+			} else {
+				const data = {
+					PaymentMethod: selectedType,
+					OrderId: res.id,
+					Status: 2,
+				};
+				axiosConfig
+					.post("/api/Order/CreatePayment", data)
+					.then((res) => {
+						console.log(res);
+						toast.success("Đặt hàng thành công");
+						dispatch(cartActions.clearCart());
+						navigate("/");
+					})
+					.catch((err) => {
+						toast.error(err);
+					});
+			}
+			dispatch(comboActions.clearCart());
+			dispatch(cartActions.clearCart());
+		});
 	};
 
 	return (
@@ -177,6 +183,26 @@ const Checkout = () => {
 												<td className="p-4 border-b border-blue-gray-50 flex items-center gap-x-2">
 													<img src={item.img} alt="" className="w-[70px]" />
 													<span>{item.foodName}</span>
+												</td>
+												<td className="p-4 border-b border-blue-gray-50">
+													{item.price} đ
+												</td>
+												<td className="p-4 border-b border-blue-gray-50">
+													<div className="flex items-center justify-between border p-2">
+														<span>x</span>
+														<p>{item.quantity}</p>
+													</div>
+												</td>
+												<td className="p-4 border-b border-blue-gray-50">
+													{item.quantity * item.price} đ
+												</td>
+											</tr>
+										))}
+										{comboSelector.list.map((item) => (
+											<tr key={item.id}>
+												<td className="p-4 border-b border-blue-gray-50 flex items-center gap-x-2">
+													<img src={item.image} alt="" className="w-[70px]" />
+													<span>{item.name}</span>
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
 													{item.price} đ
@@ -266,7 +292,10 @@ const Checkout = () => {
 								/>
 							</div>
 							<div className="flex flex-col gap-y-3">
-								<Button className="bg-primary w-full" onClick={CheckoutHandler}>
+								<Button
+									className="bg-primary w-full"
+									onClick={CreateOrderHandler}
+								>
 									Xác Nhận Thanh toán
 								</Button>
 								<Link to="/cart">

@@ -12,6 +12,7 @@ using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
@@ -355,6 +356,20 @@ namespace FFS.Application.Controllers
             }
 
         }
+
+		[HttpGet]
+		public async Task<IActionResult> GetFoodRecommend()
+		{
+			try
+			{
+				var homeFood = await _foodRepo.FindAll().OrderBy(x => Guid.NewGuid()).Take(10).ToListAsync();
+				return Ok(_mapper.Map<List<AllFoodDTO>>(homeFood));
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 
     }
 }
