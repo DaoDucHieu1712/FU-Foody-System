@@ -407,5 +407,18 @@ namespace FFS.Application.Controllers
 				return BadRequest(new { message = ex.Message });
 			}
 		}
+
+		[HttpGet("{id}")]
+		public async Task<IActionResult> GetRoleByUser(string id)
+		{
+			try
+			{
+				return Ok(await _authRepository.GetRoleWithUser(id));
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 	}
 }

@@ -10,12 +10,8 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
-import CookieService from "../../shared/helper/cookieConfig";
-import { toast } from "react-toastify";
 import AddToWishlist from "./components/wishlist/AddToWishlist";
 import WishlistDetails from "./components/wishlist/WishlistDetails";
-import ReviewStore from "./components/ReviewStore";
-import NotFoundPage from "../NotFoundPage";
 
 const FoodDetails = () => {
 	const { id } = useParams();
@@ -240,81 +236,81 @@ const FoodDetails = () => {
 											</div>
 											<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
 												<AddToWishlist foodId={food.id} />
-                        <Tooltip content="Thêm giỏ hàng">
-                          <IconButton
-                            variant="text"
-                            className="bg-white rounded-full"
-                          >
-                            <svg
-                              width="30"
-                              height="2.5em"
-                              viewBox="0 0 30 40"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M10 35C11.1046 35 12 34.1046 12 33C12 31.8954 11.1046 31 10 31C8.89543 31 8 31.8954 8 33C8 34.1046 8.89543 35 10 35Z"
-                                fill="black"
-                              />
-                              <path
-                                d="M23 35C24.1046 35 25 34.1046 25 33C25 31.8954 24.1046 31 23 31C21.8954 31 21 31.8954 21 33C21 34.1046 21.8954 35 23 35Z"
-                                fill="black"
-                              />
-                              <path
-                                d="M5.2875 15H27.7125L24.4125 26.55C24.2948 26.9692 24.0426 27.3381 23.6948 27.6001C23.3471 27.862 22.9229 28.0025 22.4875 28H10.5125C10.0771 28.0025 9.65293 27.862 9.30515 27.6001C8.95738 27.3381 8.70524 26.9692 8.5875 26.55L4.0625 10.725C4.0027 10.5159 3.8764 10.3321 3.70271 10.2012C3.52903 10.0704 3.31744 9.99977 3.1 10H1"
-                                stroke="black"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip content="Xem chi tiết món ăn">
-                          <IconButton
-                            variant="text"
-                            className="bg-white rounded-full"
-                            onClick={() => navigate(`/food-details/${food.id}`)}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="30"
-                              height="20"
-                              viewBox="0 0 550 512"
-                            >
-                              <path d="M288 80c-65.2 0-118.8 29.6-159.9 67.7C89.6 183.5 63 226 49.4 256c13.6 30 40.2 72.5 78.6 108.3C169.2 402.4 222.8 432 288 432s118.8-29.6 159.9-67.7C486.4 328.5 513 286 526.6 256c-13.6-30-40.2-72.5-78.6-108.3C406.8 109.6 353.2 80 288 80zM95.4 112.6C142.5 68.8 207.2 32 288 32s145.5 36.8 192.6 80.6c46.8 43.5 78.1 95.4 93 131.1c3.3 7.9 3.3 16.7 0 24.6c-14.9 35.7-46.2 87.7-93 131.1C433.5 443.2 368.8 480 288 480s-145.5-36.8-192.6-80.6C48.6 356 17.3 304 2.5 268.3c-3.3-7.9-3.3-16.7 0-24.6C17.3 208 48.6 156 95.4 112.6zM288 336c44.2 0 80-35.8 80-80s-35.8-80-80-80c-.7 0-1.3 0-2 0c1.3 5.1 2 10.5 2 16c0 35.3-28.7 64-64 64c-5.5 0-10.9-.7-16-2c0 .7 0 1.3 0 2c0 44.2 35.8 80 80 80zm0-208a128 128 0 1 1 0 256 128 128 0 1 1 0-256z" />
-                            </svg>
-                          </IconButton>
-                        </Tooltip>
-                      </div>
-                    </div>
-                    <div>
-                      <Typography
-                        variant="h6"
-                        className="w-36 pointer-events-none"
-                      >
-                        {food.foodName}
-                      </Typography>
-                      <Typography
-                        color="blue"
-                        className="relative w-fit pointer-events-none"
-                      >
-                        {food.price}
-                        <span className="absolute font-normal top-0 -right-2 text-xs">
-                          đ
-                        </span>
-                      </Typography>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <Typography variant="h5" color="deep-orange" className="w-96">
-                  Không có món ăn nào cùng loại
-                </Typography>
-              )}
-            </div>
-          </div>
-          {/* END RECOMMENT FOOD */}
+												<Tooltip content="Thêm giỏ hàng">
+													<IconButton
+														variant="text"
+														className="bg-white rounded-full"
+													>
+														<svg
+															width="30"
+															height="2.5em"
+															viewBox="0 0 30 40"
+															fill="none"
+															xmlns="http://www.w3.org/2000/svg"
+														>
+															<path
+																d="M10 35C11.1046 35 12 34.1046 12 33C12 31.8954 11.1046 31 10 31C8.89543 31 8 31.8954 8 33C8 34.1046 8.89543 35 10 35Z"
+																fill="black"
+															/>
+															<path
+																d="M23 35C24.1046 35 25 34.1046 25 33C25 31.8954 24.1046 31 23 31C21.8954 31 21 31.8954 21 33C21 34.1046 21.8954 35 23 35Z"
+																fill="black"
+															/>
+															<path
+																d="M5.2875 15H27.7125L24.4125 26.55C24.2948 26.9692 24.0426 27.3381 23.6948 27.6001C23.3471 27.862 22.9229 28.0025 22.4875 28H10.5125C10.0771 28.0025 9.65293 27.862 9.30515 27.6001C8.95738 27.3381 8.70524 26.9692 8.5875 26.55L4.0625 10.725C4.0027 10.5159 3.8764 10.3321 3.70271 10.2012C3.52903 10.0704 3.31744 9.99977 3.1 10H1"
+																stroke="black"
+																strokeWidth="2"
+																strokeLinecap="round"
+																strokeLinejoin="round"
+															/>
+														</svg>
+													</IconButton>
+												</Tooltip>
+												<Tooltip content="Xem chi tiết món ăn">
+													<IconButton
+														variant="text"
+														className="bg-white rounded-full"
+														onClick={() => navigate(`/food-details/${food.id}`)}
+													>
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															width="30"
+															height="20"
+															viewBox="0 0 550 512"
+														>
+															<path d="M288 80c-65.2 0-118.8 29.6-159.9 67.7C89.6 183.5 63 226 49.4 256c13.6 30 40.2 72.5 78.6 108.3C169.2 402.4 222.8 432 288 432s118.8-29.6 159.9-67.7C486.4 328.5 513 286 526.6 256c-13.6-30-40.2-72.5-78.6-108.3C406.8 109.6 353.2 80 288 80zM95.4 112.6C142.5 68.8 207.2 32 288 32s145.5 36.8 192.6 80.6c46.8 43.5 78.1 95.4 93 131.1c3.3 7.9 3.3 16.7 0 24.6c-14.9 35.7-46.2 87.7-93 131.1C433.5 443.2 368.8 480 288 480s-145.5-36.8-192.6-80.6C48.6 356 17.3 304 2.5 268.3c-3.3-7.9-3.3-16.7 0-24.6C17.3 208 48.6 156 95.4 112.6zM288 336c44.2 0 80-35.8 80-80s-35.8-80-80-80c-.7 0-1.3 0-2 0c1.3 5.1 2 10.5 2 16c0 35.3-28.7 64-64 64c-5.5 0-10.9-.7-16-2c0 .7 0 1.3 0 2c0 44.2 35.8 80 80 80zm0-208a128 128 0 1 1 0 256 128 128 0 1 1 0-256z" />
+														</svg>
+													</IconButton>
+												</Tooltip>
+											</div>
+										</div>
+										<div>
+											<Typography
+												variant="h6"
+												className="w-36 pointer-events-none"
+											>
+												{food.foodName}
+											</Typography>
+											<Typography
+												color="blue"
+												className="relative w-fit pointer-events-none"
+											>
+												{food.price}
+												<span className="absolute font-normal top-0 -right-2 text-xs">
+													đ
+												</span>
+											</Typography>
+										</div>
+									</div>
+								))
+							) : (
+								<Typography variant="h5" color="deep-orange" className="w-96">
+									Không có món ăn nào cùng loại
+								</Typography>
+							)}
+						</div>
+					</div>
+					{/* END RECOMMENT FOOD */}
 
 					{/* COMMENT */}
 					<div>

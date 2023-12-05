@@ -21,5 +21,7 @@ namespace FFS.Application.Repositories
 		Task<dynamic> GetUser(string userId);
 		Task<ApplicationUser> GetUserInformation(string userId);
 
+		Task<string> GetRoleWithUser(string id);
+
 	}
 }
