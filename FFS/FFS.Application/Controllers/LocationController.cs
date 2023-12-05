@@ -56,7 +56,7 @@ namespace FFS.Application.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateLocation(int id, Location locationDTO)
+        public async Task<ActionResult> UpdateLocation(int id, LocationDTO locationDTO)
         {
             try
             {
