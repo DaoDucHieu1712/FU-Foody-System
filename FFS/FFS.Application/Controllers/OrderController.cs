@@ -3,27 +3,18 @@ using System.Security.Cryptography;
 using System.Text;
 
 using AutoMapper;
-using DocumentFormat.OpenXml.Spreadsheet;
-
-using FFS.Application.DTOs.Admin;
 
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Order;
 using FFS.Application.DTOs.Others;
-using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Entities.Enum;
 using FFS.Application.Hubs;
-using FFS.Application.Infrastructure.Interfaces;
-using FFS.Application.Migrations;
 using FFS.Application.Repositories;
-using FFS.Application.Repositories.Impls;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace FFS.Application.Controllers
 {
@@ -600,7 +591,8 @@ namespace FFS.Application.Controllers
 			string vnpHashSecret = "LKBKXTYIOEAOZAMOQJCQNDPKNKQFRKBQ";
 			string vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 			string vnpTxnRef = order.Id.ToString();
-			string vnpOrderInfo = $"Thanh toán đơn hàng cho cửa hàng ${store.StoreName} tại ${store.Address} ";
+			string vnpOrderInfo = $"Thanh toán đơn hàng cho cửa hàng ${store.StoreName} tại  ";
+			//${store.Address}
 			string vnpOrderType = "100000";
 			long vnpAmount = Convert.ToInt64(order.TotalPrice) * 100;
 			string vnpLocal = "vn";
@@ -819,7 +811,7 @@ namespace FFS.Application.Controllers
 				return Ok(revenuePerMonths);
 
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				return StatusCode(500, "Internal Server Error");
 			}
