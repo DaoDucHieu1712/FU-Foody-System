@@ -2,16 +2,19 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using Dapper;
 using FFS.Application.Constant;
 using FFS.Application.Data;
 using FFS.Application.DTOs.Auth;
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Email;
+using FFS.Application.DTOs.Location;
 using FFS.Application.Entities;
 using FFS.Application.Entities.Constant;
 using FFS.Application.Entities.Enum;
 using FFS.Application.Helper;
+using FFS.Application.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -26,6 +29,8 @@ namespace FFS.Application.Repositories.Impls
 		private readonly AppSetting _appSettings;
 		private readonly IEmailService _emailService;
 		private readonly DapperContext _dapperContext;
+		private readonly ILocationRepository _locationRepository;
+		private readonly IMapper _mapper;
 
 		public AuthRepository(
 			UserManager<ApplicationUser> userManager
@@ -33,7 +38,8 @@ namespace FFS.Application.Repositories.Impls
 			, IEmailService emailService
 			, ApplicationDbContext context
 			, DapperContext dapperContext
-
+			, ILocationRepository locationRepository
+			, IMapper mapper
 			)
 		{
 			_userManager = userManager;
@@ -41,6 +47,8 @@ namespace FFS.Application.Repositories.Impls
 			_emailService = emailService;
 			_context = context;
 			_dapperContext = dapperContext;
+			_locationRepository = locationRepository;
+			_mapper = mapper;
 		}
 
 		public async Task<UserClientDTO> Login(string email, string password)
@@ -143,11 +151,25 @@ namespace FFS.Application.Repositories.Impls
 					StoreName = storeRegisterDTO.StoreName,
 					AvatarURL = storeRegisterDTO.AvatarURL,
 					Description = storeRegisterDTO.Description,
-					Address = storeRegisterDTO.Address,
 					TimeStart = storeRegisterDTO.TimeStart,
 					TimeEnd = storeRegisterDTO.TimeEnd,
 					PhoneNumber = storeRegisterDTO.PhoneNumber,
 				};
+				LocationDTO locationDTO = storeRegisterDTO.location;
+				var newLocation = new Location
+				{
+					UserId = _newuser.Id,
+					Address = locationDTO.Address,
+					IsDefault = true,
+					DistrictID = locationDTO.DistrictID,
+					DistrictName = locationDTO.DistrictName,
+					ProvinceID = locationDTO.ProvinceID,
+					ProvinceName = locationDTO.ProvinceName,
+					WardCode = locationDTO.WardCode,
+					WardName = locationDTO.WardName,
+				};
+
+				await _locationRepository.Add(newLocation);
 
 				_ = await _context.Stores.AddAsync(NewStore);
 				_ = await _context.SaveChangesAsync();
