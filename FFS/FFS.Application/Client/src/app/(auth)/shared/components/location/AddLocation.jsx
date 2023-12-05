@@ -124,7 +124,7 @@ const AddLocation = ({ reload, user }) => {
 				...province,
 				...district,
 				...ward,
-				address: data.address + "-" + ward.WardName + "-Thạch Thất-Hà Nội",
+				address: data.address,
 				description: data.description || null,
 				receiver: data.receiver,
 				phoneNumber: data.phoneNumber,

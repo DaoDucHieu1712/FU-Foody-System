@@ -19,7 +19,6 @@ const cookies = new Cookies();
 
 const regexPhoneNumber = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
 const schema = yup.object({
-	ward: yup.string().required("Hãy chọn xã!"),
 	address: yup.string().required("Hãy ghi thêm thông tin!"),
 	description: yup.string().nullable(),
 	phoneNumber: yup
@@ -29,7 +28,8 @@ const schema = yup.object({
 	receiver: yup.string().required("Hãy nhập tên người nhận!"),
 });
 
-const UpdateLocation = ({ item, reload, wardList }) => {
+const UpdateLocation = ({ item, reload }) => {
+	console.log(item);
 	const [listProvince, setListProvince] = useState([]);
 	const [listDistrict, setListDistrict] = useState([]);
 	const [listWard, setListWard] = useState([]);
@@ -114,8 +114,6 @@ const UpdateLocation = ({ item, reload, wardList }) => {
 	const [open, setOpen] = useState(false);
 	const handleOpen = () => setOpen((cur) => !cur);
 
-	const trueAddress = item.address.split("-");
-
 	const onSubmit = async (data) => {
 		var email = cookies.get("fu_foody_email");
 		try {
@@ -124,7 +122,7 @@ const UpdateLocation = ({ item, reload, wardList }) => {
 				...province,
 				...district,
 				...ward,
-				address: data.address + "-" + ward.WardName + "-Thạch Thất-Hà Nội",
+				address: data.address,
 				description: data.description || null,
 				receiver: data.receiver,
 				phoneNumber: data.phoneNumber,
@@ -144,10 +142,6 @@ const UpdateLocation = ({ item, reload, wardList }) => {
 			console.error("Error update location: ", error);
 		}
 	};
-
-	useEffect(() => {
-		setValue("ward", trueAddress[1]);
-	}, []);
 
 	return (
 		<>
@@ -221,6 +215,7 @@ const UpdateLocation = ({ item, reload, wardList }) => {
 							}
 							label="Chọn xã"
 							onClick={getWard}
+							value={{ WardCode: item.WardCode, WardName: item.WardName }}
 						>
 							{listWard.map((ward) => (
 								<Option key={ward.WardCode} value={ward}>
@@ -235,7 +230,7 @@ const UpdateLocation = ({ item, reload, wardList }) => {
 							className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 							size="md"
 							label="Địa chỉ cụ thể (Trọ, Thôn)"
-							defaultValue={trueAddress[0]}
+							defaultValue={item.address}
 							{...register("address")}
 						></Textarea>
 						{errors.address && (
