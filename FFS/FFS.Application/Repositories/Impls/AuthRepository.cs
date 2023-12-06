@@ -150,6 +150,7 @@ namespace FFS.Application.Repositories.Impls
 					UserId = _newuser.Id,
 					StoreName = storeRegisterDTO.StoreName,
 					AvatarURL = storeRegisterDTO.AvatarURL,
+					Address  = storeRegisterDTO.Address,
 					Description = storeRegisterDTO.Description,
 					TimeStart = storeRegisterDTO.TimeStart,
 					TimeEnd = storeRegisterDTO.TimeEnd,

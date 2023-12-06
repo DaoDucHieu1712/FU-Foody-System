@@ -10,7 +10,7 @@ const ViewApplicationPage = () => {
 
 	useEffect(() => {
 		GetRoleAsync();
-	}, []);
+	}, [id]);
 
 	const GetRoleAsync = async () => {
 		axios.get(`/api/Authenticate/GetRoleByUser/${id}`).then((res) => {

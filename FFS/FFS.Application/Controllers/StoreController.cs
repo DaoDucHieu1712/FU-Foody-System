@@ -87,6 +87,7 @@ namespace FFS.Application.Controllers {
 			}
 		}
 
+<
 
 		[Authorize]
 		[HttpGet("{id}")]
@@ -106,6 +107,7 @@ namespace FFS.Application.Controllers {
 
 		[HttpGet]
 		public async Task<IActionResult> GetStoreByUid(string uId)
+
         {
             try
             {
@@ -118,6 +120,7 @@ namespace FFS.Application.Controllers {
                 return StatusCode(500, ex.Message);
             }
         }
+
 
 		[HttpGet("{uId}")]
 		public async Task<IActionResult> GetStore(string uId)
@@ -170,7 +173,6 @@ namespace FFS.Application.Controllers {
                 return StatusCode(500, ex.Message);
             }
         }
-
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStore(int id, StoreInforDTO storeInforDTO)
@@ -232,8 +234,6 @@ namespace FFS.Application.Controllers {
                 return StatusCode(500, ex.Message);
             }
         }
-
-
 
         [HttpGet("{idShop}/{idCategory}")]
         public async Task<IActionResult> GetFoodByCategory(int idShop, int idCategory)

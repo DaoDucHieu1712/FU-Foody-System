@@ -54,7 +54,12 @@ import PostManagePage from "./app/(admin)/PostManagePage";
 import OrderIdelDetail from "./app/(shipper)/OrderIdelDetail";
 import StoreDashboardPage from "./app/(store)/StoreDashboard";
 import ShipperProfile from "./app/(shipper)/ShipperProfile";
+
+import StoreOwnderApplication from "./app/(admin)/shared/components/StoreOwnderApplication";
+import ShipperApplication from "./app/(admin)/shared/components/ShipperApplication";
+
 import StoreEditPage from "./app/(store)/StoreEditPage";
+
 
 function App() {
 	return (
@@ -142,6 +147,14 @@ function App() {
 					<Route
 						path="/admin/application/:id"
 						element={<ViewApplicationPage />}
+					/>
+					<Route
+						path="/admin/application/store-owner/:id"
+						element={<StoreOwnderApplication />}
+					/>
+					<Route
+						path="/admin/application/shipper/:id"
+						element={<ShipperApplication />}
 					/>
 				</Route>
 				<Route path="*" element={<NotFoundPage />}></Route>
