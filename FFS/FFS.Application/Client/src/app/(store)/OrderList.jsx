@@ -200,7 +200,19 @@ const OrderList = () => {
 										<td className={classes}>
 											<p className="w-[120px] text-ellipsis">{item.location}</p>
 										</td>
-										<td className={classes}>{item.shipperName}</td>
+										<td className={classes}>
+											{item.shipperName && (
+												<div className="flex flex-col gap-y-2">
+													<Link
+														to={`/shipper/details/${item.shipperId}`}
+														className="px-6 py-2 text-light-blue-500 font-medium rounded-lg cursor-pointer"
+													>
+														{item.shipperName}
+													</Link>
+												</div>
+												
+											)}
+										</td>
 										<td className={classes}>
 											<OrderStatus status={item.orderStatus}></OrderStatus>
 										</td>
