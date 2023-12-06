@@ -54,7 +54,7 @@ const FlashSaleHome = () => {
 									</Typography>
 								</div>
 							) : null}
-							<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
+							<div className="absolute hidden h-full w-full justify-center gap-x-3 items-center group-hover:flex">
 								<AddToWishlist foodId={flashSaleItem.id} />
 								<Tooltip content="Xem chi tiết món ăn">
 									<IconButton
@@ -131,7 +131,10 @@ const FlashSaleHome = () => {
 										color="blue"
 										className="relative w-fit pointer-events-none"
 									>
-										{FormatPriceHelper(flashSaleItem.price - flashSaleItem.price * flashSaleItem.salePercent / 100)}
+										{FormatPriceHelper(
+											flashSaleItem.price -
+												(flashSaleItem.price * flashSaleItem.salePercent) / 100
+										)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>
