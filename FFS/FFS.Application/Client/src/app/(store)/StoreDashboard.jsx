@@ -88,7 +88,7 @@ const StoreDashboardPage = () => {
 
             <div className="m-4 p-4 bg-gray-100 rounded-lg">
 				<h3 className="text-center text-lg font-bold mb-2">Thống kê món ăn</h3>
-				<LineChartDetailFood storeId={storeId}></LineChartDetailFood>
+					<LineChartDetailFood storeId={storeId}></LineChartDetailFood> 
 			</div>
 		</>
 	);
