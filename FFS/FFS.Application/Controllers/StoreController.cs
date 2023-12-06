@@ -87,7 +87,6 @@ namespace FFS.Application.Controllers {
 			}
 		}
 
-<
 
 		[Authorize]
 		[HttpGet("{id}")]
@@ -280,7 +279,9 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                await _commentRepository.RatingStore(_mapper.Map<Comment>(storeRatingDTO));
+				Comment c = _mapper.Map<Comment>(storeRatingDTO);
+
+				await _commentRepository.RatingStore(c);
                 if(storeRatingDTO.ParentCommentId != null)
                 {
                     dynamic comment = await _storeRepository.GetCommentReply(Convert.ToInt32(storeRatingDTO.ParentCommentId));

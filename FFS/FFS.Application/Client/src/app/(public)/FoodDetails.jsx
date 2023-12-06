@@ -12,16 +12,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
 import AddToWishlist from "./components/wishlist/AddToWishlist";
 import WishlistDetails from "./components/wishlist/WishlistDetails";
+import moment from "moment";
+import CookieService from "../../shared/helper/cookieConfig";
 
 const FoodDetails = () => {
+	const userId = CookieService.getToken("fu_foody_id");
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const [value, setValue] = useState(0);
 	const [foodData, setFoodData] = useState(null);
 	const [foodList, setFoodList] = useState([]);
 	const [categoryId, setCategoryId] = useState(0);
-	const [openComment, setOpenComment] = useState(false);
-
+	const [openComment, setOpenComment] = useState(true);
+	const [commentTxt, setCommentTxt] = useState("");
 	const increaseValue = () => {
 		setValue(value + 1);
 	};
@@ -74,6 +77,30 @@ const FoodDetails = () => {
 	useEffect(() => {
 		GetFoodByCategoryId();
 	}, [categoryId]);
+
+	const handleComment = () => {
+		const data = {
+			Content: commentTxt,
+			UserId: userId,
+			FoodId: id,
+		};
+		try {
+			axios
+				.post("/api/Food/CommentFood", data)
+				.then(() => {
+					setCommentTxt("");
+					setOpenComment(true);
+					GetFoodData();
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("Error occur: ", error);
+		}
+
+		console.log(commentTxt);
+	};
 
 	return (
 		<>
@@ -315,102 +342,62 @@ const FoodDetails = () => {
 					{/* COMMENT */}
 					<div>
 						<Typography variant="h4">Bình luận</Typography>
-						<form className="py-2" onSubmit={null}>
-							<Typography variant="small" className="pb-2">
-								Mô tả bình luận
-							</Typography>
-							<Textarea
-								className="shadow appearance-none border rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-								size="md"
-								label="Bạn nghĩ gì về món ăn này..."
-							></Textarea>
-							<Button type="submit" className="w-fit bg-primary">
-								Bình luận
-							</Button>
-						</form>
+						<Typography variant="small" className="pb-2">
+							Mô tả bình luận
+						</Typography>
+						<Textarea
+							className="shadow appearance-none border rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							size="md"
+							label="Bạn nghĩ gì về món ăn này..."
+							value={commentTxt}
+							onChange={(e) => setCommentTxt(e.target.value)}
+						></Textarea>
+						<Button
+							type="submit"
+							className="w-fit bg-primary"
+							onClick={handleComment}
+						>
+							Bình luận
+						</Button>
 						<div className="py-2">
-							<div className="flex justify-start gap-2">
-								<img
-									src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
-									alt="image 1"
-									className="h-14 w-14 rounded-full object-cover"
-								></img>
-								<div>
-									<div className="flex gap-1">
-										<Typography variant="small" className="font-bold">
-											Tung NT
-										</Typography>
-										<Typography variant="small">- 30 Oct, 2023</Typography>
-									</div>
-									<Typography variant="paragraph">
-										Cho bố cái địa chỉ
-									</Typography>
-									<div className="flex gap-2">
-										<Typography
-											variant="small"
-											className="cursor-pointer hover:text-orange-900"
-										>
-											<i className="fal fa-heart pr-1"></i>Thích
-										</Typography>
-										{openComment ? (
-											<Typography
-												variant="small"
-												className="cursor-pointer hover:text-orange-900"
-												onClick={() => handleopenComent()}
-											>
-												<i className="fal fa-angle-double-up p-1"></i>Ẩn bình
-												luận
-											</Typography>
-										) : (
-											<Typography
-												variant="small"
-												className="cursor-pointer hover:text-orange-900"
-												onClick={() => handleopenComent()}
-											>
-												<i className="fal fa-angle-double-down p-1"></i>Xem bình
-												luận
-											</Typography>
-										)}
-									</div>
-								</div>
-							</div>
 							{/* SUB COMMENT */}
 							{openComment ? (
-								<div className="ml-10 border-[1px] p-3">
-									<div className="flex justify-start gap-2">
-										<img
-											src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
-											alt="image 1"
-											className="h-14 w-14 rounded-full object-cover"
-										></img>
-										<div>
-											<div className="flex gap-1">
-												<Typography variant="small" className="font-bold">
-													Tung NT
+								<div className="ml-10 mt-1">
+									{foodData.comments.map((comment) => (
+										<div
+											key={comment.commentDate}
+											className="flex justify-start gap-2 mb-4"
+										>
+											<img
+												src={comment.user.avatar}
+												alt="image 1"
+												className="h-14 w-14 rounded-full object-cover"
+											></img>
+											<div>
+												<div className="flex gap-1">
+													<Typography variant="small" className="font-bold">
+														{comment.user.userName}
+													</Typography>
+													<Typography variant="small">
+														- {moment(comment.commentDate).fromNow()}
+													</Typography>
+												</div>
+												<Typography variant="paragraph">
+													{comment.content}
 												</Typography>
-												<Typography variant="small">- 30 Oct, 2023</Typography>
-											</div>
-											<Typography variant="paragraph">
-												Cho bố cái địa chỉ
-											</Typography>
-											<div className="flex gap-2">
-												<Typography
-													variant="small"
-													className="cursor-pointer hover:text-orange-900"
-												>
-													<i className="fal fa-heart pr-1"></i>Thích
-												</Typography>
-												<Typography
-													variant="small"
-													className="cursor-pointer hover:text-orange-900"
-												>
-													<i className="fal fa-angle-double-right fa-rotate-90 p-1"></i>
-													Xem bình luận
-												</Typography>
+												<div className="flex gap-2">
+													<Typography
+														variant="small"
+														className="cursor-pointer hover:text-orange-900"
+													></Typography>
+													<Typography
+														variant="small"
+														className="cursor-pointer hover:text-orange-900"
+													></Typography>
+												</div>
 											</div>
 										</div>
-									</div>
-									<hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+									))}
 								</div>
 							) : null}
 							{/* END SUB COMMENT */}
