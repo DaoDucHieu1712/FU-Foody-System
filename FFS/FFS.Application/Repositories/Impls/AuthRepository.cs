@@ -150,13 +150,14 @@ namespace FFS.Application.Repositories.Impls
 					UserId = _newuser.Id,
 					StoreName = storeRegisterDTO.StoreName,
 					AvatarURL = storeRegisterDTO.AvatarURL,
+					Address  = storeRegisterDTO.Address,
 					Description = storeRegisterDTO.Description,
 					TimeStart = storeRegisterDTO.TimeStart,
 					TimeEnd = storeRegisterDTO.TimeEnd,
 					PhoneNumber = storeRegisterDTO.PhoneNumber,
 				};
 				LocationDTO locationDTO = storeRegisterDTO.location;
-				var newLocation = new Location
+				var newLocation = new Entities.Location
 				{
 					UserId = _newuser.Id,
 					Address = locationDTO.Address,

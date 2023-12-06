@@ -96,38 +96,6 @@ const RequestAccountPage = () => {
 		getRequestAccount();
 	};
 
-	const handleClickBtn = async (id, username, action) => {
-		var txt = "";
-		if (action == "Accept") {
-			txt = `Bạn có chắc chắn duyệt tài khoản ${username}!`;
-		} else {
-			txt = `Bạn có chắc chắn hủy duyệt tài khoản ${username}!`;
-		}
-		const check = confirm(txt);
-		if (check) {
-			const data = {
-				id: id,
-				username: username,
-				action: action,
-			};
-			
-			try {
-				await axios
-					.post(`/api/Admin/ApproveUser`, data)
-					.then((res) => {
-						toast.success(res);
-						getRequestAccount();
-					})
-					.catch((error) => {
-						toast.error("Có lỗi xảy ra!");
-						console.log(error);
-					});
-			} catch (error) {
-				console.log("Food error: " + error);
-			}
-		}
-	};
-
 	const handleClickStatus = (id, name) => {
 		dataSearch.status = id;
 		setDateSearch(dataSearch);
@@ -272,7 +240,11 @@ const RequestAccountPage = () => {
 
 								<td className="px-6 py-3">
 									<div className=" flex justify-evenly items-center">
-										<Link to={`/admin/application/${user.Id}`}>
+										<Link
+											to={`/admin/application/${
+												user.Role === "Shipper" ? "shipper" : "store-owner"
+											}/${user.Id}`}
+										>
 											<Button
 												variant="outlined"
 												size="sm"
@@ -281,26 +253,6 @@ const RequestAccountPage = () => {
 												xem
 											</Button>
 										</Link>
-										<Button
-											variant="outlined"
-											size="sm"
-											className="border-primary hover:bg-primary hover:text-white"
-											onClick={() =>
-												handleClickBtn(user.Id, user.UserName, "Accept")
-											}
-										>
-											Chấp thuận
-										</Button>
-										<Button
-											size="sm"
-											variant="outlined"
-											className="border-primary hover:bg-primary hover:text-white"
-											onClick={() =>
-												handleClickBtn(user.Id, user.UserName, "Reject")
-											}
-										>
-											Từ chối
-										</Button>
 									</div>
 								</td>
 							</tr>

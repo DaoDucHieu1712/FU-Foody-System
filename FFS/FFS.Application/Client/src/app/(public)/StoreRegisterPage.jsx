@@ -24,7 +24,7 @@ const schema = yup.object({
 		.required("Tên cửa hàng không thể để trống !"),
 	avatarURL: yup.string().required(),
 	description: yup.string().required("Mô tả không thể để trống !"),
-	address: yup.string().required("Địa chỉ không thể để trống !"),
+	// address: yup.string().required("Địa chỉ không thể để trống !"),
 	phoneNumber: yup.string().required("Số điện thoại không thể để trống !"),
 	timeStart: yup.date().required("Hãy chọn thời gian mở cửa !"),
 	timeEnd: yup.date().required("Hãy chọn thời gian đóng cửa !"),
@@ -152,6 +152,7 @@ const StoreRegisterPage = () => {
 		data.allow = true;
 		data.avatar = data.avatarURL;
 		data.location = newLocation;
+		data.address = data.address + "-" + ward.WardName + "-Thạch Thất-Hà Nội";
 		AuthServices.storeRegister(data)
 			.then((res) => {
 				console.log(res);

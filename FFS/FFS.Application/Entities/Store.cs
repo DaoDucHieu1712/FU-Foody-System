@@ -18,6 +18,7 @@ namespace FFS.Application.Entities
 		public decimal RateAverage { get; set; } = 0;
 		public int TotalRate { get; set; } = 0;
 		public int RatingCount { get; set; } = 0;
+		public string Address { get; set; }
 		public ICollection<Discount> Discounts { get; set; }
 		public ICollection<Inventory> Inventories { get; set; }
 		public ICollection<Comment> Comments { get; set; }
