@@ -67,7 +67,7 @@ namespace FFS.Application.DTOs
 
 
 			_ = CreateMap<Entities.Comment, StoreRatingDTO>()
-			.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+			.ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
 			.ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.StoreId))
 			.ForMember(dest => dest.Rate, opt => opt.MapFrom(src => src.Rate))
 			.ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
