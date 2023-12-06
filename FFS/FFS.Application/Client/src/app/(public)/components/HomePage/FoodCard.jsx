@@ -18,9 +18,8 @@ const FoodCard = ({ item }) => {
 					<div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
 						<Typography className="text-white font-semibold">HOT</Typography>
 					</div>
-					<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
+					<div className="absolute hidden h-full w-full justify-center gap-x-3 items-center group-hover:flex">
 						<AddToWishlist foodId={item.id} />
-						<FoodCart></FoodCart>
 						<Tooltip content="Xem chi tiết món ăn">
 							<IconButton
 								variant="text"

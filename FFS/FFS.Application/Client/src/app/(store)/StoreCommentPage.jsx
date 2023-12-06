@@ -172,10 +172,12 @@ const StoreCommentPage = () => {
 							/>
 						</div>
 						<div className="col-span-3 flex flex-col gap-1">
+						<div className="flex items-center space-x-10">
 							<span className="text-base">Quán ăn</span>
 							{uId !== undefined && uId !== null ? (
 								<ReportStore uId={uId} sId={storeData.userId} />
 							) : null}
+							</div>
 							<Typography variant="h2">{storeData.storeName}</Typography>
 							<div className="border-b border-t border-gray-200 h-14 grid grid-cols-7">
 								<div className="flex justify-center items-center">
@@ -232,11 +234,13 @@ const StoreCommentPage = () => {
 								Liên hệ : {storeData.phoneNumber}
 							</span>
 							<div className="flex items-center text-base gap-1">
-								<span>
-									<i className="fal fa-clock mr-1"></i> Thời gian hoạt động:
+							<span>
+									{" "}
+									<i className="fal fa-clock mr-2"></i>Thời gian hoạt động:
 								</span>
 								<span>
-									{storeData.timeStart} : {storeData.timeEnd}
+									{storeData.timeStart.slice(11, 16)} -{" "}
+									{storeData.timeEnd.slice(11, 16)}
 								</span>
 							</div>
 							<div className="">

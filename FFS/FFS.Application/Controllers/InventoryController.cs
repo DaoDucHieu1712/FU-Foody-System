@@ -55,8 +55,21 @@ namespace FFS.Application.Controllers
             }
         }
 
+		[HttpGet("{fid}")]
+		public async Task<IActionResult> GetInventory(int fid)
+		{
+			try
+			{
+				var inventory = await _inventoryRepository.FindSingle(x => x.FoodId == fid, x=>x.Food);
+				return Ok(_mapper.Map<InventoryDTO>(inventory));
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
 
-        [HttpPost]
+		[HttpPost]
         public async Task<IActionResult> CreateInventory([FromBody]  CreateInventoryDTO inventory)
         {
             try
@@ -76,19 +89,6 @@ namespace FFS.Application.Controllers
             }
         }
 
-        //[HttpPut("update/{storeId}/{foodId}")]
-        //public async Task<IActionResult> UpdateInventoryByStoreAndFoodId(int storeId, int foodId)
-        //{
-        //    try
-        //    {
-        //        await _inventoryRepository.UpdateInventoryByStoreAndFoodId(storeId, foodId);
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
 
 		[HttpPut("{storeId}/{foodId}/{quantity}")]
 		public async Task<IActionResult> ImportInventory(int storeId, int foodId, int quantity)

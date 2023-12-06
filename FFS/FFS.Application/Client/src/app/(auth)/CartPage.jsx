@@ -9,16 +9,17 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 import axiosConfig from "../../shared/api/axiosConfig";
 import CartService from "./shared/cart.service";
 import { cartActions } from "./shared/cartSlice";
-import CartItem from "./shared/components/cart/CartItem";
-import LocationService from "./shared/location.service";
-import ComboItem from "./shared/components/cart/ComboItem";
+import { checkoutActions } from "./shared/checkoutSlice";
 import { comboActions } from "./shared/comboSlice";
+import CartItem from "./shared/components/cart/CartItem";
+import ComboItem from "./shared/components/cart/ComboItem";
+import LocationService from "./shared/location.service";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
@@ -97,6 +98,11 @@ const CartPage = () => {
 	if (!accesstoken) {
 		return <Navigate to="/login" replace={true} />;
 	}
+
+	const handleCheckOut = async () => {
+		dispatch(checkoutActions.SetInfo({ location, note, phone, feeShip }));
+		window.location.href = "/checkout";
+	};
 
 	return (
 		<>
@@ -191,7 +197,7 @@ const CartPage = () => {
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>
 								{feeShip ? (
-									<span>{feeShip}</span>
+									<span>{feeShip} đ</span>
 								) : (
 									<span>Chưa có thông tin</span>
 								)}
@@ -199,12 +205,23 @@ const CartPage = () => {
 						</div>
 						<div className="p-3 flex justify-between">
 							<p className="font-medium text-lg ">Tổng</p>
-							<span>{cart.totalPrice + comboSelector.totalPrice} đ</span>
+							<span>
+								{feeShip
+									? cart.totalPrice + comboSelector.totalPrice + feeShip
+									: cart.totalPrice + comboSelector.totalPrice}
+								đ
+							</span>
 						</div>
 						<div className="p-3 w-full">
-							<Link to={`/checkout/${location}/${phone}/${note}/${feeShip}`}>
-								<Button className="bg-primary w-full">Thanh toán</Button>
-							</Link>
+							{/* <Link to={`/checkout/${location}/${phone}/${note}/${feeShip}`}> */}
+							<Button
+								disabled={location.length === 0}
+								className="bg-primary w-full"
+								onClick={handleCheckOut}
+							>
+								Thanh toán
+							</Button>
+							{/* </Link> */}
 						</div>
 					</div>
 				</div>

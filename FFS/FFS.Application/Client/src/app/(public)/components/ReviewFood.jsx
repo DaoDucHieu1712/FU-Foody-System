@@ -8,6 +8,7 @@ import ErrorText from '../../../shared/components/text/ErrorText';
 import { toast } from 'react-toastify';
 import axios from "../../../shared/api/axiosConfig";
 import UploadImage from '../../../shared/components/form/UploadImage';
+import { useNavigate } from 'react-router-dom';
 
 const schema = yup
     .object({
@@ -18,6 +19,7 @@ const schema = yup
     });
 
 const ReviewFood = ({ idUser, idFood }) => {
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
@@ -27,10 +29,12 @@ const ReviewFood = ({ idUser, idFood }) => {
         resolver: yupResolver(schema),
         mode: "onSubmit",
     });
-
+    const isReviewedStored = localStorage.getItem(`foodReview_${idFood}`); // Check if the food has been reviewed
     const [star, setStar] = useState(5);
     const [open, setOpen] = useState(false);
     const [openThank, setOpenThank] = useState(false);
+    const [isReviewed, setIsReviewed] = useState(!!isReviewedStored); // Initialize with the stored value
+
     const handleOpen = () => setOpen((cur) => !cur);
     const handleOpenThank = () => setOpenThank((cur) => !cur);
 
@@ -47,6 +51,8 @@ const ReviewFood = ({ idUser, idFood }) => {
                 .then(() => {
                     setOpen(false);
                     setOpenThank(true);
+                    setIsReviewed(true);
+                    localStorage.setItem(`foodReview_${idFood}`, true); // Store the information in local storage
                 })
                 .catch((error) => {
                     toast.success("Đánh giá thất bại!");
@@ -58,7 +64,18 @@ const ReviewFood = ({ idUser, idFood }) => {
     }
     return (
         <div>
-            <Button className="bg-primary cursor-pointer hover:bg-orange-700" onClick={handleOpen}>Đánh giá món ăn</Button>
+             <Button className={`bg-primary cursor-pointer hover:bg-orange-700 ${isReviewed ? 'hidden' : ''}`} onClick={handleOpen}>
+                Đánh giá món ăn
+            </Button>
+            <Button
+                className={`bg-primary cursor-pointer hover:bg-orange-700 ${!isReviewed ? 'hidden' : ''}`}
+                onClick={() => {
+                    // Redirect to the Review Page using React Router
+                    // navigate(`/store/comment/${idStore}`); // Replace `idStore` with the appropriate variable
+                }}
+            >
+                Xem đánh giá
+            </Button>
             <Dialog
                 size="md"
                 open={open}

@@ -39,7 +39,7 @@ const MyOrderDetail = () => {
 			location.reload();
 		});
 	};
-	const email = CookieService.getToken("fu_foody_email");
+	const userId = CookieService.getToken("fu_foody_id");
 	const role = CookieService.getToken("fu_foody_role");
 
 	return (
@@ -64,7 +64,7 @@ const MyOrderDetail = () => {
 					</>
 					{role !== "StoreOwner" && orderQuery.data?.orderStatus === 3 ? (
 						<ReviewStore
-							email={email}
+							userId={userId}
 							idStore={orderQuery.data?.orderDetails[0].storeId}
 							idShipper={orderQuery.data?.shipperId}
 							storeName={orderQuery.data?.orderDetails[0].storeName}

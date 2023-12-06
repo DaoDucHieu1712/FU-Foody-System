@@ -28,14 +28,17 @@ namespace FFS.Application.Controllers
 		private readonly IMapper _mapper;
 		private readonly IHubContext<NotificationHub> _hubContext;
 		private readonly INotificationRepository _notifyRepository;
-		public OrderController(IOrderRepository orderRepository, IHubContext<NotificationHub> hubContext, IOrderDetailRepository orderDetailRepository, INotificationRepository notifyRepository, IStoreRepository storeRepository, IMapper mapper)
+		private readonly IInventoryRepository _inventoryRepository;
+
+		public OrderController(IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IStoreRepository storeRepository, IMapper mapper, IHubContext<NotificationHub> hubContext, INotificationRepository notifyRepository, IInventoryRepository inventoryRepository)
 		{
 			_orderRepository = orderRepository;
 			_orderDetailRepository = orderDetailRepository;
-			_mapper = mapper;
 			_storeRepository = storeRepository;
+			_mapper = mapper;
 			_hubContext = hubContext;
 			_notifyRepository = notifyRepository;
+			_inventoryRepository = inventoryRepository;
 		}
 
 		[HttpPost]
@@ -60,7 +63,15 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
-				return Ok(await _orderRepository.Order(createOrderDTO));
+				var order = await _orderRepository.Order(createOrderDTO);
+
+				foreach (var item in createOrderDTO.OrderDetails)
+				{
+					var inventory = await _inventoryRepository.FindSingle(x => x.FoodId == item.FoodId);
+					inventory.quantity = inventory.quantity - item.Quantity;
+					await _inventoryRepository.Update(inventory, "CreatedAt");
+				}
+				return Ok(order);
 			}
 			catch (Exception ex)
 			{
@@ -526,6 +537,18 @@ namespace FFS.Application.Controllers
 				order.OrderStatus = OrderStatus.Cancel;
 				order.CancelReason = CancelReason;
 				await _orderRepository.Update(order);
+
+
+				var ods = await _orderDetailRepository.FindAll(x => x.OrderId == id).ToListAsync();
+
+				foreach (var item in ods)
+				{
+					var inventory = await _inventoryRepository.FindSingle(x => x.FoodId == item.FoodId);
+					inventory.quantity = inventory.quantity + item.Quantity;
+					await _inventoryRepository.Update(inventory, "CreatedAt");
+				}
+
+
 				return NoContent();
 			}
 			catch (Exception ex)
@@ -543,6 +566,16 @@ namespace FFS.Application.Controllers
 				order.OrderStatus = OrderStatus.Cancel;
 				order.CancelReason = CancelReason;
 				await _orderRepository.Update(order);
+
+				var ods = await _orderDetailRepository.FindAll(x => x.OrderId == id).ToListAsync();
+
+				foreach (var item in ods)
+				{
+					var inventory = await _inventoryRepository.FindSingle(x => x.FoodId == item.FoodId);
+					inventory.quantity = inventory.quantity + item.Quantity;
+					await _inventoryRepository.Update(inventory, "CreatedAt");
+				}
+
 				return NoContent();
 			}
 			catch (Exception ex)

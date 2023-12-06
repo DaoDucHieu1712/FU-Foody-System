@@ -1,19 +1,42 @@
 import propTypes from "prop-types";
 import DeleteIcon from "../../../../../shared/components/icon/DeleteIcon";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../../cartSlice";
+import axios from "../../../../../shared/api/axiosConfig";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const CartItem = ({ item }) => {
 	const dispatch = useDispatch();
+	const [quantity, setQuantity] = useState();
+	const cart = useSelector((state) => state.cart);
+
+	const loadInventory = async () => {
+		await axios
+			.get(`/api/Inventory/GetInventory/${item.foodId}`)
+			.then((res) => {
+				setQuantity(res.quantity);
+				console.log(res.quantity);
+			});
+	};
+
+	useEffect(() => {
+		loadInventory();
+	}, []);
 
 	const IncrementHandler = () => {
+		if (
+			cart.list.filter((x) => x.foodId === item.foodId)[0].quantity >= quantity
+		) {
+			toast.error("Không được mua quá số lượng !!");
+			return;
+		}
+
 		dispatch(cartActions.increaseItemQuantity(item));
-		console.log("+", item);
 	};
 
 	const DescrementHandler = () => {
 		dispatch(cartActions.decreaseItemQuantity(item));
-		console.log("-", item);
 	};
 
 	const RemoveHandler = () => {
