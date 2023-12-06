@@ -164,7 +164,7 @@ const CartPage = () => {
 								{locations.map((item) => {
 									return (
 										<Option key={item.id} value={item}>
-											{item.address}
+											{`${item.address}, ${item.wardName}, ${item.districtName}, ${item.provinceName}`}
 										</Option>
 									);
 								})}

@@ -4,8 +4,10 @@ using AutoMapper;
 using Dapper;
 
 using FFS.Application.Data;
+using FFS.Application.DTOs.Auth;
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Food;
+using FFS.Application.DTOs.Location;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
@@ -358,11 +360,32 @@ namespace FFS.Application.Repositories.Impls
 				else
 				{
 					store.StoreName = storeInforDTO.StoreName;
-					store.AvatarURL = storeInforDTO.AvatarURL;
+					if (storeInforDTO.AvatarURL != null)
+					{
+						store.AvatarURL = storeInforDTO.AvatarURL;
+					}
 					store.PhoneNumber = storeInforDTO.PhoneNumber;
 					store.Description = storeInforDTO.Description;
 					store.TimeStart = storeInforDTO.TimeStart;
 					store.TimeEnd = storeInforDTO.TimeEnd;
+
+					Location location = await _context.Locations.FirstOrDefaultAsync(x => x.UserId == store.UserId);
+					if(location != null)
+					{
+						LocationDTO locationDTO = storeInforDTO.Location;
+
+						location.DistrictID = locationDTO.DistrictID;
+						location.DistrictName = locationDTO.DistrictName;
+						location.ProvinceID = locationDTO.ProvinceID;
+						location.ProvinceName = locationDTO.ProvinceName;
+						location.WardCode = locationDTO.WardCode;
+						location.WardName = locationDTO.WardName;
+						location.Address = locationDTO.Address;
+						location.Description = locationDTO.Description;
+						location.PhoneNumber = locationDTO.PhoneNumber;
+					}
+
+
 					_ = await _context.SaveChangesAsync();
 					return storeInforDTO;
 				}

@@ -16,18 +16,20 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
 namespace FFS.Application.Controllers {
-    [Route("api/[controller]/[action]")]
-    [ApiController]
-    public class StoreController : ControllerBase {
+	[Route("api/[controller]/[action]")]
+	[ApiController]
+	public class StoreController : ControllerBase {
 
-        private readonly IMapper _mapper;
-        private readonly IStoreRepository _storeRepository;
-        private readonly IFoodRepository _foodRepository;
-        private readonly ICommentRepository _commentRepository;
+		private readonly IMapper _mapper;
+		private readonly IStoreRepository _storeRepository;
+		private readonly IFoodRepository _foodRepository;
+		private readonly ICommentRepository _commentRepository;
 		private readonly IComboRepository _comboRepository;
 		private readonly IOrderRepository _orderRepository;
+		private readonly ILocationRepository _locationRepository;
 
-		public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository, IComboRepository comboRepository, IOrderRepository orderRepository)
+
+		public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository, IComboRepository comboRepository, IOrderRepository orderRepository, ILocationRepository locationRepository)
 		{
 			_mapper = mapper;
 			_storeRepository = storeRepository;
@@ -35,83 +37,110 @@ namespace FFS.Application.Controllers {
 			_commentRepository = commentRepository;
 			_comboRepository = comboRepository;
 			_orderRepository = orderRepository;
+			_locationRepository = locationRepository;
 		}
 
 		[HttpGet]
-        public IActionResult ListAllStore([FromQuery] AllStoreParameters allStoreParameters)
-        {
-            try
-            {
-                var Stores = _storeRepository.GetAllStores(allStoreParameters);
+		public IActionResult ListAllStore([FromQuery] AllStoreParameters allStoreParameters)
+		{
+			try
+			{
+				var Stores = _storeRepository.GetAllStores(allStoreParameters);
 
-                var metadata = new
-                {
-                    Stores.TotalCount,
-                    Stores.PageSize,
-                    Stores.CurrentPage,
-                    Stores.TotalPages,
-                    Stores.HasNext,
-                    Stores.HasPrevious
-                };
+				var metadata = new
+				{
+					Stores.TotalCount,
+					Stores.PageSize,
+					Stores.CurrentPage,
+					Stores.TotalPages,
+					Stores.HasNext,
+					Stores.HasPrevious
+				};
 
-                var StoreDTOs = _mapper.Map<List<AllStoreDTO>>(Stores);
+				var StoreDTOs = _mapper.Map<List<AllStoreDTO>>(Stores);
 
-                return Ok(
-                new
-                {
-                    StoreDTOs,
-                    metadata
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+				return Ok(
+				new
+				{
+					StoreDTOs,
+					metadata
+				});
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetTop10Store()
-        {
-            try
-            {
-                var top8Store = await _storeRepository.GetTop10PopularStore();
-                var top8StoreDTO =  _mapper.Map<List<AllStoreDTO>>(top8Store);
-                return Ok(top8StoreDTO);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+		}
+		[HttpGet]
+		public async Task<IActionResult> GetTop10Store()
+		{
+			try
+			{
+				var top8Store = await _storeRepository.GetTop10PopularStore();
+				var top8StoreDTO = _mapper.Map<List<AllStoreDTO>>(top8Store);
+				return Ok(top8StoreDTO);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
 
-        [Authorize]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetStoreInformation(int id)
-        {
-            try
-            {
-                StoreInforDTO storeInforDTO = await _storeRepository.GetInformationStore(id);
-                return Ok(storeInforDTO);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+<
 
-        [HttpGet]
-        public async Task<IActionResult> GetStoreByUid(string uId)
+		[Authorize]
+		[HttpGet("{id}")]
+		public async Task<IActionResult> GetStoreInformation(int id)
+		{
+			try
+			{
+				StoreInforDTO storeInforDTO = await _storeRepository.GetInformationStore(id);
+				return Ok(storeInforDTO);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+
+		[HttpGet]
+		public async Task<IActionResult> GetStoreByUid(string uId)
+
         {
             try
             {
                 var StoreByUid = await _storeRepository.FindSingle(x => x.UserId == uId);
-                return Ok(StoreByUid);
+
+				return Ok(StoreByUid);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+		[HttpGet("{uId}")]
+		public async Task<IActionResult> GetStore(string uId)
+		{
+			try
+			{
+				var store = await _storeRepository.FindSingle(x => x.UserId == uId);
+				var location = await _locationRepository.FindSingle(x => x.UserId == uId);
+
+				return Ok(new { store, location});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+
+
+       
 
         [HttpGet("exportfood")]
         public async Task<IActionResult> ExportFood(int id)
