@@ -1,4 +1,5 @@
 ﻿using FFS.Application.DTOs.FlashSale;
+using FFS.Application.DTOs.Inventory;
 using FFS.Application.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,6 +19,8 @@ namespace FFS.Application.DTOs.Food
         public ICollection<OrderDetail>? OrderDetails { get; set; }
 		public decimal? PriceAfterSale { get; set; }
 		public int? SalePercent { get; set; }
+		public ICollection<InventoryDTO>? Inventories { get; set; }
+
 		//public DateTime? Start { get; set; }
 		//public DateTime? End { get; set; }
 	}
