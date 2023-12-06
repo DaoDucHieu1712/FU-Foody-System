@@ -12,9 +12,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
 import AddToWishlist from "./components/wishlist/AddToWishlist";
 import WishlistDetails from "./components/wishlist/WishlistDetails";
+import { useDispatch } from "react-redux";
+import { cartActions } from "../(auth)/shared/cartSlice";
 
 const FoodDetails = () => {
 	const { id } = useParams();
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [value, setValue] = useState(0);
 	const [foodData, setFoodData] = useState(null);
@@ -183,9 +186,19 @@ const FoodDetails = () => {
 
 									<div className="">
 										<button
-											type="submit"
 											className="flex items-center space-x-2  text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-sm text-sm w-full px-5 py-2.5 text-center"
 											disabled={foodData.inventories[0].quantity <= 0}
+											onClick={() =>
+												dispatch(
+													cartActions.addToCart({
+														foodId: foodData.id,
+														foodName: foodData.foodName,
+														quantity: 1,
+														price: foodData.price,
+														img: foodData.imageURL,
+													})
+												)
+											}
 										>
 											THÊM VÀO GIỎ HÀNG
 											<svg
