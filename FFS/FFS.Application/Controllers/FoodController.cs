@@ -371,5 +371,19 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-    }
+		[HttpPost]
+		public async Task<IActionResult> CommentFood(Comment comment)
+		{
+			try
+			{
+				await _commentRepository.Add(comment);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+	}
 }

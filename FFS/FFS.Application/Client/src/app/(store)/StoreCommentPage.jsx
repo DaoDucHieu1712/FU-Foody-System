@@ -26,7 +26,6 @@ const StoreCommentPage = () => {
 	const [commentList, setCommentList] = useState([]);
 	const [commentReply, setCommentReply] = useState({});
 	const [dataComment, setDataComment] = useState({});
-	const [commentText, setCommentText] = useState("");
 
 	const [rate, setRate] = useState([]);
 
@@ -121,7 +120,6 @@ const StoreCommentPage = () => {
 		return { ...res, rateAvg: rateAvg.toFixed(1) };
 	};
 	const handleInputData = (content, commentId) => {
-		setCommentText(content);
 		setDataComment({
 			UserId: CookieService.getToken("fu_foody_id"),
 			Content: content,
@@ -141,7 +139,10 @@ const StoreCommentPage = () => {
 					updatedCommentReply[id] = response;
 
 					setCommentReply(updatedCommentReply);
-					setCommentText("");
+					const textarea = document.getElementById(`textarea_${id}`);
+					if (textarea) {
+						textarea.value = "";
+					}
 				})
 				.catch((error) => {
 					console.log(error);
@@ -411,7 +412,7 @@ const StoreCommentPage = () => {
 													</div>
 													<div className="flex flex-col items-end">
 														<Textarea
-															defaultValue={commentText}
+															id={`textarea_${comment.Id}`}
 															label="Nhập nội dung bình luận"
 															onChange={(e) =>
 																handleInputData(e.target.value, comment.Id)

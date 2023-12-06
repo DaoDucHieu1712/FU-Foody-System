@@ -55,7 +55,6 @@ const ProfilePage = () => {
 			toast.error("Sửa profile thất bại!");
 		}
 	};
-
 	return (
 		<>
 			{user && (
@@ -186,7 +185,7 @@ const ProfilePage = () => {
 											type="datetime-local"
 											className="col-span-2 w-full"
 											label="Ngày sinh"
-											defaultValue={dayjs(user.birthDay).format(
+											defaultValue={dayjs(user.BirthDay2).format(
 												"YYYY-MM-DDTHH:mm"
 											)}
 										/>

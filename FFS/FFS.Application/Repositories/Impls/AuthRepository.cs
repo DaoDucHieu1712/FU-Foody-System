@@ -397,7 +397,6 @@ namespace FFS.Application.Repositories.Impls
 				_user.Gender = userCommandDTO.Gender;
 				_user.Avatar = userCommandDTO.Avatar;
 				_context.Entry(_user).State = EntityState.Modified;
-				_ = await _userManager.UpdateAsync(_user);
 				_ = await _context.SaveChangesAsync();
 			}
 			catch (Exception ex)

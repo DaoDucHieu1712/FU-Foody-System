@@ -173,7 +173,7 @@ namespace FFS.Application.Repositories.Impls
             try
             {
                 var food = await _context.Foods.Include(x => x.Category).Include(x => x.Inventories).Include
-                (x => x.Store).Include(x => x.Comments).Include(x=>x.FlashSaleDetails).ThenInclude(x => x.FlashSale).FirstOrDefaultAsync(x => x.Id == id);
+                (x => x.Store).Include(x => x.Comments).ThenInclude(x => x.User).Include(x=>x.FlashSaleDetails).ThenInclude(x => x.FlashSale).FirstOrDefaultAsync(x => x.Id == id);
                 return food;
             }
             catch (Exception ex)

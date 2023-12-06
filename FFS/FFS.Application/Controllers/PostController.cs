@@ -27,7 +27,16 @@ namespace FFS.Application.Controllers
 		private readonly IHubContext<NotificationHub> _hubContext;
 		private readonly INotificationRepository _notifyRepository;
 		private readonly ApplicationDbContext _db;
-		public PostController(IPostRepository postRepository, ApplicationDbContext db, IAuthRepository authRepository,INotificationRepository notifyRepository, IReactPostRepository reactPostRepository, IMapper mapper, IHubContext<NotificationHub> hubContext)
+		private readonly ICommentRepository _commentRepository;
+		public PostController(
+			IPostRepository postRepository
+			, ApplicationDbContext db
+			, IAuthRepository authRepository
+			,INotificationRepository notifyRepository
+			, IReactPostRepository reactPostRepository
+			, IMapper mapper
+			, IHubContext<NotificationHub> hubContext
+			, ICommentRepository commentRepository)
 		{
 			_postRepository = postRepository;
 			_reactPostRepository = reactPostRepository;
@@ -35,7 +44,8 @@ namespace FFS.Application.Controllers
 			_hubContext = hubContext;
 			_notifyRepository = notifyRepository;
 			_authRepository = authRepository;
-			_db=db;
+			_db = db;
+			_commentRepository = commentRepository;
 		}
 
 		[HttpGet]
@@ -254,6 +264,20 @@ namespace FFS.Application.Controllers
 
 
 				return Ok();
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> CommentPost(Comment comment)
+		{
+			try
+			{
+				await _commentRepository.Add(comment);
+				return NoContent();
 			}
 			catch (Exception ex)
 			{
