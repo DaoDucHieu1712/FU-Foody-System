@@ -26,7 +26,7 @@ namespace FFS.Application.Repositories.Impls
             try
             {
                 // Filter the food items by the provided StoreId
-                var foodList = await GetList(f => f.StoreId == storeId, x => x.Inventories);
+                var foodList = await GetList(f => f.StoreId == storeId && f.IsDelete==false, x => x.Inventories);
                 return foodList;
             }
             catch (Exception ex)
@@ -82,12 +82,12 @@ namespace FFS.Application.Repositories.Impls
         }
         public PagedList<Food> GetAllFoods(AllFoodParameters allFoodParameters)
         {
-            var query = _context.Foods.Include(x => x.Category).Include(x => x.OrderDetails).Include(x=>x.FlashSaleDetails).ThenInclude(x=>x.FlashSale).AsQueryable();
-
-            if (!string.IsNullOrEmpty(allFoodParameters.CatId.ToString()))
+            var query = _context.Foods.Include(x => x.Category).Include(x => x.OrderDetails).Include(x=>x.FlashSaleDetails).ThenInclude(x=>x.FlashSale).Where(x=>x.IsDelete==false).AsQueryable();
+            if (!string.IsNullOrEmpty(allFoodParameters.CatName) && !allFoodParameters.CatName.Equals("Tất cả"))
             {
-                query = query.Where(f => f.CategoryId == allFoodParameters.CatId);
+                query = query.Where(f => f.Category.CategoryName.ToLower().Equals(allFoodParameters.CatName.ToLower()));
             }
+			
             SearchByProductAndCategoryName(ref query, allFoodParameters.Search);
             SearchByPriceRange(ref query, allFoodParameters.PriceMin, allFoodParameters.PriceMax);
             if (!string.IsNullOrEmpty(allFoodParameters.FilterFood.ToString()))
@@ -161,10 +161,10 @@ namespace FFS.Application.Repositories.Impls
 		{
 			if (!foods.Any())
 				return;
-
+			var currentTime = DateTime.Now;
 			foods = foods
 				.Where(food => food.FlashSaleDetails.Any(detail =>
-					detail.FlashSale.Start <= DateTime.Now && detail.FlashSale.End >= DateTime.Now
+					detail.FlashSale.Start <= currentTime && detail.FlashSale.End >= currentTime
 				));
 		}
 
@@ -173,7 +173,7 @@ namespace FFS.Application.Repositories.Impls
             try
             {
                 var food = await _context.Foods.Include(x => x.Category).Include(x => x.Inventories).Include
-                (x => x.Store).Include(x => x.Comments).ThenInclude(x => x.User).Include(x=>x.FlashSaleDetails).ThenInclude(x => x.FlashSale).FirstOrDefaultAsync(x => x.Id == id);
+                (x => x.Store).Include(x => x.Comments).Include(x=>x.FlashSaleDetails).ThenInclude(x => x.FlashSale).FirstOrDefaultAsync(x => x.Id == id);
                 return food;
             }
             catch (Exception ex)

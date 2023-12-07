@@ -374,7 +374,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
-				var homeFood = await _foodRepo.FindAll().OrderBy(x => Guid.NewGuid()).Take(10).ToListAsync();
+				var homeFood = await _foodRepo.FindAll(x=>x.IsDelete==false).OrderBy(x => Guid.NewGuid()).Take(10).ToListAsync();
 				return Ok(_mapper.Map<List<AllFoodDTO>>(homeFood));
 			}
 			catch (Exception ex)

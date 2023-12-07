@@ -163,7 +163,7 @@ namespace FFS.Application.Repositories.Impls
                 }
                 else
                 {
-                    popularCategories = popularCategories.DistinctBy(x=>x.CategoryName).Take(10).ToList(); 
+                    popularCategories = popularCategories.DistinctBy(x=>x.CategoryName).Take(8).ToList(); 
                 }
 
                 return popularCategories;

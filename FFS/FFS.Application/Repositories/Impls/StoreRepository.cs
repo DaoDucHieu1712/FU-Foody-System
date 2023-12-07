@@ -310,7 +310,7 @@ namespace FFS.Application.Repositories.Impls
 		{
 			try
 			{
-				List<Food> foods = await _context.Foods.Where(x => x.StoreId == idShop && x.CategoryId == idCategory).Include(x => x.Inventories).Include(x => x.FlashSaleDetails).ThenInclude(x => x.FlashSale).ToListAsync();
+				List<Food> foods = await _context.Foods.Where(x => x.StoreId == idShop && x.CategoryId == idCategory && x.IsDelete==false).Include(x => x.Inventories).Include(x => x.FlashSaleDetails).ThenInclude(x => x.FlashSale).ToListAsync();
 				if (foods.Count == 0)
 				{
 					throw new Exception();
@@ -463,7 +463,7 @@ namespace FFS.Application.Repositories.Impls
 		{
 			var query = _context.Stores.Include(x => x.Categories).AsQueryable();
 
-			if (!string.IsNullOrEmpty(allStoreParameters.CategoryName))
+			if (!string.IsNullOrEmpty(allStoreParameters.CategoryName)  && !allStoreParameters.CategoryName.Equals("Tất cả"))
 			{
 				query = query.Where(store => store.Categories.Any(category => category.Id == Convert.ToInt32(allStoreParameters.CategoryName)));
 			}
