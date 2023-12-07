@@ -16,6 +16,7 @@ import moment from "moment";
 import CookieService from "../../shared/helper/cookieConfig";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../(auth)/shared/cartSlice";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const FoodDetails = () => {
 	const userId = CookieService.getToken("fu_foody_id");
@@ -42,45 +43,6 @@ const FoodDetails = () => {
 		setOpenComment((cur) => !cur);
 	};
 
-	const GetFoodData = async () => {
-		try {
-			await axios
-				.get(`/api/Food/GetFoodById/${id}`)
-				.then((response) => {
-					setFoodData(response.data.result);
-					setCategoryId(response.data.result.categoryId);
-				})
-				.catch((error) => {
-					console.log(error);
-				});
-		} catch (error) {
-			console.error("An error occurred food detail!", error);
-		}
-	};
-
-	const GetFoodByCategoryId = async () => {
-		try {
-			await axios
-				.get(`/api/Food/GetFoodByCategoryid/${categoryId}`)
-				.then((response) => {
-					setFoodList(response);
-				})
-				.catch((error) => {
-					console.log(error);
-				});
-		} catch (error) {
-			console.error("An error occurred food detail!", error);
-		}
-	};
-
-	useEffect(() => {
-		GetFoodData();
-	}, [id]);
-
-	useEffect(() => {
-		GetFoodByCategoryId();
-	}, [categoryId]);
-
 	// const handleComment = () => {
 	// 	const data = {
 	// 		Content: commentTxt,
@@ -101,9 +63,45 @@ const FoodDetails = () => {
 	// 	} catch (error) {
 	// 		console.error("Error occur: ", error);
 	// 	}
-
 	// 	console.log(commentTxt);
 	// };
+
+	const GetFoodData = async () => {
+		try {
+			await axios
+				.get(`/api/Food/GetFoodById/${id}`)
+				.then((response) => {
+					setFoodData(response);
+					GetFoodByCategoryId(response.categoryId);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("An error occurred food detail!", error);
+		}
+	};
+
+	const GetFoodByCategoryId = async (id) => {
+		if (id != 0) {
+			try {
+				await axios
+					.get(`/api/Food/GetFoodByCategoryid/${id}`)
+					.then((response) => {
+						setFoodList(response);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			} catch (error) {
+				console.error("An error occurred food detail!", error);
+			}
+		}
+	};
+
+	useEffect(() => {
+		GetFoodData();
+	}, [id]);
 
 	return (
 		<>
@@ -164,25 +162,8 @@ const FoodDetails = () => {
 								</p>
 								<p className="text-base">Mô tả: {foodData.description}</p>
 								<p className="my-1 text-base font-bold flex items-center ">
-									<span className="rounded-full">
-										<svg
-											className="w-4 h-4 text-blue-500 dark:text-white"
-											aria-hidden="true"
-											xmlns="http://www.w3.org/2000/svg"
-											fill="none"
-											viewBox="0 0 11 20"
-										>
-											<path
-												stroke="currentColor"
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth="2"
-												d="M1.75 15.363a4.954 4.954 0 0 0 2.638 1.574c2.345.572 4.653-.434 5.155-2.247.502-1.813-1.313-3.79-3.657-4.364-2.344-.574-4.16-2.551-3.658-4.364.502-1.813 2.81-2.818 5.155-2.246A4.97 4.97 0 0 1 10 5.264M6 17.097v1.82m0-17.5v2.138"
-											/>
-										</svg>
-									</span>
 									<span className="text-blue-500">
-										{foodData.price}.000 VND
+										{FormatPriceHelper(foodData.price)}đ
 									</span>
 								</p>
 
@@ -354,10 +335,10 @@ const FoodDetails = () => {
 
 					{/* COMMENT */}
 					<div>
-						<Typography variant="h4" className="mb-10">
+						{/* <Typography variant="h4" className="mb-10">
 							Đánh giá
 						</Typography>
-						{/* <Typography variant="small" className="pb-2">
+						<Typography variant="small" className="pb-2">
 							Mô tả bình luận
 						</Typography>
 						<Textarea

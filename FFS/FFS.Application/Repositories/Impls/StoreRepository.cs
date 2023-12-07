@@ -388,7 +388,10 @@ namespace FFS.Application.Repositories.Impls
 						location.Address = locationDTO.Address;
 						location.Description = locationDTO.Description;
 						location.PhoneNumber = locationDTO.PhoneNumber;
+
+						store.Address = $"{locationDTO.Address}, {locationDTO.WardName}, {locationDTO.DistrictName}, {locationDTO.ProvinceName}";
 					}
+
 
 
 					_ = await _context.SaveChangesAsync();
@@ -462,7 +465,7 @@ namespace FFS.Application.Repositories.Impls
 
 			if (!string.IsNullOrEmpty(allStoreParameters.CategoryName))
 			{
-				query = query.Where(store => store.Categories.Any(category => category.CategoryName.Contains(allStoreParameters.CategoryName)));
+				query = query.Where(store => store.Categories.Any(category => category.Id == Convert.ToInt32(allStoreParameters.CategoryName)));
 			}
 			SearchByStoreName(ref query, allStoreParameters.Search);
 			if (!string.IsNullOrEmpty(allStoreParameters.FilterStore.ToString()))

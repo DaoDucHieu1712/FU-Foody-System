@@ -128,7 +128,7 @@ namespace FFS.Application.Repositories.Impls
 					Allow = storeRegisterDTO.Allow,
 					Gender = storeRegisterDTO.Gender,
 					BirthDay = storeRegisterDTO.BirthDay,
-					UserName = storeRegisterDTO.StoreName,
+					UserName = CommonService.ExtractUsername(storeRegisterDTO.Email),
 					Email = storeRegisterDTO.Email,
 					Status = StatusUser.Pending,
 				};
@@ -144,19 +144,19 @@ namespace FFS.Application.Repositories.Impls
 					throw new Exception("Đã có lỗi xảy ra");
 
 				var _newuser = _context.ApplicationUsers.FirstOrDefault(x => x.Email == NewUser.Email);
+				LocationDTO locationDTO = storeRegisterDTO.location;
 
 				var NewStore = new Store
 				{
 					UserId = _newuser.Id,
 					StoreName = storeRegisterDTO.StoreName,
 					AvatarURL = storeRegisterDTO.AvatarURL,
-					Address  = storeRegisterDTO.Address,
+					Address  = $"{locationDTO.Address}, {locationDTO.WardName}, {locationDTO.DistrictName}, {locationDTO.ProvinceName}",
 					Description = storeRegisterDTO.Description,
 					TimeStart = storeRegisterDTO.TimeStart,
 					TimeEnd = storeRegisterDTO.TimeEnd,
 					PhoneNumber = storeRegisterDTO.PhoneNumber,
 				};
-				LocationDTO locationDTO = storeRegisterDTO.location;
 				var newLocation = new Entities.Location
 				{
 					UserId = _newuser.Id,
