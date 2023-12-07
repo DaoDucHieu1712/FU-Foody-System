@@ -16,6 +16,7 @@ import moment from "moment";
 import CookieService from "../../shared/helper/cookieConfig";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../(auth)/shared/cartSlice";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const FoodDetails = () => {
 	const userId = CookieService.getToken("fu_foody_id");
@@ -181,9 +182,21 @@ const FoodDetails = () => {
 											/>
 										</svg>
 									</span>
-									<span className="text-blue-500">
-										{foodData.price}.000 VND
-									</span>
+									{/* <span className="text-blue-500">
+										{FormatPriceHelper(foodData.price)}
+										<span className="absolute font-normal top-0 -right-2 text-xs">
+													đ
+												</span>
+									</span> */}
+									<Typography
+												color="blue"
+												className="relative font-bold w-fit pointer-events-none"
+											>
+												{FormatPriceHelper(foodData.price)}
+												<span className="absolute font-normal top-0 -right-2 text-xs">
+													đ
+												</span>
+											</Typography>
 								</p>
 
 								<hr></hr>
@@ -260,8 +273,8 @@ const FoodDetails = () => {
 					<div className="py-2">
 						<Typography variant="h4">Đồ ăn liên quan</Typography>
 						<div className="grid py-3 grid-flow-row-dense grid-cols-3 xl:grid-cols-6">
-							{foodList ? (
-								foodList.splice(0, 6).map((food, index) => (
+						{foodList && foodList.filter(food => food.id !== foodData.id).length > 0 ? (
+								foodList.filter(food => food.id !== foodData.id).splice(0, 6).map((food, index) => (
 									<div key={index} className="px-1 pt-1 border-solid border-2">
 										<div className="group relative flex lg:flex-none">
 											<img
@@ -335,7 +348,7 @@ const FoodDetails = () => {
 												color="blue"
 												className="relative w-fit pointer-events-none"
 											>
-												{food.price}
+												{FormatPriceHelper(food.price)}
 												<span className="absolute font-normal top-0 -right-2 text-xs">
 													đ
 												</span>

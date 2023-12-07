@@ -20,6 +20,7 @@ import { comboActions } from "./shared/comboSlice";
 import CartItem from "./shared/components/cart/CartItem";
 import ComboItem from "./shared/components/cart/ComboItem";
 import LocationService from "./shared/location.service";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
@@ -192,7 +193,7 @@ const CartPage = () => {
 								<p className="font-medium text-lg text-gray-500">
 									Tổng đơn hàng
 								</p>
-								<span>{cart.totalPrice + comboSelector.totalPrice} đ</span>
+								<span>{FormatPriceHelper(cart.totalPrice + comboSelector.totalPrice)} đ</span>
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>
@@ -207,8 +208,8 @@ const CartPage = () => {
 							<p className="font-medium text-lg ">Tổng</p>
 							<span>
 								{feeShip
-									? cart.totalPrice + comboSelector.totalPrice + feeShip
-									: cart.totalPrice + comboSelector.totalPrice}
+									? FormatPriceHelper(cart.totalPrice + comboSelector.totalPrice + feeShip)
+									: FormatPriceHelper(cart.totalPrice + comboSelector.totalPrice)}
 								đ
 							</span>
 						</div>
