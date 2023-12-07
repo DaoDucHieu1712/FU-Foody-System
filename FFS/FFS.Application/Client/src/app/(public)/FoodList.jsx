@@ -60,7 +60,7 @@ const FoodList = () => {
 			axios
 				.get(`/api/Food/ListAllFood`, {
 					params: {
-						CatId: selectedCategory,
+						CatName: selectedCategory,
 						Search: foodNameFilter,
 						PriceMin: minPrice,
 						PriceMax: maxPrice,
@@ -126,9 +126,9 @@ const FoodList = () => {
 						<Radio
 							key={category.id}
 							label={category.categoryName}
-							checked={selectedCategory == category.id}
+							checked={selectedCategory == category.categoryName}
 							onChange={handleFoodListByCategory}
-							value={category.id}
+							value={category.categoryName}
 						/>
 					))
 				) : (
