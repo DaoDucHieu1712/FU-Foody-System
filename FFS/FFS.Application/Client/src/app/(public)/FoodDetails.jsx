@@ -257,7 +257,7 @@ const FoodDetails = () => {
 											</div>
 											<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
 												<AddToWishlist foodId={food.id} />
-												<Tooltip content="Thêm giỏ hàng">
+												{/* <Tooltip content="Thêm giỏ hàng">
 													<IconButton
 														variant="text"
 														className="bg-white rounded-full"
@@ -286,7 +286,7 @@ const FoodDetails = () => {
 															/>
 														</svg>
 													</IconButton>
-												</Tooltip>
+												</Tooltip> */}
 												<Tooltip content="Xem chi tiết món ăn">
 													<IconButton
 														variant="text"

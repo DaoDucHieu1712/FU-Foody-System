@@ -4,7 +4,7 @@ namespace FFS.Application.DTOs.QueryParametter
 {
     public class AllFoodParameters : QueryStringParameters
     {
-        public int? CatId { get; set; }
+        public string? CatName { get; set; }
         //Search by food and category
         public string? Search { get; set; }
         public decimal? PriceMin { get; set; } = 0;
