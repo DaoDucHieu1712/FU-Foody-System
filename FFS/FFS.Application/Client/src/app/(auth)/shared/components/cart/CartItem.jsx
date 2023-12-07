@@ -5,6 +5,7 @@ import { cartActions } from "../../cartSlice";
 import axios from "../../../../../shared/api/axiosConfig";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import FormatPriceHelper from "../../../../../shared/components/format/FormatPriceHelper";
 
 const CartItem = ({ item }) => {
 	const dispatch = useDispatch();
@@ -52,7 +53,7 @@ const CartItem = ({ item }) => {
 					<img src={item.img} alt="" className="w-[70px]" />
 					<span>{item.foodName}</span>
 				</td>
-				<td className="p-4 border-b border-blue-gray-50">{item.price} đ</td>
+				<td className="p-4 border-b border-blue-gray-50">{FormatPriceHelper(item.price)} đ</td>
 				<td className="p-4 border-b border-blue-gray-50">
 					<div className="flex items-center justify-between border p-2">
 						<span
@@ -71,7 +72,7 @@ const CartItem = ({ item }) => {
 					</div>
 				</td>
 				<td className="p-4 border-b border-blue-gray-50">
-					{item.quantity * item.price} đ
+					{FormatPriceHelper(item.quantity * item.price)} đ
 				</td>
 			</tr>
 		</>
