@@ -20,6 +20,7 @@ import { comboActions } from "./shared/comboSlice";
 import CartItem from "./shared/components/cart/CartItem";
 import ComboItem from "./shared/components/cart/ComboItem";
 import LocationService from "./shared/location.service";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
@@ -56,7 +57,9 @@ const CartPage = () => {
 	const handleSelectLocation = async (location) => {
 		setPhone(location.phoneNumber);
 		setNote(location.description);
-		setLocation(location.address);
+		setLocation(
+			`${location.address}, ${location.wardName}, ${location.districtName}, ${location.provinceName}`
+		);
 		const items = cart.list.map(({ foodName, quantity }) => ({
 			name: foodName,
 			quantity: quantity,
@@ -192,12 +195,17 @@ const CartPage = () => {
 								<p className="font-medium text-lg text-gray-500">
 									Tổng đơn hàng
 								</p>
-								<span>{cart.totalPrice + comboSelector.totalPrice} đ</span>
+								<span>
+									{FormatPriceHelper(
+										cart.totalPrice + comboSelector.totalPrice
+									)}{" "}
+									đ
+								</span>
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>
 								{feeShip ? (
-									<span>{feeShip} đ</span>
+									<span>{FormatPriceHelper(feeShip)} đ</span>
 								) : (
 									<span>Chưa có thông tin</span>
 								)}
@@ -207,8 +215,12 @@ const CartPage = () => {
 							<p className="font-medium text-lg ">Tổng</p>
 							<span>
 								{feeShip
-									? cart.totalPrice + comboSelector.totalPrice + feeShip
-									: cart.totalPrice + comboSelector.totalPrice}
+									? FormatPriceHelper(
+											cart.totalPrice + comboSelector.totalPrice + feeShip
+									  )
+									: FormatPriceHelper(
+											cart.totalPrice + comboSelector.totalPrice
+									  )}
 								đ
 							</span>
 						</div>

@@ -13,6 +13,7 @@ import OrderStatus from "../(store)/components/order/OrderStatus";
 import OrderService from "../(store)/shared/order.service";
 import CookieService from "../../shared/helper/cookieConfig";
 import PaymentStatus from "../(store)/components/order/PaymentStatus";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const TABLE_HEAD = [
 	"Mã Đơn hàng",
@@ -180,7 +181,7 @@ const MyOrder = () => {
 											<OrderStatus status={item.orderStatus}></OrderStatus>
 										</td>
 										<td className={classes}>
-											<p>{item.totalPrice} $</p>
+											<p>{FormatPriceHelper(item.totalPrice)} $</p>
 											<p>{item.paymentMethod}</p>
 											<PaymentStatus status={item.paymentStatus} />
 										</td>

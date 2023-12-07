@@ -152,7 +152,7 @@ const StoreRegisterPage = () => {
 		data.allow = true;
 		data.avatar = data.avatarURL;
 		data.location = newLocation;
-		data.address = data.address + "-" + ward.WardName + "-Thạch Thất-Hà Nội";
+
 		AuthServices.storeRegister(data)
 			.then((res) => {
 				console.log(res);

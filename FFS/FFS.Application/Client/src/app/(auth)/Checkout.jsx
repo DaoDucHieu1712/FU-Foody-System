@@ -16,6 +16,7 @@ import CookieService from "../../shared/helper/cookieConfig";
 import CartService from "./shared/cart.service";
 import { cartActions } from "./shared/cartSlice";
 import { comboActions } from "./shared/comboSlice";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
@@ -188,7 +189,7 @@ const Checkout = () => {
 													<span>{item.foodName}</span>
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
-													{item.price} đ
+													{FormatPriceHelper(item.price)} đ
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
 													<div className="flex items-center justify-between border p-2">
@@ -197,7 +198,7 @@ const Checkout = () => {
 													</div>
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
-													{item.quantity * item.price} đ
+													{FormatPriceHelper(item.quantity * item.price)} đ
 												</td>
 											</tr>
 										))}
@@ -208,7 +209,7 @@ const Checkout = () => {
 													<span>{item.name}</span>
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
-													{item.price} đ
+													{FormatPriceHelper(item.price)} đ
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
 													<div className="flex items-center justify-between border p-2">
@@ -217,7 +218,7 @@ const Checkout = () => {
 													</div>
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
-													{item.quantity * item.price} đ
+													{FormatPriceHelper(item.quantity * item.price)} đ
 												</td>
 											</tr>
 										))}
@@ -257,12 +258,19 @@ const Checkout = () => {
 								<p className="font-medium text-lg text-gray-500">
 									Tổng đơn hàng
 								</p>
-								<span>{cart.totalPrice + comboSelector.totalPrice} đ</span>
+								<span>
+									{FormatPriceHelper(
+										cart.totalPrice + comboSelector.totalPrice
+									)}{" "}
+									đ
+								</span>
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>
 								{checkoutSelector.info.feeShip ? (
-									<span>{checkoutSelector.info.feeShip} đ</span>
+									<span>
+										{FormatPriceHelper(checkoutSelector.info.feeShip)} đ
+									</span>
 								) : (
 									<span>Chưa có thông tin</span>
 								)}
@@ -279,9 +287,11 @@ const Checkout = () => {
 						<div className="p-3 flex justify-between">
 							<p className="font-medium text-lg ">Tổng</p>
 							<span>
-								{cart.totalPrice +
-									comboSelector.totalPrice +
-									checkoutSelector.info.feeShip}{" "}
+								{FormatPriceHelper(
+									cart.totalPrice +
+										comboSelector.totalPrice +
+										checkoutSelector.info.feeShip
+								)}{" "}
 								đ
 							</span>
 						</div>
