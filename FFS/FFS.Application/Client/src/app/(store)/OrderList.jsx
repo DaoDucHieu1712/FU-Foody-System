@@ -205,12 +205,14 @@ const OrderList = () => {
 												<div className="flex flex-col gap-y-2">
 													<Link
 														to={`/shipper/details/${item.shipperId}`}
-														className="px-6 py-2 text-light-blue-500 font-medium rounded-lg cursor-pointer"
+														className="text-light-blue-500 font-medium rounded-lg cursor-pointer"
 													>
 														{item.shipperName}
 													</Link>
+													<p className="text center">
+														Phí ship : {item.shipFee}
+													</p>
 												</div>
-												
 											)}
 										</td>
 										<td className={classes}>

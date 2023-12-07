@@ -81,29 +81,29 @@ const FoodDetails = () => {
 		GetFoodByCategoryId();
 	}, [categoryId]);
 
-	const handleComment = () => {
-		const data = {
-			Content: commentTxt,
-			UserId: userId,
-			FoodId: id,
-		};
-		try {
-			axios
-				.post("/api/Food/CommentFood", data)
-				.then(() => {
-					setCommentTxt("");
-					setOpenComment(true);
-					GetFoodData();
-				})
-				.catch((error) => {
-					console.log(error);
-				});
-		} catch (error) {
-			console.error("Error occur: ", error);
-		}
+	// const handleComment = () => {
+	// 	const data = {
+	// 		Content: commentTxt,
+	// 		UserId: userId,
+	// 		FoodId: id,
+	// 	};
+	// 	try {
+	// 		axios
+	// 			.post("/api/Food/CommentFood", data)
+	// 			.then(() => {
+	// 				setCommentTxt("");
+	// 				setOpenComment(true);
+	// 				GetFoodData();
+	// 			})
+	// 			.catch((error) => {
+	// 				console.log(error);
+	// 			});
+	// 	} catch (error) {
+	// 		console.error("Error occur: ", error);
+	// 	}
 
-		console.log(commentTxt);
-	};
+	// 	console.log(commentTxt);
+	// };
 
 	return (
 		<>
@@ -155,8 +155,8 @@ const FoodDetails = () => {
 								</p>
 								<p className="flex gap-1 text-base">
 									Tình trạng:{" "}
-									{foodData.inventories[0] != null &&
-									foodData.inventories[0].quantity > 0 ? (
+									{foodData?.inventories[0] !== null &&
+									foodData?.inventories[0]?.quantity > 0 ? (
 										<p className="text-green-800 font-bold">còn hàng</p>
 									) : (
 										<p className="text-red-800 font-bold">hết hàng</p>
@@ -354,8 +354,10 @@ const FoodDetails = () => {
 
 					{/* COMMENT */}
 					<div>
-						<Typography variant="h4">Bình luận</Typography>
-						<Typography variant="small" className="pb-2">
+						<Typography variant="h4" className="mb-10">
+							Đánh giá
+						</Typography>
+						{/* <Typography variant="small" className="pb-2">
 							Mô tả bình luận
 						</Typography>
 						<Textarea
@@ -371,7 +373,7 @@ const FoodDetails = () => {
 							onClick={handleComment}
 						>
 							Bình luận
-						</Button>
+						</Button> */}
 						<div className="py-2">
 							{/* SUB COMMENT */}
 							{openComment ? (
@@ -379,7 +381,7 @@ const FoodDetails = () => {
 									{foodData.comments.map((comment) => (
 										<div
 											key={comment.commentDate}
-											className="flex justify-start gap-2 mb-4"
+											className="flex justify-start gap-2 mb-4 border-b pb-2"
 										>
 											<img
 												src={comment.user.avatar}
@@ -387,13 +389,24 @@ const FoodDetails = () => {
 												className="h-14 w-14 rounded-full object-cover"
 											></img>
 											<div>
-												<div className="flex gap-1">
-													<Typography variant="small" className="font-bold">
+												<div className="flex flex-col gap-1">
+													<div className="Rating">
+														<Rating value={comment.rate} readonly />
+													</div>
+													<Typography
+														variant="small"
+														className="font-bold flex gap-x-1"
+													>
 														{comment.user.userName}
+														<Typography variant="small">
+															- {moment(comment.commentDate).fromNow()}
+														</Typography>
 													</Typography>
-													<Typography variant="small">
-														- {moment(comment.commentDate).fromNow()}
-													</Typography>
+													{comment.imageURL && (
+														<div className="div">
+															<img src={comment.imageURL} alt="" />
+														</div>
+													)}
 												</div>
 												<Typography variant="paragraph">
 													{comment.content}

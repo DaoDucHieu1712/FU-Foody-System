@@ -89,6 +89,12 @@ const OrderDetail = () => {
 							</p>
 						</div>
 					</ul>
+					<ul className="info">
+						<div className="flex justify-between gap-y-2 flex-col border-b pb-3 border-gray-200">
+							<p className="font-bold text-lg">Phí ship :</p>
+							<p className="font-medium text-sm">{orderQuery.data?.shipFee}</p>
+						</div>
+					</ul>
 					<div className="mt-3 border-gray-700  text-black rounded-md">
 						<p>{orderQuery.data?.note}</p>
 					</div>

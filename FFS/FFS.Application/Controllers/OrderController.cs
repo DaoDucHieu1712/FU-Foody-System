@@ -243,6 +243,7 @@ namespace FFS.Application.Controllers
 						CreatedAt = x.Order.CreatedAt,
 						UpdatedAt = x.Order.UpdatedAt,
 						ShipDate = x.Order.ShipDate,
+						ShipFee = x.Order.ShipFee
 					})
 					.Select(x => new OrderResponseDTO
 					{
@@ -262,6 +263,7 @@ namespace FFS.Application.Controllers
 						PaymentStatus = x.Key!.PaymentStatus,
 						CreatedAt = x.Key.CreatedAt,
 						ShipDate = x.Key.ShipDate,
+						ShipFee = x.Key.ShipFee
 					});
 
 				if (orderFilterDTO.SortType != null)

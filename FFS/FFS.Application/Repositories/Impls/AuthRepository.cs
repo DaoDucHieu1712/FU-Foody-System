@@ -124,11 +124,11 @@ namespace FFS.Application.Repositories.Impls
 				{
 					FirstName = storeRegisterDTO.FirstName,
 					LastName = storeRegisterDTO.LastName,
-					Avatar = storeRegisterDTO.Avatar,
+					Avatar = storeRegisterDTO.AvatarURL,
 					Allow = storeRegisterDTO.Allow,
 					Gender = storeRegisterDTO.Gender,
 					BirthDay = storeRegisterDTO.BirthDay,
-					UserName = storeRegisterDTO.Email,
+					UserName = storeRegisterDTO.StoreName,
 					Email = storeRegisterDTO.Email,
 					Status = StatusUser.Pending,
 				};
