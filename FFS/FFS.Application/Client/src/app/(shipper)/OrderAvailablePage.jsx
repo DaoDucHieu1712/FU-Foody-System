@@ -19,6 +19,7 @@ const TABLE_HEAD = [
 	"Thời gian đặt",
 	"Note",
 	"Tổng tiền",
+	"Phí ship",
 	"",
 ];
 
@@ -181,6 +182,7 @@ const OrderAvailablePage = () => {
 											<p>{item.paymentMethod}</p>
 											<PaymentStatus status={item.paymentStatus} />
 										</td>
+										<td className={classes}>Phí ship : {item.shipFee}</td>
 										<td className={`${classes}`}>
 											<div className="flex gap-x-3 text-blue-500">
 												<Link to={`/shipper/order-available/${item.id}`}>
