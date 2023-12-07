@@ -258,12 +258,7 @@ const Checkout = () => {
 								<p className="font-medium text-lg text-gray-500">
 									Tổng đơn hàng
 								</p>
-								<span>
-									{FormatPriceHelper(
-										cart.totalPrice + comboSelector.totalPrice
-									)}{" "}
-									đ
-								</span>
+								<span>{FormatPriceHelper(cart.totalPrice + comboSelector.totalPrice)} đ</span>
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>
