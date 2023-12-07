@@ -156,7 +156,7 @@ namespace FFS.Application.Repositories.Impls
 					PhoneNumber = storeRegisterDTO.PhoneNumber,
 				};
 				LocationDTO locationDTO = storeRegisterDTO.location;
-				var newLocation = new Location
+				var newLocation = new Entities.Location
 				{
 					UserId = _newuser.Id,
 					Address = locationDTO.Address,
