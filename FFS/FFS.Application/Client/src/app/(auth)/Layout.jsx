@@ -1,6 +1,6 @@
 import { Suspense, useState } from "react";
 import { useSelector } from "react-redux";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import Cart from "../../shared/components/icon/Cart";
 import Heart from "../../shared/components/icon/Heart";
 import Logo from "../../shared/components/logo/Logo";
@@ -21,7 +21,7 @@ export function LazyLoadComponent({ children }) {
 const Layout = () => {
 	const accesstoken = useSelector((state) => state.auth.accessToken);
 	const navigate = useNavigate();
-	const [foodNameSearch, setFoodNameSearch] = useState('');
+	const [foodNameSearch, setFoodNameSearch] = useState("");
 
 	return (
 		<>
@@ -40,8 +40,8 @@ const Layout = () => {
 									value={foodNameSearch}
 									onChange={(e) => setFoodNameSearch(e.target.value)}
 									onKeyUp={(event) => {
-										if (event.key === 'Enter') {
-											navigate(`/food-list/${foodNameSearch}`)
+										if (event.key === "Enter") {
+											navigate(`/food-list/${foodNameSearch}`);
 										}
 									}}
 								/>
@@ -130,11 +130,19 @@ const Layout = () => {
 									Liên kết nhanh
 								</h2>
 								<ul className="text-gray-500 text-md">
-									<li>Tất cả Sản Phẩm</li>
-									<li>Giỏ Hàng</li>
+									<li>
+										<Link to="/food-list">Tất cả sản phẩm</Link>
+									</li>
+									<li>
+										<Link to="/cart">Giỏ hàng</Link>
+									</li>
 									<li>Sản Phẩm Yêu Thích</li>
-									<li>Đăng ký Bán Hàng</li>
-									<li>Đăng ký Giao Hàng</li>
+									<li>
+										<Link to="/register-store">Đăng ký bán hàng</Link>
+									</li>
+									<li>
+										<Link to="/register-shipper">Đăng ký giao hàng</Link>
+									</li>
 									<li>Về chúng tôi</li>
 								</ul>
 							</div>

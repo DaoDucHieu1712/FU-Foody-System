@@ -13,6 +13,7 @@ import OrderStatus from "../(store)/components/order/OrderStatus";
 import OrderService from "../(store)/shared/order.service";
 import CookieService from "../../shared/helper/cookieConfig";
 import PaymentStatus from "../(store)/components/order/PaymentStatus";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const TABLE_HEAD = [
 	"Mã Đơn hàng",
@@ -166,19 +167,21 @@ const MyOrder = () => {
 												<div className="flex flex-col gap-y-2">
 													<Link
 														to={`/shipper/details/${item.shipperId}`}
-														className="px-6 py-2 text-light-blue-500 font-medium rounded-lg cursor-pointer"
+														className=" text-light-blue-500 font-medium rounded-lg cursor-pointer"
 													>
 														{item.shipperName}
 													</Link>
+													<p className="text center">
+														Phí ship : {item.shipFee}
+													</p>
 												</div>
-												
 											)}
 										</td>
 										<td className={classes}>
 											<OrderStatus status={item.orderStatus}></OrderStatus>
 										</td>
 										<td className={classes}>
-											<p>{item.totalPrice} $</p>
+											<p>{FormatPriceHelper(item.totalPrice)} $</p>
 											<p>{item.paymentMethod}</p>
 											<PaymentStatus status={item.paymentStatus} />
 										</td>
@@ -190,12 +193,6 @@ const MyOrder = () => {
 												>
 													chi tiết đơn hàng
 												</Link>
-
-												{/* {item.shipperName && (
-													<ReviewStore email={email} idStore={or}></ReviewStore>
-											)} */}
-
-
 											</div>
 										</td>
 									</tr>

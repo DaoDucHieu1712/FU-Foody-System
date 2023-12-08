@@ -60,7 +60,6 @@ import ShipperApplication from "./app/(admin)/shared/components/ShipperApplicati
 
 import StoreEditPage from "./app/(store)/StoreEditPage";
 
-
 function App() {
 	return (
 		<>
@@ -78,10 +77,7 @@ function App() {
 					<Route path="/reset-password" element={<ResetPasswordPage />} />
 					<Route path="/food-details/:id" element={<FoodDetails />} />
 					<Route path="/cart" element={<CartPage />} />
-					<Route
-						path="/checkout/:location/:phoneNumber/:note/:fee"
-						element={<Checkout />}
-					/>
+					<Route path="/checkout" element={<Checkout />} />
 					<Route path="/payment" element={<PaymentPage />} />
 					<Route path="/store-profile/:id" element={<StoreProfilePage />} />
 					<Route path="/store/detail/:id" element={<StoreDetailPage />} />

@@ -16,13 +16,15 @@ import { useForm } from "react-hook-form";
 import ErrorText from "../../../shared/components/text/ErrorText";
 import { toast } from "react-toastify";
 import axios from "../../../shared/api/axiosConfig";
+import { useNavigate } from 'react-router-dom';
 
 const schema = yup.object({
 	reviewstore: yup.string().required("Hãy ghi phản hồi về cửa hàng của bạn!"),
 	reviewshipper: yup.string().required("Hãy ghi phản hồi về shipper của bạn!"),
 });
 
-const ReviewStore = ({ email, idStore, idShipper, storeName }) => {
+const ReviewStore = ({ userId, idStore, idShipper, storeName }) => {
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
@@ -31,10 +33,11 @@ const ReviewStore = ({ email, idStore, idShipper, storeName }) => {
 		resolver: yupResolver(schema),
 		mode: "onSubmit",
 	});
-
+	const isReviewedStored = localStorage.getItem(`storeReview_${idStore}`); // Check if the food has been reviewed
 	const [star, setStar] = useState(5);
 	const [open, setOpen] = useState(false);
 	const [openThank, setOpenThank] = useState(false);
+	const [isReviewed, setIsReviewed] = useState(!!isReviewedStored); // Initialize with the stored value
 	const handleOpen = () => setOpen((cur) => !cur);
 	const handleOpenThank = () => setOpenThank((cur) => !cur);
 
@@ -42,9 +45,9 @@ const ReviewStore = ({ email, idStore, idShipper, storeName }) => {
 		console.log(storeName);
 		try {
 			const newRating = {
-				email: email,
+				userId: userId,
 				storeId: idStore,
-				rate: star,  
+				rate: star,
 				content: data.reviewstore,
 				shipperId: idShipper,
 				noteForShipper: data.reviewshipper,
@@ -54,6 +57,8 @@ const ReviewStore = ({ email, idStore, idShipper, storeName }) => {
 				.then(() => {
 					setOpen(false);
 					setOpenThank(true);
+					setIsReviewed(true);
+					localStorage.setItem(`storeReview_${idStore}`, true); // Store the information in local storage
 				})
 				.catch((error) => {
 					toast.error("Đánh giá thất bại!");
@@ -66,10 +71,23 @@ const ReviewStore = ({ email, idStore, idShipper, storeName }) => {
 	return (
 		<div>
 			<Button
-				className="bg-primary cursor-pointer hover:bg-orange-700"
+				className={`bg-primary cursor-pointer hover:bg-orange-700 ${
+					isReviewed ? "hidden" : ""
+				}`}
 				onClick={handleOpen}
 			>
 				Đánh giá cửa hàng
+			</Button>
+			<Button
+				className={`bg-primary cursor-pointer hover:bg-orange-700 ${
+					!isReviewed ? "hidden" : ""
+				}`}
+				onClick={() => {
+                    // Redirect to the Review Page using React Router
+                    navigate(`/store/comment/${idStore}`); // Replace `idStore` with the appropriate variable
+                }}
+			>
+				Xem đánh giá cửa hàng
 			</Button>
 			<Dialog
 				size="md"
@@ -173,7 +191,7 @@ const ReviewStore = ({ email, idStore, idShipper, storeName }) => {
 };
 
 ReviewStore.propTypes = {
-	email: propTypes.any.isRequired,
+	userId: propTypes.any.isRequired,
 	idStore: propTypes.any.isRequired,
 	idShipper: propTypes.any.isRequired,
 	storeName: propTypes.any.isRequired,

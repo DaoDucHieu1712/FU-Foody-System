@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@material-tailwind/react";
 import OrderItem from "./components/order/OrderItem";
 import OrderStatus from "./components/order/OrderStatus";
+import { Link } from "react-router-dom";
 
 const OrderDetail = () => {
 	const { id } = useParams();
@@ -49,7 +50,13 @@ const OrderDetail = () => {
 					<div className="flex justify-between items-center border-b pb-3 border-gray-200">
 						<p className="font-bold text-lg">Nhân viên giao hàng :</p>
 						<p className="text-red-500  font-bold text-lg">
-							{orderQuery.data?.shipperName}
+							{/* {orderQuery.data?.shipperName} */}
+							<Link
+								to={`/shipper/details/${orderQuery.data?.shipperId}`}
+								className="px-6 py-2 text-blue-500 font-bold text-lg cursor-pointer"
+							>
+								{orderQuery.data?.shipperName}
+							</Link>
 						</p>
 					</div>
 					<div className="flex justify-between items-center border-b pb-3 border-gray-200">
@@ -80,6 +87,12 @@ const OrderDetail = () => {
 							<p className="font-medium text-sm">
 								{orderQuery.data?.phoneNumber}
 							</p>
+						</div>
+					</ul>
+					<ul className="info">
+						<div className="flex justify-between gap-y-2 flex-col border-b pb-3 border-gray-200">
+							<p className="font-bold text-lg">Phí ship :</p>
+							<p className="font-medium text-sm">{orderQuery.data?.shipFee}</p>
 						</div>
 					</ul>
 					<div className="mt-3 border-gray-700  text-black rounded-md">

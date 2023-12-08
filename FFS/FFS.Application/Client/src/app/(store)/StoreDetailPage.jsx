@@ -19,6 +19,7 @@ import { comboActions } from "../(auth)/shared/comboSlice";
 import FlashSaleByStore from "../(public)/FlashSaleByStore";
 import AddToWishlist from "../(public)/components/wishlist/AddToWishlist";
 import { useNavigate } from "react-router-dom";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const cookies = new Cookies();
 const uId = cookies.get("fu_foody_id");
@@ -335,7 +336,7 @@ const StoreDetailPage = () => {
 															variant="paragraph"
 															className="relative w-fit"
 														>
-															{item.price}
+															{FormatPriceHelper(item.price)}
 															<span className="absolute font-normal top-0 -right-2 text-xs">
 																đ
 															</span>

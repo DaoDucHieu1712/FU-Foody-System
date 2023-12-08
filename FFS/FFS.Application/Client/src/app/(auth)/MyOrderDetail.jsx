@@ -39,7 +39,7 @@ const MyOrderDetail = () => {
 			location.reload();
 		});
 	};
-	const email = CookieService.getToken("fu_foody_email");
+	const userId = CookieService.getToken("fu_foody_id");
 	const role = CookieService.getToken("fu_foody_role");
 
 	return (
@@ -64,7 +64,7 @@ const MyOrderDetail = () => {
 					</>
 					{role !== "StoreOwner" && orderQuery.data?.orderStatus === 3 ? (
 						<ReviewStore
-							email={email}
+							userId={userId}
 							idStore={orderQuery.data?.orderDetails[0].storeId}
 							idShipper={orderQuery.data?.shipperId}
 							storeName={orderQuery.data?.orderDetails[0].storeName}
@@ -123,6 +123,12 @@ const MyOrderDetail = () => {
 							<p className="font-medium text-sm">
 								{orderQuery.data?.phoneNumber}
 							</p>
+						</div>
+					</ul>
+					<ul className="info">
+						<div className="flex justify-between gap-y-2 flex-col border-b pb-3 border-gray-200">
+							<p className="font-bold text-lg">Phí ship :</p>
+							<p className="font-medium text-sm">{orderQuery.data?.shipFee}</p>
 						</div>
 					</ul>
 					<div className="mt-3 border-gray-700  text-black rounded-md">

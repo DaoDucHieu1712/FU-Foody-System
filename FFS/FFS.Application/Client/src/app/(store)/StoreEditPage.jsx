@@ -20,6 +20,7 @@ import axios from "../../shared/api/axiosConfig";
 import { useSelector } from "react-redux";
 import Loading from "../../shared/components/Loading";
 import UpdateImage from "../../shared/components/form/UpdateImage";
+import Cookies from "universal-cookie";
 
 const schema = yup.object({
 	storeName: yup
@@ -32,6 +33,8 @@ const schema = yup.object({
 	timeStart: yup.date().required("Hãy chọn thời gian mở cửa !"),
 	timeEnd: yup.date().required("Hãy chọn thời gian đóng cửa !"),
 });
+
+const cookie = new Cookies();
 
 const StoreEditPage = () => {
 	const user = useSelector((state) => state.auth.userProfile);
@@ -130,7 +133,7 @@ const StoreEditPage = () => {
 			phoneNumber: data.phoneNumber,
 		};
 		console.log(data);
-		data.avatar = data.avatarURL;
+		data.UserId = cookie.get("fu_foody_id");
 		data.location = newLocation;
 		AuthServices.storeUpdate(storeInfor.store.id, data)
 			.then((res) => {

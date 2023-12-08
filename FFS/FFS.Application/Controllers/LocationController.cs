@@ -102,7 +102,7 @@ namespace FFS.Application.Controllers
 				var store = await _storeRepository.FindSingle(x => x.Id == storeId);
 				if(store != null)
 				{
-					var location = await _locaRepo.FindSingle(x => x.UserId == store.UserId);
+					var location = await _locaRepo.FindSingle(x => x.UserId == store.UserId, null);
 					if(location == null)
 					{
 						return NotFound();
