@@ -3,6 +3,7 @@ import FoodCart from "./FoodCart";
 import propTypes from "prop-types";
 import AddToWishlist from "../wishlist/AddToWishlist";
 import { useNavigate } from "react-router-dom";
+import FormatPriceHelper from "../../../../shared/components/format/FormatPriceHelper";
 
 const FoodCard = ({ item }) => {
 	const navigate = useNavigate();
@@ -46,7 +47,7 @@ const FoodCard = ({ item }) => {
 						color="blue"
 						className="pb-2 relative w-fit pointer-events-none"
 					>
-						{item.price}
+						{FormatPriceHelper(item.price)}
 						<span className="absolute font-normal top-0 -right-2 text-xs">
 							đ
 						</span>

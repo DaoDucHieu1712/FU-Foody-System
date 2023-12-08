@@ -88,6 +88,7 @@ namespace FFS.Application.Controllers {
 		}
 
 
+
 		[Authorize]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetStoreInformation(int id)
