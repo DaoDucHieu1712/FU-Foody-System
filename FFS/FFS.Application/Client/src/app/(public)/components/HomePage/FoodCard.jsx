@@ -3,6 +3,7 @@ import FoodCart from "./FoodCart";
 import propTypes from "prop-types";
 import AddToWishlist from "../wishlist/AddToWishlist";
 import { useNavigate } from "react-router-dom";
+import FormatPriceHelper from "../../../../shared/components/format/FormatPriceHelper";
 
 const FoodCard = ({ item }) => {
 	const navigate = useNavigate();
@@ -18,9 +19,8 @@ const FoodCard = ({ item }) => {
 					<div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
 						<Typography className="text-white font-semibold">HOT</Typography>
 					</div>
-					<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
+					<div className="absolute hidden h-full w-full justify-center gap-x-3 items-center group-hover:flex">
 						<AddToWishlist foodId={item.id} />
-						<FoodCart></FoodCart>
 						<Tooltip content="Xem chi tiết món ăn">
 							<IconButton
 								variant="text"
@@ -47,7 +47,7 @@ const FoodCard = ({ item }) => {
 						color="blue"
 						className="pb-2 relative w-fit pointer-events-none"
 					>
-						{item.price}
+						{FormatPriceHelper(item.price)}
 						<span className="absolute font-normal top-0 -right-2 text-xs">
 							đ
 						</span>

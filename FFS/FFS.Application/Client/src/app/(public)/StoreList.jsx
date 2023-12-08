@@ -98,9 +98,9 @@ const StoreList = () => {
             <Radio
               key={category.id}
               label={category.categoryName}
-              checked={selectedCategory == category.id}
+              checked={selectedCategory == category.categoryName}
               onChange={handleFoodListByCategory}
-              value={category.id}
+              value={category.categoryName}
             />
           ))
         ) : (

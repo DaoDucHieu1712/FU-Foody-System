@@ -59,7 +59,7 @@ const BestSellerHome = () => {
 									</Typography>
 								</div>
 							) : null}
-							<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
+							<div className="absolute hidden h-full w-full justify-center gap-x-3 items-center group-hover:flex">
 								<AddToWishlist foodId={bestSellerItem.id} />
 								<Tooltip content="Xem chi tiết món ăn">
 									<IconButton
@@ -85,7 +85,8 @@ const BestSellerHome = () => {
 							<Typography variant="h6" className="pointer-events-none">
 								{bestSellerItem.foodName}
 							</Typography>
-							{bestSellerItem.priceAfterSale <= 0 && bestSellerItem.salePercent <= 0 ? (
+							{bestSellerItem.priceAfterSale <= 0 &&
+							bestSellerItem.salePercent <= 0 ? (
 								<>
 									<Typography
 										color="blue"
@@ -135,7 +136,11 @@ const BestSellerHome = () => {
 										color="blue"
 										className="relative w-fit pointer-events-none"
 									>
-										{FormatPriceHelper(bestSellerItem.price - bestSellerItem.price * bestSellerItem.salePercent / 100)}
+										{FormatPriceHelper(
+											bestSellerItem.price -
+												(bestSellerItem.price * bestSellerItem.salePercent) /
+													100
+										)}
 										<span className="absolute font-normal top-0 -right-2 text-xs">
 											đ
 										</span>

@@ -28,18 +28,20 @@ namespace FFS.Application.Controllers
         private readonly IWishlistRepository _wishlistRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
+		private readonly IInventoryRepository _inventoryRepository;
 
-        public FoodController(IFoodRepository foodRepo, IComboRepository comboRepository, ICommentRepository commentRepository, IWishlistRepository wishlistRepository, IOrderRepository orderRepository, IMapper mapper)
-        {
-            _foodRepo = foodRepo;
-            _comboRepository = comboRepository;
-            _commentRepository = commentRepository;
-            _wishlistRepository = wishlistRepository;
-            _orderRepository = orderRepository;
-            _mapper = mapper;
-        }
+        public FoodController(IFoodRepository foodRepo, IComboRepository comboRepository, ICommentRepository commentRepository, IWishlistRepository wishlistRepository, IOrderRepository orderRepository, IMapper mapper, IInventoryRepository inventoryRepository)
+		{
+			_foodRepo = foodRepo;
+			_comboRepository = comboRepository;
+			_commentRepository = commentRepository;
+			_wishlistRepository = wishlistRepository;
+			_orderRepository = orderRepository;
+			_mapper = mapper;
+			_inventoryRepository = inventoryRepository;
+		}
 
-        [HttpPost]
+		[HttpPost]
         public IActionResult ListFood([FromBody] FoodParameters foodParameters)
         {
             try
@@ -66,12 +68,12 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var food = _foodRepo.GetFoodById(id);
+                var food = await _foodRepo.GetFoodById(id);
                 if (food == null)
                 {
                     return NotFound();
                 }
-                return Ok(new { data = food });
+                return Ok(food);
             }
             catch (Exception ex)
             {
@@ -98,17 +100,27 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var newFood = new Food
-                {
-                    CategoryId = (int)foodDTO.CategoryId,
-                    StoreId = (int)foodDTO.StoreId,
-                    FoodName = foodDTO.FoodName,
-                    ImageURL = foodDTO.ImageURL,
-                    Description = foodDTO.Description,
-                    Price = (decimal)foodDTO.Price
-                };
-                _foodRepo.Add(newFood);
-                return Ok(newFood);
+				var newFood = new Food
+				{
+					CategoryId = (int)foodDTO.CategoryId,
+					StoreId = (int)foodDTO.StoreId,
+					FoodName = foodDTO.FoodName,
+					ImageURL = foodDTO.ImageURL,
+					Description = foodDTO.Description,
+					Price = (decimal)foodDTO.Price
+				};
+				await _foodRepo.Add(newFood);
+
+				Inventory inventory = new Inventory()
+				{
+					FoodId = newFood.Id,
+					quantity = 1,
+					StoreId = (int)foodDTO.StoreId,
+				};
+
+				await _inventoryRepository.Add(inventory);
+
+				return Ok(newFood);
             }
             catch (Exception ex)
             {
@@ -362,7 +374,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
-				var homeFood = await _foodRepo.FindAll().OrderBy(x => Guid.NewGuid()).Take(10).ToListAsync();
+				var homeFood = await _foodRepo.FindAll(x=>x.IsDelete==false).OrderBy(x => Guid.NewGuid()).Take(10).ToListAsync();
 				return Ok(_mapper.Map<List<AllFoodDTO>>(homeFood));
 			}
 			catch (Exception ex)
@@ -371,5 +383,19 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-    }
+		[HttpPost]
+		public async Task<IActionResult> CommentFood(Comment comment)
+		{
+			try
+			{
+				await _commentRepository.Add(comment);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+	}
 }

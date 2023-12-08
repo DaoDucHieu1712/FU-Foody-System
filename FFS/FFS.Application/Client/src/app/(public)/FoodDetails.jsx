@@ -12,16 +12,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../shared/api/axiosConfig";
 import AddToWishlist from "./components/wishlist/AddToWishlist";
 import WishlistDetails from "./components/wishlist/WishlistDetails";
+import moment from "moment";
+import CookieService from "../../shared/helper/cookieConfig";
+import { useDispatch } from "react-redux";
+import { cartActions } from "../(auth)/shared/cartSlice";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const FoodDetails = () => {
+	const userId = CookieService.getToken("fu_foody_id");
 	const { id } = useParams();
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [value, setValue] = useState(0);
 	const [foodData, setFoodData] = useState(null);
 	const [foodList, setFoodList] = useState([]);
 	const [categoryId, setCategoryId] = useState(0);
-	const [openComment, setOpenComment] = useState(false);
-
+	const [openComment, setOpenComment] = useState(true);
+	const [commentTxt, setCommentTxt] = useState("");
 	const increaseValue = () => {
 		setValue(value + 1);
 	};
@@ -36,13 +43,36 @@ const FoodDetails = () => {
 		setOpenComment((cur) => !cur);
 	};
 
+	// const handleComment = () => {
+	// 	const data = {
+	// 		Content: commentTxt,
+	// 		UserId: userId,
+	// 		FoodId: id,
+	// 	};
+	// 	try {
+	// 		axios
+	// 			.post("/api/Food/CommentFood", data)
+	// 			.then(() => {
+	// 				setCommentTxt("");
+	// 				setOpenComment(true);
+	// 				GetFoodData();
+	// 			})
+	// 			.catch((error) => {
+	// 				console.log(error);
+	// 			});
+	// 	} catch (error) {
+	// 		console.error("Error occur: ", error);
+	// 	}
+	// 	console.log(commentTxt);
+	// };
+
 	const GetFoodData = async () => {
 		try {
 			await axios
 				.get(`/api/Food/GetFoodById/${id}`)
 				.then((response) => {
-					setFoodData(response.data.result);
-					setCategoryId(response.data.result.categoryId);
+					setFoodData(response);
+					GetFoodByCategoryId(response.categoryId);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -52,28 +82,26 @@ const FoodDetails = () => {
 		}
 	};
 
-	const GetFoodByCategoryId = async () => {
-		try {
-			await axios
-				.get(`/api/Food/GetFoodByCategoryid/${categoryId}`)
-				.then((response) => {
-					setFoodList(response);
-				})
-				.catch((error) => {
-					console.log(error);
-				});
-		} catch (error) {
-			console.error("An error occurred food detail!", error);
+	const GetFoodByCategoryId = async (id) => {
+		if (id != 0) {
+			try {
+				await axios
+					.get(`/api/Food/GetFoodByCategoryid/${id}`)
+					.then((response) => {
+						setFoodList(response);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			} catch (error) {
+				console.error("An error occurred food detail!", error);
+			}
 		}
 	};
 
 	useEffect(() => {
 		GetFoodData();
 	}, [id]);
-
-	useEffect(() => {
-		GetFoodByCategoryId();
-	}, [categoryId]);
 
 	return (
 		<>
@@ -125,8 +153,8 @@ const FoodDetails = () => {
 								</p>
 								<p className="flex gap-1 text-base">
 									Tình trạng:{" "}
-									{foodData.inventories[0] != null &&
-									foodData.inventories[0].quantity > 0 ? (
+									{foodData?.inventories[0] !== null &&
+									foodData?.inventories[0]?.quantity > 0 ? (
 										<p className="text-green-800 font-bold">còn hàng</p>
 									) : (
 										<p className="text-red-800 font-bold">hết hàng</p>
@@ -151,9 +179,21 @@ const FoodDetails = () => {
 											/>
 										</svg>
 									</span>
-									<span className="text-blue-500">
-										{foodData.price}.000 VND
-									</span>
+									{/* <span className="text-blue-500">
+										{FormatPriceHelper(foodData.price)}
+										<span className="absolute font-normal top-0 -right-2 text-xs">
+													đ
+												</span>
+									</span> */}
+									<Typography
+												color="blue"
+												className="relative font-bold w-fit pointer-events-none"
+											>
+												{FormatPriceHelper(foodData.price)}
+												<span className="absolute font-normal top-0 -right-2 text-xs">
+													đ
+												</span>
+											</Typography>
 								</p>
 
 								<hr></hr>
@@ -183,9 +223,19 @@ const FoodDetails = () => {
 
 									<div className="">
 										<button
-											type="submit"
 											className="flex items-center space-x-2  text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-sm text-sm w-full px-5 py-2.5 text-center"
 											disabled={foodData.inventories[0].quantity <= 0}
+											onClick={() =>
+												dispatch(
+													cartActions.addToCart({
+														foodId: foodData.id,
+														foodName: foodData.foodName,
+														quantity: 1,
+														price: foodData.price,
+														img: foodData.imageURL,
+													})
+												)
+											}
 										>
 											THÊM VÀO GIỎ HÀNG
 											<svg
@@ -220,8 +270,8 @@ const FoodDetails = () => {
 					<div className="py-2">
 						<Typography variant="h4">Đồ ăn liên quan</Typography>
 						<div className="grid py-3 grid-flow-row-dense grid-cols-3 xl:grid-cols-6">
-							{foodList ? (
-								foodList.splice(0, 6).map((food, index) => (
+						{foodList && foodList.filter(food => food.id !== foodData.id).length > 0 ? (
+								foodList.filter(food => food.id !== foodData.id).splice(0, 6).map((food, index) => (
 									<div key={index} className="px-1 pt-1 border-solid border-2">
 										<div className="group relative flex lg:flex-none">
 											<img
@@ -236,7 +286,7 @@ const FoodDetails = () => {
 											</div>
 											<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
 												<AddToWishlist foodId={food.id} />
-												<Tooltip content="Thêm giỏ hàng">
+												{/* <Tooltip content="Thêm giỏ hàng">
 													<IconButton
 														variant="text"
 														className="bg-white rounded-full"
@@ -265,7 +315,7 @@ const FoodDetails = () => {
 															/>
 														</svg>
 													</IconButton>
-												</Tooltip>
+												</Tooltip> */}
 												<Tooltip content="Xem chi tiết món ăn">
 													<IconButton
 														variant="text"
@@ -295,7 +345,7 @@ const FoodDetails = () => {
 												color="blue"
 												className="relative w-fit pointer-events-none"
 											>
-												{food.price}
+												{FormatPriceHelper(food.price)}
 												<span className="absolute font-normal top-0 -right-2 text-xs">
 													đ
 												</span>
@@ -314,103 +364,76 @@ const FoodDetails = () => {
 
 					{/* COMMENT */}
 					<div>
-						<Typography variant="h4">Bình luận</Typography>
-						<form className="py-2" onSubmit={null}>
-							<Typography variant="small" className="pb-2">
-								Mô tả bình luận
-							</Typography>
-							<Textarea
-								className="shadow appearance-none border rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-								size="md"
-								label="Bạn nghĩ gì về món ăn này..."
-							></Textarea>
-							<Button type="submit" className="w-fit bg-primary">
-								Bình luận
-							</Button>
-						</form>
+						{/* <Typography variant="h4" className="mb-10">
+							Đánh giá
+						</Typography>
+						<Typography variant="small" className="pb-2">
+							Mô tả bình luận
+						</Typography>
+						<Textarea
+							className="shadow appearance-none border rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							size="md"
+							label="Bạn nghĩ gì về món ăn này..."
+							value={commentTxt}
+							onChange={(e) => setCommentTxt(e.target.value)}
+						></Textarea>
+						<Button
+							type="submit"
+							className="w-fit bg-primary"
+							onClick={handleComment}
+						>
+							Bình luận
+						</Button> */}
 						<div className="py-2">
-							<div className="flex justify-start gap-2">
-								<img
-									src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
-									alt="image 1"
-									className="h-14 w-14 rounded-full object-cover"
-								></img>
-								<div>
-									<div className="flex gap-1">
-										<Typography variant="small" className="font-bold">
-											Tung NT
-										</Typography>
-										<Typography variant="small">- 30 Oct, 2023</Typography>
-									</div>
-									<Typography variant="paragraph">
-										Cho bố cái địa chỉ
-									</Typography>
-									<div className="flex gap-2">
-										<Typography
-											variant="small"
-											className="cursor-pointer hover:text-orange-900"
-										>
-											<i className="fal fa-heart pr-1"></i>Thích
-										</Typography>
-										{openComment ? (
-											<Typography
-												variant="small"
-												className="cursor-pointer hover:text-orange-900"
-												onClick={() => handleopenComent()}
-											>
-												<i className="fal fa-angle-double-up p-1"></i>Ẩn bình
-												luận
-											</Typography>
-										) : (
-											<Typography
-												variant="small"
-												className="cursor-pointer hover:text-orange-900"
-												onClick={() => handleopenComent()}
-											>
-												<i className="fal fa-angle-double-down p-1"></i>Xem bình
-												luận
-											</Typography>
-										)}
-									</div>
-								</div>
-							</div>
 							{/* SUB COMMENT */}
 							{openComment ? (
-								<div className="ml-10 border-[1px] p-3">
-									<div className="flex justify-start gap-2">
-										<img
-											src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
-											alt="image 1"
-											className="h-14 w-14 rounded-full object-cover"
-										></img>
-										<div>
-											<div className="flex gap-1">
-												<Typography variant="small" className="font-bold">
-													Tung NT
+								<div className="ml-10 mt-1">
+									{foodData.comments.map((comment) => (
+										<div
+											key={comment.commentDate}
+											className="flex justify-start gap-2 mb-4 border-b pb-2"
+										>
+											<img
+												src={comment.user.avatar}
+												alt="image 1"
+												className="h-14 w-14 rounded-full object-cover"
+											></img>
+											<div>
+												<div className="flex flex-col gap-1">
+													<div className="Rating">
+														<Rating value={comment.rate} readonly />
+													</div>
+													<Typography
+														variant="small"
+														className="font-bold flex gap-x-1"
+													>
+														{comment.user.userName}
+														<Typography variant="small">
+															- {moment(comment.commentDate).fromNow()}
+														</Typography>
+													</Typography>
+													{comment.imageURL && (
+														<div className="div">
+															<img src={comment.imageURL} alt="" />
+														</div>
+													)}
+												</div>
+												<Typography variant="paragraph">
+													{comment.content}
 												</Typography>
-												<Typography variant="small">- 30 Oct, 2023</Typography>
-											</div>
-											<Typography variant="paragraph">
-												Cho bố cái địa chỉ
-											</Typography>
-											<div className="flex gap-2">
-												<Typography
-													variant="small"
-													className="cursor-pointer hover:text-orange-900"
-												>
-													<i className="fal fa-heart pr-1"></i>Thích
-												</Typography>
-												<Typography
-													variant="small"
-													className="cursor-pointer hover:text-orange-900"
-												>
-													<i className="fal fa-angle-double-right fa-rotate-90 p-1"></i>
-													Xem bình luận
-												</Typography>
+												<div className="flex gap-2">
+													<Typography
+														variant="small"
+														className="cursor-pointer hover:text-orange-900"
+													></Typography>
+													<Typography
+														variant="small"
+														className="cursor-pointer hover:text-orange-900"
+													></Typography>
+												</div>
 											</div>
 										</div>
-									</div>
-									<hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+									))}
 								</div>
 							) : null}
 							{/* END SUB COMMENT */}

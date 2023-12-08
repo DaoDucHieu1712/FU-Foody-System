@@ -7,15 +7,16 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { cartActions } from "./shared/cartSlice";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axiosConfig from "../../shared/api/axiosConfig";
-import CartService from "./shared/cart.service";
 import Cookies from "universal-cookie";
-import CookieService from "../../shared/helper/cookieConfig";
 import OrderService from "../(store)/shared/order.service";
+import axiosConfig from "../../shared/api/axiosConfig";
+import CookieService from "../../shared/helper/cookieConfig";
+import CartService from "./shared/cart.service";
+import { cartActions } from "./shared/cartSlice";
 import { comboActions } from "./shared/comboSlice";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const TABLE_HEAD = ["SẢN PHẨM", "ĐƠN GIÁ", "SỐ LƯỢNG", "THÀNH TIỀN"];
 
@@ -24,28 +25,28 @@ var cookies = new Cookies();
 const Checkout = () => {
 	const cart = useSelector((state) => state.cart);
 	const comboSelector = useSelector((state) => state.combo);
-	const { location, phoneNumber, note, fee } = useParams();
+	const checkoutSelector = useSelector((state) => state.checkout);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [selectedType, setSelectedType] = useState("Thanh toán khi nhận hàng");
 	const [code, setCode] = useState("");
 	const [discount, setDiscount] = useState();
-
 	const [totalPrice, setTotalPrice] = useState(
-		cart.totalPrice + comboSelector.totalPrice
+		cart.totalPrice + comboSelector.totalPrice + checkoutSelector.info.feeShip
 	);
 
 	useEffect(() => {
 		dispatch(cartActions.getCartTotal());
+		dispatch(comboActions.getCartTotal());
 		var items = cart.list.map((item) => {
 			return Number(item.storeId);
 		});
 		console.log(items);
-		// if (cart.list.length === 0) {
-		// 	toast.error("Giỏ hàng trống nên không thể thanh toán");
-		// 	window.location.href = "/";
-		// }
-	}, [cart, comboSelector]);
+		if (cart.list.length === 0) {
+			toast.error("Giỏ hàng trống nên không thể thanh toán");
+			window.location.href = "/";
+		}
+	}, [cart, comboSelector, checkoutSelector]);
 
 	const useDiscountHandler = async () => {
 		console.log("use discount");
@@ -94,11 +95,14 @@ const Checkout = () => {
 
 		await OrderService.Order({
 			customerId: cookies.get("fu_foody_id"),
-			location: location,
-			phoneNumber: phoneNumber,
-			note: note,
-			totalPrice: totalPrice,
-			shipFee: 20000,
+			location: checkoutSelector.info.location,
+			phoneNumber: checkoutSelector.info.phone,
+			note: checkoutSelector.info.note,
+			totalPrice:
+				cart.totalPrice +
+				comboSelector.totalPrice +
+				checkoutSelector.info.feeShip,
+			shipFee: checkoutSelector.info.feeShip,
 			orderStatus: 1,
 			orderdetails: [...combos, ...foods],
 		}).then((res) => {
@@ -185,7 +189,7 @@ const Checkout = () => {
 													<span>{item.foodName}</span>
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
-													{item.price} đ
+													{FormatPriceHelper(item.price)} đ
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
 													<div className="flex items-center justify-between border p-2">
@@ -194,7 +198,7 @@ const Checkout = () => {
 													</div>
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
-													{item.quantity * item.price} đ
+													{FormatPriceHelper(item.quantity * item.price)} đ
 												</td>
 											</tr>
 										))}
@@ -205,7 +209,7 @@ const Checkout = () => {
 													<span>{item.name}</span>
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
-													{item.price} đ
+													{FormatPriceHelper(item.price)} đ
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
 													<div className="flex items-center justify-between border p-2">
@@ -214,7 +218,7 @@ const Checkout = () => {
 													</div>
 												</td>
 												<td className="p-4 border-b border-blue-gray-50">
-													{item.quantity * item.price} đ
+													{FormatPriceHelper(item.quantity * item.price)} đ
 												</td>
 											</tr>
 										))}
@@ -235,13 +239,13 @@ const Checkout = () => {
 						</div>
 						<div className="p-3 flex flex-col gap-y-3">
 							<p>
-								<span>Địa chỉ :</span> {location}
+								<span>Địa chỉ :</span> {checkoutSelector.info.location}
 							</p>
 							<p>
-								<span>phone :</span> {phoneNumber}
+								<span>phone :</span> {checkoutSelector.info.phone}
 							</p>
 							<p>
-								<span>note :</span> {note}
+								<span>note :</span> {checkoutSelector.info.note}
 							</p>
 						</div>
 					</div>
@@ -254,12 +258,14 @@ const Checkout = () => {
 								<p className="font-medium text-lg text-gray-500">
 									Tổng đơn hàng
 								</p>
-								<span>{totalPrice} đ</span>
+								<span>{FormatPriceHelper(cart.totalPrice + comboSelector.totalPrice)} đ</span>
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>
-								{fee === undefined ? (
-									<span>{fee}</span>
+								{checkoutSelector.info.feeShip ? (
+									<span>
+										{FormatPriceHelper(checkoutSelector.info.feeShip)} đ
+									</span>
 								) : (
 									<span>Chưa có thông tin</span>
 								)}
@@ -275,7 +281,14 @@ const Checkout = () => {
 						</div>
 						<div className="p-3 flex justify-between">
 							<p className="font-medium text-lg ">Tổng</p>
-							<span>{totalPrice} đ</span>
+							<span>
+								{FormatPriceHelper(
+									cart.totalPrice +
+										comboSelector.totalPrice +
+										checkoutSelector.info.feeShip
+								)}{" "}
+								đ
+							</span>
 						</div>
 						<div className="p-3 w-full">
 							<div>
