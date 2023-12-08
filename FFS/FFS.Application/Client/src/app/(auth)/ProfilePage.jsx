@@ -32,6 +32,7 @@ const ProfilePage = () => {
 	const onSubmit = async (data) => {
 		try {
 			const updatedUserData = {
+				...user,
 				avatar: data.avatar ? data.avatar : user.avatar,
 				firstName: data.firstName,
 				lastName: data.lastName,
@@ -39,7 +40,7 @@ const ProfilePage = () => {
 				allow: true,
 				birthDay: data.birthDay,
 			};
-
+			console.log("updated",updatedUserData);
 			const response = await axios.put(
 				`/api/Authenticate/Profile?email=${user.email}`,
 				updatedUserData

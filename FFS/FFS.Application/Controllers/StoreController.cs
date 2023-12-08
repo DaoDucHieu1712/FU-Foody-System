@@ -87,7 +87,7 @@ namespace FFS.Application.Controllers {
 			}
 		}
 
-<
+
 
 		[Authorize]
 		[HttpGet("{id}")]

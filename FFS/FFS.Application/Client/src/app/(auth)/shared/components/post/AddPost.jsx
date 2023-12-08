@@ -20,7 +20,7 @@ import Editor from "./Editor";
 
 const schema = yup.object({
 	title: yup.string().required("Hãy viết tiêu đề của bạn!"),
-	// content: yup.string().required("Hãy viết nội dung của bạn!"),
+	content: yup.string().required("Hãy viết nội dung của bạn!"),
 	image: yup.string().required("Hãy thêm ảnh!"),
 });
 
@@ -41,6 +41,7 @@ const AddPost = ({ reloadPost }) => {
 
 	const handleEditorChange = (content) => {
 		setEditorContent(content);
+		setValue("content", content, { shouldValidate: true });
 	};
 	const onSubmit = async (data) => {
 		try {
@@ -115,6 +116,9 @@ const AddPost = ({ reloadPost }) => {
 							<ErrorText text={errors.content.message}></ErrorText>
 						)}
 						<UploadImage name="image" onChange={setValue}></UploadImage>
+						{errors.image && (
+									<ErrorText text={errors.image.message} />
+								)}
 					</DialogBody>
 					<DialogFooter className="space-x-2">
 						<Button variant="text" color="deep-orange" onClick={handleOpen}>
