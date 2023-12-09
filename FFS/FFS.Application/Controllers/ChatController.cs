@@ -32,6 +32,9 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+
+
+
 				var boxs = await _chatRepository
 					.FindAll(x => x.ToUserId == UserId || x.FromUserId == UserId,
 					x => x.ToUser,

@@ -123,6 +123,7 @@ public class DiscountControllerTests
         Assert.Equal(200, okObjectResult.StatusCode);
     }
 
+
     /**
     * Method: ListDiscoutByStore()
     * Scenario: Input DiscountParameters: invalid
@@ -160,6 +161,7 @@ public class DiscountControllerTests
     * Scenario: Input DiscountDTO: valid
     * Expected behavior: Returns OkObjectResult
     */
+
     [Fact]
     public async Task CreateDiscount_ValidDiscount_ReturnsOkResult()
     {
