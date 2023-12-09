@@ -71,7 +71,7 @@ const ReviewFood = ({ idUser, idFood }) => {
                 className={`bg-primary cursor-pointer hover:bg-orange-700 ${!isReviewed ? 'hidden' : ''}`}
                 onClick={() => {
                     // Redirect to the Review Page using React Router
-                    // navigate(`/store/comment/${idStore}`); // Replace `idStore` with the appropriate variable
+                     navigate(`/food-details/${idFood}`); // Replace `idStore` with the appropriate variable
                 }}
             >
                 Xem đánh giá
