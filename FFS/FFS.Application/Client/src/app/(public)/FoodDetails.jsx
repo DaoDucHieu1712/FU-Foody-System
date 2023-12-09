@@ -397,52 +397,56 @@ const FoodDetails = () => {
 							{/* SUB COMMENT */}
 							{openComment ? (
 								<div className="ml-10 mt-1">
-									{foodData.comments.map((comment) => (
-										<div
-											key={comment.commentDate}
-											className="flex justify-start gap-2 mb-4 border-b pb-2"
-										>
-											<img
-												src={comment.user.avatar}
-												alt="image 1"
-												className="h-14 w-14 rounded-full object-cover"
-											></img>
-											<div>
-												<div className="flex flex-col gap-1">
-													<div className="Rating">
-														<Rating value={comment.rate} readonly />
-													</div>
-													<Typography
-														variant="small"
-														className="font-bold flex gap-x-1"
-													>
-														{comment.user.userName}
-														<Typography variant="small">
-															- {moment(comment.commentDate).fromNow()}
-														</Typography>
-													</Typography>
-													{comment.imageURL && (
-														<div className="div">
-															<img src={comment.imageURL} alt="" />
+									{foodData.comments && foodData.comments.length > 0 ? (
+										foodData.comments.map((comment) => (
+											<div
+												key={comment.commentDate}
+												className="flex justify-start gap-2 mb-4 border-b pb-2"
+											>
+												<img
+													src={comment.user.avatar}
+													alt="image 1"
+													className="h-14 w-14 rounded-full object-cover"
+												></img>
+												<div>
+													<div className="flex flex-col gap-1">
+														<div className="Rating">
+															<Rating value={comment.rate} readonly />
 														</div>
-													)}
-												</div>
-												<Typography variant="paragraph">
-													{comment.content}
-												</Typography>
-												<div className="flex gap-2">
-													<Typography
-														variant="small"
-														className="cursor-pointer hover:text-orange-900"
-													></Typography>
-													<Typography
-														variant="small"
-														className="cursor-pointer hover:text-orange-900"
-													></Typography>
+														<Typography
+															variant="small"
+															className="font-bold flex gap-x-1"
+														>
+															{comment.user.userName}
+															<Typography variant="small">
+																- {moment(comment.commentDate).fromNow()}
+															</Typography>
+														</Typography>
+														{comment.imageURL && (
+															<div className="div">
+																<img src={comment.imageURL} alt="" />
+															</div>
+														)}
+													</div>
+													<Typography variant="paragraph">
+														{comment.content}
+													</Typography>
+													<div className="flex gap-2">
+														<Typography
+															variant="small"
+															className="cursor-pointer hover:text-orange-900"
+														></Typography>
+														<Typography
+															variant="small"
+															className="cursor-pointer hover:text-orange-900"
+														></Typography>
+													</div>
 												</div>
 											</div>
-										</div>
-									))}
+										))
+									) : (
+										<div></div>
+									)}
 								</div>
 							) : null}
 							{/* END SUB COMMENT */}
