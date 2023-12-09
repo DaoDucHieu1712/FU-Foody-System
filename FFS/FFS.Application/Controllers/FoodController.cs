@@ -152,7 +152,7 @@ namespace FFS.Application.Controllers
                 {
                     await _foodRepo.Update(food);
                 }
-                return Ok();
+                return Ok("Sửa thành công!");
             }
             catch (Exception ex)
             {
@@ -172,7 +172,7 @@ namespace FFS.Application.Controllers
                 }
                 food.IsDelete = true;
                 await _foodRepo.Update(food);
-                return Ok();
+                return Ok("Xóa thành công!");
             }
             catch (Exception ex)
             {
