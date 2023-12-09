@@ -72,7 +72,7 @@ function App() {
 					<Route path="/register-store" element={<StoreRegisterPage />} />
 					<Route path="/register-shipper" element={<ShipperRegisterPage />} />
 					<Route path="/profile" element={<ProfilePage />} />
-					<Route path="/change-passsword" element={<ChangePasswordPage />} />
+					<Route path="/change-password" element={<ChangePasswordPage />} />
 					<Route path="/forgot-password" element={<ForgotPasswordPage />} />
 					<Route path="/reset-password" element={<ResetPasswordPage />} />
 					<Route path="/food-details/:id" element={<FoodDetails />} />

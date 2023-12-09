@@ -116,7 +116,6 @@ public class DiscountControllerTests
         var okObjectResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(200, okObjectResult.StatusCode);
     }
-
     [Fact]
     public async Task CreateDiscount_ValidDiscount_ReturnsOkResult()
     {
