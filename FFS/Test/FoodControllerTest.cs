@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FFS.Application.Controllers;
+using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Food;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.DTOs.Store;
@@ -8,6 +9,7 @@ using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Migrations;
 using FFS.Application.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -39,7 +41,7 @@ namespace Test
             _wishlistRepoMock = new Mock<IWishlistRepository>();
             _inventoryRepoMock = new Mock<IInventoryRepository>();
             _commentRepoMock = new Mock<ICommentRepository>();
-            _foodController = new FoodController(_foodRepoMock.Object, _comboRepoMock.Object, _commentRepoMock.Object, _wishlistRepoMock.Object, _orderRepoMock.Object,  _mapperMock.Object, _inventoryRepoMock.Object);
+            _foodController = new FoodController(_foodRepoMock.Object, _comboRepoMock.Object, _commentRepoMock.Object, _wishlistRepoMock.Object, _orderRepoMock.Object, _mapperMock.Object, _inventoryRepoMock.Object);
         }
         #region ListFood
         [Fact]
@@ -580,6 +582,503 @@ namespace Test
         #endregion
 
         #region GetDetailCombo
+        [Fact]
+        public async Task GetDetailCombo_ReturnsOkResult()
+        {
+            // Arrange
+            var comboId = 1;
+            var comboDetails = new List<dynamic>
+            {
+                new { Id = comboId, Detail = "Detail1" },
+                new { Id = comboId, Detail = "Detail2" }
+            };
+
+            _comboRepoMock.Setup(repo => repo.GetDetail(It.IsAny<int>()))
+                               .ReturnsAsync(comboDetails);
+
+            // Act
+            var result = await _foodController.GetDetailCombo(comboId) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+
+            var responseBody = result.Value as List<dynamic>;
+            Assert.NotNull(responseBody);
+            Assert.Equal(comboDetails.Count, responseBody.Count);
+        }
+        [Fact]
+        public async Task GetDetailCombo_ThrowsException()
+        {
+            // Arrange
+            var comboId = 1;
+
+            // Setup GetDetail to throw an exception
+            _comboRepoMock.Setup(repo => repo.GetDetail(It.IsAny<int>()))
+                               .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(async () => await _foodController.GetDetailCombo(comboId));
+        }
+
+        #endregion
+
+        #region CreateCombo
+        [Fact]
+        public async Task CreateCombo_ReturnsOkResult()
+        {
+            // Arrange
+            var comboFoodDTO = new ComboFoodDTO
+            {
+                Name = "TestCombo",
+                StoreId = 1,
+                Percent = 10,
+                Image = "combo.jpg",
+                IdFoods = new List<int> { 1, 2, 3 }
+            };
+
+            // Setup Add and AddComboFood to succeed
+            _comboRepoMock.Setup(repo => repo.Add(It.IsAny<Combo>()))
+                          .Returns(Task.FromResult(new Combo { Id = 1 })); // Simulate the assigned ID after adding to the repository
+
+            _comboRepoMock.Setup(repo => repo.AddComboFood(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<List<int>>()))
+                          .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _foodController.CreateCombo(comboFoodDTO) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            Assert.Equal("Tạo thành công Combo!", result.Value);
+        }
+        [Fact]
+        public async Task CreateCombo_ThrowsException()
+        {
+            // Arrange
+            var comboFoodDTO = new ComboFoodDTO
+            {
+                Name = "TestCombo",
+                StoreId = 1,
+                Percent = 10,
+                Image = "combo.jpg",
+                IdFoods = new List<int> { 1, 2, 3 }
+            };
+
+            // Setup Add to succeed but AddComboFood to throw an exception
+            _comboRepoMock.Setup(repo => repo.Add(It.IsAny<Combo>()))
+                           .Returns(Task.FromResult(new Combo { Id = 1 })); // Simulate the assigned ID after adding to the repository
+
+            _comboRepoMock.Setup(repo => repo.AddComboFood(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<List<int>>()))
+                               .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(async () => await _foodController.CreateCombo(comboFoodDTO));
+        }
+        #endregion
+
+        #region UpdateCombo
+        [Fact]
+        public async Task UpdateCombo_ReturnsOkResult()
+        {
+            // Arrange
+            var id = 1;
+            var comboFoodDTO = new ComboFoodDTO
+            {
+                Name = "UpdatedCombo",
+                StoreId = 1,
+                Percent = 20,
+                IdFoods = new List<int> { 1, 2, 3 }
+            };
+
+            // Setup Update and UpdateComboFood to succeed
+            _comboRepoMock.Setup(repo => repo.Update(It.IsAny<Combo>()))
+                               .Returns(Task.CompletedTask);
+
+            _comboRepoMock.Setup(repo => repo.UpdateComboFood(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<List<int>>()))
+                      .Callback<int, int, List<int>>((comboId, storeId, idFoods) =>
+                      {
+                          Console.WriteLine($"ComboId: {comboId}, StoreId: {storeId}, IdFoods: {string.Join(", ", idFoods)}");
+                      });
+
+            // Act
+            var result = await _foodController.UpdateCombo(id, comboFoodDTO) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            Assert.Equal("Cập nhật thành công Combo!", result.Value);
+        }
+        [Fact]
+        public async Task UpdateCombo_ThrowsException()
+        {
+            // Arrange
+            var id = 1;
+            var comboFoodDTO = new ComboFoodDTO
+            {
+                Name = "UpdatedCombo",
+                StoreId = 1,
+                Percent = 20,
+                IdFoods = new List<int> { 1, 2, 3 }
+            };
+
+            // Setup Update to succeed but UpdateComboFood to throw an exception
+            _comboRepoMock.Setup(repo => repo.Update(It.IsAny<Combo>()))
+                               .Returns(Task.CompletedTask);
+
+            _comboRepoMock.Setup(repo => repo.UpdateComboFood(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<List<int>>()))
+                               .Throws(new Exception("Simulated exception"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(async () => await _foodController.UpdateCombo(id, comboFoodDTO));
+        }
+        #endregion
+
+        #region DeleteCombo
+        [Fact]
+        public async Task DeleteCombo_ReturnsOkResult()
+        {
+            // Arrange
+            var id = 1;
+
+            // Setup DeleteCombo to succeed
+            _comboRepoMock.Setup(repo => repo.DeleteCombo(It.IsAny<int>()))
+                               .Callback<int>(comboId =>
+                               {
+                                   // Perform custom action, if needed
+                                   Console.WriteLine($"DeleteCombo method called with comboId: {comboId}");
+                               });
+
+            // Act
+            var result = await _foodController.DeleteCombo(id) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+        }
+        [Fact]
+        public async Task DeleteFood_FoodNotFound_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int nonExistingFoodId = 999; // Assuming this ID does not exist
+            _foodRepoMock.Setup(repo => repo.FindById(nonExistingFoodId, null))
+                            .ReturnsAsync((Food)null); // Simulate the case where food is not found
+
+            // Act
+            var result = await _foodController.DeleteFood(nonExistingFoodId);
+
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundResult>(result);
+            Assert.Equal(404, notFoundResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteCombo_ThrowsException()
+        {
+            // Arrange
+            var id = 1;
+
+            // Setup DeleteCombo to throw an exception
+            _comboRepoMock.Setup(repo => repo.DeleteCombo(It.IsAny<int>()))
+                               .Throws(new Exception("Simulated exception"));
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Exception>(async () => await _foodController.DeleteCombo(id));
+        }
+
+        #endregion
+
+        #region
+        [Fact]
+        public async Task GetFoodByStoreId_ValidStoreId_ReturnsOkResult()
+        {
+            // Arrange
+            int validStoreId = 1;
+            var foodList = new List<Food> { new Food { Id = 1 } };
+            _foodRepoMock.Setup(repo => repo.GetFoodListByStoreId(validStoreId))
+                                .ReturnsAsync(foodList);
+
+            // Act
+            var result = await _foodController.GetFoodByStoreId(validStoreId) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            // Add more assertions based on the expected result content
+        }
+
+        [Fact]
+        public async Task GetFoodByStoreId_EmptyList_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int storeIdWithNoFood = 2; // Assuming this store has no food items
+            _foodRepoMock.Setup(repo => repo.GetFoodListByStoreId(storeIdWithNoFood))
+                                .ReturnsAsync(new List<Food>());
+
+            // Act
+            var result = await _foodController.GetFoodByStoreId(storeIdWithNoFood) as NotFoundResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(404, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetFoodByStoreId_NullList_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int storeIdWithNullList = 3; // Assuming this store has a null list of food items
+            _foodRepoMock.Setup(repo => repo.GetFoodListByStoreId(storeIdWithNullList))
+                                .ReturnsAsync((List<Food>)null);
+
+            // Act
+            var result = await _foodController.GetFoodByStoreId(storeIdWithNullList) as NotFoundResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(404, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetFoodByStoreId_ExceptionThrown_ReturnsBadRequestResult()
+        {
+            // Arrange
+            int storeId = 1;
+            _foodRepoMock.Setup(repo => repo.GetFoodListByStoreId(storeId))
+                                .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await _foodController.GetFoodByStoreId(storeId) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(400, result.StatusCode);
+            Assert.Equal("Error: Simulated exception", result.Value);
+        }
+        #endregion
+
+        #region RatingFood
+        [Fact]
+        public async Task RatingFood_Rate5AndWishlistEmpty_AddsToWishlistAndRatesFood_ReturnsOkResult()
+        {
+            // Arrange
+            var foodRatingDTO = new FoodRatingDTO
+            {
+                UserId = "testUserId",
+                FoodId = 1,
+                Rate = 5
+            };
+            _wishlistRepoMock.Setup(repo => repo.GetList(It.IsAny<Expression<Func<Wishlist, bool>>>()))
+                                   .ReturnsAsync(new List<Wishlist>());
+
+            // Act
+            var result = await _foodController.RatingFood(foodRatingDTO) as ObjectResult;
+
+            // Assert
+            _wishlistRepoMock.Verify(repo => repo.AddToWishlist(foodRatingDTO.UserId, foodRatingDTO.FoodId), Times.Once);
+            _commentRepoMock.Verify(repo => repo.RatingFood(It.IsAny<Comment>()), Times.Once);
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            Assert.True((bool)result.Value.GetType().GetProperty("IsCanRate").GetValue(result.Value));
+        }
+        [Fact]
+        public async Task RatingFood_Rate5AndWishlistNotEmpty_DoesNotAddToWishlist_ReturnsOkResult()
+        {
+            // Arrange
+            var foodRatingDTO = new FoodRatingDTO
+            {
+                UserId = "testUserId",
+                FoodId = 1,
+                Rate = 5
+            };
+            _wishlistRepoMock.Setup(repo => repo.GetList(It.IsAny<Expression<Func<Wishlist, bool>>>()))
+                                   .ReturnsAsync(new List<Wishlist> { new Wishlist() });
+
+            // Act
+            var result = await _foodController.RatingFood(foodRatingDTO) as ObjectResult;
+
+            // Assert
+            _wishlistRepoMock.Verify(repo => repo.AddToWishlist(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+            _commentRepoMock.Verify(repo => repo.RatingFood(It.IsAny<Comment>()), Times.Once);
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            Assert.True((bool)result.Value.GetType().GetProperty("IsCanRate").GetValue(result.Value));
+        }
+        [Fact]
+        public async Task RatingFood_ExceptionThrown_ReturnsBadRequestResult()
+        {
+            // Arrange
+            var foodRatingDTO = new FoodRatingDTO
+            {
+                UserId = "testUserId",
+                FoodId = 1,
+                Rate = 5
+            };
+            _wishlistRepoMock.Setup(repo => repo.GetList(It.IsAny<Expression<Func<Wishlist, bool>>>()))
+                                   .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await _foodController.RatingFood(foodRatingDTO) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(400, result.StatusCode);
+            Assert.Equal("Simulated exception", result.Value);
+        }
+        #endregion
+        #region ListAllFood
+        [Fact]
+        public void ListAllFood_ValidParameters_ReturnsOkResult()
+        {
+            // Arrange
+            var allFoodParameters = new AllFoodParameters
+            {
+                // Set valid parameters
+                PageNumber = 1,
+                PageSize = 10,
+                // Set other parameters based on your scenario
+            };
+
+            var foods = new PagedList<Food>(new List<Food>
+    {
+        // Set paginated food data
+        new Food { Id = 1, FoodName = "A" },
+        new Food { Id = 2, FoodName = "B" },
+        // Add more foods as needed
+    }, 1, 1, 10); // Assuming 1 is the total count, 10 is the page size
+
+            var foodDTOs = new List<AllFoodDTO>
+    {
+        // Create AllFoodDTO objects or use AutoMapper to map from Food to AllFoodDTO
+        new AllFoodDTO { Id = 1, FoodName = "A" },
+        new AllFoodDTO { Id = 2, FoodName = "B" },
+    };
+
+            _foodRepoMock.Setup(repo => repo.GetAllFoods(allFoodParameters))
+                               .Returns(foods);
+
+            _mapperMock.Setup(mapper => mapper.Map<List<AllFoodDTO>>(foods))
+                       .Returns(foodDTOs);
+
+            // Act
+            var result = _foodController.ListAllFood(allFoodParameters) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+        }
+
+
+        [Fact]
+        public void ListAllFood_ExceptionThrown_ReturnsBadRequestResult()
+        {
+            // Arrange
+            var allFoodParameters = new AllFoodParameters
+            {
+                // Set valid or invalid parameters
+            };
+
+            _foodRepoMock.Setup(repo => repo.GetAllFoods(allFoodParameters))
+                               .Throws(new Exception("Simulated exception"));
+
+            // Act
+            var result = _foodController.ListAllFood(allFoodParameters) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(400, result.StatusCode);
+            Assert.Equal("Simulated exception", result.Value);
+        }
+        #endregion
+
+        #region GetFoodRecommend
+        [Fact]
+        public async Task GetFoodRecommend_ReturnsOkResult()
+        {
+            // Arrange
+            var homeFood = new List<Food>
+    {
+        new Food { Id = 1, FoodName = "A" },
+        new Food { Id = 2, FoodName = "B" },
+    };
+
+            var mappedFoodDTOs = new List<AllFoodDTO>
+    {
+        new AllFoodDTO { Id = 1, FoodName = "A" },
+        new AllFoodDTO { Id = 2, FoodName = "B" },
+    };
+
+            _foodRepoMock.Setup(repo => repo.FindAll(It.IsAny<Expression<Func<Food, bool>>>()))
+                         .Returns(homeFood.AsQueryable());
+
+            _mapperMock.Setup(mapper => mapper.Map<List<AllFoodDTO>>(It.IsAny<List<Food>>()))
+                       .Returns(mappedFoodDTOs);
+
+            // Act
+            var result = await _foodController.GetFoodRecommend() as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+        }
+
+
+        [Fact]
+        public async Task GetFoodRecommend_ExceptionThrown_ReturnsStatusCode500()
+        {
+            // Arrange
+            _foodRepoMock.Setup(repo => repo.FindAll(It.IsAny<Expression<Func<Food, bool>>>()))
+                               .Throws(new Exception("Simulated exception"));
+
+            // Act
+            var result = await _foodController.GetFoodRecommend() as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(500, result.StatusCode);
+            Assert.Equal("Simulated exception", result.Value);
+        }
+        #endregion
+
+        #region CommentFood
+        [Fact]
+        public async Task CommentFood_Success_ReturnsNoContent()
+        {
+            // Arrange
+            var comment = new Comment { Id = 1, Content = "Hay" };
+
+            _commentRepoMock.Setup(repo => repo.Add(comment)).Verifiable();
+
+            // Act
+            var result = await _foodController.CommentFood(comment) as NoContentResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(204, result.StatusCode);
+
+            _commentRepoMock.Verify(repo => repo.Add(comment), Times.Once);
+        }
+
+        [Fact]
+        public async Task CommentFood_ExceptionThrown_ReturnsBadRequest()
+        {
+            // Arrange
+            var comment = new Comment {Id = 1, Content = "Hay"};
+
+            _commentRepoMock.Setup(repo => repo.Add(comment))
+                            .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await _foodController.CommentFood(comment) as ObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(400, result.StatusCode);
+
+            // Additional assertions based on your exception handling logic
+            Assert.Contains("Simulated exception", result.Value.ToString());
+        }
         #endregion
     }
 }
+

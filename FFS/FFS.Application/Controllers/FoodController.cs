@@ -300,22 +300,22 @@ namespace FFS.Application.Controllers
                 return BadRequest($"Error: {ex.Message}");
             }
         }
-        [HttpGet]
-        public async Task<IActionResult> IsCanRate(string Uid, int foodId)
-        {
-            try
-            {
-                var order = await _orderRepository.FindSingle(x =>
-    x.CustomerId.Equals(Uid) &&
-    x.OrderDetails.Any(od => od.FoodId.Equals(foodId)));
-                bool isCanRate = order != null ? true : false;
-                return Ok(isCanRate);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+    //    [HttpGet]
+    //    public async Task<IActionResult> IsCanRate(string Uid, int foodId)
+    //    {
+    //        try
+    //        {
+    //            var order = await _orderRepository.FindSingle(x =>
+    //x.CustomerId.Equals(Uid) &&
+    //x.OrderDetails.Any(od => od.FoodId.Equals(foodId)));
+    //            bool isCanRate = order != null ? true : false;
+    //            return Ok(isCanRate);
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            return BadRequest(ex.Message);
+    //        }
+    //    }
 
         [HttpPost]
         public async Task<IActionResult> RatingFood([FromBody] FoodRatingDTO foodRatingDTO)
@@ -374,7 +374,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
-				var homeFood = await _foodRepo.FindAll(x=>x.IsDelete==false).OrderBy(x => Guid.NewGuid()).Take(10).ToListAsync();
+				var homeFood = _foodRepo.FindAll(x=>x.IsDelete==false).OrderBy(x => Guid.NewGuid()).Take(10).ToList();
 				return Ok(_mapper.Map<List<AllFoodDTO>>(homeFood));
 			}
 			catch (Exception ex)
