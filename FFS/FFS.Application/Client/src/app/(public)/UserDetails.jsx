@@ -4,12 +4,15 @@ import {
 	MenuList,
 	Typography,
 	Avatar,
+	Input,
+	Button,
 	MenuItem,
 } from "@material-tailwind/react";
 import Elips from "../../shared/components/icon/Elips";
 import axios from "../../shared/api/axiosConfig";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import CookieService from "../../shared/helper/cookieConfig";
 import moment from "moment";
 import "moment/dist/locale/vi";
@@ -25,11 +28,15 @@ moment.locale("vi");
 const UserDetails = () => {
 	const { id } = useParams();
 	const dispatch = useDispatch();
+	const accesstoken = useSelector((state) => state.auth.accessToken);
+	const userInfo = useSelector((state) => state.auth.userProfile);
 	const [user, setUser] = useState([]);
 	const [isReact, setIsReact] = useState(false);
 	const [postIdToCheck, setPostIdToCheck] = useState(null);
 	const [openComment, setOpenComment] = useState(false);
 	const userId = CookieService.getToken("fu_foody_id");
+	const [commentTxt, setCommentTxt] = useState("");
+	const [post, setPost] = useState("");
 
 	const GetUserInformation = async () => {
 		try {
@@ -54,6 +61,46 @@ const UserDetails = () => {
 		} catch (error) {
 			console.error("An error occurred", error);
 		}
+	};
+	const fetchPostDetails = (postId) => {
+		axios
+			.get(`/api/Post/GetPostByPostId/${postId}`)
+			.then((response) => {
+				setPost(response);
+				const checkReact = response.reactPosts
+					.filter((post) => post.userId == userId && post.postId == postId)
+					.some((post) => post.isLike == true);
+				if (checkReact) {
+					setIsReact(true);
+				}
+			})
+			.catch((error) => {
+				console.error("Error fetching post details: ", error);
+			});
+	};
+
+	const handleComment = (postId) => {
+		const data = {
+			Content: commentTxt,
+			UserId: userId,
+			PostId: postId,
+		};
+		try {
+			axios
+				.post("/api/Post/CommentPost", data)
+				.then(() => {
+					setCommentTxt("");
+					setOpenComment(true);
+					GetUserInformation();
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("Error occur: ", error);
+		}
+
+		console.log(commentTxt);
 	};
 
 	const handleReactPost = (postId) => {
@@ -105,14 +152,14 @@ const UserDetails = () => {
 								<h1 className="text-xl font-bold">{user.userName}</h1>
 
 								<div className="mt-3 flex flex-wrap gap-4 justify-center items-center">
-								{userId !== null && userId !== undefined ? (
-									<a
-										onClick={handleCreateBoxChat}
-										className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
-									>
-										Nhắn tin
-									</a>
-							) : null}
+									{userId !== null && userId !== undefined ? (
+										<a
+											onClick={handleCreateBoxChat}
+											className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
+										>
+											Nhắn tin
+										</a>
+									) : null}
 									{/* <a
 										href="#"
 										className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
@@ -314,23 +361,33 @@ const UserDetails = () => {
 											</div>
 										) : null}
 										{/* END SUB COMMENT */}
-										<div className="mb-4">
-											<div className="flex space-x-2">
-												<img
-													src=""
-													alt="Profile picture"
-													className="w-9 h-9 rounded-full"
-												/>
-
-												<div className="flex-1 flex bg-gray-100 dark:bg-dark-third rounded-full items-center justify-between px-3">
-													<input
-														type="text"
-														placeholder="Viết bình luận..."
-														className="outline-none bg-transparent flex-1"
-														name="content"
-													/>
+										<div className="px-8 mb-4">
+											{accesstoken ? (
+												<div className="flex space-x-2">
+													{userInfo && (
+														<img
+															src={userInfo.avatar}
+															alt="Profile picture"
+															className="w-9 h-9 rounded-full"
+														/>
+													)}
+													<div className="flex-1 flex bg-gray-100 ">
+														<Input
+															type="text"
+															placeholder="Viết bình luận..."
+															name="content"
+															value={commentTxt}
+															onChange={(e) => setCommentTxt(e.target.value)}
+														/>
+													</div>
+													<Button
+														className="h-1/2 bg-primary"
+														onClick={()=>handleComment(post.id)}
+													>
+														Bình Luận
+													</Button>
 												</div>
-											</div>
+											) : null}
 										</div>
 
 										{/* // END POST */}
