@@ -78,7 +78,7 @@ namespace FFS.Application.Controllers
 				IEnumerable<dynamic> data = _userRepository.GetUsers(userParameters);
 				int total = _userRepository.CountGetUsers(userParameters);
 				var res = new
-				{
+				dataReturn {
 					data = data,
 					total = total,
 				};
@@ -90,8 +90,6 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-
-
 		[Authorize]
 		[HttpPost]
 		public IActionResult GetPosts([FromBody] UserParameters userParameters)
@@ -101,7 +99,7 @@ namespace FFS.Application.Controllers
 				IEnumerable<dynamic> data = _userRepository.GetPosts(userParameters);
 				int total = _userRepository.CountGetPosts(userParameters);
 				var res = new
-				{
+				dataReturn {
 					data = data,
 					total = total,
 				};
@@ -203,6 +201,7 @@ namespace FFS.Application.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
 		[Authorize]
 		[HttpPost]
 		public IActionResult GetRequestAccount([FromBody] UserParameters userParameters)
@@ -212,7 +211,7 @@ namespace FFS.Application.Controllers
 				IEnumerable<dynamic> data = _userRepository.GetRequestCreateAccount(userParameters);
 				int total = _userRepository.CountGetRequestCreateAccount(userParameters);
 				var res = new
-				{
+				dataReturn {
 					data = data,
 					total = total,
 				};
@@ -337,5 +336,12 @@ namespace FFS.Application.Controllers
 				return StatusCode(500, "Internal Server Error");
 			}
 		}
+	}
+
+	public class dataReturn
+	{
+		public IEnumerable<dynamic> data { get; set; }
+		public int total { get; set; }
+
 	}
 }

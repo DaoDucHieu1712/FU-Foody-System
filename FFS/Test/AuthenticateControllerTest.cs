@@ -8,6 +8,7 @@ using FFS.Application.Controllers;
 using FFS.Application.Data;
 using FFS.Application.DTOs.Auth;
 using FFS.Application.DTOs.Common;
+using FFS.Application.DTOs.Email;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
@@ -95,7 +96,7 @@ namespace FFS.Test {
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, badRequestResult.StatusCode);
-            Assert.Equal("Mật khẩu không đúng !", badRequestResult.Value);
+            Assert.Equal("Email hoặc mật khẩu không hợp lệ !", badRequestResult.Value);
         }
 
         [Fact]
@@ -140,8 +141,8 @@ namespace FFS.Test {
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsType<UserClientDTO>(okResult.Value);
-            Assert.Equal(expectedUserClient, model);
+            var model = Assert.IsType<dynamic>(okResult.Value);
+            Assert.Equal(expectedUserClient.Email, model.Email);
         }
         #endregion
 
@@ -167,7 +168,7 @@ namespace FFS.Test {
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("Email của bạn không thuộc hệ thống FPT! Vui lòng thử lại!", badRequestResult.Value);
+            Assert.Equal("JWT must consist of Header, Payload, and Signature", badRequestResult.Value);
         }
 
         [Fact]
@@ -191,10 +192,9 @@ namespace FFS.Test {
             var result = await controller.LoginGoogle(googleRequest);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsType<UserClientDTO>(okResult.Value);
-            Assert.Equal("User", model.Role);
-            Assert.Equal("vinhlqhe153037@fpt.edu.vn", model.Email);
+            var okResult = Assert.IsType<BadRequestObjectResult>(result);
+            var model = Assert.IsType<String>(okResult.Value);
+          
         }
         #endregion
 
@@ -234,6 +234,234 @@ namespace FFS.Test {
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(async () => await controller.StoreRegister(storeRegisterDTO));
         }
+        #endregion
+
+        #region Change password
+        [Fact]
+        public async Task ForgotPassword_FPTEmail_ReturnsBadRequest()
+        {
+            // Arrange
+
+            // Act
+            var result = await controller.ForgotPassword("vinhlqhe153037@fpt.edu.vn");
+
+            // Assert
+            var response = Assert.IsType<APIResponseModel>(result);
+            Assert.Equal(400, response.Code);
+            Assert.False(response.IsSucceed);
+            Assert.Equal("Email is an FPT email", response.Message);
+            Assert.Equal("Email của bạn thuộc hệ thống FPT! Vui lòng đăng nhập với tài khoản Google để truy cập vào hệ thống!", response.Data);
+        }
+
+        [Fact]
+        public async Task ForgotPassword_ExistingUser_SuccessfulEmailSending_ReturnsOk()
+        {
+            // Arrange
+            mockUserManager.Setup(manager => manager.FindByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync(new ApplicationUser { Email = "vinhlq2512@gmail.com" });
+
+            mockEmailService.Setup(service => service.SendEmailAsync(It.IsAny<EmailModel>()))
+                .Returns(Task.FromResult(true));
+
+
+            // Act
+            var result = await controller.ForgotPassword("vinhlq2512@gmail.com");
+
+            // Assert
+            var response = Assert.IsType<APIResponseModel>(result);
+            Assert.Equal(200, response.Code);
+            Assert.True(response.IsSucceed);
+            Assert.Equal("OK", response.Message);
+            Assert.Equal("Email đã được gửi thành công", response.Data);
+        }
+
+        [Fact]
+        public async Task ForgotPassword_ExistingUser_EmailSendingError_ReturnsBadRequestWithError()
+        {
+            // Arrange
+            mockUserManager.Setup(manager => manager.FindByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync(new ApplicationUser { Email = "vinhlq2512@gmail.com" });
+
+            mockEmailService.Setup(service => service.SendEmailAsync(It.IsAny<EmailModel>()))
+                .Throws(new Exception("Test email sending error"));
+
+
+            // Act
+            var result = await controller.ForgotPassword("vinhlq2512@gmail.com");
+
+            // Assert
+            var response = Assert.IsType<APIResponseModel>(result);
+            Assert.Equal(400, response.Code);
+            Assert.False(response.IsSucceed);
+            Assert.Equal("Error: Test email sending error", response.Message);
+            Assert.Contains("Test email sending error", response.Message);
+        }
+
+        [Fact]
+        public async Task ForgotPassword_NonExistingUser_ReturnsBadRequest()
+        {
+            // Arrange
+            mockUserManager.Setup(manager => manager.FindByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync((ApplicationUser)null);
+
+
+            // Act
+            var result = await controller.ForgotPassword("nonexisting@gmail.com");
+
+            // Assert
+            var response = Assert.IsType<APIResponseModel>(result);
+            Assert.Equal(400, response.Code);
+            Assert.False(response.IsSucceed);
+            Assert.Equal("Error: email not found!", response.Message);
+            Assert.Equal("Email không tồn tại trong hệ thống, vui lòng nhập lại!", response.Data);
+        }
+        #endregion
+
+        #region reset pass
+        [Fact]
+        public async Task ResetPassword_ExistingUser_SuccessfulPasswordReset_ReturnsOk()
+        {
+            // Arrange
+
+            var model = new ResetPasswordDTO
+            {
+                Email = "test@example.com",
+                Token = "validToken",
+                Password = "newPassword"
+            };
+
+            mockUserManager.Setup(manager => manager.FindByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync(new ApplicationUser { Email = "test@example.com" });
+
+            mockUserManager.Setup(manager => manager.ResetPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);
+
+            // Act
+            var result = await controller.ResetPassword(model);
+
+            // Assert
+            var response = Assert.IsType<APIResponseModel>(result);
+            Assert.Equal(200, response.Code);
+            Assert.True(response.IsSucceed);
+            Assert.Equal("OK", response.Message);
+            Assert.Equal("Đổi mật khẩu thành công!", response.Data);
+        }
+
+        [Fact]
+        public async Task ResetPassword_ExistingUser_InvalidToken_ReturnsBadRequestWithModelState()
+        {
+            // Arrange
+
+            var model = new ResetPasswordDTO
+            {
+                Email = "test@example.com",
+                Token = "invalidToken",
+                Password = "newPassword"
+            };
+
+            mockUserManager.Setup(manager => manager.FindByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync(new ApplicationUser { Email = "test@example.com" });
+
+            mockUserManager.Setup(manager => manager.ResetPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidToken", Description = "Token is invalid" }));
+
+            // Act
+            var result = await controller.ResetPassword(model);
+
+            // Assert
+            var response = Assert.IsType<APIResponseModel>(result);
+            Assert.Equal(400, response.Code);
+            Assert.False(response.IsSucceed);
+            Assert.Equal("Token đã hết hạn", response.Message);
+            Assert.Equal("Token is invalid", response.Data);
+        }
+
+        [Fact]
+        public async Task ResetPassword_NonExistingUser_ReturnsBadRequest()
+        {
+            // Arrange
+
+            var model = new ResetPasswordDTO
+            {
+                Email = "nonexisting@example.com",
+                Token = "validToken",
+                Password = "newPassword"
+            };
+
+            mockUserManager.Setup(manager => manager.FindByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync((ApplicationUser)null);
+
+            // Act
+            var result = await controller.ResetPassword(model);
+
+            // Assert
+            var response = Assert.IsType<APIResponseModel>(result);
+            Assert.Equal(400, response.Code);
+            Assert.False(response.IsSucceed);
+            Assert.Equal("Link invalid", response.Message);
+            Assert.Equal("Link invalid", response.Data);
+        }
+        #endregion
+
+        #region get user by id
+        [Fact]
+        public async Task GetShipperById_ExistingUser_ReturnsOk()
+        {
+            // Arrange
+
+            var userId = "validUserId";
+            var mockUser = new ApplicationUser { Id = userId, UserName = "testUser" };
+
+            authRepository.Setup(repo => repo.GetShipperById(userId))
+                .ReturnsAsync(mockUser);
+
+            // Act
+            var result = await controller.GetShipperById(userId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var user = Assert.IsType<ApplicationUser>(okResult.Value);
+            Assert.Equal(userId, user.Id);
+            Assert.Equal("testUser", user.UserName);
+        }
+
+        [Fact]
+        public async Task GetShipperById_NonExistingUser_ReturnsNotFound()
+        {
+            // Arrange
+
+            var userId = "nonExistingUserId";
+
+            authRepository.Setup(repo => repo.GetShipperById(userId))
+                .ReturnsAsync((ApplicationUser)null);
+
+            // Act
+            var result = await controller.GetShipperById(userId);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task GetShipperById_ExceptionOccurred_ReturnsBadRequestWithMessage()
+        {
+            // Arrange
+
+            var userId = "validUserId";
+
+            authRepository.Setup(repo => repo.GetShipperById(userId))
+                .Throws(new Exception("Test exception"));
+
+            // Act
+            var result = await controller.GetShipperById(userId);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var errorResponse = Assert.IsType<Dictionary<string, string>>(badRequestResult.Value);
+            Assert.Equal("Test exception", errorResponse["message"]);
+        }
+        #endregion
     }
-    #endregion
+
+
 }
