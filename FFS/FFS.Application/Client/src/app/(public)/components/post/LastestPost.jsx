@@ -34,7 +34,7 @@ const LastestPost = () => {
 				{lastestPost.map((post) => (
 					<div
 						key={post.id}
-						className="flex mb-4 mt-4 cursor-poiter "
+						className="flex mb-4 mt-4 cursor-pointer "
 						onClick={() => navigate(`/post-details/${post.id}`)}
 					>
 						{/* Image */}
