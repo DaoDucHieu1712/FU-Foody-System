@@ -66,6 +66,7 @@ const CartPage = () => {
 		}));
 
 		var storeId = cart.list[0].storeId;
+		console.log(cart.list[0]);
 		await getLocationByUserId(storeId)
 			.then(async (res) => {
 				console.log(res);
