@@ -11,6 +11,7 @@ using FFS.Application.Controllers;
 using FFS.Application.DTOs.Chat;
 using FFS.Application.Entities;
 using FFS.Application.Hubs;
+using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
 
@@ -25,7 +26,7 @@ namespace Test {
         private readonly Mock<IMessageRepository> mockMessageRepository;
         private readonly Mock<IHubContext<ChatHub>> mockHubChatContext;
         private readonly Mock<IMapper> mockMapper;
-
+        private readonly Mock<ILoggerManager> _logger;
         private readonly ChatController controller;
 
         public ChatControllerTest()
@@ -35,13 +36,13 @@ namespace Test {
             mockMessageRepository = new Mock<IMessageRepository>();
             mockHubChatContext = new Mock<IHubContext<ChatHub>>();
             mockMapper = new Mock<IMapper>();
-
+            _logger = new Mock<ILoggerManager>();
             // Initialize Controller with Mocks
             controller = new ChatController(
                 mockChatRepository.Object,
                 mockMessageRepository.Object,
                 mockHubChatContext.Object,
-                mockMapper.Object);
+                mockMapper.Object, _logger.Object);
         }
 
 

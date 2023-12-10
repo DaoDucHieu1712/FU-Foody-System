@@ -27,9 +27,10 @@ namespace FFS.Application.Controllers {
 		private readonly IComboRepository _comboRepository;
 		private readonly IOrderRepository _orderRepository;
 		private readonly ILocationRepository _locationRepository;
+		private ILoggerManager _logger;
 
 
-		public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository, IComboRepository comboRepository, IOrderRepository orderRepository, ILocationRepository locationRepository)
+		public StoreController(IMapper mapper, IStoreRepository storeRepository, IFoodRepository foodRepository, ICommentRepository commentRepository, IComboRepository comboRepository, IOrderRepository orderRepository, ILocationRepository locationRepository, ILoggerManager logger)
 		{
 			_mapper = mapper;
 			_storeRepository = storeRepository;
@@ -38,6 +39,7 @@ namespace FFS.Application.Controllers {
 			_comboRepository = comboRepository;
 			_orderRepository = orderRepository;
 			_locationRepository = locationRepository;
+			_logger = logger;
 		}
 
 		[HttpGet]
@@ -45,8 +47,9 @@ namespace FFS.Application.Controllers {
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to retrieve all stores...");
 				var Stores = _storeRepository.GetAllStores(allStoreParameters);
-
+				_logger.LogInfo($"Retrieved {Stores.TotalCount} stores successfully.");
 				var metadata = new
 				{
 					Stores.TotalCount,
@@ -68,6 +71,7 @@ namespace FFS.Application.Controllers {
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving all stores: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 
@@ -77,12 +81,15 @@ namespace FFS.Application.Controllers {
 		{
 			try
 			{
-				var top8Store = await _storeRepository.GetTop10PopularStore();
-				var top8StoreDTO = _mapper.Map<List<AllStoreDTO>>(top8Store);
-				return Ok(top8StoreDTO);
+				_logger.LogInfo("Attempting to retrieve the top 10 popular stores...");
+				var top10Store = await _storeRepository.GetTop10PopularStore();
+				var top10StoreDTO = _mapper.Map<List<AllStoreDTO>>(top10Store);
+				_logger.LogInfo("Retrieved top 10 popular stores successfully.");
+				return Ok(top10StoreDTO);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving the top 10 popular stores: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -95,11 +102,14 @@ namespace FFS.Application.Controllers {
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to retrieve information for store with ID: {id}");
 				StoreInforDTO storeInforDTO = await _storeRepository.GetInformationStore(id);
+				_logger.LogInfo($"Retrieved information for store with ID: {id} successfully.");
 				return Ok(storeInforDTO);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving store information for ID {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -125,13 +135,15 @@ namespace FFS.Application.Controllers {
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to retrieve store information for User ID: {uId}");
 				var store = await _storeRepository.FindSingle(x => x.UserId == uId);
 				var location = await _locationRepository.FindSingle(x => x.UserId == uId);
-
+				_logger.LogInfo($"Retrieved store information for User ID: {uId} successfully.");
 				return Ok(new { store, location});
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving store information for User ID {uId}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -141,14 +153,16 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                var data = await _storeRepository.ExportFood(id);
-                string uniqueFileName = "ThongKe_MonAn_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-
-                return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", uniqueFileName);
+				_logger.LogInfo($"Attempting to export food data for Store ID: {id}");
+				var data = await _storeRepository.ExportFood(id);
+				string uniqueFileName = "ThongKe_MonAn_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+				_logger.LogInfo($"Exported food data for Store ID: {id} successfully.");
+				return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", uniqueFileName);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while exporting food data for Store ID {id}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -157,14 +171,16 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                var data = await _storeRepository.ExportInventory(id);
-                string uniqueFileName = "ThongKe_Kho_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+				_logger.LogInfo($"Attempting to export inventory data for Store ID: {id}");
+				var data = await _storeRepository.ExportInventory(id);
+				string uniqueFileName = "ThongKe_Kho_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
 
                 return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", uniqueFileName);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while exporting inventory data for Store ID {id}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -173,12 +189,15 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                StoreInforDTO inforDTO = await _storeRepository.UpdateStore(id, storeInforDTO);
-                return Ok(inforDTO);
+				_logger.LogInfo($"Attempting to update information for Store ID: {id}");
+				StoreInforDTO inforDTO = await _storeRepository.UpdateStore(id, storeInforDTO);
+				_logger.LogInfo($"Updated store information for Store ID: {id} successfully.");
+				return Ok(inforDTO);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while updating store information for Store ID {id}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -187,15 +206,17 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                StoreInforDTO storeInforDTO = await _storeRepository.GetDetailStore(id);
+				_logger.LogInfo($"Attempting to retrieve detailed information for Store ID: {id}");
+				StoreInforDTO storeInforDTO = await _storeRepository.GetDetailStore(id);
 				List<Combo> combos = await _comboRepository.GetList(x => x.StoreId == id && x.IsDelete == false);
 				storeInforDTO.Combos = combos;
-
+				_logger.LogInfo($"Retrieved detailed information for Store ID: {id} successfully.");
 				return Ok(storeInforDTO);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while retrieving detailed information for Store ID {id}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -205,12 +226,15 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                dynamic comment = await _storeRepository.GetCommentByStore(rate, id);
-                return Ok(comment);
+				_logger.LogInfo($"Attempting to retrieve comments for Store ID: {id} with rating: {rate}");
+				dynamic comment = await _storeRepository.GetCommentByStore(rate, id);
+				_logger.LogInfo($"Retrieved comments for Store ID: {id} with rating: {rate} successfully.");
+				return Ok(comment);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while retrieving comments for Store ID {id} with rating {rate}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -220,12 +244,15 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                dynamic comment = await _storeRepository.GetCommentReply(id);
-                return Ok(comment);
+				_logger.LogInfo($"Attempting to retrieve comment replies for Comment ID: {id}");
+				dynamic comment = await _storeRepository.GetCommentReply(id);
+				_logger.LogInfo($"Retrieved comment replies for Comment ID: {id} successfully.");
+				return Ok(comment);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while retrieving comment replies for Comment ID {id}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -234,8 +261,10 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                List<FoodDTO> foodDTOs = await _storeRepository.GetFoodByCategory(idShop, idCategory);
-                return Ok(foodDTOs);
+				_logger.LogInfo($"Attempting to retrieve food for Shop ID: {idShop} and Category ID: {idCategory}");
+				List<FoodDTO> foodDTOs = await _storeRepository.GetFoodByCategory(idShop, idCategory);
+				_logger.LogInfo($"Retrieved food items for Shop ID: {idShop} and Category ID: {idCategory} successfully.");
+				return Ok(foodDTOs);
             }
             catch (Exception ex)
             {
@@ -248,7 +277,8 @@ namespace FFS.Application.Controllers {
         {
             try
             {
-                List<Food> foods;
+				_logger.LogInfo($"Attempting to retrieve food by name: {name}");
+				List<Food> foods;
 
                 if (string.IsNullOrEmpty(name))
                 {
@@ -261,11 +291,13 @@ namespace FFS.Application.Controllers {
                     foods = _foodRepository.FindAll(i => i.FoodName.Contains(name)).ToList();
                 }
                 List<FoodDTO> foodDTOs = _mapper.Map<List<FoodDTO>>(foods);
-                return Ok(foodDTOs);
+				_logger.LogInfo($"Retrieved {foodDTOs.Count} food items matching the search criteria.");
+				return Ok(foodDTOs);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while retrieving food by name {name}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -274,20 +306,23 @@ namespace FFS.Application.Controllers {
         {
             try
             {
+				_logger.LogInfo($"Attempting to rate the store with ID {storeRatingDTO.StoreId}.");
 				Comment c = _mapper.Map<Comment>(storeRatingDTO);
 
 				await _commentRepository.RatingStore(c);
                 if(storeRatingDTO.ParentCommentId != null)
                 {
                     dynamic comment = await _storeRepository.GetCommentReply(Convert.ToInt32(storeRatingDTO.ParentCommentId));
-                    return Ok(comment);
+					_logger.LogInfo($"Successfully rated the store with ID {storeRatingDTO.StoreId}. Returning comment reply.");
+					return Ok(comment);
                 }
                 
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+				_logger.LogError($"An error occurred while rating the store with ID {storeRatingDTO.StoreId}: {ex.Message}");
+				return BadRequest(ex.Message);
             }
         }
 		[HttpGet("{storeId}")]
@@ -295,7 +330,9 @@ namespace FFS.Application.Controllers {
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to retrieve order statistics for store with ID {storeId}.");
 				List<OrderStatistic> orderStatistics = _orderRepository.OrderStatistic(storeId);
+				_logger.LogInfo($"Successfully retrieved order statistics for store with ID {storeId}.");
 				return Ok(new
 				{
 					TotalOrder = _orderRepository.CountTotalOrder(storeId),
@@ -304,6 +341,7 @@ namespace FFS.Application.Controllers {
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving order statistics for store with ID {storeId}: {ex.Message}");
 				return StatusCode(500, "Internal Server Error");
 			}
 
@@ -330,12 +368,15 @@ namespace FFS.Application.Controllers {
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to retrieve food detail statistics for store with ID {storeId}.");
 				List<RevenuePerMonth> revenuePerMonths = _orderRepository.RevenuePerMonth(storeId, year);
+				_logger.LogInfo($"Successfully retrieved food detail statistics for store with ID {storeId}.");
 				return Ok(revenuePerMonths);
 
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving food detail statistics for store with ID {storeId}: {ex.Message}");
 				return StatusCode(500, "Internal Server Error");
 			}
 		}

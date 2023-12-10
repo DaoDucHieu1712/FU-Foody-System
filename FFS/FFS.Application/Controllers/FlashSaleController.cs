@@ -24,13 +24,15 @@ namespace FFS.Application.Controllers
 		private readonly IFlashSaleDetailRepository _fsDetailRepo;
 		private readonly IMapper _mapper;
 		private readonly ApplicationDbContext _context;
+		private ILoggerManager _logger;
 
-		public FlashSaleController(ApplicationDbContext context, IFlashSaleRepository fsRepo, IFlashSaleDetailRepository fsDetailRepo, IMapper mapper)
+		public FlashSaleController(ApplicationDbContext context, IFlashSaleRepository fsRepo, IFlashSaleDetailRepository fsDetailRepo, IMapper mapper, ILoggerManager logger)
 		{
 			_fsRepo = fsRepo;
 			_fsDetailRepo = fsDetailRepo;
 			_mapper = mapper;
 			_context = context;
+			_logger = logger;
 		}
 		[HttpGet()]
 		public IActionResult ListFoodAvailable([FromQuery] CheckFoodFlashSaleParameters parameters)
@@ -69,6 +71,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Creating new flash sale");
 				var flashSaleEntity = _mapper.Map<FlashSale>(flashSaleDTO);
 				await _fsRepo.Add(flashSaleEntity);
 				if (flashSaleDTO.FlashSaleDetails != null)
@@ -92,10 +95,12 @@ namespace FFS.Application.Controllers
 						}
 					}
 				}
-				return Ok();
+				_logger.LogInfo("New flash sale created successfully");
+				return Ok("Thêm thành công");
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while creating flash sale: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -105,9 +110,11 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Updating flash sale with ID: {id}");
 				var flashSaleUpdate = await _fsRepo.FindSingle(x => x.Id == id, x => x.FlashSaleDetails);
 				if (flashSaleUpdate == null)
 				{
+					_logger.LogInfo($"Flash sale with ID {id} not found");
 					return NotFound();
 				}
 				flashSaleDTO.Id = id;
@@ -136,11 +143,13 @@ namespace FFS.Application.Controllers
 						}
 					}
 				}
+				_logger.LogInfo($"Flash sale with ID {id} updated successfully");
 				return Ok();
 
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while updating flash sale with ID {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -150,19 +159,22 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Deleting flash sale with ID: {id}");
 				var existingFlashSaleEntity = await _fsRepo.FindSingle(x => x.Id == id);
 
 				if (existingFlashSaleEntity == null)
 				{
+					_logger.LogInfo($"Flash sale with ID {id} not found");
 					return NotFound($"Flash sale with ID {id} not found");
 				}
 				// Delete flash sale
 				await _fsRepo.DeleteFlashSale(existingFlashSaleEntity.Id);
-
+				_logger.LogInfo($"Flash sale with ID {id} deleted successfully");
 				return Ok();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while deleting flash sale with ID {id}: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -172,12 +184,14 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Deleting flash sale detail with FlashSaleId: {flashSaleId} and FoodId: {foodId}");
 				await _fsRepo.DeleteFlashSaleDetail(flashSaleId, foodId);
-
+				_logger.LogInfo($"Flash sale detail with FlashSaleId {flashSaleId} and FoodId {foodId} deleted successfully");
 				return Ok();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while deleting flash sale detail with FlashSaleId {flashSaleId} and FoodId {foodId}: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -187,16 +201,19 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Retrieving flash sale detail with ID: {flashSaleId}");
 				var flashSaleById = await _fsRepo.FindSingle(x => x.Id == flashSaleId, x => x.FlashSaleDetails);
 				if (flashSaleById == null)
 				{
 					return NotFound();
 				}
 				var postDTO = _mapper.Map<FlashSaleDTO>(flashSaleById);
+				_logger.LogInfo($"Flash sale detail with ID {flashSaleId} retrieved successfully");
 				return Ok(postDTO);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving flash sale detail with ID {flashSaleId}: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -205,6 +222,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Retrieving flash sales for store with ID: {storeId}");
 				var flashSales = _fsRepo.ListFlashSaleByStore(storeId, parameter);
 
 				var metadata = new
@@ -225,6 +243,7 @@ namespace FFS.Application.Controllers
 													   .Count() ?? 0;
 					flashSaleDTO.FlashSaleStatus = GetFlashSaleStatus(flashSaleDTO.Start, flashSaleDTO.End);
 				}
+				_logger.LogInfo($"Flash sales for store with ID {storeId} retrieved successfully");
 				return Ok(
 				new
 				{
@@ -234,6 +253,7 @@ namespace FFS.Application.Controllers
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving flash sales for store with ID {storeId}: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 
@@ -244,6 +264,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Retrieving flash sales in time for store with ID: {storeId}");
 				var flashSales = await _fsRepo.ListFoodFlashSaleInTimeByStore(storeId);
 
 				var flashSaleDTOs = _mapper.Map<List<FlashSaleDTO>>(flashSales);
@@ -255,6 +276,7 @@ namespace FFS.Application.Controllers
 													   .Count() ?? 0;
 					flashSaleDTO.FlashSaleStatus = GetFlashSaleStatus(flashSaleDTO.Start, flashSaleDTO.End);
 				}
+				_logger.LogInfo($"Flash sales in time for store with ID {storeId} retrieved successfully");
 				return Ok(
 				new
 				{
@@ -263,6 +285,7 @@ namespace FFS.Application.Controllers
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving flash sales in time for store with ID {storeId}: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 

@@ -29,8 +29,9 @@ namespace FFS.Application.Controllers
         private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
 		private readonly IInventoryRepository _inventoryRepository;
+		private ILoggerManager _logger;
 
-        public FoodController(IFoodRepository foodRepo, IComboRepository comboRepository, ICommentRepository commentRepository, IWishlistRepository wishlistRepository, IOrderRepository orderRepository, IMapper mapper, IInventoryRepository inventoryRepository)
+		public FoodController(IFoodRepository foodRepo, IComboRepository comboRepository, ICommentRepository commentRepository, IWishlistRepository wishlistRepository, IOrderRepository orderRepository, IMapper mapper, IInventoryRepository inventoryRepository, ILoggerManager logger)
 		{
 			_foodRepo = foodRepo;
 			_comboRepository = comboRepository;
@@ -39,6 +40,7 @@ namespace FFS.Application.Controllers
 			_orderRepository = orderRepository;
 			_mapper = mapper;
 			_inventoryRepository = inventoryRepository;
+			_logger = logger;
 		}
 
 		[HttpPost]
@@ -46,7 +48,8 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var foods = _foodRepo.GetFoods(foodParameters);
+				_logger.LogInfo("Retrieving foods");
+				var foods = _foodRepo.GetFoods(foodParameters);
                 int total = _foodRepo.CountGetFoods(foodParameters);
 
                 var data = new
@@ -54,12 +57,13 @@ namespace FFS.Application.Controllers
                     data = foods,
                     totalPage = total
                 };
-
-                return Ok(data);
+				_logger.LogInfo("Foods retrieved successfully");
+				return Ok(data);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while retrieving foods: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -68,16 +72,20 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var food = await _foodRepo.GetFoodById(id);
+				_logger.LogInfo($"Retrieving food with ID: {id}");
+				var food = await _foodRepo.GetFoodById(id);
                 if (food == null)
                 {
-                    return NotFound();
+					_logger.LogInfo($"Food with ID {id} not found");
+					return NotFound();
                 }
-                return Ok(food);
+				_logger.LogInfo($"Food with ID {id} retrieved successfully");
+				return Ok(food);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while retrieving food with ID {id}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -86,12 +94,15 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var foods = _foodRepo.FindAll(x => x.CategoryId == cateId && x.IsDelete == false);
-                return Ok(foods);
+				_logger.LogInfo($"Retrieving food items for category with ID: {cateId}");
+				var foods = _foodRepo.FindAll(x => x.CategoryId == cateId && x.IsDelete == false);
+				_logger.LogInfo($"Food items for category with ID {cateId} retrieved successfully");
+				return Ok(foods);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while retrieving food items for category with ID {cateId}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -100,6 +111,7 @@ namespace FFS.Application.Controllers
         {
             try
             {
+				_logger.LogInfo("Adding a new food item");
 				var newFood = new Food
 				{
 					CategoryId = (int)foodDTO.CategoryId,
@@ -119,12 +131,13 @@ namespace FFS.Application.Controllers
 				};
 
 				await _inventoryRepository.Add(inventory);
-
+				_logger.LogInfo("New food item added successfully");
 				return Ok(newFood);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while adding a new food item: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -133,10 +146,12 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var food = await _foodRepo.FindById(id, null);
+				_logger.LogInfo($"Updating food item with ID: {id}");
+				var food = await _foodRepo.FindById(id, null);
                 if (food == null)
                 {
-                    return NotFound();
+					_logger.LogInfo($"Food item with ID {id} not found");
+					return NotFound();
                 }
                 food.CategoryId = (int)foodDTO.CategoryId;
                 food.Description = foodDTO.Description;
@@ -152,11 +167,13 @@ namespace FFS.Application.Controllers
                 {
                     await _foodRepo.Update(food);
                 }
-                return Ok("Sửa thành công!");
+				_logger.LogInfo($"Food item with ID {id} updated successfully");
+				return Ok("Sửa thành công!");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while updating food item with ID {id}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -165,18 +182,22 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var food = await _foodRepo.FindById(id, null);
+				_logger.LogInfo($"Deleting food item with ID: {id}");
+				var food = await _foodRepo.FindById(id, null);
                 if (food == null)
                 {
-                    return NotFound();
+					_logger.LogInfo($"Food item with ID {id} not found");
+					return NotFound();
                 }
                 food.IsDelete = true;
                 await _foodRepo.Update(food);
-                return Ok("Xóa thành công!");
+				_logger.LogInfo($"Food item with ID {id} deleted successfully");
+				return Ok("Xóa thành công!");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while deleting food item with ID {id}: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -185,6 +206,8 @@ namespace FFS.Application.Controllers
         {
             try
             {
+				_logger.LogInfo($"Retrieving list of combos for store with ID: {idStore}");
+
 				List<dynamic> res = new List<dynamic>();
                 List<Combo> combos = await _comboRepository.GetList(x => x.StoreId == idStore && x.IsDelete == false);
 				foreach(Combo combo in combos)
@@ -196,11 +219,13 @@ namespace FFS.Application.Controllers
 					};
 					res.Add(c);
 				}
-                return Ok(res);
+				_logger.LogInfo($"List of combos for store with ID {idStore} retrieved successfully");
+				return Ok(res);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+				_logger.LogError($"An error occurred while retrieving list of combos for store with ID {idStore}: {ex.Message}");
+				throw new Exception(ex.Message);
             }
         }
 
@@ -209,12 +234,15 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                List< dynamic> combo = await _comboRepository.GetDetail(id);
-                return Ok(combo);
+				_logger.LogInfo($"Retrieving details of combo with ID: {id}");
+				List< dynamic> combo = await _comboRepository.GetDetail(id);
+				_logger.LogInfo($"Details of combo with ID {id} retrieved successfully");
+				return Ok(combo);
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+				_logger.LogError($"An error occurred while retrieving details of combo with ID {id}: {ex.Message}");
+				throw new Exception(ex.Message);
             }
         }
 
@@ -223,7 +251,8 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                Combo combo = new Combo()
+				_logger.LogInfo("Creating a new combo");
+				Combo combo = new Combo()
                 {
                     Name = comboFoodDTO.Name,
                     StoreId = comboFoodDTO.StoreId,
@@ -235,12 +264,13 @@ namespace FFS.Application.Controllers
 				int id = combo.Id;
 
                 await _comboRepository.AddComboFood(combo.Id, comboFoodDTO.StoreId, comboFoodDTO.IdFoods);
-
-                return Ok("Tạo thành công Combo!");
+				_logger.LogInfo("New combo created successfully");
+				return Ok("Tạo thành công Combo!");
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+				_logger.LogError($"An error occurred while creating a new combo: {ex.Message}");
+				throw new Exception(ex.Message);
             }
         }
 
@@ -249,8 +279,8 @@ namespace FFS.Application.Controllers
         {
             try
             {
-
-                Combo combo = new Combo()
+				_logger.LogInfo($"Updating combo with ID: {id}");
+				Combo combo = new Combo()
                 {
                     Id = id,
                     Name = comboFoodDTO.Name,
@@ -260,12 +290,13 @@ namespace FFS.Application.Controllers
                 await _comboRepository.Update(combo);
 
                 _comboRepository.UpdateComboFood(combo.Id, comboFoodDTO.StoreId, comboFoodDTO.IdFoods);
-
-                return Ok("Cập nhật thành công Combo!");
+				_logger.LogInfo($"Combo with ID {id} updated successfully");
+				return Ok("Cập nhật thành công Combo!");
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+				_logger.LogError($"An error occurred while updating combo with ID {id}: {ex.Message}");
+				throw new Exception(ex.Message);
             }
         }
 
@@ -274,12 +305,15 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                _comboRepository.DeleteCombo(id);
-                return Ok("Xóa thành công Combo!");
+				_logger.LogInfo($"Deleting combo with ID: {id}");
+				_comboRepository.DeleteCombo(id);
+				_logger.LogInfo($"Combo with ID {id} deleted successfully");
+				return Ok("Xóa thành công Combo!");
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+				_logger.LogError($"An error occurred while deleting combo with ID {id}: {ex.Message}");
+				throw new Exception(ex.Message);
             }
         }
 
@@ -288,16 +322,20 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var foodList = await _foodRepo.GetFoodListByStoreId(storeId);
+				_logger.LogInfo($"Retrieving food items for store with ID: {storeId}");
+				var foodList = await _foodRepo.GetFoodListByStoreId(storeId);
                 if (foodList == null || foodList.Count == 0)
                 {
-                    return NotFound();
+					_logger.LogInfo($"No food items found for store with ID: {storeId}");
+					return NotFound();
                 }
-                return Ok(foodList);
+				_logger.LogInfo($"Food items for store with ID {storeId} retrieved successfully");
+				return Ok(foodList);
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error: {ex.Message}");
+				_logger.LogError($"An error occurred while retrieving food items for store with ID {storeId}: {ex.Message}");
+				return BadRequest($"Error: {ex.Message}");
             }
         }
     //    [HttpGet]
@@ -322,18 +360,21 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var wishlistByEmail = await _wishlistRepository.GetList(w => w.UserId == foodRatingDTO.UserId && w.FoodId == foodRatingDTO.FoodId);
+				_logger.LogInfo("Rating food");
+				var wishlistByEmail = await _wishlistRepository.GetList(w => w.UserId == foodRatingDTO.UserId && w.FoodId == foodRatingDTO.FoodId);
                 var checkExist = wishlistByEmail.Count() == 0 ? true : false;
                 if (foodRatingDTO.Rate == 5 && checkExist == true)
                 {
                     await _wishlistRepository.AddToWishlist(foodRatingDTO.UserId, foodRatingDTO.FoodId);
                 }
                 await _commentRepository.RatingFood(_mapper.Map<Comment>(foodRatingDTO));
-                return Ok(new { IsCanRate = true });
+				_logger.LogInfo("Food rated successfully");
+				return Ok(new { IsCanRate = true });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+				_logger.LogError($"An error occurred while rating food: {ex.Message}");
+				return BadRequest(ex.Message);
             }
         }
         [HttpGet]
@@ -341,7 +382,8 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var foods = _foodRepo.GetAllFoods(allFoodParameters);
+				_logger.LogInfo("Retrieving all food items");
+				var foods = _foodRepo.GetAllFoods(allFoodParameters);
 
                 var metadata = new
                 {
@@ -354,8 +396,8 @@ namespace FFS.Application.Controllers
                 };
 
                 var foodDTOs = _mapper.Map<List<AllFoodDTO>>(foods);
-
-                return Ok(
+				_logger.LogInfo("All food items retrieved successfully");
+				return Ok(
                 new
                 {
                     foodDTOs,
@@ -364,7 +406,8 @@ namespace FFS.Application.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+				_logger.LogError($"An error occurred while retrieving all food items: {ex.Message}");
+				return BadRequest(ex.Message);
             }
 
         }
@@ -374,11 +417,14 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Retrieving recommended food items");
 				var homeFood = _foodRepo.FindAll(x=>x.IsDelete==false).OrderBy(x => Guid.NewGuid()).Take(10).ToList();
+				_logger.LogInfo("Recommended food items retrieved successfully");
 				return Ok(_mapper.Map<List<AllFoodDTO>>(homeFood));
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving recommended food items: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -388,11 +434,14 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Adding comment for food");
 				await _commentRepository.Add(comment);
+				_logger.LogInfo("Comment added successfully");
 				return NoContent();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while adding comment for food: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
