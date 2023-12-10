@@ -29,7 +29,7 @@ namespace Test
         private Mock<IWishlistRepository> _wishlistRepoMock;
         private Mock<IOrderRepository> _orderRepoMock;
         private Mock<IInventoryRepository> _inventoryRepoMock;
-
+        private readonly Mock<ILoggerManager> _logger;
         private FoodController _foodController;
 
         public FoodControllerTest()
@@ -41,7 +41,8 @@ namespace Test
             _wishlistRepoMock = new Mock<IWishlistRepository>();
             _inventoryRepoMock = new Mock<IInventoryRepository>();
             _commentRepoMock = new Mock<ICommentRepository>();
-            _foodController = new FoodController(_foodRepoMock.Object, _comboRepoMock.Object, _commentRepoMock.Object, _wishlistRepoMock.Object, _orderRepoMock.Object, _mapperMock.Object, _inventoryRepoMock.Object);
+            _logger = new Mock<ILoggerManager>();
+            _foodController = new FoodController(_foodRepoMock.Object, _comboRepoMock.Object, _commentRepoMock.Object, _wishlistRepoMock.Object, _orderRepoMock.Object, _mapperMock.Object, _inventoryRepoMock.Object, _logger.Object);
         }
         #region ListFood
         [Fact]
@@ -303,7 +304,7 @@ namespace Test
             var result = await _foodController.UpdateFood(foodId, foodDTO);
 
             // Assert
-            Assert.IsType<OkResult>(result);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]

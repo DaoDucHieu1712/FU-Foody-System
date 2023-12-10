@@ -25,6 +25,7 @@ namespace Test
         private readonly Mock<IHubContext<NotificationHub>> _hubContext;
         private readonly Mock<INotificationRepository> _notifyRepository;
         private readonly Mock<IMapper> _mapper;
+        private readonly Mock<ILoggerManager> _logger;
 
         private AdminController controller;
 
@@ -39,6 +40,7 @@ namespace Test
             _hubContext = new Mock<IHubContext<NotificationHub>>();
             _notifyRepository = new Mock<INotificationRepository>();
             _mapper = new Mock<IMapper>();
+            _logger = new Mock<ILoggerManager>();
 
             controller = new AdminController(_reportRepository.Object,
                                              _hubContext.Object,
@@ -46,7 +48,8 @@ namespace Test
                                              _userRepository.Object,
                                              _postRepository.Object,
                                              _orderRepository.Object,
-                                             _mapper.Object);
+                                             _mapper.Object,
+                                             _logger.Object);
         }
 
         #region Get report

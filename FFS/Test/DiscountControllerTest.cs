@@ -21,6 +21,7 @@ public class DiscountControllerTests
     private Mock<IDiscountRepository> _discountRepositoryMock;
     private Mock<IMapper> _mapperMock;
     private Mock<IUserDiscountRepository> _userDiscountMock;
+    private readonly Mock<ILoggerManager> _logger;
     private DiscountController _discountController;
 
     public DiscountControllerTests()
@@ -28,7 +29,8 @@ public class DiscountControllerTests
         _discountRepositoryMock = new Mock<IDiscountRepository>();
         _mapperMock = new Mock<IMapper>();
         _userDiscountMock = new Mock<IUserDiscountRepository>();
-        _discountController = new DiscountController(_discountRepositoryMock.Object, _userDiscountMock.Object, _mapperMock.Object);
+        _logger = new Mock<ILoggerManager>();
+        _discountController = new DiscountController(_discountRepositoryMock.Object, _userDiscountMock.Object, _mapperMock.Object, _logger.Object);
     }
     #region ListDiscoutByStore
 

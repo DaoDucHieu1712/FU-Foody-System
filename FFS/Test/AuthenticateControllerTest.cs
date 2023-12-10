@@ -43,6 +43,7 @@ namespace FFS.Test {
         private Mock<IAuthRepository> authRepository;
         private Mock<ILocationRepository> locationRepository;
         private AuthenticateController controller;
+        private readonly Mock<ILoggerManager> _logger;
 
         public AuthenticateControllerTest()
         {
@@ -54,6 +55,7 @@ namespace FFS.Test {
             mockEmailService = new Mock<IEmailService>();
             mockConfiguration = new Mock<IConfiguration>();
             locationRepository = new Mock<ILocationRepository>();
+            _logger = new Mock<ILoggerManager>();
 
             var appSettings = new AppSetting();
             mockOptionsMonitor.Setup(m => m.CurrentValue).Returns(appSettings);
@@ -70,7 +72,8 @@ namespace FFS.Test {
                 mockUserManager.Object,
                 authRepository.Object,
                 mockMapper.Object,
-                mockEmailService.Object
+                mockEmailService.Object,
+                _logger.Object
             );
         }
 

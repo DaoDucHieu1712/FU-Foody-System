@@ -13,11 +13,13 @@ namespace FFS.Application.Controllers
     {
         private readonly IReportRepository _reportRepository;
         private readonly IMapper _mapper;
+		private ILoggerManager _logger;
 
-        public ReportController(IReportRepository reportRepository, IMapper mapper)
+		public ReportController(IReportRepository reportRepository, IMapper mapper, ILoggerManager logger)
         {
             _reportRepository = reportRepository;
             _mapper = mapper;
+			_logger = logger;
         }
 
         [HttpPost]
@@ -25,12 +27,15 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                await _reportRepository.CreateReport(_mapper.Map<Report>(storeReportDTO));
-                return Ok();
+				_logger.LogInfo($"Attempting to create a new report...");
+				await _reportRepository.CreateReport(_mapper.Map<Report>(storeReportDTO));
+				_logger.LogInfo($"Report created successfully.");
+				return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+				_logger.LogError($"An error occurred while creating a report: {ex.Message}");
+				return BadRequest(ex.Message);
             }
         }
 
