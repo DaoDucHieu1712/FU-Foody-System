@@ -233,6 +233,7 @@ const FoodDetails = () => {
 														quantity: 1,
 														price: foodData.price,
 														img: foodData.imageURL,
+														storeId: foodData.storeId,
 													})
 												)
 											}
