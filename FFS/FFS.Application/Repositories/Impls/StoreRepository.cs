@@ -465,7 +465,7 @@ namespace FFS.Application.Repositories.Impls
 
 			if (!string.IsNullOrEmpty(allStoreParameters.CategoryName)  && !allStoreParameters.CategoryName.Equals("Tất cả"))
 			{
-				query = query.Where(store => store.Categories.Any(category => category.Id == Convert.ToInt32(allStoreParameters.CategoryName)));
+				query = query.Where(store => store.Categories.Any(category => category.CategoryName.ToLower().Equals(allStoreParameters.CategoryName.ToLower())));
 			}
 			SearchByStoreName(ref query, allStoreParameters.Search);
 			if (!string.IsNullOrEmpty(allStoreParameters.FilterStore.ToString()))

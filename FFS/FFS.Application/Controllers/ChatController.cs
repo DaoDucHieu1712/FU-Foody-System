@@ -30,6 +30,10 @@ namespace FFS.Application.Controllers
 		[HttpGet("{UserId}")]
 		public async Task<IActionResult> GetAllByUserId(string UserId)
 		{
+			if (string.IsNullOrEmpty(UserId))
+			{
+				return BadRequest("Người dùng không tồn tại");
+			}
 			try
 			{
 				var boxs = await _chatRepository
@@ -39,6 +43,10 @@ namespace FFS.Application.Controllers
 					x => x.Messages.OrderByDescending(m => m.CreatedAt))
 					.OrderByDescending(x => x.Messages.FirstOrDefault().CreatedAt)
 					.ToListAsync();
+				if(boxs is null)
+				{
+					return NotFound();
+				}
 				return Ok(_mapper.Map<List<ChatResponseDTO>>(boxs));
 			}
 			catch (Exception ex)
