@@ -36,6 +36,9 @@ const DetailPost = () => {
 	const userId = CookieService.getToken("fu_foody_id");
 	const accesstoken = useSelector((state) => state.auth.accessToken);
 	const userInfo = useSelector((state) => state.auth.userProfile);
+	const avartar = userInfo?.avatar;
+	const username = userInfo?.firstName + " " + userInfo?.lastName;
+
 	const { postId } = useParams();
 	const [post, setPost] = useState("");
 	const [openComment, setOpenComment] = useState(false);
@@ -53,6 +56,7 @@ const DetailPost = () => {
 					.some((post) => post.isLike == true);
 				if (checkReact) {
 					setIsReact(true);
+					console.log(isReact);
 				}
 			})
 			.catch((error) => {
@@ -60,23 +64,49 @@ const DetailPost = () => {
 			});
 	};
 
-	const handleReactPost = () => {
+	const handleReactPost = async () => {
 		try {
 			const dataPost = {
 				userId: userId,
 				postId: postId,
 			};
-			axiosConfig
-				.post("/api/Post/ReactPost", dataPost)
-				.then(() => {
-					fetchPostDetails();
-				})
-				.catch((error) => {
-					console.log(error);
-				})
-				.finally(() => {
-					setIsReact((cur) => !cur);
-				});
+
+			// Send a request to react or unreact to the post
+			await axiosConfig.post("/api/Post/ReactPost", dataPost);
+
+			// Update the state to reflect the change
+			setPost((prevPost) => {
+				const updatedReactPosts = isReact
+					? [
+							...prevPost.reactPosts.map((react) =>
+								react.userId === userId && react.postId === postId
+									? { ...react, isLike: false }
+									: react
+							),
+					  ]
+					: [
+							...prevPost.reactPosts,
+							{
+								userId: userId,
+								avartar: avartar, // Make sure you have avartar defined
+								username: username, // Make sure you have username defined
+								postId: postId,
+								isLike: true,
+							},
+					  ];
+					  console.log(prevPost.reactPosts);
+
+				return {
+					...prevPost,
+					reactPosts: updatedReactPosts,
+					likeNumber: isReact
+						? prevPost.likeNumber - 1
+						: prevPost.likeNumber + 1,
+				};
+			});
+
+			// Update the isReact state
+			setIsReact((prevIsReact) => !prevIsReact);
 		} catch (error) {
 			console.error("Error occur: ", error);
 		}
@@ -84,7 +114,7 @@ const DetailPost = () => {
 
 	useEffect(() => {
 		fetchPostDetails();
-	}, [postId]);
+	}, [postId, isReact]);
 
 	const reloadPost = () => {
 		fetchPostDetails();
