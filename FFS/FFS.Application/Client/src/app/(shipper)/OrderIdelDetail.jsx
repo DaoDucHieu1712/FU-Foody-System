@@ -62,6 +62,8 @@ const OrderIdelDetail = () => {
 														<p className="font-bold w-[300px]">
 															{item.foodName || item.comboName}
 														</p>
+														<p>Địa chỉ nhận hàng : {item.storeAddress}</p>
+
 														<p>{item.unitPrice} $</p>
 													</div>
 												</div>
@@ -114,7 +116,7 @@ const OrderIdelDetail = () => {
 					</div>
 					<ul className="info">
 						<div className="flex justify-between gap-y-2 flex-col border-b pb-3 border-gray-200">
-							<p className="font-bold text-lg">Địa chỉ :</p>
+							<p className="font-bold text-lg">Địa chỉ giao :</p>
 							<p className="font-medium text-sm">{orderQuery.data?.location}</p>
 						</div>
 					</ul>

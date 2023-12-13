@@ -60,7 +60,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize]
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public IActionResult CountGetReports([FromBody] ReportParameters reportParameters)
 		{
@@ -81,7 +81,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize]
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public IActionResult GetAccounts([FromBody] UserParameters userParameters)
 		{
@@ -108,7 +108,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize]
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public IActionResult GetPosts([FromBody] UserParameters userParameters)
 		{
@@ -135,7 +135,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize]
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public async Task<IActionResult> ApprovePost([FromBody] UserParameters userParameters)
 		{
@@ -184,7 +184,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize]
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public IActionResult GetRoles()
 		{
@@ -204,6 +204,8 @@ namespace FFS.Application.Controllers
 				throw;
 			}
 		}
+
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<IActionResult> ExportReport()
 		{
@@ -219,6 +221,8 @@ namespace FFS.Application.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<IActionResult> ExportUser()
 		{
@@ -237,7 +241,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize]
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public IActionResult GetRequestAccount([FromBody] UserParameters userParameters)
 		{
@@ -264,7 +268,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize]
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public IActionResult BanAccount([FromBody] UserParameters userParameters)
 		{
@@ -286,7 +290,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize]
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public IActionResult UnBanAccount([FromBody] UserParameters userParameters)
 		{
@@ -308,7 +312,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize]
+		[Authorize(Roles = "Admin")]
 		[HttpPost]
 		public IActionResult ApproveUser([FromBody] UserParameters userParameters)
 		{
@@ -329,6 +333,8 @@ namespace FFS.Application.Controllers
 				throw;
 			}
 		}
+
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public IActionResult AccountsStatistic()
 		{
@@ -354,6 +360,8 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+
+		[Authorize(Roles = "Admin")]
 		[HttpGet("{year}")]
 		public IActionResult ReportsStatistic(int year = default)
 		{

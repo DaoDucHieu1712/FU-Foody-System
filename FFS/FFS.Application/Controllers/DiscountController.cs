@@ -9,6 +9,7 @@ using FFS.Application.Helper;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ namespace FFS.Application.Controllers
 			_logger = logger;
 		}
 
+		[Authorize(Roles = "StoreOwner")]
 		[HttpGet]
         public  IActionResult ListDiscoutByStore([FromQuery] DiscountParameters discountParameters)
         {
@@ -72,7 +74,9 @@ namespace FFS.Application.Controllers
             }
 
         }
-        [HttpPost]
+
+		[Authorize(Roles = "StoreOwner")]
+		[HttpPost]
         public async Task<IActionResult> CreateDiscount([FromBody] DiscountDTO discountDTO)
         {
             try
@@ -90,6 +94,8 @@ namespace FFS.Application.Controllers
             }
         }
 
+
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPut]
 		public async Task<IActionResult> UpdateDiscount(int id, DiscountDTO discountDTO)
 		{
@@ -120,6 +126,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "StoreOwner")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteDiscount(int id)
 		{

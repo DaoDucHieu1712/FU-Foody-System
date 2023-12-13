@@ -6,6 +6,8 @@ import { setAccessToken } from "../../redux/auth";
 import CookieService from "../../shared/helper/cookieConfig";
 import axios from "../../shared/api/axiosConfig";
 import { useSelector } from "react-redux";
+import { cartActions } from "./shared/cartSlice";
+import { comboActions } from "./shared/comboSlice";
 
 const UserNav = () => {
 	const userInfo = useSelector((state) => state.auth.userProfile);
@@ -25,6 +27,8 @@ const UserNav = () => {
 		CookieService.removeToken("fu_foody_id");
 		CookieService.removeToken("fu_foody_email");
 		dispatch(setAccessToken(null));
+		dispatch(cartActions.clearCart());
+		dispatch(comboActions.clearCart());
 		window.location.href = "/login";
 	};
 
@@ -103,6 +107,14 @@ const UserNav = () => {
 							<div className="font-medium truncate">{userInfo.email}</div>
 						</div>
 						<ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+							<li>
+								<a
+									href={`/user-detail/${CookieService.getToken("fu_foody_id")}`}
+									className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer"
+								>
+									Trang cá nhân
+								</a>
+							</li>
 							<li>
 								<a
 									onClick={handleProfileClick}

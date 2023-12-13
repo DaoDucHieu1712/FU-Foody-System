@@ -150,6 +150,9 @@ const UserDetails = () => {
 	};
 
 	const handleCreateBoxChat = async () => {
+		if (cookies.get("fu_foody_id") === id) {
+			return;
+		}
 		dispatch(chatActions.Update(true));
 		await ChatService.CreateChatBox({
 			fromUserId: cookies.get("fu_foody_id"),

@@ -4,6 +4,7 @@ using FFS.Application.Entities;
 using FFS.Application.Hubs;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -30,6 +31,7 @@ namespace FFS.Application.Controllers
 			_logger = logger;
 		}
 
+		[Authorize]
 		[HttpGet("{UserId}")]
 		public async Task<IActionResult> GetAllByUserId(string UserId)
 		{
@@ -63,6 +65,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> FindById(int id)
 		{
@@ -81,6 +84,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> CreateChatBox(ChatRequestDTO chatRequestDTO)
 		{
@@ -116,6 +120,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> SendMessage(MessageRequestDTO messageRequestDTO)
 		{

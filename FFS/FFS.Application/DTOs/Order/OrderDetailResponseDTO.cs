@@ -5,6 +5,7 @@
 		public int Id { get; set; }
 		public int OrderId { get; set; }
 		public int StoreId { get; set; }
+		public string StoreAddress { get; set; }
 		public string StoreName { get; set; }
 		public int? FoodId { get; set; }
 		public string? FoodName { get; set; }

@@ -11,6 +11,7 @@ using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Migrations;
 using FFS.Application.Repositories.Impls;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -66,6 +67,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPost]
 		public async Task<IActionResult> CreateFlashSale([FromBody] FlashSaleDTO flashSaleDTO)
 		{
@@ -105,6 +107,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateFlashSale(int id, FlashSaleDTO flashSaleDTO)
 		{
@@ -154,6 +157,8 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+
+		[Authorize(Roles = "StoreOwner")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteFlashSale(int id)
 		{
@@ -179,6 +184,8 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+
+		[Authorize(Roles = "StoreOwner")]
 		[HttpDelete("{flashSaleId}/{foodId}")]
 		public async Task<IActionResult> DeleteFlashSaleDetail(int flashSaleId, int foodId)
 		{

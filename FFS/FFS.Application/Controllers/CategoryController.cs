@@ -6,7 +6,7 @@ using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Entities.Common;
 using FFS.Application.Infrastructure.Interfaces;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,6 +57,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPost]
 		public async Task<IActionResult> Create(CategoryRequestDTO categoryRequestDTO)
 		{
@@ -93,6 +94,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> Update(int id, CategoryRequestDTO categoryRequestDTO)
 		{
@@ -128,6 +130,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "StoreOwner")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> Delete(int id)
 		{

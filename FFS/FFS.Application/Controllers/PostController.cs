@@ -155,9 +155,8 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-
 		[HttpPost]
-		[Authorize(Roles = $"User")]
+		[Authorize]
 		public async Task<ActionResult<Post>> CreatePost([FromBody] CreatePostDTO post)
 		{
 			try
@@ -187,6 +186,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpPut("{id}")]
 		public async Task<ActionResult<Post>> UpdatePost(int id, [FromBody] UpdatePostDTO updatedPost)
 		{
@@ -216,6 +216,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeletePost(int id)
 		{
@@ -232,6 +233,9 @@ namespace FFS.Application.Controllers
 				return BadRequest(ex.Message);
 			}
 		}
+
+
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> ReactPost([FromBody] CreateReactPostDTO reactPostDTO)
 		{
@@ -300,6 +304,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> CommentPost(Comment comment)
 		{

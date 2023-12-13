@@ -9,6 +9,7 @@ import NewLogo from "../../shared/components/icon/NewLogo";
 import StoreTag from "../../shared/components/store/StoreTag";
 import Notification from "./Notification";
 import UserNav from "./UserNav";
+import BlogIcon from "../../shared/components/icon/BlogIcon";
 
 export function LazyLoadComponent({ children }) {
 	return (
@@ -72,6 +73,7 @@ const Layout = () => {
 						<div className="flex items-center gap-3">
 							{accesstoken ? (
 								<>
+									<BlogIcon></BlogIcon>
 									<Cart></Cart>
 									<Heart></Heart>
 									<Notification></Notification>
