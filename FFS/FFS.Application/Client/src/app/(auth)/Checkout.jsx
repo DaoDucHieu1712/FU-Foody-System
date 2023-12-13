@@ -42,10 +42,10 @@ const Checkout = () => {
 			return Number(item.storeId);
 		});
 		console.log(items);
-		// if (cart.list.length === 0) {
-		// 	toast.error("Giỏ hàng trống nên không thể thanh toán");
-		// 	window.location.href = "/";
-		// }
+		if (cart.list.length === 0 && comboSelector.list.length === 0) {
+			toast.error("Giỏ hàng trống nên không thể thanh toán");
+			window.location.href = "/";
+		}
 	}, [cart, comboSelector, checkoutSelector]);
 
 	const useDiscountHandler = async () => {
@@ -154,8 +154,8 @@ const Checkout = () => {
 						toast.error(err);
 					});
 			}
-			// dispatch(comboActions.clearCart());
-			// dispatch(cartActions.clearCart());
+			dispatch(comboActions.clearCart());
+			dispatch(cartActions.clearCart());
 		});
 	};
 

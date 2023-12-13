@@ -146,6 +146,7 @@ namespace FFS.Application.DTOs
 				.ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Payment.Status))
 				.ReverseMap();
 			_ = CreateMap<OrderDetail, OrderDetailResponseDTO>()
+				.ForMember(dest => dest.StoreAddress , opt => opt.MapFrom(src => src.Store.Address))
 				.ForMember(dest => dest.FoodName, opt => opt.MapFrom(src => src.Food.FoodName))
 				.ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.Name))
 				.ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src =>

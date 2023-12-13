@@ -2,6 +2,7 @@
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,7 @@ namespace FFS.Application.Controllers
 			_logger = logger;
         }
 
+		[Authorize]
         [HttpPost]
         public async Task<IActionResult> Report([FromBody] ReportDTO storeReportDTO)
         {

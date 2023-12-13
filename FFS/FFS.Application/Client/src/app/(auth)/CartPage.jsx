@@ -228,7 +228,10 @@ const CartPage = () => {
 						<div className="p-3 w-full">
 							{/* <Link to={`/checkout/${location}/${phone}/${note}/${feeShip}`}> */}
 							<Button
-								disabled={location.length === 0}
+								disabled={
+									location.length === 0 ||
+									(cart.list.length === 0 && comboSelector.list.length === 0)
+								}
 								className="bg-primary w-full"
 								onClick={handleCheckOut}
 							>

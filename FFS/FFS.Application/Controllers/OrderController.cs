@@ -74,9 +74,12 @@ namespace FFS.Application.Controllers
 
 				foreach (var item in createOrderDTO.OrderDetails)
 				{
-					var inventory = await _inventoryRepository.FindSingle(x => x.FoodId == item.FoodId);
-					inventory.quantity = inventory.quantity - item.Quantity;
-					await _inventoryRepository.Update(inventory, "CreatedAt");
+					if (item.FoodId != null)
+					{
+						var inventory = await _inventoryRepository.FindSingle(x => x.FoodId == item.FoodId);
+						inventory.quantity = inventory.quantity - item.Quantity;
+						await _inventoryRepository.Update(inventory, "CreatedAt");
+					}
 				}
 				_logger.LogInfo("Order placed successfully");
 
@@ -176,6 +179,9 @@ namespace FFS.Application.Controllers
 							break;
 						case "price-desc":
 							queryOrders = queryOrders.OrderByDescending(x => x.TotalPrice);
+							break;
+						default:
+							queryOrders = queryOrders.OrderByDescending(x => x.CreatedAt);
 							break;
 					}
 				}
@@ -299,6 +305,9 @@ namespace FFS.Application.Controllers
 							break;
 						case "price-desc":
 							queryOrders = queryOrders.OrderByDescending(x => x.TotalPrice);
+							break;
+						default:
+							queryOrders = queryOrders.OrderByDescending(x => x.CreatedAt);
 							break;
 					}
 				}

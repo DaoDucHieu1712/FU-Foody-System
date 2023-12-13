@@ -5,6 +5,12 @@ using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
+
+
+using FFS.Application.Repositories.Impls;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace FFS.Application.Controllers
@@ -94,14 +100,17 @@ namespace FFS.Application.Controllers
 			{
 				_logger.LogError($"An error occurred while retrieving food items for category with ID {cateId}: {ex.Message}");
 				return StatusCode(500, ex.Message);
-			}
-		}
 
+            }
+        }
+
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPost]
 		public async Task<IActionResult> AddFood(FoodDTO foodDTO)
 		{
 			try
 			{
+
 				_logger.LogInfo("Adding a new food item");
 				var newFood = new Food
 				{
@@ -129,14 +138,17 @@ namespace FFS.Application.Controllers
 			{
 				_logger.LogError($"An error occurred while adding a new food item: {ex.Message}");
 				return StatusCode(500, ex.Message);
-			}
-		}
 
+            }
+        }
+
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateFood(int id, FoodDTO foodDTO)
 		{
 			try
 			{
+
 				_logger.LogInfo($"Updating food item with ID: {id}");
 				var food = await _foodRepo.FindById(id, null);
 				if (food == null)
@@ -165,14 +177,17 @@ namespace FFS.Application.Controllers
 			{
 				_logger.LogError($"An error occurred while updating food item with ID {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
-			}
-		}
 
+            }
+        }
+
+		[Authorize(Roles = "StoreOwner")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteFood(int id)
 		{
 			try
 			{
+
 				_logger.LogInfo($"Deleting food item with ID: {id}");
 				var food = await _foodRepo.FindById(id, null);
 				if (food == null)
@@ -235,14 +250,17 @@ namespace FFS.Application.Controllers
 			{
 				_logger.LogError($"An error occurred while retrieving details of combo with ID {id}: {ex.Message}");
 				throw new Exception(ex.Message);
-			}
-		}
 
+            }
+        }
+
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPost]
 		public async Task<IActionResult> CreateCombo(ComboFoodDTO comboFoodDTO)
 		{
 			try
 			{
+
 				_logger.LogInfo("Creating a new combo");
 				Combo combo = new Combo()
 				{
@@ -263,14 +281,17 @@ namespace FFS.Application.Controllers
 			{
 				_logger.LogError($"An error occurred while creating a new combo: {ex.Message}");
 				throw new Exception(ex.Message);
-			}
-		}
 
+            }
+        }
+
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateCombo(int id, ComboFoodDTO comboFoodDTO)
 		{
 			try
 			{
+
 				_logger.LogInfo($"Updating combo with ID: {id}");
 				Combo combo = new Combo()
 				{
@@ -292,14 +313,17 @@ namespace FFS.Application.Controllers
 			{
 				_logger.LogError($"An error occurred while updating combo with ID {id}: {ex.Message}");
 				throw new Exception(ex.Message);
-			}
-		}
 
+            }
+        }
+
+		[Authorize(Roles = "StoreOwner")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteCombo(int id)
 		{
 			try
 			{
+
 				_logger.LogInfo($"Deleting combo with ID: {id}");
 				_comboRepository.DeleteCombo(id);
 				_logger.LogInfo($"Combo with ID {id} deleted successfully");
@@ -351,8 +375,10 @@ namespace FFS.Application.Controllers
 			{
 				_logger.LogError($"An error occurred while retrieving food items for store with ID {storeId}: {ex.Message}");
 				return BadRequest($"Error: {ex.Message}");
-			}
-		}
+
+            }
+        }
+
 		//    [HttpGet]
 		//    public async Task<IActionResult> IsCanRate(string Uid, int foodId)
 		//    {
@@ -370,11 +396,14 @@ namespace FFS.Application.Controllers
 		//        }
 		//    }
 
+
+		[Authorize] 
 		[HttpPost]
 		public async Task<IActionResult> RatingFood([FromBody] FoodRatingDTO foodRatingDTO)
 		{
 			try
 			{
+
 				_logger.LogInfo("Rating food");
 				var wishlistByEmail = await _wishlistRepository.GetList(w => w.UserId == foodRatingDTO.UserId && w.FoodId == foodRatingDTO.FoodId);
 				var checkExist = wishlistByEmail.Count() == 0 ? true : false;

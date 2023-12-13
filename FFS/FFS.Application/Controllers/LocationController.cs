@@ -5,7 +5,7 @@ using FFS.Application.DTOs.Location;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +31,7 @@ namespace FFS.Application.Controllers
 			_logger = logger;
         }
 
+		[Authorize]
         [HttpGet]
         public async Task<ActionResult<List<Location>>> ListLocation(string email)
         {
@@ -48,7 +49,8 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPost]
+		[Authorize]
+		[HttpPost]
         public async Task<ActionResult<Location>> AddLocation([FromBody] Location locationDTO)
         {
             try
@@ -65,7 +67,8 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+		[Authorize]
+		[HttpPut("{id}")]
         public async Task<ActionResult> UpdateLocation(int id, LocationDTO locationDTO)
         {
             try
@@ -90,7 +93,8 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+		[Authorize]
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLocation(int id)
         {
             try
@@ -111,6 +115,7 @@ namespace FFS.Application.Controllers
             }
         }
 
+		[Authorize]
 		[HttpGet("{storeId}")]
 		public async Task<IActionResult> GetLocation(int storeId)
 		{
@@ -139,6 +144,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpPut("{id}")]
         public async Task<ActionResult> UpdateDefaultLocation(int id, string email)
 		{

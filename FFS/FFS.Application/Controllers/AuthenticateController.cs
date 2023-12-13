@@ -381,6 +381,7 @@ namespace FFS.Application.Controllers
 		}
 
 
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePasswordDTO)
 		{
@@ -410,6 +411,7 @@ namespace FFS.Application.Controllers
 			return await Task.FromResult(result);
 		}
 
+		[Authorize]
 		[HttpGet]
 		public async Task<IActionResult> Profile(string email)
 		{
@@ -427,7 +429,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-
+		[Authorize]
 		[HttpPut]
 		public async Task<IActionResult> Profile(string email, [FromBody] UserCommandDTO userCommandDTO)
 		{
@@ -462,6 +464,8 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+
+		[Authorize]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetRoleByUser(string id)
 		{

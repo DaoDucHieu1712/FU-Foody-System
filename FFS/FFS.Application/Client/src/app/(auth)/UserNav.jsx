@@ -6,6 +6,8 @@ import { setAccessToken } from "../../redux/auth";
 import CookieService from "../../shared/helper/cookieConfig";
 import axios from "../../shared/api/axiosConfig";
 import { useSelector } from "react-redux";
+import { cartActions } from "./shared/cartSlice";
+import { comboActions } from "./shared/comboSlice";
 
 const UserNav = () => {
 	const userInfo = useSelector((state) => state.auth.userProfile);
@@ -25,6 +27,8 @@ const UserNav = () => {
 		CookieService.removeToken("fu_foody_id");
 		CookieService.removeToken("fu_foody_email");
 		dispatch(setAccessToken(null));
+		dispatch(cartActions.clearCart());
+		dispatch(comboActions.clearCart());
 		window.location.href = "/login";
 	};
 
