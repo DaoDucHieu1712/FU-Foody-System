@@ -13,6 +13,7 @@ using FFS.Application.Entities.Enum;
 using FFS.Application.Hubs;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,7 @@ namespace FFS.Application.Controllers
 			_logger = logger;
 		}
 
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> CreaterOrder(OrderRequestDTO orderRequestDTO)
 		{
@@ -63,7 +65,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> Order(CreateOrderDTO createOrderDTO)
 		{
@@ -117,6 +119,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> AddOrderItem(List<OrderDetailDTO> items)
 		{
@@ -156,6 +159,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> MyOrder(string id, [FromQuery] OrderFilterDTO orderFilterDTO)
 		{
@@ -235,6 +239,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "StoreOwner")]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetOrderWithStore(int id, [FromQuery] OrderFilterDTO orderFilterDTO)
 		{
@@ -365,6 +370,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetOrderDetail(int id)
 		{
@@ -382,6 +388,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles ="Shipper")]
 		[HttpPost]
 		public async Task<IActionResult> GetOrderUnBook(DTOs.QueryParametter.Parameters parameters)
 		{
@@ -421,6 +428,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "Shipper")]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> CheckReceiverOrder(string id)
 		{
@@ -443,6 +451,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "Shipper")]
 		[HttpGet]
 		public async Task<IActionResult> GetOrderIdel(int? PageIndex, int? PageSize)
 		{
@@ -476,6 +485,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "Shipper")]
 		[HttpPut("{idShipper}/{idOrder}")]
 		public async Task<IActionResult> ReceiveOrderUnbook(string idShipper, int idOrder)
 		{
@@ -546,6 +556,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "Shipper")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> AcceptOrderWithShipper(int id)
 		{
@@ -576,6 +587,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "Customer")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> CancelOrderWithCustomer(int id, string CancelReason)
 		{
@@ -607,6 +619,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "Shipper")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> CancelOrderWithShipper(int id, string CancelReason)
 		{
@@ -636,6 +649,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> GetOrderFinish(DTOs.QueryParametter.Parameters parameters)
 		{
@@ -842,6 +856,7 @@ namespace FFS.Application.Controllers
 			return new Dictionary<string, string>(dictionary.OrderBy(kvp => kvp.Key));
 		}
 
+		[Authorize(Roles = "Shipper")]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetOrderPendingWithShipper(string id)
 		{
@@ -866,6 +881,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "Shipper")]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetNumberOfOrder(string id)
 		{
@@ -929,6 +945,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		[Authorize(Roles = "Shipper")]
 		[HttpGet("{shipperId}/{year}")]
 		public IActionResult GetRevenueShipperPerMonth(string shipperId, int year)
 		{

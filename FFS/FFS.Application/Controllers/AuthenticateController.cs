@@ -234,34 +234,6 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		//[HttpPost("testsendmail")]
-		//public async Task<APIResponseModel> TestSendMail(EmailModel emailModel)
-		//{
-
-		//	try
-		//	{
-		//		await _emailService.SendEmailAsync(emailModel);
-		//		return new APIResponseModel()
-		//		{
-		//			Code = 200,
-		//			Message = "OK",
-		//			IsSucceed = true,
-		//			Data = "Send email success"
-		//		};
-
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		return new APIResponseModel()
-		//		{
-		//			Code = 400,
-		//			Message = "Error: " + ex.Message,
-		//			IsSucceed = false,
-		//			Data = ex.ToString(),
-		//		};
-		//	}
-		//}
-
 		[HttpPost]
 		[AllowAnonymous]
 		public async Task<APIResponseModel> ForgotPassword([Required] string email)
@@ -379,7 +351,6 @@ namespace FFS.Application.Controllers
 			}
 
 		}
-
 
 		[Authorize]
 		[HttpPost]

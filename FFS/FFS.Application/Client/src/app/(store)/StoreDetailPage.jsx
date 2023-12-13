@@ -131,6 +131,9 @@ const StoreDetailPage = () => {
 	};
 
 	const handleCreateBoxChat = async () => {
+		if (cookies.get("fu_foody_id") === storeData.userId) {
+			return;
+		}
 		dispatch(chatActions.Update(true));
 		await ChatService.CreateChatBox({
 			fromUserId: cookies.get("fu_foody_id"),
