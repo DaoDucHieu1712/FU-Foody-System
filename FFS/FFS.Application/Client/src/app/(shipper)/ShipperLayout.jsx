@@ -14,6 +14,8 @@ import Shipping from "../../shared/components/icon/Shipping";
 import CookieService from "../../shared/helper/cookieConfig";
 import { setAccessToken } from "../../redux/auth";
 import { useDispatch } from "react-redux";
+import { cartActions } from "../(auth)/shared/cartSlice";
+import { comboActions } from "../(auth)/shared/comboSlice";
 
 const ShipperLayout = () => {
 	const userId = CookieService.getToken("fu_foody_id");
@@ -52,6 +54,8 @@ const ShipperLayout = () => {
 		CookieService.removeToken("fu_foody_id");
 		CookieService.removeToken("fu_foody_email");
 		dispatch(setAccessToken(null));
+		dispatch(cartActions.clearCart());
+		dispatch(comboActions.clearCart());
 		window.location.href = "/login";
 	};
 	return (

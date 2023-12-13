@@ -172,7 +172,7 @@ const OrderAvailablePage = () => {
 											<Typography
 												variant="small"
 												color="blue-gray"
-												className="font-normal w-[100px] whitespace-nowrap text-ellipsis"
+												className="font-normal w-[100px] text-ellipsis"
 											>
 												{item.note}
 											</Typography>

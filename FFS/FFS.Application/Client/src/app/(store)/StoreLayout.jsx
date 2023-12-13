@@ -16,6 +16,8 @@ import Discount from "../../shared/components/icon/Discount";
 import FlashSale from "../../shared/components/icon/FlashSale";
 import OrderIcon from "../../shared/components/icon/Order";
 import User from "../../shared/components/icon/User";
+import { cartActions } from "../(auth)/shared/cartSlice";
+import { comboActions } from "../(auth)/shared/comboSlice";
 
 const navigations = [
 	{ href: "/store/edit", name: "Cập nhật thông tin", icon: <User /> },
@@ -98,6 +100,8 @@ const StoreLayout = () => {
 									CookieService.removeToken("fu_foody_role");
 									CookieService.removeToken("fu_foody_id");
 									CookieService.removeToken("fu_foody_email");
+									dispatch(cartActions.clearCart());
+									dispatch(comboActions.clearCart());
 									dispatch(setAccessToken(null));
 									window.location.href = "/login"; // Redirect to the login page
 								}}

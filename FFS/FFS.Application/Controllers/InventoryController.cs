@@ -5,6 +5,7 @@ using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,9 @@ namespace FFS.Application.Controllers
             _mapper = mapper;
 			_logger = logger;
         }
+
+
+		[Authorize]
         [HttpGet()]
         public IActionResult GetInventories([FromQuery] InventoryParameters inventoryParameters)
         {
@@ -60,6 +64,7 @@ namespace FFS.Application.Controllers
             }
         }
 
+		[Authorize]
 		[HttpGet("{fid}")]
 		public async Task<IActionResult> GetInventory(int fid)
 		{
@@ -77,6 +82,8 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+
+		[Authorize(Roles ="StoreOwner")]
 		[HttpPost]
         public async Task<IActionResult> CreateInventory([FromBody]  CreateInventoryDTO inventory)
         {
@@ -101,7 +108,7 @@ namespace FFS.Application.Controllers
             }
         }
 
-
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPut("{storeId}/{foodId}/{quantity}")]
 		public async Task<IActionResult> ImportInventory(int storeId, int foodId, int quantity)
 		{
@@ -120,6 +127,8 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPut("{storeId}/{foodId}/{quantity}")]
 		public async Task<IActionResult> ExportInventory(int storeId, int foodId, int quantity)
 		{
@@ -137,7 +146,8 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-        [HttpDelete("{inventoryId}")]
+		[Authorize(Roles = "StoreOwner")]
+		[HttpDelete("{inventoryId}")]
         public async Task<IActionResult> DeleteInventoryByInventoryId(int inventoryId)
         {
             try
@@ -156,7 +166,7 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpGet("{storeId}/{foodId}")]
+		[HttpGet("{storeId}/{foodId}")]
         public async Task<ActionResult<bool>> CheckExistingInventory(int storeId, int foodId)
         {
             try

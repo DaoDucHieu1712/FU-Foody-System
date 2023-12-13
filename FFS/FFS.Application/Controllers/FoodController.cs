@@ -10,6 +10,7 @@ using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 
 using FFS.Application.Repositories.Impls;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -106,6 +107,7 @@ namespace FFS.Application.Controllers
             }
         }
 
+		[Authorize(Roles = "StoreOwner")]
         [HttpPost]
         public async Task<IActionResult> AddFood(FoodDTO foodDTO)
         {
@@ -141,7 +143,8 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+		[Authorize(Roles = "StoreOwner")]
+		[HttpPut("{id}")]
         public async Task<IActionResult> UpdateFood(int id, FoodDTO foodDTO)
         {
             try
@@ -177,7 +180,8 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+		[Authorize(Roles = "StoreOwner")]
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFood(int id)
         {
             try
@@ -246,7 +250,8 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPost]
+		[Authorize(Roles = "StoreOwner")]
+		[HttpPost]
         public async Task<IActionResult> CreateCombo(ComboFoodDTO comboFoodDTO)
         {
             try
@@ -274,7 +279,8 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+		[Authorize(Roles = "StoreOwner")]
+		[HttpPut("{id}")]
         public async Task<IActionResult> UpdateCombo(int id, ComboFoodDTO comboFoodDTO)
         {
             try
@@ -300,7 +306,8 @@ namespace FFS.Application.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+		[Authorize(Roles = "StoreOwner")]
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCombo(int id)
         {
             try
@@ -338,23 +345,24 @@ namespace FFS.Application.Controllers
 				return BadRequest($"Error: {ex.Message}");
             }
         }
-    //    [HttpGet]
-    //    public async Task<IActionResult> IsCanRate(string Uid, int foodId)
-    //    {
-    //        try
-    //        {
-    //            var order = await _orderRepository.FindSingle(x =>
-    //x.CustomerId.Equals(Uid) &&
-    //x.OrderDetails.Any(od => od.FoodId.Equals(foodId)));
-    //            bool isCanRate = order != null ? true : false;
-    //            return Ok(isCanRate);
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            return BadRequest(ex.Message);
-    //        }
-    //    }
+		//    [HttpGet]
+		//    public async Task<IActionResult> IsCanRate(string Uid, int foodId)
+		//    {
+		//        try
+		//        {
+		//            var order = await _orderRepository.FindSingle(x =>
+		//x.CustomerId.Equals(Uid) &&
+		//x.OrderDetails.Any(od => od.FoodId.Equals(foodId)));
+		//            bool isCanRate = order != null ? true : false;
+		//            return Ok(isCanRate);
+		//        }
+		//        catch (Exception ex)
+		//        {
+		//            return BadRequest(ex.Message);
+		//        }
+		//    }
 
+		[Authorize]
         [HttpPost]
         public async Task<IActionResult> RatingFood([FromBody] FoodRatingDTO foodRatingDTO)
         {

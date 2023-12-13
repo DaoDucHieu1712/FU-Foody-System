@@ -6,6 +6,7 @@ using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using FFS.Application.Repositories.Impls;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace FFS.Application.Controllers
 			_logger = logger;
 		}
 
+		[Authorize]
 		[HttpGet]
 		public async Task<ActionResult<List<WishlistDTO>>> GetWishlistByUserId(string userId)
 		{
@@ -84,7 +86,7 @@ namespace FFS.Application.Controllers
 		//        return StatusCode(500, ex.Message);
 		//    }
 		//}
-
+		[Authorize]
 		[HttpPost()]
 		public async Task<ActionResult> AddToWishlist(string userId, int foodId)
 		{
@@ -121,6 +123,8 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+
+		[Authorize]
 		[HttpDelete("{wishlistId}")]
 		public async Task<ActionResult> RemoveFromWishlist(int wishlistId)
 		{
@@ -139,7 +143,9 @@ namespace FFS.Application.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-		 [HttpDelete("{userId}/{foodId}")]
+
+		[Authorize]
+		[HttpDelete("{userId}/{foodId}")]
         public async Task<ActionResult> RemoveFromWishlistv2(string userId, int foodId)
         {
             try
