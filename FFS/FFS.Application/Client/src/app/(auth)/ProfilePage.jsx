@@ -13,11 +13,22 @@ import ErrorText from "../../shared/components/text/ErrorText";
 const schema = yup.object({
 	firstName: yup.string().required("Hãy điền tên!"),
 	lastName: yup.string().required("Hãy điền họ!"),
-	// avatar: yup.string().required("Hãy thêm ảnh!"),
+	birthDay: yup
+		.date()
+		.required("Hãy chọn ngày sinh!")
+		.test(
+			"is-valid-birth-year",
+			"Năm sinh không hợp lệ !",
+			(value) => value && dayjs(value).isBefore(dayjs().subtract(18, "years"))
+		),
 });
 const ProfilePage = () => {
 	const dispatch = useDispatch();
 	const user = useSelector((state) => state.auth.userProfile);
+	const birthDateOnly =
+		user && user.birthDay && typeof user.birthDay === "string"
+			? user.birthDay.split("T")[0]
+			: "";
 
 	const {
 		register,
@@ -38,9 +49,9 @@ const ProfilePage = () => {
 				lastName: data.lastName,
 				gender: data.gender === "true",
 				allow: true,
-				birthDay: data.birthDay,
+				birthDay: dayjs(data.birthDay).format("YYYY-MM-DD"),
 			};
-			console.log("updated",updatedUserData);
+			console.log("updated", updatedUserData);
 			const response = await axios.put(
 				`/api/Authenticate/Profile?email=${user.email}`,
 				updatedUserData
@@ -150,12 +161,15 @@ const ProfilePage = () => {
 										<span className="font-semibold text-gray-500 ">Email</span>
 										<p className="col-span-2">{user.email}</p>
 									</div>
-									<div className="grid grid-cols-3">
-										<span className="font-semibold text-gray-500 ">
-											Số điện thoại
-										</span>
-										<p className="col-span-2">{user.phoneNumber}</p>
-									</div>
+									{user.phoneNumber ? (
+										<div className="grid grid-cols-3">
+											<span className="font-semibold text-gray-500 ">
+												Số điện thoại
+											</span>
+											<p className="col-span-2">{user.phoneNumber}</p>
+										</div>
+									) : null}
+
 									<div className="grid grid-cols-3">
 										<span className="font-semibold text-gray-500">
 											Giới tính
@@ -181,16 +195,24 @@ const ProfilePage = () => {
 										<span className="font-semibold text-gray-500">
 											Ngày sinh
 										</span>
-										<Input
-											{...register("birthDay")}
-											type="datetime-local"
-											className="col-span-2 w-full"
-											label="Ngày sinh"
-											defaultValue={dayjs(user.BirthDay2).format(
-												"YYYY-MM-DDTHH:mm"
+										<div className="col-span-1 flex flex-col">
+											
+											<Input
+												{...register("birthDay")}
+												type="date"
+												className="w-full"
+												label="Ngày sinh"
+												defaultValue={birthDateOnly}
+											/>
+											{errors.birthDay && (
+												<ErrorText
+													className="mt-1 text-red-500"
+													text={errors.birthDay.message}
+												></ErrorText>
 											)}
-										/>
+										</div>
 									</div>
+
 									<div className="grid grid-cols-3 mt-4">
 										<Button type="submit" className="bg-primary">
 											Lưu
