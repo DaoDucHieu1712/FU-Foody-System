@@ -16,6 +16,7 @@ import Discount from "../../shared/components/icon/Discount";
 import FlashSale from "../../shared/components/icon/FlashSale";
 import OrderIcon from "../../shared/components/icon/Order";
 import User from "../../shared/components/icon/User";
+import AccessDenied from "../(public)/AccessDenied";
 import { cartActions } from "../(auth)/shared/cartSlice";
 import { comboActions } from "../(auth)/shared/comboSlice";
 
@@ -35,8 +36,8 @@ const navigations = [
 ];
 
 const StoreLayout = () => {
-	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const [email, setEmail] = useState();
 	const [notFound, setNotFound] = useState(null);
 	const [loading, setLoading] = useState(true); // Add loading state
@@ -68,7 +69,7 @@ const StoreLayout = () => {
 	return (
 		<>
 			{notFound == true ? (
-				<NotFoundPage />
+				<AccessDenied />
 			) : (
 				<div className="flex">
 					<div className="fixed p-3 flex flex-col gap-y-12 h-[100vh] shadow-md w-[20vw] bg-primary">
@@ -115,7 +116,7 @@ const StoreLayout = () => {
 						<div className="flex items-center justify-end bg-primary p-9">
 							<div>
 								<p className="text-white font-medium cursor-pointer text-xl">
-									{email}
+									{CookieService.getToken("fu_foody_email")}
 								</p>
 							</div>
 						</div>

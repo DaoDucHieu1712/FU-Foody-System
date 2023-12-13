@@ -124,7 +124,8 @@ function App() {
 					<Route path="/store/food" element={<Food />} />
 					<Route path="/store/inventory" element={<Inventory />} />
 					<Route path="/store/category" element={<Category />} />
-					<Route path="/store/discount" element={<Discount />} />
+					<Route path="/store/discount" element={<Discount />} />user
+					
 					<Route path="/store/order/:id" element={<OrderDetail />} />
 					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
 					<Route path="/store/flash-sale" element={<FlashSale />} />

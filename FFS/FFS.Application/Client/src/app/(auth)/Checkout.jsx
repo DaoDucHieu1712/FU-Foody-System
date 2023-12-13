@@ -70,7 +70,7 @@ const Checkout = () => {
 				setTotalPrice(totalPrice - res.discount * totalPrice);
 			})
 			.catch((err) => {
-				toast.error(err.response.data);
+				toast.error(err.response.data.msg);
 			});
 	};
 
