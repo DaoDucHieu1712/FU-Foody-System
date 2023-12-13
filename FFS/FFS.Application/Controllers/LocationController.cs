@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Wordprocessing;
 using FFS.Application.Data;
 using FFS.Application.DTOs.Location;
 using FFS.Application.Entities;
@@ -19,12 +20,15 @@ namespace FFS.Application.Controllers
 		private readonly IStoreRepository _storeRepository;
 
 		private readonly IMapper _mapper;
+		private ILoggerManager _logger;
 
-        public LocationController(ILocationRepository locaRepo, IMapper mapper, IStoreRepository storeRepository)
+
+		public LocationController(ILocationRepository locaRepo, IMapper mapper, IStoreRepository storeRepository, ILoggerManager logger)
         {
             _locaRepo = locaRepo;
             _mapper = mapper;
 			_storeRepository = storeRepository;
+			_logger = logger;
         }
 
         [HttpGet]
@@ -32,12 +36,15 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var locations = await _locaRepo.GetList(x => x.User.Email == email && x.IsDelete == false, x => x.User);
-                return Ok(locations);
+				_logger.LogInfo($"Listing locations for email: {email}");
+				var locations = await _locaRepo.GetList(x => x.User.Email == email && x.IsDelete == false, x => x.User);
+				_logger.LogInfo($"Locations listed successfully for email: {email}");
+				return Ok(locations);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while listing locations: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -46,12 +53,15 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                await _locaRepo.Add(locationDTO);
-                return Ok("Thêm thành công");
+				_logger.LogInfo("Adding location");
+				await _locaRepo.Add(locationDTO);
+				_logger.LogInfo("Location added successfully");
+				return Ok("Thêm thành công");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while adding location: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -60,19 +70,23 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var locationUpdate = await _locaRepo.FindById(id, null);
+				_logger.LogInfo($"Updating location with ID: {id}");
+				var locationUpdate = await _locaRepo.FindById(id, null);
                 if (locationUpdate == null)
                 {
-                    return NotFound();
+					_logger.LogInfo($"Location with ID: {id} not found");
+					return NotFound();
                 }
                 locationDTO.IsDefault = locationUpdate.IsDefault;
                 _mapper.Map(locationDTO, locationUpdate);
                 await _locaRepo.Update(locationUpdate);
-                return Ok("Sửa thành công");
+				_logger.LogInfo("Location updated successfully");
+				return Ok("Sửa thành công");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while updating location: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -81,16 +95,19 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var locationDelete = await _locaRepo.FindSingle(x => x.Id == id);
+				_logger.LogInfo($"Deleting location with ID: {id}");
+				var locationDelete = await _locaRepo.FindSingle(x => x.Id == id);
                 if (locationDelete == null)
                 {
                     return NotFound();
                 }
                 await _locaRepo.Remove(locationDelete);
-                return Ok("Xóa thành công");
+				_logger.LogInfo("Location deleted successfully");
+				return Ok("Xóa thành công");
             }
-            catch (Exception ex) { 
-                return StatusCode(500, ex.Message);
+            catch (Exception ex) {
+				_logger.LogError($"An error occurred while deleting location: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
 
@@ -99,33 +116,40 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Getting location for Store ID: {storeId}");
 				var store = await _storeRepository.FindSingle(x => x.Id == storeId);
 				if(store != null)
 				{
 					var location = await _locaRepo.FindSingle(x => x.UserId == store.UserId, null);
 					if(location == null)
 					{
+						_logger.LogInfo($"Location not found for Store ID: {storeId}");
 						return NotFound();
 					}
+					_logger.LogInfo($"Location retrieved successfully for Store ID: {storeId}");
 					return Ok(location);
 				}
+				_logger.LogInfo($"Store not found for Store ID: {storeId}");
 				return NotFound();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting location: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
 
 		[HttpPut("{id}")]
         public async Task<ActionResult> UpdateDefaultLocation(int id, string email)
-        {
-            try
+		{
+			try
             {
-                var locationUpdate = await _locaRepo.FindById(id, null);
+				_logger.LogInfo($"Updating default location with ID: {id} for email: {email}");
+				var locationUpdate = await _locaRepo.FindById(id, null);
                 if (locationUpdate == null)
                 {
-                    return NotFound();
+					_logger.LogInfo($"Location with ID: {id} not found");
+					return NotFound();
                 }
                 locationUpdate.IsDefault = true;
                 var locationToUpdate = await _locaRepo.FindSingle(x => x.User.Email == email && x.IsDefault == true);
@@ -133,7 +157,8 @@ namespace FFS.Application.Controllers
                 if (locationToUpdate == null)
                 {
                     await _locaRepo.Update(locationUpdate);
-                    return Ok();
+					_logger.LogInfo($"Default location updated successfully for email: {email}");
+					return Ok();
 
                 }
                 locationToUpdate.IsDefault = false;
@@ -141,11 +166,13 @@ namespace FFS.Application.Controllers
 
                 await _locaRepo.Update(locationUpdate);
                 await _locaRepo.Update(locationToUpdate);
-                return Ok();
+				_logger.LogInfo($"Default location updated successfully for email: {email}");
+				return Ok();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+				_logger.LogError($"An error occurred while updating default location: {ex.Message}");
+				return StatusCode(500, ex.Message);
             }
         }
     }

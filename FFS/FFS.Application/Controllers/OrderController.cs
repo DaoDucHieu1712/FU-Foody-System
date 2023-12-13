@@ -11,6 +11,7 @@ using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Entities.Enum;
 using FFS.Application.Hubs;
+using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -29,8 +30,10 @@ namespace FFS.Application.Controllers
 		private readonly IHubContext<NotificationHub> _hubContext;
 		private readonly INotificationRepository _notifyRepository;
 		private readonly IInventoryRepository _inventoryRepository;
+		private ILoggerManager _logger;
 
-		public OrderController(IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IStoreRepository storeRepository, IMapper mapper, IHubContext<NotificationHub> hubContext, INotificationRepository notifyRepository, IInventoryRepository inventoryRepository)
+
+		public OrderController(IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IStoreRepository storeRepository, IMapper mapper, IHubContext<NotificationHub> hubContext, INotificationRepository notifyRepository, IInventoryRepository inventoryRepository, ILoggerManager logger)
 		{
 			_orderRepository = orderRepository;
 			_orderDetailRepository = orderDetailRepository;
@@ -39,6 +42,7 @@ namespace FFS.Application.Controllers
 			_hubContext = hubContext;
 			_notifyRepository = notifyRepository;
 			_inventoryRepository = inventoryRepository;
+			_logger = logger;
 		}
 
 		[HttpPost]
@@ -46,13 +50,15 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Creating order");
 				var order = await _orderRepository.CreateOrder(orderRequestDTO);
 
-
+				_logger.LogInfo("Order created successfully");
 				return Ok(order);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while creating order: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -63,6 +69,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Placing an order");
 				var order = await _orderRepository.Order(createOrderDTO);
 
 				foreach (var item in createOrderDTO.OrderDetails)
@@ -71,10 +78,13 @@ namespace FFS.Application.Controllers
 					inventory.quantity = inventory.quantity - item.Quantity;
 					await _inventoryRepository.Update(inventory, "CreatedAt");
 				}
+				_logger.LogInfo("Order placed successfully");
+
 				return Ok(order);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while placing an order: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -84,19 +94,22 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Getting store ID for Order ID: {orderId}");
 				var storeId = await _orderRepository.GetStoreIdByOrderId(orderId);
 				if (storeId.HasValue)
 				{
+					_logger.LogInfo($"Store ID retrieved successfully for Order ID: {orderId}");
 					return Ok(new { StoreId = storeId.Value });
 				}
 				else
 				{
+					_logger.LogInfo($"Store not found for Order ID: {orderId}");
 					return NotFound($"Store not found for OrderId: {orderId}");
 				}
 			}
 			catch (Exception ex)
-
 			{
+				_logger.LogError($"An error occurred while getting store ID: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -106,14 +119,15 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
-
+				_logger.LogInfo("Adding order items");
 				await _orderRepository.AddOrder(items);
 
-
+				_logger.LogInfo("Order items added successfully");
 				return NoContent();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while adding order items: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -123,6 +137,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Finding order by ID: {id}");
 				return Ok(_mapper.Map<OrderResponseDTO>(
 					await _orderRepository.FindAll(x => x.Id == id, x => x.Customer, x => x.Shipper, x => x.Payment)
 					.Include(x => x.OrderDetails).ThenInclude(x => x.Store)
@@ -133,7 +148,7 @@ namespace FFS.Application.Controllers
 			}
 			catch (Exception ex)
 			{
-
+				_logger.LogError($"An error occurred while finding order by ID: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -143,6 +158,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Retrieving orders for customer ID: {id}");
 				var queryOrders = _orderRepository.FindAll(x => x.CustomerId == id, x => x.Customer, x => x.Shipper, x => x.Payment);
 
 				if (orderFilterDTO.SortType != null)
@@ -197,7 +213,7 @@ namespace FFS.Application.Controllers
 				int pageSize = Constant.Contants.PAGE_SIZE;
 				List<Order> orders = PagedList<Order>.ToPagedList(queryOrders, orderFilterDTO.PageIndex ?? 1, pageSize);
 				var TotalPages = (int)Math.Ceiling(queryOrders.Count() / (double)pageSize);
-
+				_logger.LogInfo($"Orders retrieved successfully for customer ID: {id}");
 				return Ok(new EntityFilter<OrderResponseDTO>()
 				{
 					List = _mapper.Map<List<OrderResponseDTO>>(orders),
@@ -208,6 +224,7 @@ namespace FFS.Application.Controllers
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving orders for customer ID: {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -217,6 +234,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Retrieving orders for store ID: {id}");
 				var queryOrders = _orderDetailRepository.FindAll(x => x.StoreId == id, x => x.Order)
 					.Include(x => x.Order)
 					.ThenInclude(x => x.Customer)
@@ -323,7 +341,7 @@ namespace FFS.Application.Controllers
 				int pageSize = Constant.Contants.PAGE_SIZE;
 				List<OrderResponseDTO> orders = PagedList<OrderResponseDTO>.ToPagedList(queryOrders, orderFilterDTO.PageIndex ?? 1, pageSize);
 				var TotalPages = (int)Math.Ceiling(queryOrders.Count() / (double)pageSize);
-
+				_logger.LogInfo($"Orders retrieved successfully for store ID: {id}");
 				return Ok(new EntityFilter<OrderResponseDTO>()
 				{
 					List = orders,
@@ -333,6 +351,7 @@ namespace FFS.Application.Controllers
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving orders for store ID: {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -342,11 +361,14 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to get order details for order ID {id}...");
 				var orderItems = await _orderDetailRepository.FindAll(x => x.OrderId == id, x => x.Food, x => x.Store, x => x.Combo).ToListAsync();
+				_logger.LogInfo($"Successfully retrieved order details for order ID {id}.");
 				return Ok(_mapper.Map<List<OrderDetailResponseDTO>>(orderItems));
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting order details for order ID {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -356,9 +378,11 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to get unbooked orders for Shipper ID {parameters.ShipperId}...");
 				List<Order> check = _orderRepository.FindAll(x => x.OrderStatus == OrderStatus.Booked && x.ShipperId == parameters.ShipperId).ToList();
 				if (check.Count > 0)
 				{
+					_logger.LogWarn($"Shipper ID {parameters.ShipperId} has an uncompleted order. Unable to get unbooked orders.");
 					return BadRequest("Bạn đang có đơn hàng chưa hoàn thành!");
 				}
 				else
@@ -376,12 +400,14 @@ namespace FFS.Application.Controllers
 						 data = orders,
 						 total = total
 					 };
+					_logger.LogInfo($"Successfully retrieved {total} unbooked orders for Shipper ID {parameters.ShipperId}.");
 					return Ok(res);
 				}
 
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting unbooked orders for Shipper ID {parameters.ShipperId}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -391,16 +417,19 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Checking if receiver with ID {id} has a booked order...");
 				List<Order> check = _orderRepository.FindAll(x => x.OrderStatus == OrderStatus.Booked && x.ShipperId == id).ToList();
 				if (check.Count > 0)
 				{
+					_logger.LogInfo($"Receiver with ID {id} has a booked order.");
 					return Ok(false);
 				}
-
+				_logger.LogInfo($"Receiver with ID {id} has a booked order.");
 				return Ok(true);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while checking if receiver with ID {id} has a booked order: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -410,6 +439,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to get unbooked orders with pagination. PageIndex: {PageIndex}, PageSize: {PageSize}");
 				var productsQuery = _orderRepository
 					.FindAll(x => x.OrderStatus == OrderStatus.Unbooked, x => x.Customer, x => x.Payment)
 					.Include(x => x.OrderDetails).ThenInclude(x => x.Store)
@@ -417,6 +447,7 @@ namespace FFS.Application.Controllers
 					.OrderByDescending(x => x.CreatedAt);
 
 				PagedList<Order> orderPaged = PagedList<Order>.ToPagedList(productsQuery, PageIndex ?? 1, PageSize ?? 7);
+				_logger.LogInfo($"Successfully retrieved {orderPaged.Count} unbooked orders with pagination. PageIndex: {PageIndex}, PageSize: {PageSize}");
 
 				return Ok(new
 				{
@@ -431,6 +462,7 @@ namespace FFS.Application.Controllers
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting unbooked orders with pagination. PageIndex: {PageIndex}, PageSize: {PageSize}. Error: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -440,14 +472,17 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Shipper with ID {idShipper} is attempting to receive unbooked order with ID {idOrder}...");
 				var order = await _orderRepository.FindById(idOrder, null);
 				if (order.ShipperId != null)
 				{
+					_logger.LogError($"Order with ID {idOrder} already has another shipper. Unable to receive.");
 					throw new Exception("Đơn hàng đã có shipper khác nhận. Xin vui lòng thử lại!");
 				}
 				List<Order> check = _orderRepository.FindAll(x => x.ShipperId == idShipper && x.OrderStatus == OrderStatus.Booked, null).ToList();
 				if (check.Count > 0)
 				{
+					_logger.LogError($"Shipper with ID {idShipper} has an uncompleted order. Unable to receive.");
 					throw new Exception("Bạn đang có đơn hàng chưa hoàn thành!");
 				}
 				order.ShipperId = idShipper;
@@ -463,6 +498,7 @@ namespace FFS.Application.Controllers
 
 				if (!storeId.HasValue)
 				{
+					_logger.LogError($"Store not found for OrderId: {order.Id}");
 					return NotFound($"Store not found for OrderId: {order.Id}");
 				}
 
@@ -491,11 +527,12 @@ namespace FFS.Application.Controllers
 				await _hubContext.Clients.All.SendAsync("ReceiveNotification", customerNotification);
 				await _notifyRepository.Add(customerNotification);
 
-
+				_logger.LogInfo($"Successfully received unbooked order with ID {idOrder} by Shipper ID {idShipper}.");
 				return Ok("Nhận đơn hàng thành công!");
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while receiving unbooked order with ID {idOrder} by Shipper ID {idShipper}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -535,6 +572,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to accept order with ID {id} and mark it as finished...");
 				var order = await _orderRepository.FindSingle(x => x.Id == id);
 				order.OrderStatus = OrderStatus.Cancel;
 				order.CancelReason = CancelReason;
@@ -550,11 +588,12 @@ namespace FFS.Application.Controllers
 					await _inventoryRepository.Update(inventory, "CreatedAt");
 				}
 
-
+				_logger.LogInfo($"Successfully accepted order with ID {id} and marked it as finished.");
 				return NoContent();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while accepting order with ID {id} and marking it as finished: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -564,6 +603,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to cancel order with ID {id} and provide cancel reason...");
 				var order = await _orderRepository.FindSingle(x => x.Id == id);
 				order.OrderStatus = OrderStatus.Cancel;
 				order.CancelReason = CancelReason;
@@ -577,11 +617,12 @@ namespace FFS.Application.Controllers
 					inventory.quantity = inventory.quantity + item.Quantity;
 					await _inventoryRepository.Update(inventory, "CreatedAt");
 				}
-
+				_logger.LogInfo($"Successfully canceled order with ID {id} and provided cancel reason.");
 				return NoContent();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while canceling order with ID {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -591,6 +632,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to get finished orders with parameters: {parameters}...");
 				parameters.OrderStatus = OrderStatus.Finish;
 				List<dynamic> orders = await _orderRepository.GetOrder(parameters);
 				foreach (var item in orders)
@@ -604,10 +646,12 @@ namespace FFS.Application.Controllers
 					 data = orders,
 					 total = total
 				 };
+				_logger.LogInfo($"Successfully retrieved {total} finished orders.");
 				return Ok(res);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting finished orders: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -615,25 +659,28 @@ namespace FFS.Application.Controllers
 		[HttpGet("{orderId}")]
 		public async Task<string> GetUrlPayment(int orderId)
 		{
-			Order order = await _orderRepository.FindById(orderId, null);
+			try
+			{
+				_logger.LogInfo($"Attempting to generate payment URL for order with ID {orderId}...");
+				Order order = await _orderRepository.FindById(orderId, null);
 
-			List<OrderDetail> orderDetails = await _orderDetailRepository.FindAll(x => x.OrderId == orderId, null).ToListAsync();
-			int storeId = orderDetails[0].StoreId;
-			Store store = await _storeRepository.FindById(storeId, null);
+				List<OrderDetail> orderDetails = await _orderDetailRepository.FindAll(x => x.OrderId == orderId, null).ToListAsync();
+				int storeId = orderDetails[0].StoreId;
+				Store store = await _storeRepository.FindById(storeId, null);
 
 
-			string vnpTmnCode = "U0K46IOK";
-			string vnpHashSecret = "LKBKXTYIOEAOZAMOQJCQNDPKNKQFRKBQ";
-			string vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-			string vnpTxnRef = order.Id.ToString();
-			string vnpOrderInfo = $"Thanh toán đơn hàng cho cửa hàng ${store.StoreName} tại  ";
-			//${store.Address}
-			string vnpOrderType = "100000";
-			long vnpAmount = Convert.ToInt64(order.TotalPrice) * 100;
-			string vnpLocal = "vn";
-			string vnpIpAdd = HttpContext.Connection.RemoteIpAddress.ToString();
+				string vnpTmnCode = "U0K46IOK";
+				string vnpHashSecret = "LKBKXTYIOEAOZAMOQJCQNDPKNKQFRKBQ";
+				string vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+				string vnpTxnRef = order.Id.ToString();
+				string vnpOrderInfo = $"Thanh toán đơn hàng cho cửa hàng ${store.StoreName} tại  ";
+				//${store.Address}
+				string vnpOrderType = "100000";
+				long vnpAmount = Convert.ToInt64(order.TotalPrice) * 100;
+				string vnpLocal = "vn";
+				string vnpIpAdd = HttpContext.Connection.RemoteIpAddress.ToString();
 
-			Dictionary<string, string> inputData = new Dictionary<string, string>
+				Dictionary<string, string> inputData = new Dictionary<string, string>
 				{
 					{ "vnp_Amount", vnpAmount.ToString() },
 					{ "vnp_Command", "pay" },
@@ -651,13 +698,20 @@ namespace FFS.Application.Controllers
 
 
 				};
-			inputData = SortDictionary(inputData);
-			string originalData = string.Join("&", inputData.Select(kvp => $"{kvp.Key}={WebUtility.UrlEncode(kvp.Value)}"));
-			string vnpUrlWithQuery = vnpUrl + "?" + string.Join("&", inputData.Select(kvp => $"{kvp.Key}={WebUtility.UrlEncode(kvp.Value)}"));
-			string vnpSecurityHash = CalculateVnPSecurityHash(vnpHashSecret, originalData);
+				inputData = SortDictionary(inputData);
+				string originalData = string.Join("&", inputData.Select(kvp => $"{kvp.Key}={WebUtility.UrlEncode(kvp.Value)}"));
+				string vnpUrlWithQuery = vnpUrl + "?" + string.Join("&", inputData.Select(kvp => $"{kvp.Key}={WebUtility.UrlEncode(kvp.Value)}"));
+				string vnpSecurityHash = CalculateVnPSecurityHash(vnpHashSecret, originalData);
 
-			vnpUrlWithQuery += $"&vnp_SecureHashType=HMACSHA512&vnp_SecureHash={vnpSecurityHash}";
-			return vnpUrlWithQuery;
+				vnpUrlWithQuery += $"&vnp_SecureHashType=HMACSHA512&vnp_SecureHash={vnpSecurityHash}";
+				_logger.LogInfo($"Successfully generated payment URL for order with ID {orderId}.");
+				return vnpUrlWithQuery;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError($"An error occurred while generating payment URL for order with ID {orderId}: {ex.Message}");
+				throw; // Consider rethrowing the exception or handle it as needed
+			}
 		}
 
 		public class PaymentCreate
@@ -670,59 +724,71 @@ namespace FFS.Application.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreatePayment(PaymentCreate payment)
 		{
-			Order order = await _orderRepository.FindById(payment.OrderId, null);
+			try
+			{
+				_logger.LogInfo($"Attempting to create payment for order with ID {payment.OrderId}...");
 
-			Payment p = new Payment()
-			{
-				Amount = order.TotalPrice,
-				PaymentMethod = payment.PaymentMethod
-			};
-			if (payment.Status == 2)
-			{
-				p.Status = PaymentStatus.Completed;
+				Order order = await _orderRepository.FindById(payment.OrderId, null);
+
+				Payment p = new Payment()
+				{
+					Amount = order.TotalPrice,
+					PaymentMethod = payment.PaymentMethod
+				};
+				if (payment.Status == 2)
+				{
+					p.Status = PaymentStatus.Completed;
+				}
+				else
+				{
+					p.Status = PaymentStatus.Pending;
+				}
+
+				await _orderRepository.CreatePayment(p);
+
+				order.PaymentId = p.Id;
+				await _orderRepository.Update(order);
+
+
+				var storeId = await _orderRepository.GetStoreIdByOrderId(order.Id);
+
+
+				if (!storeId.HasValue)
+				{
+					_logger.LogError($"Store information not found for orderId: {storeId}");
+					return NotFound($"Store not found for OrderId: {order.Id}");
+				}
+
+				var storeinfor = await _storeRepository.GetInformationStore(storeId.Value);
+
+				// Ensure storeinfor is valid before proceeding
+				if (storeinfor == null)
+				{
+					_logger.LogError($"Store information not found for StoreId: {storeId}");
+					return NotFound($"Store information not found for StoreId: {storeId}");
+				}
+
+				var notification = new Notification
+				{
+					CreatedAt = DateTime.Now,
+					UpdatedAt = DateTime.Now,
+					IsDelete = false,
+					UserId = storeinfor.UserId,
+					Title = "Đơn hàng mới",
+					Content = $"Bạn có đơn hàng mới mã #{order.Id}"
+				};
+
+				await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+				await _notifyRepository.Add(notification);
+
+				_logger.LogInfo($"Successfully created payment for order with ID {payment.OrderId}.");
+				return Ok(p);
 			}
-			else
+			catch (Exception ex)
 			{
-				p.Status = PaymentStatus.Pending;
+				_logger.LogError($"An error occurred while creating payment for order with ID {payment.OrderId}: {ex.Message}");
+				return StatusCode(500, ex.Message);
 			}
-
-			await _orderRepository.CreatePayment(p);
-
-			order.PaymentId = p.Id;
-			await _orderRepository.Update(order);
-
-
-			var storeId = await _orderRepository.GetStoreIdByOrderId(order.Id);
-
-
-			if (!storeId.HasValue)
-			{
-				return NotFound($"Store not found for OrderId: {order.Id}");
-			}
-
-			var storeinfor = await _storeRepository.GetInformationStore(storeId.Value);
-
-			// Ensure storeinfor is valid before proceeding
-			if (storeinfor == null)
-			{
-				return NotFound($"Store information not found for StoreId: {storeId}");
-			}
-
-			var notification = new Notification
-			{
-				CreatedAt = DateTime.Now,
-				UpdatedAt = DateTime.Now,
-				IsDelete = false,
-				UserId = storeinfor.UserId,
-				Title = "Đơn hàng mới",
-				Content = $"Bạn có đơn hàng mới mã #{order.Id}"
-			};
-
-			await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
-			await _notifyRepository.Add(notification);
-
-
-			return Ok(p);
 		}
 
 		public class Confirm
@@ -734,9 +800,21 @@ namespace FFS.Application.Controllers
 		[HttpPost]
 		public async Task<IActionResult> ConfirmPayment(Confirm confirm)
 		{
-			await _orderRepository.ConfirmPayment(confirm);
+			try
+			{
+				_logger.LogInfo($"Attempting to confirm payment with ID {confirm.OrderId}...");
 
-			return Ok("Thanh toán thành công");
+				await _orderRepository.ConfirmPayment(confirm);
+
+				_logger.LogInfo($"Successfully confirmed payment with ID {confirm.OrderId}.");
+
+				return Ok("Thanh toán thành công");
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError($"An error occurred while confirming payment with ID {confirm.OrderId}: {ex.Message}");
+				return StatusCode(500, ex.Message);
+			}
 		}
 
 		private string CalculateVnPSecurityHash(string vnpHashSecret, string originalData)
@@ -760,6 +838,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to get pending orders for shipper with ID {id}...");
 				var orders = await _orderRepository
 					.FindAll(x => x.ShipperId == id, x => x.Customer, x => x.Shipper, x => x.Payment)
 					.Include(x => x.OrderDetails).ThenInclude(x => x.Food)
@@ -768,10 +847,12 @@ namespace FFS.Application.Controllers
 					.Where(x => x.OrderStatus == OrderStatus.Booked)
 					.ToListAsync();
 				var order = orders.FirstOrDefault();
+				_logger.LogInfo($"Successfully retrieved pending orders for shipper with ID {id}.");
 				return Ok(_mapper.Map<OrderResponseDTO>(order));
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting pending orders for shipper with ID {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -781,6 +862,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to get the number of orders for shipper with ID {id}...");
 				DateTime currentDate = DateTime.Now.Date;
 
 				// Orders finished today
@@ -828,11 +910,12 @@ namespace FFS.Application.Controllers
 					ThisMonth = numberOfOrdersThisMonth,
 					ThisYear = numberOfOrdersThisYear
 				};
-
+				_logger.LogInfo($"Successfully retrieved the number of orders for shipper with ID {id}.");
 				return Ok(result);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting the number of orders for shipper with ID {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -842,12 +925,15 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to get revenue for shipper with ID {shipperId} for the year {year}...");
 				List<RevenuePerMonth> revenuePerMonths = _orderRepository.RevenueShipperPerMonth(shipperId, year);
+				_logger.LogInfo($"Successfully retrieved revenue for shipper with ID {shipperId} for the year {year}.");
 				return Ok(revenuePerMonths);
 
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting revenue for shipper with ID {shipperId} for the year {year}: {ex.Message}");
 				return StatusCode(500, "Internal Server Error");
 			}
 		}

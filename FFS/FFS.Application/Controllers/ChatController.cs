@@ -2,6 +2,7 @@
 using FFS.Application.DTOs.Chat;
 using FFS.Application.Entities;
 using FFS.Application.Hubs;
+using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,20 +19,24 @@ namespace FFS.Application.Controllers
 		private readonly IMessageRepository _messageRepositoy;
 		private IHubContext<ChatHub> _hubChatContext;
 		private readonly IMapper _mapper;
+		private ILoggerManager _logger;
 
-		public ChatController(IChatRepository chatRepository, IMessageRepository messageRepositoy, IHubContext<ChatHub> hubChatContext, IMapper mapper)
+		public ChatController(IChatRepository chatRepository, IMessageRepository messageRepositoy, IHubContext<ChatHub> hubChatContext, IMapper mapper, ILoggerManager logger)
 		{
 			_chatRepository = chatRepository;
 			_messageRepositoy = messageRepositoy;
 			_hubChatContext = hubChatContext;
 			_mapper = mapper;
+			_logger = logger;
 		}
 
 		[HttpGet("{UserId}")]
 		public async Task<IActionResult> GetAllByUserId(string UserId)
 		{
+			_logger.LogInfo($"Retrieving chat boxes for user with ID: {UserId}");
 			if (string.IsNullOrEmpty(UserId))
 			{
+				_logger.LogInfo("Invalid request. UserId is null or empty.");
 				return BadRequest("Người dùng không tồn tại");
 			}
 			try
@@ -45,12 +50,15 @@ namespace FFS.Application.Controllers
 					.ToListAsync();
 				if(boxs is null)
 				{
+					_logger.LogInfo("No chat boxes found for the specified user.");
 					return NotFound();
 				}
+				_logger.LogInfo($"Chat boxes retrieved successfully for user with ID: {UserId}");
 				return Ok(_mapper.Map<List<ChatResponseDTO>>(boxs));
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving chat boxes for user with ID {UserId}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -60,12 +68,15 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Retrieving chat box with ID: {id}");
 				var box = await _chatRepository.FindSingle(x => x.Id == id, x => x.Messages, x => x.ToUser, x => x.FormUser);
 				var _box = _mapper.Map<ChatResponseDTO>(box);
+				_logger.LogInfo($"Chat box with ID {id} retrieved successfully.");
 				return Ok(_box);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving chat box with ID {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -75,6 +86,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Creating chat box");
 				var check = await _chatRepository.FindSingle(
 				x => x.ToUserId == chatRequestDTO.ToUserId &&
 				x.FromUserId == chatRequestDTO.FromUserId ||
@@ -84,6 +96,7 @@ namespace FFS.Application.Controllers
 
 				if (check != null)
 				{
+					_logger.LogInfo("Chat box already exists");
 					await _hubChatContext.Clients.All.SendAsync("FuFoodyCreateBox");
 					return StatusCode(500, "...");
 				}
@@ -93,10 +106,12 @@ namespace FFS.Application.Controllers
 				   ToUser = chatRequestDTO.ToUserId,
 				   FromUser = chatRequestDTO.FromUserId
 				});
+				_logger.LogInfo("Chat box created successfully");
 				return Ok();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while creating chat box: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -106,16 +121,19 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Sending message");
 				await _messageRepositoy.Add(_mapper.Map<Message>(messageRequestDTO));
 				await _hubChatContext.Clients.All.SendAsync("FuFoodySendMessage", new
 				{
 					Ok = "oK1",
 					Ok2 = "Ok2"
 				});
+				_logger.LogInfo("Message sent successfully");
 				return Ok();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while sending message: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}

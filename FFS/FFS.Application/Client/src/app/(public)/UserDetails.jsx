@@ -21,6 +21,7 @@ import ReportUser from "./components/ReportUser";
 import ChatService from "../(auth)/shared/chat.service";
 import { chatActions } from "../(auth)/shared/chatSlice";
 import Cookies from "universal-cookie";
+import ViewLikePost from "../(auth)/shared/components/post/ViewLikePost";
 
 const cookies = new Cookies();
 
@@ -30,6 +31,8 @@ const UserDetails = () => {
 	const dispatch = useDispatch();
 	const accesstoken = useSelector((state) => state.auth.accessToken);
 	const userInfo = useSelector((state) => state.auth.userProfile);
+	const avartar = userInfo?.avatar;
+	const username = userInfo?.firstName + " " + userInfo?.lastName;
 	const [user, setUser] = useState([]);
 	const [isReact, setIsReact] = useState(false);
 	const [postIdToCheck, setPostIdToCheck] = useState(null);
@@ -47,6 +50,7 @@ const UserDetails = () => {
 					setUser(response);
 					response.posts.forEach((post) => {
 						setPostIdToCheck(post.id);
+						setPost(post);
 
 						const checkReact = post.reactPosts.some(
 							(reactPost) =>
@@ -62,23 +66,6 @@ const UserDetails = () => {
 			console.error("An error occurred", error);
 		}
 	};
-	const fetchPostDetails = (postId) => {
-		axios
-			.get(`/api/Post/GetPostByPostId/${postId}`)
-			.then((response) => {
-				setPost(response);
-				const checkReact = response.reactPosts
-					.filter((post) => post.userId == userId && post.postId == postId)
-					.some((post) => post.isLike == true);
-				if (checkReact) {
-					setIsReact(true);
-				}
-			})
-			.catch((error) => {
-				console.error("Error fetching post details: ", error);
-			});
-	};
-
 	const handleComment = (postId) => {
 		const data = {
 			Content: commentTxt,
@@ -103,21 +90,53 @@ const UserDetails = () => {
 		console.log(commentTxt);
 	};
 
-	const handleReactPost = (postId) => {
+	const handleReactPost = async (postId) => {
 		try {
 			const dataPost = {
 				userId: userId,
 				postId: postId,
 			};
-			axios
-				.post("/api/Post/ReactPost", dataPost)
-				.then(() => {
-					GetUserInformation();
-					setIsReact((cur) => !cur);
-				})
-				.catch((error) => {
-					console.log(error);
-				});
+			await axios.post("/api/Post/ReactPost", dataPost);
+
+			// Update the state to reflect the change
+			setPost((prevPost) => {
+				// const hasReacted = prevPost.reactPosts.some(
+				// 	(react) => react.userId === userId && react.postId === postId
+				// );
+				console.log(isReact);
+				console.log(prevPost.reactPosts);
+
+				const updatedReactPosts = isReact
+					? [
+							...prevPost.reactPosts.map((react) =>
+								react.userId === userId && react.postId === postId
+									? { ...react, isLike: false }
+									: react
+							),
+					  ]
+					: [
+							...prevPost.reactPosts,
+							{
+								userId: userId,
+								avartar: avartar, // Make sure you have avartar defined
+								username: username, // Make sure you have username defined
+								postId: postId,
+								isLike: true,
+							},
+					  ];
+				console.log(prevPost.reactPosts);
+
+				return {
+					...prevPost,
+					reactPosts: updatedReactPosts,
+					likeNumber: isReact
+						? prevPost.likeNumber - 1
+						: prevPost.likeNumber + 1,
+				};
+			});
+
+			// Update the isReact state
+			setIsReact((prevIsReact) => !prevIsReact);
 		} catch (error) {
 			console.error("Error occur: ", error);
 		}
@@ -125,7 +144,7 @@ const UserDetails = () => {
 
 	useEffect(() => {
 		GetUserInformation();
-	}, [id]);
+	}, [id, isReact]);
 	const handleopenComent = () => {
 		setOpenComment((cur) => !cur);
 	};
@@ -250,9 +269,10 @@ const UserDetails = () => {
 										<div className=" py-2">
 											<div className="flex items-center justify-between">
 												<div className="flex flex-row-reverse items-center">
-													<span className="ml-2 text-gray-500">
-														{post.likeNumber} lượt thích
-													</span>
+													<ViewLikePost
+														likeNumber={post.likeNumber}
+														likedBy={post.reactPosts}
+													></ViewLikePost>
 												</div>
 												<div className="text-gray-500">
 													<span onClick="" style={{ cursor: "pointer" }}>
@@ -283,7 +303,7 @@ const UserDetails = () => {
 																>
 																	<path
 																		d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
-																		fill="orange"
+																		fill="pink"
 																	/>
 																</svg>
 																Thích
@@ -382,7 +402,7 @@ const UserDetails = () => {
 													</div>
 													<Button
 														className="h-1/2 bg-primary"
-														onClick={()=>handleComment(post.id)}
+														onClick={() => handleComment(post.id)}
 													>
 														Bình Luận
 													</Button>

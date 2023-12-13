@@ -23,10 +23,11 @@ namespace FFS.Application.Controllers
 		private readonly IAuthRepository _authRepository;
 		private readonly IHubContext<NotificationHub> _hubContext;
 		private readonly INotificationRepository _notifyRepository;
+		private ILoggerManager _logger;
 
 		private readonly IMapper _mapper;
 
-		public AdminController(IReportRepository reportRepository, IHubContext<NotificationHub> hubContext, INotificationRepository notifyRepository, IUserRepository userRepository, IPostRepository postRepository, IOrderRepository orderRepository, IMapper mapper)
+		public AdminController(IReportRepository reportRepository, IHubContext<NotificationHub> hubContext, INotificationRepository notifyRepository, IUserRepository userRepository, IPostRepository postRepository, IOrderRepository orderRepository, IMapper mapper, ILoggerManager logger)
 		{
 			_reportRepository = reportRepository;
 			_userRepository = userRepository;
@@ -35,20 +36,26 @@ namespace FFS.Application.Controllers
 			_mapper = mapper;
 			_hubContext = hubContext;
 			_notifyRepository = notifyRepository;
+			_logger = logger;
 		}
 
 		[HttpPost]
-		[Authorize(Roles = $"Admin")]
+		[Authorize(Roles = "Admin")]
 		public IActionResult GetReports([FromBody] ReportParameters reportParameters)
 		{
 			try
 			{
+				_logger.LogInfo("Attempting to get reports...");
+
 				IEnumerable<dynamic> data = _reportRepository.GetReports(reportParameters);
+
+				_logger.LogInfo("Successfully retrieved reports.");
+
 				return Ok(data);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-
+				_logger.LogError($"An error occurred while getting reports: {ex.Message}");
 				throw;
 			}
 		}
@@ -59,12 +66,17 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Attempting to count reports...");
+
 				int total = _reportRepository.CountGetReports(reportParameters);
+
+				_logger.LogInfo("Successfully counted reports.");
+
 				return Ok(total);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-
+				_logger.LogError($"An error occurred while counting reports: {ex.Message}");
 				throw;
 			}
 		}
@@ -75,17 +87,23 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Attempting to get user accounts...");
+
 				IEnumerable<dynamic> data = _userRepository.GetUsers(userParameters);
 				int total = _userRepository.CountGetUsers(userParameters);
-				var res = new
-				dataReturn {
+				var res = new dataReturn
+				{
 					data = data,
 					total = total,
 				};
+
+				_logger.LogInfo("Successfully retrieved user accounts.");
+
 				return Ok(res);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting user accounts: {ex.Message}");
 				throw;
 			}
 		}
@@ -96,17 +114,23 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Attempting to get posts...");
+
 				IEnumerable<dynamic> data = _userRepository.GetPosts(userParameters);
 				int total = _userRepository.CountGetPosts(userParameters);
-				var res = new
-				dataReturn {
+				var res = new dataReturn
+				{
 					data = data,
 					total = total,
 				};
+
+				_logger.LogInfo("Successfully retrieved posts.");
+
 				return Ok(res);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting posts: {ex.Message}");
 				throw;
 			}
 		}
@@ -117,6 +141,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Attempting to approve post...");
 				int idPost = Convert.ToInt32(userParameters.IdPost);
 				Post post = await _postRepository.FindById(idPost, null);
 				if (post != null)
@@ -147,8 +172,10 @@ namespace FFS.Application.Controllers
 						await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
 						await _notifyRepository.Add(notification);
 					}
+					_logger.LogInfo("Post approved successfully.");
 					return Ok("Duyệt thành công!");
 				}
+				_logger.LogInfo("Post not found.");
 				return BadRequest("Bài viết không tồn tại! Xin vui lòng thử lại sau");
 			}
 			catch (Exception)
@@ -163,11 +190,17 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Attempting to get roles...");
+
 				IEnumerable<dynamic> data = _userRepository.GetRoles();
+
+				_logger.LogInfo("Successfully retrieved roles.");
+
 				return Ok(data);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting roles: {ex.Message}");
 				throw;
 			}
 		}
@@ -191,13 +224,15 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Attempting to export report...");
 				var data = await _userRepository.ExportUser();
 				string uniqueFileName = "ThongKe_NguoiDung_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-
+				_logger.LogInfo("Successfully exported report.");
 				return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", uniqueFileName);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while exporting report: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -208,17 +243,23 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Attempting to get request for creating account...");
+
 				IEnumerable<dynamic> data = _userRepository.GetRequestCreateAccount(userParameters);
 				int total = _userRepository.CountGetRequestCreateAccount(userParameters);
-				var res = new
-				dataReturn {
+				var res = new dataReturn
+				{
 					data = data,
 					total = total,
 				};
+
+				_logger.LogInfo("Successfully retrieved request for creating account.");
+
 				return Ok(res);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting request for creating account: {ex.Message}");
 				throw;
 			}
 		}
@@ -229,12 +270,18 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to ban account {userParameters.Username}...");
+
 				string idBan = userParameters.id;
 				_userRepository.BanAccount(idBan);
+
+				_logger.LogInfo($"Successfully banned account {userParameters.Username}.");
+
 				return Ok($"Khóa thành công tài khoản {userParameters.Username}");
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while banning account {userParameters.Username}: {ex.Message}");
 				throw;
 			}
 		}
@@ -245,12 +292,18 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to unban account {userParameters.Username}...");
+
 				string idUnBan = userParameters.id;
 				_userRepository.UnBanAccount(idUnBan);
+
+				_logger.LogInfo($"Successfully unbanned account {userParameters.Username}.");
+
 				return Ok($"Mở khóa thành công tài khoản {userParameters.Username}");
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while unbanning account {userParameters.Username}: {ex.Message}");
 				throw;
 			}
 		}
@@ -261,36 +314,44 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to approve user account {userParameters.Username}...");
+
 				string id = userParameters.id;
 				_userRepository.ApproveUser(id, userParameters.Action);
+
+				_logger.LogInfo($"Successfully approved user account {userParameters.Username}.");
+
 				return Ok($"Duyệt thành công tài khoản {userParameters.Username}");
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while approving user account {userParameters.Username}: {ex.Message}");
 				throw;
 			}
 		}
-
-
-
-
 		[HttpGet]
 		public IActionResult AccountsStatistic()
 		{
 			try
 			{
-				List<AccountStatistic> AccountsStatistic = _userRepository.AccountsStatistic();
+				_logger.LogInfo("Attempting to retrieve accounts statistics...");
+
+				List<AccountStatistic> accountsStatistic = _userRepository.AccountsStatistic();
+				int totalAccount = _userRepository.CountTotalUsers();
+
+				_logger.LogInfo("Successfully retrieved accounts statistics.");
+
 				return Ok(new
 				{
-					TotalAccount = _userRepository.CountTotalUsers(),
-					AccountsStatistic = AccountsStatistic
+					TotalAccount = totalAccount,
+					AccountsStatistic = accountsStatistic
 				});
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving accounts statistics: {ex.Message}");
 				return StatusCode(500, "Internal Server Error");
 			}
-
 		}
 
 		[HttpGet("{year}")]
@@ -303,19 +364,24 @@ namespace FFS.Application.Controllers
 
 			try
 			{
+				_logger.LogInfo($"Attempting to retrieve reports statistics for year {year}...");
+
 				List<ReportStatistic> reportsStatistic = _reportRepository.ReportStatistics(year);
-				int TotalReportYear = _reportRepository.CountAllReportInYear(year);
+				int totalReportYear = _reportRepository.CountAllReportInYear(year);
+
+				_logger.LogInfo($"Successfully retrieved reports statistics for year {year}.");
 
 				var result = new
 				{
-					TotalReportYear = TotalReportYear,
+					TotalReportYear = totalReportYear,
 					ReportsStatistic = reportsStatistic
 				};
 
 				return Ok(result);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving reports statistics for year {year}: {ex.Message}");
 				return StatusCode(500, "Internal Server Error");
 			}
 		}
@@ -324,15 +390,22 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Attempting to retrieve posts statistics...");
+
 				List<PostStatistic> postStatistics = _postRepository.PostStatistics();
+				int totalPost = _postRepository.CountAllPost();
+
+				_logger.LogInfo("Successfully retrieved posts statistics.");
+
 				return Ok(new
 				{
-					TotalPost = _postRepository.CountAllPost(),
+					TotalPost = totalPost,
 					PostsStatistic = postStatistics
 				});
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving posts statistics: {ex.Message}");
 				return StatusCode(500, "Internal Server Error");
 			}
 		}

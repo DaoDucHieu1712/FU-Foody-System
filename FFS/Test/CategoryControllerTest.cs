@@ -20,14 +20,14 @@ namespace Test
         private readonly Mock<ICategoryRepository> _categoryRepository;
         private readonly Mock<IMapper> _mapper;
 
+        private readonly Mock<ILoggerManager> _logger;
         private CategoryController controller;
-
         public CategoryControllerTest()
         {
             _categoryRepository = new Mock<ICategoryRepository>();
             _mapper = new Mock<IMapper>();
-
-            controller = new CategoryController(_categoryRepository.Object, _mapper.Object);
+            _logger = new Mock<ILoggerManager>();
+            controller = new CategoryController(_categoryRepository.Object, _mapper.Object, _logger.Object);
         }
 
         #region List cate by store
@@ -85,7 +85,7 @@ namespace Test
             // Arrange
             var mockCategoryRepository = new Mock<ICategoryRepository>();
             var mockMapper = new Mock<IMapper>();
-            var controller = new CategoryController(mockCategoryRepository.Object, mockMapper.Object);
+            var controller = new CategoryController(mockCategoryRepository.Object, mockMapper.Object, _logger.Object);
 
             // Act
             var result = await controller.Create(null);

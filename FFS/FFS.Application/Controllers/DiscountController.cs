@@ -22,12 +22,14 @@ namespace FFS.Application.Controllers
         private readonly IDiscountRepository _discountRepository;
 		private readonly IUserDiscountRepository _userDiscountRepository;
         private readonly IMapper _mapper;
+		private ILoggerManager _logger;
 
-		public DiscountController(IDiscountRepository discountRepository, IUserDiscountRepository userDiscountRepository, IMapper mapper)
+		public DiscountController(IDiscountRepository discountRepository, IUserDiscountRepository userDiscountRepository, IMapper mapper, ILoggerManager logger)
 		{
 			_discountRepository = discountRepository;
 			_userDiscountRepository = userDiscountRepository;
 			_mapper = mapper;
+			_logger = logger;
 		}
 
 		[HttpGet]
@@ -35,7 +37,8 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var query = _discountRepository.FindAll(x => x.StoreId == discountParameters.StoreId && x.IsDelete == false);
+				_logger.LogInfo("Retrieving discounts for store");
+				var query = _discountRepository.FindAll(x => x.StoreId == discountParameters.StoreId && x.IsDelete == false);
                 if (!string.IsNullOrEmpty(discountParameters.CodeName))
                 {
                     var codeNameLower = discountParameters.CodeName.ToLower();
@@ -58,12 +61,14 @@ namespace FFS.Application.Controllers
                     discounts.HasPrevious
                 };
                 var discountDtos = _mapper.Map<List<DiscountDTO>>(discounts);
-                return Ok(new {Discounts = discountDtos,
+				_logger.LogInfo("Discounts retrieved successfully for store");
+				return Ok(new {Discounts = discountDtos,
                 Metadata = metadata});
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+				_logger.LogError($"An error occurred while retrieving discounts for store: {ex.Message}");
+				throw new Exception(ex.Message);
             }
 
         }
@@ -90,6 +95,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Creating new discount");
 				var discountUpdate = await _discountRepository.FindById(id, null);
 				if (discountUpdate == null)
 				{
@@ -98,6 +104,7 @@ namespace FFS.Application.Controllers
 				var discountNameExist = await _discountRepository.FindSingle(x => x.Code == discountDTO.Code);
 				if (discountNameExist != null)
 				{
+					_logger.LogInfo($"Duplicate discount code: {discountNameExist.Code}");
 					return BadRequest($"Mã giảm giá {discountNameExist.Code} đã tồn tại. Vui lòng chọn mã khác!");
 				}
 				discountDTO.Id = id;
@@ -108,6 +115,7 @@ namespace FFS.Application.Controllers
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while creating discount: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -117,16 +125,20 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Deleting discount with ID: {id}");
 				var discountDelete = await _discountRepository.FindSingle(x => x.Id == id);
 				if (discountDelete == null)
 				{
+					_logger.LogInfo($"Discount with ID {id} not found");
 					return NotFound();
 				}
 				await _discountRepository.Remove(discountDelete);
+				_logger.LogInfo($"Discount with ID {id} deleted successfully");
 				return Ok("Xóa thành công");
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while deleting discount with ID {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -215,6 +227,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Applying discount with code: {Code} for user with ID: {UserId}");
 				var discount = await _discountRepository
 					.FindSingle(x => x.Code == Code);
 
@@ -226,11 +239,12 @@ namespace FFS.Application.Controllers
 					DiscountId = discount.Id,
 					UserId = UserId
 				});
+				_logger.LogInfo($"Discount with code {Code} applied successfully for user with ID {UserId}");
 				return Ok();
 			}
 			catch (Exception ex)
 			{
-
+				_logger.LogError($"An error occurred while applying discount with code {Code} for user with ID {UserId}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}

@@ -215,7 +215,6 @@ const UpdateLocation = ({ item, reload }) => {
 							}
 							label="Chọn xã"
 							onClick={getWard}
-							value={{ WardCode: item.WardCode, WardName: item.WardName }}
 						>
 							{listWard.map((ward) => (
 								<Option key={ward.WardCode} value={ward}>

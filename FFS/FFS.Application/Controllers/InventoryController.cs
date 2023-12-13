@@ -18,17 +18,21 @@ namespace FFS.Application.Controllers
     {
         private readonly IInventoryRepository _inventoryRepository;
         private readonly IMapper _mapper;
-        public InventoryController(IInventoryRepository inventoryRepository, IMapper mapper)
+		private ILoggerManager _logger;
+
+		public InventoryController(IInventoryRepository inventoryRepository, IMapper mapper, ILoggerManager logger)
         {
             _inventoryRepository = inventoryRepository;
             _mapper = mapper;
+			_logger = logger;
         }
         [HttpGet()]
         public IActionResult GetInventories([FromQuery] InventoryParameters inventoryParameters)
         {
             try
             {
-                var Inventories = _inventoryRepository.GetInventories(inventoryParameters);
+				_logger.LogInfo("Retrieving inventories");
+				var Inventories = _inventoryRepository.GetInventories(inventoryParameters);
 
                 var metadata = new
                 {
@@ -41,8 +45,8 @@ namespace FFS.Application.Controllers
                 };
                
                 var entityInventory = _mapper.Map<List<InventoryDTO>>(Inventories);
-
-                return Ok(
+				_logger.LogInfo("Inventories retrieved successfully");
+				return Ok(
                 new
                 {
                     entityInventory,
@@ -51,7 +55,8 @@ namespace FFS.Application.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+				_logger.LogError($"An error occurred while retrieving inventories: {ex.Message}");
+				return BadRequest(ex.Message);
             }
         }
 
@@ -60,11 +65,14 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Retrieving inventory for food with ID: {fid}");
 				var inventory = await _inventoryRepository.FindSingle(x => x.FoodId == fid, x=>x.Food);
+				_logger.LogInfo($"Inventory for food with ID {fid} retrieved successfully");
 				return Ok(_mapper.Map<InventoryDTO>(inventory));
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while retrieving inventory for food with ID {fid}: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -74,18 +82,22 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var existingInventory = await _inventoryRepository.GetInventoryByFoodAndStore(inventory.StoreId, inventory.FoodId);
+				_logger.LogInfo("Creating inventory");
+				var existingInventory = await _inventoryRepository.GetInventoryByFoodAndStore(inventory.StoreId, inventory.FoodId);
 
                 if (existingInventory != null)
-                {                  
-                    return BadRequest("Món ăn này đã có trong tồn kho !");
+                {
+					_logger.LogInfo("Inventory creation failed: Duplicate inventory found");
+					return BadRequest("Món ăn này đã có trong tồn kho !");
                 }
                 await _inventoryRepository.CreateInventory(_mapper.Map<Inventory>(inventory));
-                return Ok();
+				_logger.LogInfo("Inventory created successfully");
+				return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+				_logger.LogError($"An error occurred while creating inventory: {ex.Message}");
+				return BadRequest(ex.Message);
             }
         }
 
@@ -95,11 +107,15 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Importing inventory for Store ID: {storeId}, Food ID: {foodId}, Quantity: {quantity}");
 				await _inventoryRepository.ImportInventory(storeId, foodId, quantity);
+				_logger.LogInfo("Inventory import successful");
+
 				return Ok();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while importing inventory: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -109,11 +125,14 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Exporting inventory for Store ID: {storeId}, Food ID: {foodId}, Quantity: {quantity}");
 				await _inventoryRepository.ExportInventory(storeId, foodId, quantity);
+				_logger.LogInfo("Inventory export successful");
 				return Ok();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while exporting inventory: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -123,14 +142,17 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                // Call the repository method to delete the inventory
-                await _inventoryRepository.DeleteInventoryByInventoryId(inventoryId);
-                return Ok("Inventory deleted successfully");
+				_logger.LogInfo($"Deleting inventory with ID: {inventoryId}");
+				// Call the repository method to delete the inventory
+				await _inventoryRepository.DeleteInventoryByInventoryId(inventoryId);
+				_logger.LogInfo("Inventory deleted successfully");
+				return Ok("Inventory deleted successfully");
             }
             catch (Exception ex)
             {
-                // Handle any errors and return an error response
-                return BadRequest($"Error deleting inventory: {ex.Message}");
+				_logger.LogError($"An error occurred while deleting inventory: {ex.Message}");
+				// Handle any errors and return an error response
+				return BadRequest($"Error deleting inventory: {ex.Message}");
             }
         }
 
@@ -139,12 +161,15 @@ namespace FFS.Application.Controllers
         {
             try
             {
-                var existingInventory = await _inventoryRepository.GetInventoryByFoodAndStore(storeId, foodId);
-                return existingInventory != null;
+				_logger.LogInfo($"Checking existing inventory for Store ID: {storeId}, Food ID: {foodId}");
+				var existingInventory = await _inventoryRepository.GetInventoryByFoodAndStore(storeId, foodId);
+				_logger.LogInfo($"Existing inventory check result for Store ID: {storeId}, Food ID: {foodId}: {existingInventory != null}");
+				return existingInventory != null;
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+				_logger.LogError($"An error occurred while checking existing inventory: {ex.Message}");
+				return BadRequest(ex.Message);
             }
         }
     }

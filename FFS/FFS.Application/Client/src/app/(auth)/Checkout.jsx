@@ -42,10 +42,10 @@ const Checkout = () => {
 			return Number(item.storeId);
 		});
 		console.log(items);
-		if (cart.list.length === 0) {
-			toast.error("Giỏ hàng trống nên không thể thanh toán");
-			window.location.href = "/";
-		}
+		// if (cart.list.length === 0) {
+		// 	toast.error("Giỏ hàng trống nên không thể thanh toán");
+		// 	window.location.href = "/";
+		// }
 	}, [cart, comboSelector, checkoutSelector]);
 
 	const useDiscountHandler = async () => {
@@ -92,7 +92,11 @@ const Checkout = () => {
 				unitPrice: item.price,
 			};
 		});
-
+		console.log(
+			cart.totalPrice,
+			comboSelector.totalPrice,
+			checkoutSelector.info.feeShip
+		);
 		await OrderService.Order({
 			customerId: cookies.get("fu_foody_id"),
 			location: checkoutSelector.info.location,
@@ -101,15 +105,17 @@ const Checkout = () => {
 			totalPrice:
 				cart.totalPrice +
 				comboSelector.totalPrice +
-				checkoutSelector.info.feeShip,
+				(checkoutSelector.info.feeShip ?? 0),
 			shipFee: checkoutSelector.info.feeShip,
 			orderStatus: 1,
 			orderdetails: [...combos, ...foods],
 		}).then((res) => {
+			console.log(res);
+			var orderId = res.id;
 			if (selectedType == "Chuyển khoản") {
 				const data = {
 					PaymentMethod: selectedType,
-					OrderId: res.id,
+					OrderId: orderId,
 					Status: 1,
 				};
 				axiosConfig
@@ -118,8 +124,9 @@ const Checkout = () => {
 						console.log(res);
 						toast.success("Đặt hàng thành công");
 						axiosConfig
-							.get("/api/Order/GetUrlPayment/" + res.id)
+							.get("/api/Order/GetUrlPayment/" + orderId)
 							.then((res) => {
+								console.log(res);
 								window.open(res, "_blank");
 							})
 							.catch((err) => {
@@ -147,8 +154,8 @@ const Checkout = () => {
 						toast.error(err);
 					});
 			}
-			dispatch(comboActions.clearCart());
-			dispatch(cartActions.clearCart());
+			// dispatch(comboActions.clearCart());
+			// dispatch(cartActions.clearCart());
 		});
 	};
 
@@ -258,7 +265,12 @@ const Checkout = () => {
 								<p className="font-medium text-lg text-gray-500">
 									Tổng đơn hàng
 								</p>
-								<span>{FormatPriceHelper(cart.totalPrice + comboSelector.totalPrice)} đ</span>
+								<span>
+									{FormatPriceHelper(
+										cart.totalPrice + comboSelector.totalPrice
+									)}{" "}
+									đ
+								</span>
 							</div>
 							<div className="flex justify-between">
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>

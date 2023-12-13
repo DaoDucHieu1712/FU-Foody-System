@@ -28,15 +28,17 @@ namespace FFS.Application.Controllers
 		private readonly INotificationRepository _notifyRepository;
 		private readonly ApplicationDbContext _db;
 		private readonly ICommentRepository _commentRepository;
+		private ILoggerManager _logger;
 		public PostController(
 			IPostRepository postRepository
 			, ApplicationDbContext db
 			, IAuthRepository authRepository
-			,INotificationRepository notifyRepository
+			, INotificationRepository notifyRepository
 			, IReactPostRepository reactPostRepository
 			, IMapper mapper
 			, IHubContext<NotificationHub> hubContext
-			, ICommentRepository commentRepository)
+			, ICommentRepository commentRepository,
+			  ILoggerManager logger)
 		{
 			_postRepository = postRepository;
 			_reactPostRepository = reactPostRepository;
@@ -46,6 +48,7 @@ namespace FFS.Application.Controllers
 			_authRepository = authRepository;
 			_db = db;
 			_commentRepository = commentRepository;
+			_logger = logger;
 		}
 
 		[HttpGet]
@@ -53,7 +56,9 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to get list of posts...");
 				var posts = _postRepository.GetListPosts(postParameters);
+				_logger.LogInfo($"Successfully retrieved list of posts.");
 				var metadata = new
 				{
 					posts.TotalCount,
@@ -73,6 +78,7 @@ namespace FFS.Application.Controllers
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting list of posts: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -81,20 +87,24 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to get post with ID {postId}...");
 				var post = await _postRepository.GetPostByPostId(postId);
 
 				if (post == null)
 				{
+					_logger.LogInfo($"Post with ID {postId} not found.");
 					return NotFound();
 				}
 				var postDTO = _mapper.Map<PostDTO>(post);
 
 				postDTO.LikeNumber = postDTO.ReactPosts.Where(x => x.IsLike == true).Count();
 				postDTO.CommentNumber = postDTO.Comments.Count();
+				_logger.LogInfo($"Successfully retrieved post with ID {postId}.");
 				return Ok(postDTO);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting post with ID {postId}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -104,17 +114,20 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to get user by post with ID {postId}...");
 				var post = await _postRepository.GetUserIdByPostId(postId);
 
 				if (post == null)
 				{
+					_logger.LogInfo($"Post with ID {postId} not found.");
 					return NotFound();
 				}
-				
+				_logger.LogInfo($"Successfully retrieved user by post with ID {postId}.");
 				return Ok(post);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting user by post with ID {postId}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 			}
 		}
@@ -124,6 +137,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo("Attempting to get the top 3 newest posts...");
 				var top3Posts = await _postRepository.GetTop3NewestPosts();
 				var entityPost = _mapper.Map<List<PostDTO>>(top3Posts);
 				foreach (var postDTO in entityPost)
@@ -131,10 +145,12 @@ namespace FFS.Application.Controllers
 					postDTO.LikeNumber = postDTO.ReactPosts.Where(x => x.IsLike == true).Count();
 					postDTO.CommentNumber = postDTO.Comments.Count();
 				}
+				_logger.LogInfo("Successfully retrieved the top 3 newest posts.");
 				return Ok(entityPost);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while getting the top 3 newest posts: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -146,6 +162,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to create a new post for user with ID {post.UserId}...");
 				var createdPost = await _postRepository.CreatePost(_mapper.Map<Post>(post));
 
 				var notification = new Notification
@@ -160,11 +177,12 @@ namespace FFS.Application.Controllers
 
 				await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
 				await _notifyRepository.Add(notification);
-
+				_logger.LogInfo($"Successfully created a new post for user with ID {post.UserId}.");
 				return Ok();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while creating a new post: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -174,8 +192,10 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to update post with ID {id}...");
 				if (id != updatedPost.Id)
 				{
+					_logger.LogError($"Invalid request: Provided post ID {id} does not match the ID in the request body.");
 					return BadRequest("Bài viết không tồn tại !");
 				}
 
@@ -183,13 +203,15 @@ namespace FFS.Application.Controllers
 
 				if (result == null)
 				{
+					_logger.LogError($"Post with ID {id} not found.");
 					return NotFound();
 				}
-
+				_logger.LogInfo($"Successfully updated post with ID {id}.");
 				return Ok(result);
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while updating post with ID {id}: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -199,12 +221,14 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
-
+				_logger.LogInfo($"Attempting to delete post with ID {id}...");
 				await _postRepository.DeletePost(id);
+				_logger.LogInfo($"Successfully deleted post with ID {id}.");
 				return NoContent();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while deleting post with ID {id}: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -213,11 +237,12 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to react to post with ID {reactPostDTO.PostId} by user ID {reactPostDTO.UserId}...");
 				var reactingUser = await _authRepository.GetUser(reactPostDTO.UserId);
 
 				if (reactingUser == null)
 				{
-					
+					_logger.LogError($"Reacting user with ID {reactPostDTO.UserId} not found.");
 					return BadRequest("Reacting user not found");
 				}
 				var postAuthor = await _postRepository.GetUserIdByPostId((int)reactPostDTO.PostId);
@@ -233,7 +258,7 @@ namespace FFS.Application.Controllers
 						UpdatedAt = DateTime.Now,
 						IsDelete = false
 					});
-				
+
 
 
 					if (postAuthor != null && reactPostDTO.UserId != postAuthor)
@@ -251,6 +276,7 @@ namespace FFS.Application.Controllers
 
 						await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
 						await _notifyRepository.Add(notification);
+						_logger.LogInfo($"Notification sent to post author with ID {postAuthor} about the reaction.");
 					}
 
 
@@ -260,13 +286,16 @@ namespace FFS.Application.Controllers
 					reactPost.IsLike = !reactPost.IsLike;
 
 					_reactPostRepository?.Update(reactPost);
+					_logger.LogInfo($"React post updated for post ID {reactPostDTO.PostId} and user ID {reactPostDTO.UserId}.");
 				}
 
+				_logger.LogInfo($"Successfully reacted to post with ID {reactPostDTO.PostId} by user ID {reactPostDTO.UserId}.");
 
 				return Ok();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while reacting to post with ID {reactPostDTO.PostId} by user ID {reactPostDTO.UserId}: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
@@ -276,11 +305,14 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				_logger.LogInfo($"Attempting to add a new comment for post with ID {comment.PostId}...");
 				await _commentRepository.Add(comment);
+				_logger.LogInfo($"Comment added successfully for post with ID {comment.PostId}.");
 				return NoContent();
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError($"An error occurred while adding a comment for post with ID {comment.PostId}: {ex.Message}");
 				return BadRequest(ex.Message);
 			}
 		}
