@@ -446,7 +446,7 @@ namespace FFS.Application.Repositories.Impls
 		{
 			try
 			{
-				var userWithPost = await _context.ApplicationUsers.Include(x => x.Posts.Where(p => p.Status == StatusPost.Accept)).ThenInclude(p => p.ReactPosts)
+				var userWithPost = await _context.ApplicationUsers.Include(x => x.Posts.Where(p => p.Status == StatusPost.Accept)).ThenInclude(p => p.ReactPosts).ThenInclude(x => x.User)
 				.Include(c => c.Comments).FirstOrDefaultAsync(x => x.Id.Equals(userId));
 				if (userWithPost != null)
 				{

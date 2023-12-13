@@ -7,5 +7,6 @@ namespace FFS.Application.Repositories {
         void UpdateComboFood(int comboId, int storeId, List<int> idFoods);
         void DeleteCombo(int comboId);
 		Task<List<dynamic>> GetDetail(int id);
+		void DeleteDetail(int id);
 	}
 }

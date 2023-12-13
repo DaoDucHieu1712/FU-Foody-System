@@ -60,7 +60,7 @@ const Location = () => {
 											{location.receiver} | (+84) {location.phoneNumber}
 										</p>
 										<hr className="h-px my-1 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-										<p>{location.address}</p>
+										<p>{location.address}-{location.wardName}-{location.districtName}-{location.provinceName}</p>
 										<p>Ghi chú: {location.description}</p>
 										{/* {location.isDefault == false ? null : <p className="text-orange-400 text-center font-semibold border-solid border-2 border-orange-400 h-auto w-20 pointer-events-none">Mặc định</p>} */}
 									</div>
