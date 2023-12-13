@@ -15,7 +15,7 @@ const schema = yup.object({
 	imageURL: yup.string().required("Hãy thêm ảnh!"),
 });
 
-const AddCombo = ({ reload, storeId, foodList }) => {
+const Combo = ({ reload, storeId, foodList }) => {
 	const {
 		register,
 		setValue,
@@ -233,9 +233,9 @@ const AddCombo = ({ reload, storeId, foodList }) => {
 		</div>
 	);
 };
-AddCombo.propTypes = {
+Combo.propTypes = {
 	reload: propTypes.any.isRequired,
 	storeId: propTypes.any.isRequired,
 	foodList: propTypes.any.isRequired,
 };
-export default AddCombo;
+export default Combo;
