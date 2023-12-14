@@ -1,25 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using AutoFixture;
-
-using AutoMapper;
+﻿using AutoMapper;
 using FFS.Application.Controllers;
-using FFS.Application.DTOs.Common;
-using FFS.Application.DTOs.Inventory;
-using FFS.Application.DTOs.QueryParametter;
-using FFS.Application.Entities;
 using FFS.Application.Repositories;
-
-using Microsoft.AspNetCore.Mvc;
 
 using Moq;
 
-namespace Test {
-    public class InventoryControllerTest {
+namespace Test
+{
+    public class InventoryControllerTest
+    {
 
         private readonly Mock<IInventoryRepository> mockInventoryRepository;
         private readonly Mock<IMapper> mockMapper;

@@ -13,8 +13,8 @@ namespace FFS.Application.Entities
 		public string AvatarURL { get; set; }
 		public string PhoneNumber { get; set; }
 		public string Description { get; set; }
-		public DateTime TimeStart { get; set; }
-		public DateTime TimeEnd { get; set; }
+		public string TimeStart { get; set; }
+		public string TimeEnd { get; set; }
 		public decimal RateAverage { get; set; } = 0;
 		public int TotalRate { get; set; } = 0;
 		public int RatingCount { get; set; } = 0;
