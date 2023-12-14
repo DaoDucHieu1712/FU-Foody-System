@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { setAccessToken } from "../../redux/auth";
 
 const navigations = [
-	{ href: "/admin/dashboard", name: "Dashboard" },
+	{ href: "/admin/dashboard", name: "Thống kê" },
 	{ href: "/admin/report", name: "Báo cáo" },
 	{ href: "/admin/manage-acoount", name: "Quản lí tài khoản" },
 	{ href: "/admin/manage-post", name: "Quản lí bài đăng" },
