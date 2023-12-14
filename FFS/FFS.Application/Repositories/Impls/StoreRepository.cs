@@ -4,7 +4,6 @@ using AutoMapper;
 using Dapper;
 
 using FFS.Application.Data;
-using FFS.Application.DTOs.Auth;
 using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Food;
 using FFS.Application.DTOs.Location;
@@ -310,7 +309,7 @@ namespace FFS.Application.Repositories.Impls
 		{
 			try
 			{
-				List<Food> foods = await _context.Foods.Where(x => x.StoreId == idShop && x.CategoryId == idCategory && x.IsDelete==false).Include(x => x.Inventories).Include(x => x.FlashSaleDetails).ThenInclude(x => x.FlashSale).ToListAsync();
+				List<Food> foods = await _context.Foods.Where(x => x.StoreId == idShop && x.CategoryId == idCategory && x.IsDelete == false).Include(x => x.Inventories).Include(x => x.FlashSaleDetails).ThenInclude(x => x.FlashSale).ToListAsync();
 				if (foods.Count == 0)
 				{
 					throw new Exception();
@@ -362,7 +361,7 @@ namespace FFS.Application.Repositories.Impls
 					var user = await _context.ApplicationUsers.FirstOrDefaultAsync(x => x.Id == storeInforDTO.UserId);
 					user.Avatar = storeInforDTO.AvatarURL;
 					user.UserName = storeInforDTO.StoreName;
-					await _context.SaveChangesAsync();
+					_ = await _context.SaveChangesAsync();
 
 					store.StoreName = storeInforDTO.StoreName;
 					if (storeInforDTO.AvatarURL != null)
@@ -375,7 +374,7 @@ namespace FFS.Application.Repositories.Impls
 					store.TimeEnd = storeInforDTO.TimeEnd;
 
 					Location location = await _context.Locations.FirstOrDefaultAsync(x => x.UserId == store.UserId);
-					if(location != null)
+					if (location != null)
 					{
 						LocationDTO locationDTO = storeInforDTO.Location;
 
@@ -463,7 +462,7 @@ namespace FFS.Application.Repositories.Impls
 		{
 			var query = _context.Stores.Include(x => x.Categories).AsQueryable();
 
-			if (!string.IsNullOrEmpty(allStoreParameters.CategoryName)  && !allStoreParameters.CategoryName.Equals("Tất cả"))
+			if (!string.IsNullOrEmpty(allStoreParameters.CategoryName) && !allStoreParameters.CategoryName.Equals("Tất cả"))
 			{
 				query = query.Where(store => store.Categories.Any(category => category.CategoryName.ToLower().Equals(allStoreParameters.CategoryName.ToLower())));
 			}

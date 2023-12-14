@@ -26,8 +26,8 @@ const schema = yup.object({
 	description: yup.string().required("Mô tả không thể để trống !"),
 	// address: yup.string().required("Địa chỉ không thể để trống !"),
 	phoneNumber: yup.string().required("Số điện thoại không thể để trống !"),
-	timeStart: yup.date().required("Hãy chọn thời gian mở cửa !"),
-	timeEnd: yup.date().required("Hãy chọn thời gian đóng cửa !"),
+	timeStart: yup.string().required("Hãy chọn thời gian mở cửa !"),
+	timeEnd: yup.string().required("Hãy chọn thời gian đóng cửa !"),
 	firstName: yup.string().required("Họ không thể để trống"),
 	lastName: yup.string().required("Tên không thể để trống"),
 	gender: yup.boolean().required("Giới tính không thể để trống !"),
@@ -242,7 +242,7 @@ const StoreRegisterPage = () => {
 							</div>
 							<div className="w-full">
 								<Input
-									type="datetime-local"
+									type="time"
 									label="Thời gian mở cửa"
 									{...register("timeStart")}
 								/>
@@ -252,7 +252,7 @@ const StoreRegisterPage = () => {
 							</div>
 							<div className="w-full">
 								<Input
-									type="datetime-local"
+									type="time"
 									label="Thời gian đóng cửa"
 									{...register("timeEnd")}
 								/>
