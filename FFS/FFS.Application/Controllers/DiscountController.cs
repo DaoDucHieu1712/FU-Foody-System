@@ -108,11 +108,6 @@ namespace FFS.Application.Controllers
 					return NotFound();
 				}
 				var discountNameExist = await _discountRepository.FindSingle(x => x.Code == discountDTO.Code);
-				if (discountNameExist != null)
-				{
-					_logger.LogInfo($"Duplicate discount code: {discountNameExist.Code}");
-					return BadRequest($"Mã giảm giá {discountNameExist.Code} đã tồn tại. Vui lòng chọn mã khác!");
-				}
 				discountDTO.Id = id;
 				discountDTO.StoreId = discountUpdate.StoreId;
 				_mapper.Map(discountDTO, discountUpdate);
