@@ -76,7 +76,7 @@ namespace FFS.Application.Controllers
 						_logger.LogInfo("Invalid request. CategoryName is required.");
 						return BadRequest(new { message = "CategoryName is required." });
 					}
-					var check = _categoryRepository.FindSingle(x => x.CategoryName == categoryRequestDTO.CategoryName && x.StoreId == categoryRequestDTO.StoreId);
+					var check = await _categoryRepository.FindSingle(x => x.CategoryName == categoryRequestDTO.CategoryName && x.StoreId == categoryRequestDTO.StoreId);
 					if(check is not null)
 					{
 						_logger.LogInfo("Category already exists.");
