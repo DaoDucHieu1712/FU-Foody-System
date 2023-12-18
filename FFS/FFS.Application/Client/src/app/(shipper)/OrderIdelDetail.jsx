@@ -6,6 +6,7 @@ import OrderService from "../(store)/shared/order.service";
 import axios from "../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const OrderIdelDetail = () => {
 	const userProfile = useSelector((state) => state.auth.userProfile);
@@ -64,11 +65,11 @@ const OrderIdelDetail = () => {
 														</p>
 														<p>Địa chỉ nhận hàng : {item.storeAddress}</p>
 
-														<p>{item.unitPrice} $</p>
+														<p>{FormatPriceHelper(item.unitPrice)} $</p>
 													</div>
 												</div>
 												<div className="flex flex-col gap-y-3">
-													<p className="text-sm">{item.unitPrice} $</p>
+													<p className="text-sm">{FormatPriceHelper(item.unitPrice)} $</p>
 													<div className="flex items-center justify-center gap-x-1">
 														<button className="">x</button>
 														<span>{item.quantity}</span>
@@ -107,7 +108,7 @@ const OrderIdelDetail = () => {
 					<div className="flex justify-between items-center border-b pb-3 border-gray-200">
 						<p className="font-bold text-lg">Ngày đặt :</p>
 						<p className="text-red-500  font-bold text-lg">
-							{orderQuery.data?.createdAt.toString().slice(0, 10)}
+							{orderQuery.data?.createdAt.toString().replace("T", " ").slice(0, 16)}
 						</p>
 					</div>
 					<div className="my-3 flex justify-between items-center gap-x-3">

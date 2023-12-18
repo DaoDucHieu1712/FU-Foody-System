@@ -44,7 +44,13 @@ const ReviewFood = ({ idUser, idFood }) => {
                 userId: idUser,
                 foodId: idFood,
                 rate: star,
-                content: data.reviewfood
+                content: data.reviewfood,
+                images: [
+                    {
+                        url: data.imageURL,
+                        commentId: 0
+                    }
+                ]
             };
             axios
                 .post(`/api/Food/RatingFood`, newRating)
@@ -55,23 +61,24 @@ const ReviewFood = ({ idUser, idFood }) => {
                     localStorage.setItem(`foodReview_${idFood}`, true); // Store the information in local storage
                 })
                 .catch((error) => {
-                    toast.success("Đánh giá thất bại!");
+                    toast.error("Đánh giá thất bại!");
                     console.log(error);
                 });
         } catch (error) {
             console.error("Error add rating: ", error);
         }
     }
+
     return (
         <div>
-             <Button className={`bg-primary cursor-pointer hover:bg-orange-700 ${isReviewed ? 'hidden' : ''}`} onClick={handleOpen}>
+            <Button className={`bg-primary cursor-pointer hover:bg-orange-700 ${isReviewed ? 'hidden' : ''}`} onClick={handleOpen}>
                 Đánh giá món ăn
             </Button>
             <Button
                 className={`bg-primary cursor-pointer hover:bg-orange-700 ${!isReviewed ? 'hidden' : ''}`}
                 onClick={() => {
                     // Redirect to the Review Page using React Router
-                     navigate(`/food-details/${idFood}`); // Replace `idStore` with the appropriate variable
+                    navigate(`/food-details/${idFood}`); // Replace `idStore` with the appropriate variable
                 }}
             >
                 Xem đánh giá
