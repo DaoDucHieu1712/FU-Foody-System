@@ -60,6 +60,14 @@ const OrderList = () => {
 		},
 	});
 
+	const ExportOrder = () => {
+		const url = `${
+			import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL
+		}/api/Store/ExportOrder/${store.id}`;
+
+		window.location.href = url;
+	};
+
 	useEffect(() => {
 		getStore();
 	}, []);
@@ -69,15 +77,24 @@ const OrderList = () => {
 	return (
 		<>
 			<div className="container mx-auto">
-				<div className="flex justify-between p-2">
-					<div className="">
-						<h1 className="text-2xl text-orange-400 font-bold mb-3">
-							Quản lý đơn hàng
-						</h1>
-						<p className="text-sm">
-							Đơn hàng của{" "}
-							<span className="text-lg font-semibold">{store.storeName}</span>{" "}
-						</p>
+				<div className="flex">
+					<div className="flex justify-between p-2">
+						<div className="">
+							<h1 className="text-2xl text-orange-400 font-bold mb-3">
+								Quản lý đơn hàng
+							</h1>
+							<p className="text-sm">
+								Đơn hàng của{" "}
+								<span className="text-lg font-semibold">{store.storeName}</span>{" "}
+							</p>
+						</div>
+					</div>
+					<div className="flex justify-between p-2">
+						<div className="">
+							<Button className="bg-primary" onClick={ExportOrder}>
+								Xuất excel
+							</Button>
+						</div>
 					</div>
 				</div>
 				<div className="mt-5">
