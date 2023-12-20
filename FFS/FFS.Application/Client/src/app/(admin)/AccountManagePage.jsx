@@ -10,7 +10,6 @@ import {
 } from "@material-tailwind/react";
 import axios from "../../shared/api/axiosConfig";
 
-
 const AccountManagePage = () => {
 	const [dataSearch, setDateSearch] = useState({
 		pageNumber: 1,
@@ -20,7 +19,9 @@ const AccountManagePage = () => {
 		role: "",
 	});
 	const handleExportExcel = () => {
-		const fileDownloadUrl = `https://localhost:7025/api/Admin/ExportUser`;
+		const fileDownloadUrl = `${
+			import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL
+		}/api/Admin/ExportUser`;
 
 		window.location.href = fileDownloadUrl;
 	};
@@ -300,7 +301,6 @@ const AccountManagePage = () => {
 						handleClick={changePage}
 					></Pagination>
 				</div>
-				
 			</div>
 		</>
 	);

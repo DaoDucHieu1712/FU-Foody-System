@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import PieChartOrder from "./PiechartOrder";
+import PieChartOrder from "./PieChartOrder";
 import axios from "../../shared/api/axiosConfig";
 import { Option, Select } from "@material-tailwind/react";
 import CookieService from "../../shared/helper/cookieConfig";
@@ -68,7 +68,9 @@ const StoreDashboardPage = () => {
 			</div>
 
 			<div className="m-4 p-4 bg-gray-100 rounded-lg">
-				<h3 className="text-center text-lg font-bold mb-2">Thống kê doanh thu cửa hàng</h3>
+				<h3 className="text-center text-lg font-bold mb-2">
+					Thống kê doanh thu cửa hàng
+				</h3>
 				<div className="flex items-center justify-center mx-auto w-4/12 whitespace-nowrap m-10">
 					<span className="mr-2">Chọn năm </span>
 					<Select
@@ -83,12 +85,15 @@ const StoreDashboardPage = () => {
 					</Select>
 				</div>
 
-				<BarChartRevenue storeId={storeId} year={selectedYear}></BarChartRevenue>
+				<BarChartRevenue
+					storeId={storeId}
+					year={selectedYear}
+				></BarChartRevenue>
 			</div>
 
-            <div className="m-4 p-4 bg-gray-100 rounded-lg">
+			<div className="m-4 p-4 bg-gray-100 rounded-lg">
 				<h3 className="text-center text-lg font-bold mb-2">Thống kê món ăn</h3>
-					<LineChartDetailFood storeId={storeId}></LineChartDetailFood> 
+				<LineChartDetailFood storeId={storeId}></LineChartDetailFood>
 			</div>
 		</>
 	);

@@ -65,7 +65,9 @@ const Inventory = () => {
 		}
 	};
 	const handleExportExcel = () => {
-		const fileDownloadUrl = `https://localhost:7025/api/Store/ExportInventory/exportinventory?id=${storeId}`;
+		const fileDownloadUrl = `${
+			import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL
+		}/api/Store/ExportInventory/exportinventory?id=${storeId}`;
 
 		window.location.href = fileDownloadUrl;
 	};
