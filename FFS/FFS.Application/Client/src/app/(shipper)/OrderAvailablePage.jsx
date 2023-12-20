@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import PaymentStatus from "../(store)/components/order/PaymentStatus";
 import OrderService from "../(store)/shared/order.service";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const TABLE_HEAD = [
 	"Id",
@@ -178,11 +179,11 @@ const OrderAvailablePage = () => {
 											</Typography>
 										</td>
 										<td className={classes}>
-											<p>{item.totalPrice} $</p>
+											<p>{FormatPriceHelper(item.totalPrice)}$</p>
 											<p>{item.paymentMethod}</p>
 											<PaymentStatus status={item.paymentStatus} />
 										</td>
-										<td className={classes}>Phí ship : {item.shipFee}</td>
+										<td className={classes}>Phí ship : {FormatPriceHelper(item.shipFee)}$</td>
 										<td className={`${classes}`}>
 											<div className="flex gap-x-3 text-blue-500">
 												<Link to={`/shipper/order-available/${item.id}`}>

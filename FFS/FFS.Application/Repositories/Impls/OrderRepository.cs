@@ -4,17 +4,15 @@ using AutoMapper;
 
 using Dapper;
 
-using DocumentFormat.OpenXml.Office2010.Excel;
-
 using FFS.Application.Controllers;
 using FFS.Application.Data;
-using FFS.Application.DTOs.Admin;
 using FFS.Application.DTOs.Order;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 namespace FFS.Application.Repositories.Impls
 {
@@ -35,7 +33,7 @@ namespace FFS.Application.Repositories.Impls
 			try
 			{
 				var items = _mapper.Map<List<OrderDetail>>(orderDetailDTOs);
-			
+
 				await _orderDetailRepository.AddMultiple(items);
 			}
 			catch (Exception ex)
@@ -141,8 +139,8 @@ namespace FFS.Application.Repositories.Impls
 
 		public async Task CreatePayment(Payment payment)
 		{
-			await _context.AddAsync(payment);
-			await _context.SaveChangesAsync();
+			_ = await _context.AddAsync(payment);
+			_ = await _context.SaveChangesAsync();
 		}
 
 		public async Task ConfirmPayment(OrderController.Confirm confirm)
@@ -170,10 +168,10 @@ namespace FFS.Application.Repositories.Impls
 					{
 						payment.Status = Entities.Enum.PaymentStatus.Cancel;
 					}
-					await _context.SaveChangesAsync();
+					_ = await _context.SaveChangesAsync();
 				}
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 
 				throw;
@@ -273,7 +271,7 @@ namespace FFS.Application.Repositories.Impls
 		{
 			try
 			{
-			    var NewOrder = await CreateAndGetEntity(_mapper.Map<Order>(createOrderDTO));
+				var NewOrder = await CreateAndGetEntity(_mapper.Map<Order>(createOrderDTO));
 				if (NewOrder == null) throw new Exception("Something wrong !");
 				return _mapper.Map<OrderDTO>(NewOrder);
 			}
@@ -295,7 +293,7 @@ namespace FFS.Application.Repositories.Impls
 						Month = monthNames[month - 1],
 						Revenue = _context.Orders
 							.Where(o => o.PaymentId != null && o.CreatedAt.Year == year && o.CreatedAt.Month == month && o.ShipperId.Equals(shipperId))
-							.Sum(x => x.ShipFee) ?? 0 
+							.Sum(x => x.ShipFee) ?? 0
 					})
 					.ToList();
 
@@ -307,5 +305,125 @@ namespace FFS.Application.Repositories.Impls
 			}
 		}
 
+		public byte[] ExportOrder(int storeId)
+		{
+			try
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("storeId", storeId);
+				using var db = _context.Database.GetDbConnection();
+
+				dynamic exportFoods = db.Query<dynamic>("ExportOrder", parameters, commandType: CommandType.StoredProcedure);
+				db.Close();
+
+				using (var package = new ExcelPackage())
+				{
+					var workbook = package.Workbook;
+					var worksheet = workbook.Worksheets.Add("Orders");
+
+
+					int index = 1;
+					string cell = string.Format($"A{index}:K{index}");
+					worksheet.Cells[cell].Value = "Báo cáo đơn hàng";
+					worksheet.Cells[cell].Merge = true;
+					worksheet.Cells[cell].Style.Font.Size = 20;
+					worksheet.Cells[cell].Style.Font.Bold = true;
+					worksheet.Cells[cell].Style.Fill.SetBackground(System.Drawing.ColorTranslator.FromHtml("#FE5303"));
+					worksheet.Cells[cell].Style.Font.Color.SetColor(System.Drawing.Color.White);
+					worksheet.Cells[cell].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+					worksheet.Cells[cell].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+					index++;
+
+					cell = string.Format($"A{index}");
+					worksheet.Cells[cell].Value = "ID Đơn hàng";
+
+					cell = string.Format($"B{index}");
+					worksheet.Cells[cell].Value = "Khách hàng";
+
+					cell = string.Format($"C{index}");
+					worksheet.Cells[cell].Value = "Địa điểm đặt hàng";
+
+					cell = string.Format($"D{index}");
+					worksheet.Cells[cell].Value = "Trạng thái đơn hàng";
+
+					cell = string.Format($"E{index}");
+					worksheet.Cells[cell].Value = "Giá trị đơn hàng";
+
+					cell = string.Format($"F{index}");
+					worksheet.Cells[cell].Value = "Phương thức thanh toán";
+
+					cell = string.Format($"G{index}");
+					worksheet.Cells[cell].Value = "Trạng thái thanh toán";
+
+					cell = string.Format($"J{index}");
+					worksheet.Cells[cell].Value = "Ngày tạo đơn";
+
+					cell = string.Format($"K{index}");
+					worksheet.Cells[cell].Value = "Ngày Ship";
+
+
+
+					cell = string.Format($"A{index}:K{index}");
+					worksheet.Cells[cell].Style.Font.Size = 14;
+					worksheet.Cells[cell].Style.Font.Bold = true;
+					worksheet.Cells[cell].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+					worksheet.Cells[cell].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+
+					index++;
+
+
+					int indexData = 0;
+
+					// Populate rows with data
+					for (int i = 0; i < exportFoods.Count; i++)
+					{
+						indexData = index + i;
+						cell = string.Format($"A{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].Id;
+
+						cell = string.Format($"B{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].Customer;
+
+						cell = string.Format($"C{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].Location;
+
+						cell = string.Format($"D{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].TotalPrice;
+
+						cell = string.Format($"E{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].OrderStatus;
+
+						cell = string.Format($"F{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].TotalPrice;
+
+						cell = string.Format($"G{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].PaymentMethod;
+
+						cell = string.Format($"H{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].Status;
+
+						cell = string.Format($"J{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].CreatedAt;
+
+						cell = string.Format($"K{indexData}");
+						worksheet.Cells[cell].Value = exportFoods[i].ShipDate;
+
+						worksheet.Row(indexData).Height = 30;
+					}
+
+
+					cell = string.Format($"A{2}:K{indexData}");
+					worksheet.Cells[cell].Style.Font.Size = 14;
+
+					worksheet.Cells.AutoFitColumns();
+
+					return package.GetAsByteArray();
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
 	}
 }
