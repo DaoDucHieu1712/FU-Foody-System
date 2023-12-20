@@ -59,6 +59,7 @@ import StoreOwnderApplication from "./app/(admin)/shared/components/StoreOwnderA
 import ShipperApplication from "./app/(admin)/shared/components/ShipperApplication";
 
 import StoreEditPage from "./app/(store)/StoreEditPage";
+import ProfileLayout from "./app/(auth)/ProfileLayout";
 
 function App() {
 	return (
@@ -68,11 +69,11 @@ function App() {
 					<Route path="/confirm-payment" element={<ConfirmPaymentPage />} />
 					<Route path="/" element={<HomePage />} />
 					<Route path="/login" element={<Login />} />
-					<Route path="/location" element={<Location />} />
+					
 					<Route path="/register-store" element={<StoreRegisterPage />} />
 					<Route path="/register-shipper" element={<ShipperRegisterPage />} />
-					<Route path="/profile" element={<ProfilePage />} />
-					<Route path="/change-password" element={<ChangePasswordPage />} />
+					
+				
 					<Route path="/forgot-password" element={<ForgotPasswordPage />} />
 					<Route path="/reset-password" element={<ResetPasswordPage />} />
 					<Route path="/food-details/:id" element={<FoodDetails />} />
@@ -92,6 +93,11 @@ function App() {
 					<Route path="/user-detail/:id" element={<UserDetails />} />
 					<Route path="/my-order/:id" element={<MyOrderDetail />} />
 					<Route path="/shipper/details/:id" element={<ShipperDetailsPage />} />
+					<Route element={<ProfileLayout></ProfileLayout>}>
+						<Route path="/profile" element={<ProfilePage />} />
+						<Route path="/location" element={<Location />} />
+						<Route path="/change-password" element={<ChangePasswordPage />} />
+					</Route>
 				</Route>
 				<Route element={<ShipperLayout></ShipperLayout>}>
 					<Route
@@ -119,13 +125,12 @@ function App() {
 				</Route>
 				<Route element={<StoreLayout></StoreLayout>}>
 					<Route path="/store/edit" element={<StoreEditPage />} />
-
 					<Route path="/store/order" element={<OrderList />} />
 					<Route path="/store/food" element={<Food />} />
 					<Route path="/store/inventory" element={<Inventory />} />
 					<Route path="/store/category" element={<Category />} />
-					<Route path="/store/discount" element={<Discount />} />user
-					
+					<Route path="/store/discount" element={<Discount />} />
+					user
 					<Route path="/store/order/:id" element={<OrderDetail />} />
 					<Route path="/store/flash-sale/add" element={<AddFlashSale />} />
 					<Route path="/store/flash-sale" element={<FlashSale />} />
