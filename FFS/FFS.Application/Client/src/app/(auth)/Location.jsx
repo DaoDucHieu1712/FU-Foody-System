@@ -37,7 +37,7 @@ const Location = () => {
 	return (
 		<>
 			{userProfile != null ? (
-				<div className="w-full h-auto">
+				<div className="w-full h-auto px-2 my-4">
 					<div className="flex items-center justify-between">
 						<p className="px-5 mx-5 mt-2 font-bold text-lg pointer-events-none">
 							Địa chỉ của tôi

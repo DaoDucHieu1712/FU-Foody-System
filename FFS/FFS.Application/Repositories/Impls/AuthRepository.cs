@@ -387,6 +387,7 @@ namespace FFS.Application.Repositories.Impls
 		}
 		public async Task ProfileEdit(string email, UserCommandDTO userCommandDTO)
 		{
+			using var transaction = await _context.Database.BeginTransactionAsync();
 			try
 			{
 				ApplicationUser _user = await _userManager.FindByEmailAsync(email);
@@ -396,12 +397,20 @@ namespace FFS.Application.Repositories.Impls
 				_user.LastName = userCommandDTO.LastName;
 				_user.Gender = userCommandDTO.Gender;
 				_user.Avatar = userCommandDTO.Avatar;
+				//_ = await _userManager.UpdateAsync(_user);
+				//_ = await _context.SaveChangesAsync();
+				_context.Entry(_user).State = EntityState.Modified;
 				_ = await _userManager.UpdateAsync(_user);
-				_ = await _context.SaveChangesAsync();
+				// Save changes to the database
+				_ =await _context.SaveChangesAsync();
+
+				// Commit the transaction
+				await transaction.CommitAsync();
+
 			}
 			catch (Exception ex)
 			{
-
+				await transaction.RollbackAsync();
 				throw new Exception(ex.Message);
 			}
 		}
