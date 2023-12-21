@@ -184,7 +184,7 @@ const FoodList = () => {
 					<Radio
 						label="Trên 100.000đ"
 						checked={priceRange === "range4"}
-						onChange={() => handlePriceRangeChange("range4", "", "")}
+						onChange={() => handlePriceRangeChange("range4", "100000", null)}
 					/>
 				</div>
 			</div>
