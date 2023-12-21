@@ -8,11 +8,14 @@ using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
+using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -229,10 +232,10 @@ namespace Test
             };
 
             _mapperMock.Setup(mapper => mapper.Map<FlashSale>(It.IsAny<FlashSaleDTO>()))
-               .Returns(new FlashSale()); 
+               .Returns(new FlashSale());
 
             _fsRepoMock.Setup(repo => repo.Add(It.IsAny<FlashSale>()))
-               .ThrowsAsync(new Exception("Simulated exception")); 
+               .ThrowsAsync(new Exception("Simulated exception"));
             // Act
             var result = await _fsController.CreateFlashSale(flashSaleDTO) as ObjectResult;
 
@@ -243,6 +246,358 @@ namespace Test
         }
 
 
+        #endregion
+
+        #region UpdateFlashSale
+        [Fact]
+        public async Task UpdateFlashSale_ExistingId_ReturnsOk()
+        {
+            // Arrange
+            int existingFlashSaleId = 1;
+            var flashSaleDTO = new FlashSaleDTO
+            {
+                Id = 1,
+                StoreId = 4
+            };
+
+            var existingFlashSale = new FlashSale
+            {
+                Id = existingFlashSaleId,
+                StoreId = 4
+            };
+
+            _fsRepoMock.Setup(repo => repo.FindSingle(
+    It.IsAny<Expression<Func<FlashSale, bool>>>(),
+    It.IsAny<Expression<Func<FlashSale, object>>[]>())
+)
+.ReturnsAsync(existingFlashSale);
+
+
+            // Act
+            var result = await _fsController.UpdateFlashSale(existingFlashSaleId, flashSaleDTO);
+
+            // Assert
+            _fsRepoMock.Verify(repo => repo.Update(It.IsAny<FlashSale>()), Times.Once);
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task UpdateFlashSale_NonExistingId_ReturnsNotFound()
+        {
+            // Arrange
+            int nonExistingFlashSaleId = 2;
+            var flashSaleDTO = new FlashSaleDTO
+            {
+                Id = 1,
+                StoreId = 4
+            };
+
+            _fsRepoMock.Setup(repo => repo.FindSingle(
+    It.IsAny<Expression<Func<FlashSale, bool>>>(),
+    It.IsAny<Expression<Func<FlashSale, object>>[]>())
+)
+                .ReturnsAsync((FlashSale)null);
+
+            // Act
+            var result = await _fsController.UpdateFlashSale(nonExistingFlashSaleId, flashSaleDTO);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task UpdateFlashSale_Exception_ReturnsInternalServerError()
+        {
+            // Arrange
+            int flashSaleId = 1;
+            var flashSaleDTO = new FlashSaleDTO
+            {
+                Id = 1,
+                StoreId = 4
+            };
+
+            _fsRepoMock.Setup(repo => repo.FindSingle(
+     It.IsAny<Expression<Func<FlashSale, bool>>>(),
+     It.IsAny<Expression<Func<FlashSale, object>>[]>())
+ )
+                 .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await _fsController.UpdateFlashSale(flashSaleId, flashSaleDTO);
+
+            // Assert
+            Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, ((ObjectResult)result).StatusCode);
+        }
+
+        #endregion
+
+        #region DeleteFlashSale
+        [Fact]
+        public async Task DeleteFlashSale_ExistingId_ReturnsOk()
+        {
+            // Arrange
+            int existingFlashSaleId = 1;
+            var existingFlashSaleEntity = new FlashSale { Id = existingFlashSaleId };
+
+            _fsRepoMock.Setup(repo => repo.FindSingle(It.IsAny<Expression<Func<FlashSale, bool>>>()))
+                .ReturnsAsync(existingFlashSaleEntity);
+
+            _fsRepoMock.Setup(repo => repo.DeleteFlashSale(It.IsAny<int>()))
+    .Returns(Task.CompletedTask);
+
+
+            // Act
+            var result = await _fsController.DeleteFlashSale(existingFlashSaleId);
+
+            // Assert
+            _fsRepoMock.Verify(repo => repo.DeleteFlashSale(existingFlashSaleEntity.Id), Times.Once);
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteFlashSale_NonExistingId_ReturnsNotFound()
+        {
+            // Arrange
+            int nonExistingFlashSaleId = 2;
+
+            _fsRepoMock.Setup(repo => repo.FindSingle(It.IsAny<Expression<Func<FlashSale, bool>>>()))
+                .ReturnsAsync((FlashSale)null);
+
+            // Act
+            var result = await _fsController.DeleteFlashSale(nonExistingFlashSaleId);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal($"Flash sale with ID {nonExistingFlashSaleId} not found", (result as NotFoundObjectResult)?.Value);
+        }
+
+        [Fact]
+        public async Task DeleteFlashSale_Exception_ReturnsBadRequest()
+        {
+            // Arrange
+            int flashSaleId = 1;
+            var existingFlashSaleEntity = new FlashSale { Id = flashSaleId };
+
+            _fsRepoMock.Setup(repo => repo.FindSingle(It.IsAny<Expression<Func<FlashSale, bool>>>()))
+                .ReturnsAsync(existingFlashSaleEntity);
+
+            _fsRepoMock.Setup(repo => repo.DeleteFlashSale(It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await _fsController.DeleteFlashSale(flashSaleId);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal($"Simulated exception", (result as BadRequestObjectResult)?.Value);
+        }
+        #endregion
+
+        #region DeleteFlashSaleDetail
+        [Fact]
+        public async Task DeleteFlashSaleDetail_ExistingIds_ReturnsOk()
+        {
+            // Arrange
+            int existingFlashSaleId = 1;
+            int existingFoodId = 1;
+
+            _fsRepoMock.Setup(repo => repo.DeleteFlashSaleDetail(It.IsAny<int>(), It.IsAny<int>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _fsController.DeleteFlashSaleDetail(existingFlashSaleId, existingFoodId);
+
+            // Assert
+            _fsRepoMock.Verify(repo => repo.DeleteFlashSaleDetail(existingFlashSaleId, existingFoodId), Times.Once);
+            Assert.IsType<OkResult>(result);
+        }
+        [Fact]
+        public async Task DeleteFlashSaleDetail_NonExistingIds_ReturnsOk()
+        {
+            // Arrange
+            int nonExistingFlashSaleId = 2;
+            int nonExistingFoodId = 2;
+
+            _fsRepoMock.Setup(repo => repo.DeleteFlashSaleDetail(It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await _fsController.DeleteFlashSaleDetail(nonExistingFlashSaleId, nonExistingFoodId);
+
+            // Assert
+            _fsRepoMock.Verify(repo => repo.DeleteFlashSaleDetail(nonExistingFlashSaleId, nonExistingFoodId), Times.Once);
+            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal($"Simulated exception", (result as BadRequestObjectResult)?.Value);
+        }
+
+        [Fact]
+        public async Task DeleteFlashSaleDetail_Exception_ReturnsBadRequest()
+        {
+            // Arrange
+            int flashSaleId = 1;
+            int foodId = 1;
+
+            _fsRepoMock.Setup(repo => repo.DeleteFlashSaleDetail(It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await _fsController.DeleteFlashSaleDetail(flashSaleId, foodId);
+
+            // Assert
+            _fsRepoMock.Verify(repo => repo.DeleteFlashSaleDetail(flashSaleId, foodId), Times.Once);
+            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal($"Simulated exception", (result as BadRequestObjectResult)?.Value);
+        }
+        #endregion
+
+        #region FlashSaleDetail
+        [Fact]
+        public async Task FlashSaleDetail_ExistingId_ReturnsOkWithFlashSaleDTO()
+        {
+            // Arrange
+            int existingFlashSaleId = 1;
+            var existingFlashSaleEntity = new FlashSale { Id = existingFlashSaleId, /* set other properties */ };
+            var expectedFlashSaleDTO = new FlashSaleDTO { /* set properties based on your mapping */ };
+
+            _fsRepoMock.Setup(repo => repo.FindSingle(
+     It.IsAny<Expression<Func<FlashSale, bool>>>(),
+     It.IsAny<Expression<Func<FlashSale, object>>[]>())
+ )
+ .ReturnsAsync(existingFlashSaleEntity);
+
+
+            _mapperMock.Setup(mapper => mapper.Map<FlashSaleDTO>(existingFlashSaleEntity))
+                .Returns(expectedFlashSaleDTO);
+
+            // Act
+            var result = await _fsController.FlashSaleDetail(existingFlashSaleId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(expectedFlashSaleDTO, okResult.Value);
+        }
+
+        [Fact]
+        public async Task FlashSaleDetail_NonExistingId_ReturnsNotFound()
+        {
+            // Arrange
+            int nonExistingFlashSaleId = 2;
+
+            _fsRepoMock.Setup(repo => repo.FindSingle(
+    It.IsAny<Expression<Func<FlashSale, bool>>>(),
+    It.IsAny<Expression<Func<FlashSale, object>>[]>())
+)
+                .ReturnsAsync((FlashSale)null);
+
+            // Act
+            var result = await _fsController.FlashSaleDetail(nonExistingFlashSaleId);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task FlashSaleDetail_Exception_ReturnsBadRequest()
+        {
+            // Arrange
+            int flashSaleId = 1;
+
+            _fsRepoMock.Setup(repo => repo.FindSingle(
+     It.IsAny<Expression<Func<FlashSale, bool>>>(),
+     It.IsAny<Expression<Func<FlashSale, object>>[]>())
+ )
+                 .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await _fsController.FlashSaleDetail(flashSaleId);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal($"Simulated exception", (result as BadRequestObjectResult)?.Value);
+        }
+        #endregion
+
+        #region ListFlashSaleByStore
+        [Fact]
+        public async Task ListFlashSaleByStore_ValidData_ReturnsOk()
+        {
+            // Arrange
+            List<FlashSale> flashSales = new List<FlashSale>();
+
+            var flashSaleParameters = new FlashSaleParameter { Start = DateTime.Now, PageNumber = 1, PageSize = 10 };
+            var mockFlashSales = new PagedList<FlashSale>(flashSales, 1, 1, 10);
+            var mockFlashSaleDTOs = new List<FlashSaleDTO> { /* mock your FlashSale DTOs data here */ };
+
+            _fsRepoMock.Setup(repo => repo.ListFlashSaleByStore(It.IsAny<int>(), It.IsAny<FlashSaleParameter>()))
+                .Returns(mockFlashSales);
+            _mapperMock.Setup(mapper => mapper.Map<List<FlashSaleDTO>>(mockFlashSales))
+                .Returns(mockFlashSaleDTOs);
+
+            // Act
+            var result = _fsController.ListFlashSaleByStore(1, flashSaleParameters);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public async void ListFlashSaleByStore_ExceptionOccurred_ReturnsInternalServerError()
+        {
+            // Arrange
+
+            var flashSaleParameters = new FlashSaleParameter { Start = DateTime.Now, PageNumber = 1, PageSize = 10 };
+
+            _fsRepoMock.Setup(repo => repo.ListFlashSaleByStore(It.IsAny<int>(), It.IsAny<FlashSaleParameter>()))
+               .Throws(new Exception("Test exception"));
+
+            // Act
+            var result = _fsController.ListFlashSaleByStore(1, flashSaleParameters);
+
+            // Assert
+            var objiectCodeResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, objiectCodeResult.StatusCode);
+        }
+
+
+        #endregion
+
+        #region ListFlashSaleInTimeByStore 
+        [Fact]
+        public async Task ListFlashSaleInTimeByStore_ValidData_ReturnsOk()
+        {
+            // Arrange
+            int storeId = 1;
+            var mockFlashSales = new List<FlashSale>();
+            var mockFlashSaleDTOs = new List<FlashSaleDTO>(); 
+
+            _fsRepoMock.Setup(repo => repo.ListFoodFlashSaleInTimeByStore(storeId))
+                .ReturnsAsync(mockFlashSales);
+            _mapperMock.Setup(mapper => mapper.Map<List<FlashSaleDTO>>(mockFlashSales))
+                .Returns(mockFlashSaleDTOs);
+
+            // Act
+            var result = await _fsController.ListFlashSaleInTimeByStore(storeId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task ListFlashSaleInTimeByStore_Exception_ReturnsBadRequest()
+        {
+            // Arrange
+            int storeId = 1;
+            _fsRepoMock.Setup(repo => repo.ListFoodFlashSaleInTimeByStore(storeId))
+                .ThrowsAsync(new Exception("Some error message"));
+
+            // Act
+            var result = await _fsController.ListFlashSaleInTimeByStore(storeId);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Some error message", badRequestResult.Value);
+        }
         #endregion
     }
 }
