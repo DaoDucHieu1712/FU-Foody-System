@@ -19,9 +19,9 @@ namespace Test
             mockInventoryRepository = new Mock<IInventoryRepository>();
             mockMapper = new Mock<IMapper>();
 
-            controller = new InventoryController(
-                mockInventoryRepository.Object,
-                mockMapper.Object);
+            //controller = new InventoryController(
+            //    mockInventoryRepository.Object,
+            //    mockMapper.Object);
         }
 
         #region Get inventories

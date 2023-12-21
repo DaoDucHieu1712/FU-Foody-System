@@ -48,7 +48,9 @@ const Food = () => {
 		}
 	};
 	const handleExportExcel = () => {
-		const fileDownloadUrl = `https://localhost:7025/api/Store/ExportFood/exportfood?id=${storeId}`;
+		const fileDownloadUrl = `${
+			import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL
+		}/api/Store/ExportFood/exportfood?id=${storeId}`;
 
 		window.location.href = fileDownloadUrl;
 	};
