@@ -355,10 +355,10 @@ namespace FFS.Application.Repositories.Impls
 					cell = string.Format($"G{index}");
 					worksheet.Cells[cell].Value = "Trạng thái thanh toán";
 
-					cell = string.Format($"J{index}");
+					cell = string.Format($"H{index}");
 					worksheet.Cells[cell].Value = "Ngày tạo đơn";
 
-					cell = string.Format($"K{index}");
+					cell = string.Format($"I{index}");
 					worksheet.Cells[cell].Value = "Ngày Ship";
 
 
@@ -388,24 +388,21 @@ namespace FFS.Application.Repositories.Impls
 						worksheet.Cells[cell].Value = exportFoods[i].Location;
 
 						cell = string.Format($"D{indexData}");
-						worksheet.Cells[cell].Value = exportFoods[i].TotalPrice;
-
-						cell = string.Format($"E{indexData}");
 						worksheet.Cells[cell].Value = exportFoods[i].OrderStatus;
 
-						cell = string.Format($"F{indexData}");
+						cell = string.Format($"E{indexData}");
 						worksheet.Cells[cell].Value = exportFoods[i].TotalPrice;
 
-						cell = string.Format($"G{indexData}");
+						cell = string.Format($"F{indexData}");
 						worksheet.Cells[cell].Value = exportFoods[i].PaymentMethod;
 
-						cell = string.Format($"H{indexData}");
+						cell = string.Format($"G{indexData}");
 						worksheet.Cells[cell].Value = exportFoods[i].Status;
 
-						cell = string.Format($"J{indexData}");
+						cell = string.Format($"H{indexData}");
 						worksheet.Cells[cell].Value = exportFoods[i].CreatedAt;
 
-						cell = string.Format($"K{indexData}");
+						cell = string.Format($"I{indexData}");
 						worksheet.Cells[cell].Value = exportFoods[i].ShipDate;
 
 						worksheet.Row(indexData).Height = 30;

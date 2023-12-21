@@ -100,6 +100,7 @@ const UpdateDiscount = ({ reload, discountData }) => {
                             type="text"
                             defaultValue={discountData.code}
                             label="Mã ưu đãi"
+                            readOnly
                             {...register("code")}
                         ></Input>
                         {errors.code && <ErrorText text={errors.code.message}></ErrorText>}
