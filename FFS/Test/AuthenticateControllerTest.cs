@@ -29,7 +29,7 @@ using Xunit;
 using static System.Net.WebRequestMethods;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 
-namespace FFS.Test {
+namespace Test {
 
     public class AuthenticateControllerTest {
 

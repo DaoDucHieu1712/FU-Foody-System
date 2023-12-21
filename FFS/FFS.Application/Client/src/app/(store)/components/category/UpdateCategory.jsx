@@ -38,19 +38,23 @@ const UpdateCategory = ({ id, storeId, categoryName, reloadCategory }) => {
         categoryName: data.categoryName,
         storeId: storeId,
       };
-      axios
-        .put(`/api/Category/Update/${id}`, newCategory)
-        .then(() => {
-          toast.success("Cập nhật danh mục mới thành công!");
-          reloadCategory();
-          setOpen(false);
-        })
-        .catch(() => {
-          toast.error("Cập nhật danh mục mới thất bại!");
-          setOpen(false);
-        });
+  
+      const response = await axios.put(`/api/Category/Update/${id}`, newCategory);
+  
+      if (response.status === 200) {
+        toast.success("Cập nhật danh mục mới thành công!");
+        reloadCategory();
+        setOpen(false);
+      } else {
+        toast.error("Cập nhật danh mục mới thất bại!");
+        setOpen(false);
+      }
     } catch (error) {
-      console.error("Error add category: ", error);
+      if (error.response && error.response.status === 409) {
+        toast.error("Danh mục đã tồn tại. Không thể cập nhật.");
+      } else {
+        console.error("Error updating category: ", error);
+      }
     }
   };
   return (

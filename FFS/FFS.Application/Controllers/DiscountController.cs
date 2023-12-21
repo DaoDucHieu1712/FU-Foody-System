@@ -101,7 +101,7 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
-				_logger.LogInfo("Creating new discount");
+				_logger.LogInfo("Update new discount");
 				var discountUpdate = await _discountRepository.FindById(id, null);
 				if (discountUpdate == null)
 				{
