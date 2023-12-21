@@ -110,7 +110,7 @@ const Layout = () => {
 							<span className="text-gray-500">
 								Đại học FPT, Thạch Hòa, Thạch Thất, Hà Nội
 							</span>
-							<h5>fufoody@.com</h5>
+							<h5>fptfoodysystemservice@gmail.com</h5>
 						</div>
 						<div className="category">
 							<div className="heading">

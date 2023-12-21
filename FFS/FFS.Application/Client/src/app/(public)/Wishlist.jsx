@@ -13,6 +13,7 @@ import CookieService from "../../shared/helper/cookieConfig";
 import RemoveWishlist from "./components/wishlist/RemoveWishlist";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../(auth)/shared/cartSlice";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -91,7 +92,7 @@ const Wishlist = () => {
                     {item.foodName}
                   </Typography>
                   <Typography color="blue-gray" className="font-medium">
-                    ${item.price}.000 VND
+                    ${FormatPriceHelper(item.price)}VND
                   </Typography>
                 </div>
                 <Typography variant="small" className="font-normal">
