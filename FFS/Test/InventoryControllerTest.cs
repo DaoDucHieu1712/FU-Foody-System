@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FFS.Application.Controllers;
+using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 
 using Moq;
@@ -11,6 +12,7 @@ namespace Test
 
         private readonly Mock<IInventoryRepository> mockInventoryRepository;
         private readonly Mock<IMapper> mockMapper;
+        private readonly Mock<ILoggerManager> logger;
 
         private readonly InventoryController controller;
 
@@ -18,10 +20,11 @@ namespace Test
         {
             mockInventoryRepository = new Mock<IInventoryRepository>();
             mockMapper = new Mock<IMapper>();
+            logger = new Mock<ILoggerManager>();
 
-            controller = new InventoryController(
-                mockInventoryRepository.Object,
-                mockMapper.Object);
+            //controller = new InventoryController(
+            //    mockInventoryRepository.Object,
+            //    mockMapper.Object);
         }
 
         #region Get inventories

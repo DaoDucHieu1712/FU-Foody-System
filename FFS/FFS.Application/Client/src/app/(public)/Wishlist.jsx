@@ -74,6 +74,7 @@ const Wishlist = () => {
       
         <Typography variant="h4">Món ăn yêu thích</Typography>
         <div className="grid grid-cols-4 gap-5 my-5">
+
          {wishlistItems && wishlistItems.length != 0 ? (
                    wishlistItems.map((item) => (
                     <Card
@@ -129,6 +130,7 @@ const Wishlist = () => {
                       </CardFooter>
                     </Card>
                   ))
+
                   ) : (
                    
                       <span className="">

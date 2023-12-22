@@ -73,12 +73,12 @@ namespace Test
             var result = await controller.ListCategoryByStoreId(categoryParameters);
 
             // Assert
-            var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
-            Assert.Equal(500, statusCodeResult.StatusCode);
+            var objiectCodeResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, objiectCodeResult.StatusCode);
         }
         #endregion
 
-        #region Create category
+        #region CreateCategory
         [Fact]
         public async Task Create_NullData_ReturnsBadRequest()
         {
@@ -238,12 +238,16 @@ namespace Test
             Assert.Equal(400, badRequestResult.StatusCode);
         }
 
-
         [Fact]
         public async Task Delete_SuccessfulDeletion_ReturnsNoContent()
         {
+            int id = 1;
+            var categoryDelete = new Category(); // Create an instance of Discount
+            _categoryRepository.Setup(x => x.FindById(It.IsAny<int>(), null)).ReturnsAsync(categoryDelete);
+            _categoryRepository.Setup(x => x.Remove(categoryDelete)).Returns(Task.CompletedTask);
+
             // Act
-            var result = await controller.Delete(21);
+            var result = await controller.Delete(id);
 
             // Assert
             var noContentResult = Assert.IsType<NoContentResult>(result);
