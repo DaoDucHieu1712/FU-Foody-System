@@ -56,7 +56,9 @@ const ResetPasswordPage = () => {
 		// Send a request to the server to reset the password
 		try {
 			const response = await axios.post(
-				"${import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL}/api/Authenticate/ResetPassword/reset-password",
+				`${
+					import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL
+				}/api/Authenticate/ResetPassword/reset-password`,
 				{
 					token: token,
 					email: email,

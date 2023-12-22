@@ -20,7 +20,9 @@ const ForgotPasswordPage = () => {
 
 		try {
 			const response = await axios.post(
-				"${import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL}/api/Authenticate/ForgotPassword",
+				`${
+					import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL
+				}/api/Authenticate/ForgotPassword`,
 				null,
 				{
 					params: { email: email },
