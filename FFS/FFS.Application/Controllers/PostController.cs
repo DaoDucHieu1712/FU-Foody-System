@@ -72,6 +72,7 @@ namespace FFS.Application.Controllers
 				foreach (var postDTO in entityPost)
 				{
 					postDTO.LikeNumber = postDTO.ReactPosts.Where(x => x.IsLike == true).Count();
+					postDTO.CommentNumber = postDTO.Comments.Count();
 				}
 
 				return Ok(new { entityPost, metadata });

@@ -13,9 +13,11 @@ import CookieService from "../../shared/helper/cookieConfig";
 import RemoveWishlist from "./components/wishlist/RemoveWishlist";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../(auth)/shared/cartSlice";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
+  
   const userId = CookieService.getToken("fu_foody_id");
   const dispatch = useDispatch();
 
@@ -63,64 +65,80 @@ const Wishlist = () => {
     }
   };
 
+
+  
+
   return (
     <>
-      <div className="container">
-        <h1 className="text-xl font-bold">Món ăn yêu thích</h1>
+      <div className="container" style={{minHeight:"400px"}}>
+      
+        <Typography variant="h4">Món ăn yêu thích</Typography>
         <div className="grid grid-cols-4 gap-5 my-5">
-          {wishlistItems.map((item) => (
-            <Card
-              key={item.id}
-              className="max-w-[18rem] overflow-hidden rounded-none shadow-none"
-            >
-              <CardHeader
-                floated={false}
-                shadow={false}
-                color="transparent"
-                className="m-0 rounded-none"
-              >
-                <img
-                  src={item.imageURL}
-                  alt="ui/ux review check "
-                  style={{ height: "216px", width:"100%" }}
-                />
-              </CardHeader>
-              <CardBody className="px-0 py-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <Typography color="blue-gray" className="font-medium">
-                    {item.foodName}
-                  </Typography>
-                  <Typography color="blue-gray" className="font-medium">
-                    ${item.price}.000 VND
-                  </Typography>
-                </div>
-                <Typography variant="small" className="font-normal">
-                  Tình trạng:{" "}
-                  {item.isOutStock ? (
-                    <span className="font-bold" style={{ color: "red" }}>
-                      Hết hàng
-                    </span>
-                  ) : (
-                    <span className="font-bold" style={{ color: "green" }}>
-                      Còn hàng
-                    </span>
-                  )}
-                </Typography>
-              </CardBody>
-              <CardFooter className="pt-0 px-0">
-                <ButtonGroup variant="outlined" fullWidth>
-                  <Button  onClick={() => handleAddToCart(item)}
-                    className="text-xs rounded-none px-0 bg-primary text-white px-0 border-orange-700"
-                    disabled={item.isOutStock}
-                  >
-                    Thêm vào giỏ hàng
-                  </Button>
 
-                  <RemoveWishlist wishlistId={item.id} reloadWishlist={reloadWishlist}/>
-                </ButtonGroup>
-              </CardFooter>
-            </Card>
-          ))}
+         {wishlistItems && wishlistItems.length != 0 ? (
+                   wishlistItems.map((item) => (
+                    <Card
+                      key={item.id}
+                      className="max-w-[18rem] overflow-hidden rounded-none shadow-none"
+                    >
+                      <CardHeader
+                        floated={false}
+                        shadow={false}
+                        color="transparent"
+                        className="m-0 rounded-none"
+                      >
+                        <img
+                          src={item.imageURL}
+                          alt="ui/ux review check "
+                          style={{ height: "216px", width:"100%" }}
+                        />
+                      </CardHeader>
+                      <CardBody className="px-0 py-3">
+                        <div className="mb-2 flex items-center justify-between">
+                          <Typography color="blue-gray" className="font-medium">
+                            {item.foodName}
+                          </Typography>
+                          <Typography color="blue-gray" className="font-medium">
+                            $ {FormatPriceHelper(item.price)} đ
+                            
+                          </Typography>
+                        </div>
+                        <Typography variant="small" className="font-normal">
+                          Tình trạng:{" "}
+                          {item.isOutStock ? (
+                            <span className="font-bold" style={{ color: "red" }}>
+                              Hết hàng
+                            </span>
+                          ) : (
+                            <span className="font-bold" style={{ color: "green" }}>
+                              Còn hàng
+                            </span>
+                          )}
+                        </Typography>
+                      </CardBody>
+                      <CardFooter className="pt-0 px-0">
+                        <ButtonGroup variant="outlined" fullWidth>
+                          <Button  onClick={() => handleAddToCart(item)}
+                            className="text-xs rounded-none px-0 bg-primary text-white px-0 border-orange-700"
+                            disabled={item.isOutStock}
+                          >
+                            Thêm vào giỏ hàng
+                          </Button>
+        
+                          <RemoveWishlist wishlistId={item.id} reloadWishlist={reloadWishlist}/>
+                        </ButtonGroup>
+                      </CardFooter>
+                    </Card>
+                  ))
+
+                  ) : (
+                   
+                      <span className="">
+                        Không có món ăn yêu thích nào!
+                      </span>
+                  
+                  )}
+          
         </div>
       </div>
     </>

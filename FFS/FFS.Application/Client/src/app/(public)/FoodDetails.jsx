@@ -256,13 +256,14 @@ const FoodDetails = () => {
 											</svg>
 										</button>
 									</div>
+									<div><WishlistDetails foodId={id}></WishlistDetails></div>
 								</div>
-								<div className="flex items-center space-x-2 mt-3">
+								{/* <div className="flex items-center space-x-2 mt-3">
 									<div className="h-10 w-28"></div>
 									<div>
 										<WishlistDetails foodId={id}></WishlistDetails>
 									</div>
-								</div>
+								</div> */}
 							</div>
 						</div>
 					</div>
@@ -432,6 +433,12 @@ const FoodDetails = () => {
 													<Typography variant="paragraph">
 														{comment.content}
 													</Typography>
+													<div>
+														<img 
+														src={comment.images[0].url}
+															width={150}
+														/>
+													</div>
 													<div className="flex gap-2">
 														<Typography
 															variant="small"

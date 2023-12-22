@@ -37,7 +37,7 @@ const Layout = () => {
 								<input
 									type="text"
 									className="focus:none border-none outline-none w-full"
-									placeholder="hôm nay ăn gì ...."
+									placeholder="Hôm nay bạn ăn gì ...."
 									value={foodNameSearch}
 									onChange={(e) => setFoodNameSearch(e.target.value)}
 									onKeyUp={(event) => {
@@ -85,9 +85,7 @@ const Layout = () => {
 									<a href="/login" className="login-link text-white">
 										Đăng nhập
 									</a>
-									<a href="/" className="logout-link text-white">
-										Đăng ký
-									</a>
+									
 								</div>
 							)}
 						</div>
@@ -110,7 +108,7 @@ const Layout = () => {
 							<span className="text-gray-500">
 								Đại học FPT, Thạch Hòa, Thạch Thất, Hà Nội
 							</span>
-							<h5>fufoody@.com</h5>
+							<h5>fptfoodysystemservice@gmail.com</h5>
 						</div>
 						<div className="category">
 							<div className="heading">

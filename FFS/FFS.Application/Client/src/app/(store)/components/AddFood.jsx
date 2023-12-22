@@ -131,7 +131,7 @@ const AddFood = ({ reload, storeId }) => {
 						<Input
 							className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight"
 							type="number"
-							label="Giá tiền (nghìn VND)"
+							label="Giá tiền"
 							{...register("price")}
 						></Input>
 						{errors.price && (

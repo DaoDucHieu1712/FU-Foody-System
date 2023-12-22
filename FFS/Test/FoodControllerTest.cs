@@ -53,11 +53,11 @@ namespace Test
             {
                 uId = "a8ace8f5-a853-40d8-9f4e-1e722c200769",
                 FoodName = "Bánh",
-                PageSize = 20, // Set your desired page size for testing
-                PageNumber = 2 // Set your desired page number for testing
+                PageSize = 20, 
+                PageNumber = 2 
             };
 
-            var mockFoods = new List<Food>(); // Mock data for foods
+            var mockFoods = new List<Food>(); 
             var total = mockFoods.Count;
 
             _foodRepoMock.Setup(repo => repo.GetFoods(It.IsAny<FoodParameters>())).Returns(mockFoods);

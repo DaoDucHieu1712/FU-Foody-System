@@ -169,17 +169,17 @@ namespace FFS.Application.Repositories.Impls
 		}
 
 		public async Task<Food> GetFoodById(int id)
-        {
-            try
-            {
-                var food = await _context.Foods.Include(x => x.Category).Include(x => x.Inventories).Include
-                (x => x.Store).Include(x => x.Comments).ThenInclude(x=>x.User).Include(x=>x.FlashSaleDetails).ThenInclude(x => x.FlashSale).FirstOrDefaultAsync(x => x.Id == id);
-                return food;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+		{
+			try
+			{
+				var food = await _context.Foods.Include(x => x.Category).Include(x => x.Inventories).Include
+				(x => x.Store).Include(x => x.Comments).ThenInclude(x => x.Images).Include(x => x.Comments).ThenInclude(x => x.User).Include(x => x.FlashSaleDetails).ThenInclude(x => x.FlashSale).FirstOrDefaultAsync(x => x.Id == id);
+				return food;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
 	}
 }
