@@ -20,6 +20,7 @@ import FlashSaleByStore from "../(public)/FlashSaleByStore";
 import AddToWishlist from "../(public)/components/wishlist/AddToWishlist";
 import { useNavigate } from "react-router-dom";
 import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
+import DiscountProfileStore from "./components/Discount/DiscountProfileStore";
 
 const cookies = new Cookies();
 const uId = cookies.get("fu_foody_id");
@@ -33,6 +34,7 @@ const StoreDetailPage = () => {
 	const [comboList, setComboList] = useState([]);
 	const [searchFood, setSearchFood] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [discountList, setDiscountList] = useState([]);
 
 	const dispatch = useDispatch();
 
@@ -56,6 +58,7 @@ const StoreDetailPage = () => {
 				.get(`/api/Store/DetailStore/${id}`)
 				.then((response) => {
 					setStoreData(response);
+					setDiscountList(response.discounts);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -201,6 +204,8 @@ const StoreDetailPage = () => {
 							) : null}
 						</div>
 					</div>
+					<hr className="h-px my-4 bg-gray-400 border-0 dark:bg-gray-700"></hr>
+					<DiscountProfileStore discountList={discountList}></DiscountProfileStore>
 					<hr className="h-px my-4 bg-gray-400 border-0 dark:bg-gray-700"></hr>
 					<div className="grid grid-cols-6">
 						<div className="col-span-1">

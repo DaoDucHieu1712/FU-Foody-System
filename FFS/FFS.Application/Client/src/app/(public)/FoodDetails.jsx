@@ -435,7 +435,7 @@ const FoodDetails = () => {
 													</Typography>
 													<div>
 														<img 
-														src={comment.images[0].url}
+														src={comment.images[0]?.url}
 															width={150}
 														/>
 													</div>
