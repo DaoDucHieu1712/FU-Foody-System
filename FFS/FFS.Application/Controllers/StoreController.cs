@@ -383,7 +383,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		//[Authorize(Roles = "StoreOwner")]
+		[Authorize(Roles = "StoreOwner")]
 		[HttpGet("{storeId}")]
 		public IActionResult ExportOrder(int storeId)
 		{

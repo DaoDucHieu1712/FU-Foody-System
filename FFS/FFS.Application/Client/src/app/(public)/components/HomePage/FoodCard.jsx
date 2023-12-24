@@ -11,10 +11,6 @@ const FoodCard = ({ item }) => {
 	const navigate = useNavigate();
 	const userId = CookieService.getToken("fu_foody_id");
 
-
-
-
-
 	return (
 		<>
 			<div className="px-1 pt-1 pb-2 shadow-lg">
@@ -28,12 +24,7 @@ const FoodCard = ({ item }) => {
 						<Typography className="text-white font-semibold">HOT</Typography>
 					</div>
 					<div className="absolute hidden h-full w-full justify-center gap-x-3 items-center group-hover:flex">
-					{userId ? (
-     <AddToWishlist foodId={item.id} />
-    ) : (
-      <CheckLogin />
-    )}
-						
+						<AddToWishlist foodId={item.id} />
 						<Tooltip content="Xem chi tiết món ăn">
 							<IconButton
 								variant="text"
