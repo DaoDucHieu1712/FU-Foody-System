@@ -32,6 +32,7 @@ namespace Test
         private readonly Mock<IStoreRepository> _storeMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IHubContext<NotificationHub>> _hubContextMock;
+        private readonly Mock<IHubContext<OrderIdelHub>> _IdlhubContextMock;
         private readonly Mock<INotificationRepository> _notiMock;
         private readonly Mock<IInventoryRepository> _invenMock;
         private Mock<ILoggerManager> _logger;
@@ -43,10 +44,11 @@ namespace Test
             _storeMock = new Mock<IStoreRepository>();
             _mapperMock = new Mock<IMapper>();
             _hubContextMock = new Mock<IHubContext<NotificationHub>>();
+            _IdlhubContextMock = new Mock<IHubContext<OrderIdelHub>>();
             _notiMock = new Mock<INotificationRepository> { };
             _invenMock = new Mock<IInventoryRepository>();
-            _logger = new Mock<ILoggerManager> { };
-            _controller = new OrderController(_orderMock.Object, _odMock.Object, _storeMock.Object, _mapperMock.Object, _hubContextMock.Object, _notiMock.Object, _invenMock.Object, _logger.Object);
+            _logger = new Mock<ILoggerManager>();
+            _controller = new OrderController(_orderMock.Object, _odMock.Object, _storeMock.Object, _mapperMock.Object, _hubContextMock.Object, _IdlhubContextMock.Object, _notiMock.Object, _invenMock.Object, _logger.Object);
         }
         #region CreaterOrder
         [Fact]
