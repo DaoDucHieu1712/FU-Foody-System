@@ -20,6 +20,7 @@ import FlashSaleByStore from "../(public)/FlashSaleByStore";
 import AddToWishlist from "../(public)/components/wishlist/AddToWishlist";
 import { useNavigate } from "react-router-dom";
 import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
+import DiscountProfileStore from "./components/Discount/DiscountProfileStore";
 
 const cookies = new Cookies();
 const uId = cookies.get("fu_foody_id");
@@ -33,6 +34,7 @@ const StoreDetailPage = () => {
 	const [comboList, setComboList] = useState([]);
 	const [searchFood, setSearchFood] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [discountList, setDiscountList] = useState([]);
 
 	const dispatch = useDispatch();
 
@@ -56,6 +58,7 @@ const StoreDetailPage = () => {
 				.get(`/api/Store/DetailStore/${id}`)
 				.then((response) => {
 					setStoreData(response);
+					setDiscountList(response.discounts);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -202,6 +205,8 @@ const StoreDetailPage = () => {
 						</div>
 					</div>
 					<hr className="h-px my-4 bg-gray-400 border-0 dark:bg-gray-700"></hr>
+					<DiscountProfileStore discountList={discountList}></DiscountProfileStore>
+					<hr className="h-px my-4 bg-gray-400 border-0 dark:bg-gray-700"></hr>
 					<div className="grid grid-cols-6">
 						<div className="col-span-1">
 							<Typography
@@ -276,36 +281,37 @@ const StoreDetailPage = () => {
 									<ul>
 										{foodList.map((item, index) => (
 											<li
-												className={`p-2 ${
-													backgroundColors[index % backgroundColors.length]
-												}`}
+												className={`p-2 ${backgroundColors[index % backgroundColors.length]
+													}`}
 												key={item.id}
 											>
 												<div className="border-collapse grid grid-cols-6 gap-5">
-													<div className="col-span-2">
+													<div className="group relative col-span-2 flex lg:flex-none">
 														<img
-															className="w-full h-52 rounded-lg object-cover"
+															className="w-full h-52 rounded-lg object-cover group-hover:opacity-40"
 															src={item.imageURL}
 														/>
-														<AddToWishlist foodId={item.id} />
-														<Tooltip content="Xem chi tiết món ăn">
-															<IconButton
-																variant="text"
-																className="bg-white rounded-full"
-																onClick={() =>
-																	navigate(`/food-details/${item.id}`)
-																}
-															>
-																<svg
-																	xmlns="http://www.w3.org/2000/svg"
-																	width="30"
-																	height="20"
-																	viewBox="0 0 550 512"
+														<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
+															<AddToWishlist foodId={item.id} />
+															<Tooltip content="Xem chi tiết món ăn">
+																<IconButton
+																	variant="text"
+																	className="bg-white rounded-full"
+																	onClick={() =>
+																		navigate(`/food-details/${item.id}`)
+																	}
 																>
-																	<path d="M288 80c-65.2 0-118.8 29.6-159.9 67.7C89.6 183.5 63 226 49.4 256c13.6 30 40.2 72.5 78.6 108.3C169.2 402.4 222.8 432 288 432s118.8-29.6 159.9-67.7C486.4 328.5 513 286 526.6 256c-13.6-30-40.2-72.5-78.6-108.3C406.8 109.6 353.2 80 288 80zM95.4 112.6C142.5 68.8 207.2 32 288 32s145.5 36.8 192.6 80.6c46.8 43.5 78.1 95.4 93 131.1c3.3 7.9 3.3 16.7 0 24.6c-14.9 35.7-46.2 87.7-93 131.1C433.5 443.2 368.8 480 288 480s-145.5-36.8-192.6-80.6C48.6 356 17.3 304 2.5 268.3c-3.3-7.9-3.3-16.7 0-24.6C17.3 208 48.6 156 95.4 112.6zM288 336c44.2 0 80-35.8 80-80s-35.8-80-80-80c-.7 0-1.3 0-2 0c1.3 5.1 2 10.5 2 16c0 35.3-28.7 64-64 64c-5.5 0-10.9-.7-16-2c0 .7 0 1.3 0 2c0 44.2 35.8 80 80 80zm0-208a128 128 0 1 1 0 256 128 128 0 1 1 0-256z" />
-																</svg>
-															</IconButton>
-														</Tooltip>
+																	<svg
+																		xmlns="http://www.w3.org/2000/svg"
+																		width="30"
+																		height="20"
+																		viewBox="0 0 550 512"
+																	>
+																		<path d="M288 80c-65.2 0-118.8 29.6-159.9 67.7C89.6 183.5 63 226 49.4 256c13.6 30 40.2 72.5 78.6 108.3C169.2 402.4 222.8 432 288 432s118.8-29.6 159.9-67.7C486.4 328.5 513 286 526.6 256c-13.6-30-40.2-72.5-78.6-108.3C406.8 109.6 353.2 80 288 80zM95.4 112.6C142.5 68.8 207.2 32 288 32s145.5 36.8 192.6 80.6c46.8 43.5 78.1 95.4 93 131.1c3.3 7.9 3.3 16.7 0 24.6c-14.9 35.7-46.2 87.7-93 131.1C433.5 443.2 368.8 480 288 480s-145.5-36.8-192.6-80.6C48.6 356 17.3 304 2.5 268.3c-3.3-7.9-3.3-16.7 0-24.6C17.3 208 48.6 156 95.4 112.6zM288 336c44.2 0 80-35.8 80-80s-35.8-80-80-80c-.7 0-1.3 0-2 0c1.3 5.1 2 10.5 2 16c0 35.3-28.7 64-64 64c-5.5 0-10.9-.7-16-2c0 .7 0 1.3 0 2c0 44.2 35.8 80 80 80zm0-208a128 128 0 1 1 0 256 128 128 0 1 1 0-256z" />
+																	</svg>
+																</IconButton>
+															</Tooltip>
+														</div>
 													</div>
 													<div className="col-span-3">
 														<Typography variant="h6">
@@ -316,7 +322,7 @@ const StoreDetailPage = () => {
 														</Typography>
 
 														{item.inventories.length > 0 &&
-														item.inventories[0]?.quantity != 0 ? (
+															item.inventories[0]?.quantity != 0 ? (
 															<Typography
 																variant="paragraph"
 																className="py-2 text-green-500"
@@ -344,7 +350,7 @@ const StoreDetailPage = () => {
 															</span>
 														</Typography>
 														{item.inventories.length > 0 &&
-														item.inventories[0]?.quantity != 0 ? (
+															item.inventories[0]?.quantity != 0 ? (
 															<Button
 																size="sm"
 																className="bg-primary"
@@ -363,9 +369,8 @@ const StoreDetailPage = () => {
 									<ul>
 										{comboList.map((item, index) => (
 											<li
-												className={`p-2 ${
-													backgroundColors[index % backgroundColors.length]
-												}`}
+												className={`p-2 ${backgroundColors[index % backgroundColors.length]
+													}`}
 												key={item.combo.id}
 											>
 												<div className="border-collapse grid grid-cols-6 gap-5">

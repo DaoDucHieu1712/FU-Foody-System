@@ -438,8 +438,9 @@ const FoodDetails = () => {
 														{comment.content}
 													</Typography>
 													<div>
+
 														<img src={comment.images[0]?.url} width={150} />
-													</div>
+						</div>
 													<div className="flex gap-2">
 														<Typography
 															variant="small"
