@@ -21,6 +21,7 @@ import { cartActions } from "../(auth)/shared/cartSlice";
 import { comboActions } from "../(auth)/shared/comboSlice";
 import LogoutIcon from "../../shared/components/icon/LogoutIcon";
 import ChangePasswordIcon from "../../shared/components/icon/ChangePasswordIcon";
+import Notification from "../(auth)/Notification";
 
 const navigations = [
 	{ href: "/store/edit", name: "Cập nhật thông tin", icon: <User /> },
@@ -120,7 +121,8 @@ const StoreLayout = () => {
 						</div>
 					</div>
 					<section className="w-[80vw] ml-[20vw]">
-						<div className="flex items-center justify-end bg-primary p-9">
+						<div className="flex items-center space-x-3 justify-end bg-primary p-9">
+						<Notification></Notification>
 							<div>
 								<p className="text-white font-medium cursor-pointer text-xl">
 									{CookieService.getToken("fu_foody_email")}

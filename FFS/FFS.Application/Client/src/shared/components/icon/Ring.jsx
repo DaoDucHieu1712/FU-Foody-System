@@ -1,7 +1,16 @@
+import { Badge } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import { selectNotifications } from "../../../app/(auth)/shared/notificationSlice";
+
 const Ring = () => {
+
+  const notifications = useSelector(selectNotifications);
+
+  const unreadCount = notifications.filter((notification) => !notification.isRead).length;
 	return (
 		<>
-			<svg
+    <Badge content={unreadCount} withBorder className="top-[24%] right-[24%] min-w-[20px] min-h-[20px] py-0" >
+    <svg
         width="33"
         height="33"
         viewBox="0 0 33 33"
@@ -35,13 +44,15 @@ const Ring = () => {
           strokeLinejoin="round"
         />
        
-        <path
+        {/* <path
           d="M24.0002 16.5673C28.1791 16.5673 31.5668 13.1796 31.5668 9.00065C31.5668 4.8217 28.1791 1.43398 24.0002 1.43398C19.8212 1.43398 16.4335 4.8217 16.4335 9.00065C16.4335 13.1796 19.8212 16.5673 24.0002 16.5673Z"
           fill="#EE5858"
           stroke="white"
           strokeWidth="1.8"
-        />
+        /> */}
       </svg>
+    </Badge>
+			
 
 			
 		</>

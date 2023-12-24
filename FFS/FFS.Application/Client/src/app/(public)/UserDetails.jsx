@@ -22,6 +22,9 @@ import ChatService from "../(auth)/shared/chat.service";
 import { chatActions } from "../(auth)/shared/chatSlice";
 import Cookies from "universal-cookie";
 import ViewLikePost from "../(auth)/shared/components/post/ViewLikePost";
+import UpdatePost from "../(auth)/shared/components/post/UpdatePost";
+import DeletePost from "../(auth)/shared/components/post/DeletePost";
+import dayjs from "dayjs";
 
 const cookies = new Cookies();
 
@@ -40,7 +43,7 @@ const UserDetails = () => {
 	const userId = CookieService.getToken("fu_foody_id");
 	const [commentTxt, setCommentTxt] = useState("");
 	const [post, setPost] = useState("");
-
+	const isUser = userId === id;
 	const GetUserInformation = async () => {
 		try {
 			axios
@@ -65,6 +68,10 @@ const UserDetails = () => {
 		} catch (error) {
 			console.error("An error occurred", error);
 		}
+	};
+
+	const reloadPost = () => {
+		GetUserInformation();
 	};
 	const handleComment = (postId) => {
 		const data = {
@@ -174,29 +181,20 @@ const UserDetails = () => {
 								<h1 className="text-xl font-bold">{user.userName}</h1>
 
 								<div className="mt-3 flex flex-wrap gap-4 justify-center items-center">
-									{userId !== null && userId !== undefined ? (
-										<a
-											onClick={handleCreateBoxChat}
-											className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
-										>
-											Nhắn tin
-										</a>
+									
+									{userId !== null && userId !== undefined && userId !== id ? (
+										<>
+											<a
+												onClick={handleCreateBoxChat}
+												className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
+											>
+												Nhắn tin
+											</a>
+											<a>
+												<ReportUser uId={userId} sId={id}></ReportUser>
+											</a>
+										</>
 									) : null}
-									{/* <a
-										href="#"
-										className="bg-primary hover:bg-orange-900 text-white py-2 px-4 rounded"
-									>
-										Nhắn tin
-									</a> */}
-									<a>
-										<ReportUser uId={userId} sId={id}></ReportUser>
-									</a>
-									{/* <a
-										href="#"
-										className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
-									>
-										Báo cáo
-									</a> */}
 								</div>
 							</div>
 							<hr className="my-6 border-t border-gray-300" />
@@ -215,7 +213,7 @@ const UserDetails = () => {
 					</div>
 					<div className="col-span-4 sm:col-span-9">
 						{user.posts && user.posts.length > 0 ? (
-							user.posts.map((post) => (
+							user.posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((post) => (
 								<div key={post.id} className="bg-white shadow rounded-lg mb-4">
 									<div className="md:col-span-2 py-4 px-6">
 										{/* POST AUTHOR */}
@@ -229,7 +227,7 @@ const UserDetails = () => {
 														color="gray"
 														className="font-normal"
 													>
-														5 Tháng 7, 2020
+														{dayjs(post.createdAt).format("D [Tháng] M, YYYY")}
 													</Typography>
 												</div>
 											</div>
@@ -244,12 +242,27 @@ const UserDetails = () => {
 															<Elips></Elips>
 														</button>
 													</MenuHandler>
-													<MenuList>
-														<ReportUser
-															uId={userId}
-															sId={post.userId}
-														></ReportUser>
-													</MenuList>
+
+													{userId === post.userId  ? (
+												<MenuList>
+													<UpdatePost
+														post={post}
+														reloadPost={reloadPost}
+													></UpdatePost>
+													<DeletePost
+														post={post}
+														reloadPost={reloadPost}
+													></DeletePost>
+												</MenuList>
+											) : (
+												<MenuList>
+													<ReportUser
+														uId={userId}
+														sId={post.userId}
+													></ReportUser>
+												</MenuList>
+											)}
+													
 												</Menu>
 											</div>
 										</div>

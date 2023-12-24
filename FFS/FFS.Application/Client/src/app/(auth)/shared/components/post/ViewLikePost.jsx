@@ -87,6 +87,7 @@
 import { Dialog, Typography } from "@material-tailwind/react";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const ViewLikePost = ({ likeNumber, likedBy }) => {
@@ -94,7 +95,6 @@ const ViewLikePost = ({ likeNumber, likedBy }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [open, setOpen] = useState(false);
   const [displayLikedBy, setDisplayLikedBy] = useState([]);
-
   const handleOpen = () => setOpen((cur) => !cur);
 
   const handleMouseOver = () => {
