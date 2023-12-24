@@ -172,11 +172,11 @@ const StoreCommentPage = () => {
 							/>
 						</div>
 						<div className="col-span-3 flex flex-col gap-1">
-						<div className="flex items-center space-x-10">
-							<span className="text-base">Quán ăn</span>
-							{uId !== undefined && uId !== null ? (
-								<ReportStore uId={uId} sId={storeData.userId} />
-							) : null}
+							<div className="flex items-center space-x-10">
+								<span className="text-base">Quán ăn</span>
+								{uId !== undefined && uId !== null ? (
+									<ReportStore uId={uId} sId={storeData.userId} />
+								) : null}
 							</div>
 							<Typography variant="h2">{storeData.storeName}</Typography>
 							<div className="border-b border-t border-gray-200 h-14 grid grid-cols-7">
@@ -234,7 +234,7 @@ const StoreCommentPage = () => {
 								Liên hệ : {storeData.phoneNumber}
 							</span>
 							<div className="flex items-center text-base gap-1">
-							<span>
+								<span>
 									{" "}
 									<i className="fal fa-clock mr-2"></i>Thời gian hoạt động:
 								</span>
@@ -330,13 +330,13 @@ const StoreCommentPage = () => {
 												>
 													<div className="flex justify-between items-center border-b-[1px] border-gray-400 pb-1">
 														<div className="flex justify-center">
-															<div>
+															<a href={`/user-detail/${comment.UserId}`}>
 																<img
 																	className="rounded-full w-14 h-14  object-cover object-center"
 																	src={comment.Avatar}
 																	alt="nature image"
 																/>
-															</div>
+															</a>
 															<div className="ml-2">
 																<p className="font-bold">{comment.UserName}</p>
 																<p className="text-sm text-gray-600">

@@ -66,6 +66,7 @@ const OrderShippingPage = () => {
 														<p className="font-bold w-[300px]">
 															{item.foodName || item.comboName}
 														</p>
+														<p>Địa chỉ nhận hàng : {item.storeAddress}</p>
 														<p>{item.unitPrice} $</p>
 													</div>
 												</div>

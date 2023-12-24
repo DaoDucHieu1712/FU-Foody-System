@@ -16,6 +16,7 @@ using FFS.Application.Entities.Constant;
 using FFS.Application.Entities.Enum;
 using FFS.Application.Helper;
 using FFS.Application.Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -233,6 +234,9 @@ namespace FFS.Application.Repositories.Impls
 			return await Task.FromResult(result);
 
 		}
+
+
+		[Authorize]
 		public async Task ChangePassword(ChangePasswordDTO changePasswordDTO)
 		{
 			try
@@ -245,7 +249,7 @@ namespace FFS.Application.Repositories.Impls
 				}
 
 				if (changePasswordDTO.ConfirmPassword != changePasswordDTO.NewPassword) throw new Exception("Xin vui lòng kiểm tra lại mật khẩu xác nhận !!");
-				var rs = await _userManager.ChangePasswordAsync(user, changePasswordDTO.OldPassword, changePasswordDTO.NewPassword);
+				await _userManager.ChangePasswordAsync(user, changePasswordDTO.OldPassword, changePasswordDTO.NewPassword);
 			}
 			catch (Exception ex)
 			{
