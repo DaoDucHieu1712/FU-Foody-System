@@ -1,6 +1,6 @@
 import { IconButton, Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-// import FoodCart from "./FoodCart";
+import FoodCart from "../(public)/components/HomePage/FoodCart";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "../../shared/api/axiosConfig";
@@ -8,9 +8,13 @@ import AddToWishlist from "./components/wishlist/AddToWishlist";
 import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 import propTypes from "prop-types";
 import FormatDateTimeString from "../../shared/components/format/FormatDateTime";
+import CookieService from "../../shared/helper/cookieConfig";
+import { cartActions } from "../(auth)/shared/cartSlice";
+import { useDispatch } from "react-redux";
 
 const FlashSaleByStore = ({ storeId }) => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const [flashSale, setFlashSale] = useState([]);
 
 	const GetListFilterFood = async () => {
@@ -119,6 +123,33 @@ const FlashSaleByStore = ({ storeId }) => {
 											) : null}
 											<div className="absolute hidden h-full w-3/ justify-between gap-x-3 items-center group-hover:flex">
 												<AddToWishlist foodId={detailItem.foodId} />
+												<div
+													className=""
+													onClick={() => {
+														if (!CookieService.getToken("fu_foody_token")) {
+															window.location.href = "/login";
+															return;
+														} else {
+															dispatch(
+																cartActions.addToCart({
+																	foodId: detailItem.foodId,
+																	foodName: detailItem.foodName,
+																	quantity: 1,
+																	price: FormatPriceHelper(
+																		detailItem.price -
+																			(detailItem.price *
+																				detailItem.salePercent) /
+																				100
+																	),
+																	img: detailItem.imageURL,
+																	storeId: detailItem.storeId,
+																})
+															);
+														}
+													}}
+												>
+													<FoodCart></FoodCart>
+												</div>
 												<Tooltip content="Xem chi tiết món ăn">
 													<IconButton
 														variant="text"

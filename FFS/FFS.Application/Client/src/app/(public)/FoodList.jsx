@@ -28,7 +28,7 @@ const FoodList = () => {
 	const { foodNameSearch } = useParams();
 	const navigate = useNavigate();
 	const [foodList, setFoodList] = useState([]);
-	const [foodNameFilter, setFoodNameFilter] = useState('');
+	const [foodNameFilter, setFoodNameFilter] = useState("");
 	const [foodFilter, setFoodFilter] = useState("");
 	const [pageNumber, setPageNumber] = useState(1);
 	const pageSize = 12;
@@ -114,7 +114,7 @@ const FoodList = () => {
 	]);
 
 	useEffect(() => {
-		setFoodNameFilter(foodNameSearch || '');
+		setFoodNameFilter(foodNameSearch || "");
 	}, [foodNameSearch]);
 
 	return (
@@ -252,46 +252,15 @@ const FoodList = () => {
 										alt="image 1"
 										className="h-36 w-80 object-cover lg:w-64 group-hover:opacity-40"
 									/>
-									{food.salePercent > 0 ?
-										(
-											<div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
-												<Typography className="text-white font-semibold">{food.salePercent}%</Typography>
-											</div>
-										) : (
-											null
-										)}
+									{food.salePercent > 0 ? (
+										<div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
+											<Typography className="text-white font-semibold">
+												{food.salePercent}%
+											</Typography>
+										</div>
+									) : null}
 									<div className="absolute hidden h-full w-full justify-around items-center group-hover:flex">
 										<AddToWishlist foodId={food.id} />
-										<Tooltip content="Thêm giỏ hàng">
-											<IconButton
-												variant="text"
-												className="bg-white rounded-full"
-											>
-												<svg
-													width="30"
-													height="2.5em"
-													viewBox="0 0 30 40"
-													fill="none"
-													xmlns="http://www.w3.org/2000/svg"
-												>
-													<path
-														d="M10 35C11.1046 35 12 34.1046 12 33C12 31.8954 11.1046 31 10 31C8.89543 31 8 31.8954 8 33C8 34.1046 8.89543 35 10 35Z"
-														fill="black"
-													/>
-													<path
-														d="M23 35C24.1046 35 25 34.1046 25 33C25 31.8954 24.1046 31 23 31C21.8954 31 21 31.8954 21 33C21 34.1046 21.8954 35 23 35Z"
-														fill="black"
-													/>
-													<path
-														d="M5.2875 15H27.7125L24.4125 26.55C24.2948 26.9692 24.0426 27.3381 23.6948 27.6001C23.3471 27.862 22.9229 28.0025 22.4875 28H10.5125C10.0771 28.0025 9.65293 27.862 9.30515 27.6001C8.95738 27.3381 8.70524 26.9692 8.5875 26.55L4.0625 10.725C4.0027 10.5159 3.8764 10.3321 3.70271 10.2012C3.52903 10.0704 3.31744 9.99977 3.1 10H1"
-														stroke="black"
-														strokeWidth="2"
-														strokeLinecap="round"
-														strokeLinejoin="round"
-													/>
-												</svg>
-											</IconButton>
-										</Tooltip>
 										<Tooltip content="Xem chi tiết món ăn">
 											<IconButton
 												variant="text"
@@ -314,72 +283,65 @@ const FoodList = () => {
 									<Typography variant="h6" className="w-36 pointer-events-none">
 										{food.foodName}
 									</Typography>
-									{food.priceAfterSale <= 0 && food.salePercent <= 0 ?
-										(
-											<div className="flex gap-5">
-												<Typography
-													color="blue"
-													className="relative w-fit pointer-events-none"
-												>
-													{FormatPriceHelper(food.price)}
-													<span className="absolute font-normal top-0 -right-2 text-xs">
-														đ
-													</span>
-												</Typography>
-											</div>
-										) : (
-											null
-										)}
-									{food.priceAfterSale > 0 ?
-										(
-											<div className="flex gap-5">
-												<Typography
-													color="gray"
-													className="relative w-fit line-through pointer-events-none"
-												>
-													{FormatPriceHelper(food.price)}
-													<span className="absolute font-normal top-0 -right-2 text-xs">
-														đ
-													</span>
-												</Typography>
-												<Typography
-													color="blue"
-													className="relative w-fit pointer-events-none"
-												>
-													{ FormatPriceHelper(food.priceAfterSale)}
-													<span className="absolute font-normal top-0 -right-2 text-xs">
-														đ
-													</span>
-												</Typography>
-											</div>
-										) : (
-											null
-										)}
-									{food.salePercent > 0 ?
-										(
-											<div className="flex gap-5">
-												<Typography
-													color="gray"
-													className="relative w-fit line-through pointer-events-none"
-												>
-													{FormatPriceHelper(food.price)}
-													<span className="absolute font-normal top-0 -right-2 text-xs">
-														đ
-													</span>
-												</Typography>
-												<Typography
-													color="blue"
-													className="relative w-fit pointer-events-none"
-												>
-													{FormatPriceHelper(food.price - (food.price * food.salePercent / 100))}
-													<span className="absolute font-normal top-0 -right-2 text-xs">
-														đ
-													</span>
-												</Typography>
-											</div>
-										) : (
-											null
-										)}
+									{food.priceAfterSale <= 0 && food.salePercent <= 0 ? (
+										<div className="flex gap-5">
+											<Typography
+												color="blue"
+												className="relative w-fit pointer-events-none"
+											>
+												{FormatPriceHelper(food.price)}
+												<span className="absolute font-normal top-0 -right-2 text-xs">
+													đ
+												</span>
+											</Typography>
+										</div>
+									) : null}
+									{food.priceAfterSale > 0 ? (
+										<div className="flex gap-5">
+											<Typography
+												color="gray"
+												className="relative w-fit line-through pointer-events-none"
+											>
+												{FormatPriceHelper(food.price)}
+												<span className="absolute font-normal top-0 -right-2 text-xs">
+													đ
+												</span>
+											</Typography>
+											<Typography
+												color="blue"
+												className="relative w-fit pointer-events-none"
+											>
+												{FormatPriceHelper(food.priceAfterSale)}
+												<span className="absolute font-normal top-0 -right-2 text-xs">
+													đ
+												</span>
+											</Typography>
+										</div>
+									) : null}
+									{food.salePercent > 0 ? (
+										<div className="flex gap-5">
+											<Typography
+												color="gray"
+												className="relative w-fit line-through pointer-events-none"
+											>
+												{FormatPriceHelper(food.price)}
+												<span className="absolute font-normal top-0 -right-2 text-xs">
+													đ
+												</span>
+											</Typography>
+											<Typography
+												color="blue"
+												className="relative w-fit pointer-events-none"
+											>
+												{FormatPriceHelper(
+													food.price - (food.price * food.salePercent) / 100
+												)}
+												<span className="absolute font-normal top-0 -right-2 text-xs">
+													đ
+												</span>
+											</Typography>
+										</div>
+									) : null}
 								</div>
 							</div>
 						))
