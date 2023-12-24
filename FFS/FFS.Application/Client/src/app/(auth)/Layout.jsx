@@ -1,15 +1,15 @@
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import Cart from "../../shared/components/icon/Cart";
 import Heart from "../../shared/components/icon/Heart";
 import Logo from "../../shared/components/logo/Logo";
 import NewLogo from "../../shared/components/icon/NewLogo";
-
 import StoreTag from "../../shared/components/store/StoreTag";
 import Notification from "./Notification";
 import UserNav from "./UserNav";
 import BlogIcon from "../../shared/components/icon/BlogIcon";
+import axios from "../../shared/api/axiosConfig";
 
 export function LazyLoadComponent({ children }) {
 	return (
@@ -23,6 +23,26 @@ const Layout = () => {
 	const accesstoken = useSelector((state) => state.auth.accessToken);
 	const navigate = useNavigate();
 	const [foodNameSearch, setFoodNameSearch] = useState("");
+	const [stores, setStores] = useState();
+
+	const loadStoreList = async () => {
+		try {
+			axios
+				.get(`/api/Store/GetTop10Store`)
+				.then((response) => {
+					setStores(response);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("Location: " + error);
+		}
+	};
+
+	useEffect(() => {
+		loadStoreList();
+	}, []);
 
 	return (
 		<>
@@ -85,7 +105,6 @@ const Layout = () => {
 									<a href="/login" className="login-link text-white">
 										Đăng nhập
 									</a>
-									
 								</div>
 							)}
 						</div>
@@ -113,14 +132,13 @@ const Layout = () => {
 						<div className="category">
 							<div className="heading">
 								<h2 className="font-semibold text-xl mb-4 uppercase">
-									Danh mục
+									Về chúng tôi
 								</h2>
 								<ul className="text-gray-500 text-md">
-									<li>Đồ ăn</li>
-									<li>Đồ uống</li>
-									<li>Đồ chay</li>
-									<li>Bánh kem</li>
-									<li>Tráng miệng</li>
+									<li>Chính sách phát triển</li>
+									<li>Dịch vụ</li>
+									<li>Quy định</li>
+									<li>Liên hệ</li>
 								</ul>
 							</div>
 						</div>
@@ -136,14 +154,15 @@ const Layout = () => {
 									<li>
 										<Link to="/cart">Giỏ hàng</Link>
 									</li>
-									<li>Sản Phẩm Yêu Thích</li>
+									<li>
+										<Link to="/wishlist">Yêu thích</Link>
+									</li>
 									<li>
 										<Link to="/register-store">Đăng ký bán hàng</Link>
 									</li>
 									<li>
 										<Link to="/register-shipper">Đăng ký giao hàng</Link>
 									</li>
-									<li>Về chúng tôi</li>
 								</ul>
 							</div>
 						</div>
@@ -243,17 +262,15 @@ const Layout = () => {
 								Cửa hàng phổ biến
 							</h2>
 							<div className="flex gap-2 flex-wrap">
-								<StoreTag name="Chan Chan"></StoreTag>
-								<StoreTag name="Chan Chan sdsd"></StoreTag>
-								<StoreTag name="Chan sd"></StoreTag>
-								<StoreTag name="Chan"></StoreTag>
-								<StoreTag name="Chan Chan"></StoreTag>
-								<StoreTag name="d Chan"></StoreTag>
-								<StoreTag name="Chan"></StoreTag>
-								<StoreTag name="Cshan"></StoreTag>
-								<StoreTag name="dsfds dff"></StoreTag>
-								<StoreTag name="OPP DFFD"></StoreTag>
-								<StoreTag name="Chan"></StoreTag>
+								{stores?.map((item) => {
+									return (
+										<StoreTag
+											key={item.id}
+											url={`/store/detail/${item.id}`}
+											name={item.storeName}
+										/>
+									);
+								})}
 							</div>
 						</div>
 					</div>

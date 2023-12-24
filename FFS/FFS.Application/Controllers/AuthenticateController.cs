@@ -30,8 +30,6 @@ namespace FFS.Application.Controllers
 		private readonly IMapper _mapper;
 		private readonly IEmailService _emailService;
 		private ILoggerManager _logger;
-
-
 		public AuthenticateController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IAuthRepository authRepository, IMapper mapper, IEmailService emailService, ILoggerManager logger)
 		{
 			_db = db;
@@ -74,7 +72,6 @@ namespace FFS.Application.Controllers
 				return BadRequest("Mật khẩu không đúng");
 			}
 		}
-
 
 		[HttpPost]
 		public async Task<IActionResult> LoginByEmail([FromBody] LoginDTO logindto)

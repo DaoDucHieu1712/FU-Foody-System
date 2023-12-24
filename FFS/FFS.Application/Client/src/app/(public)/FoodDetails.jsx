@@ -256,7 +256,9 @@ const FoodDetails = () => {
 											</svg>
 										</button>
 									</div>
-									<div><WishlistDetails foodId={id}></WishlistDetails></div>
+									<div>
+										<WishlistDetails foodId={id}></WishlistDetails>
+									</div>
 								</div>
 								{/* <div className="flex items-center space-x-2 mt-3">
 									<div className="h-10 w-28"></div>
@@ -405,11 +407,13 @@ const FoodDetails = () => {
 												key={comment.commentDate}
 												className="flex justify-start gap-2 mb-4 border-b pb-2"
 											>
-												<img
-													src={comment.user.avatar}
-													alt="image 1"
-													className="h-14 w-14 rounded-full object-cover"
-												></img>
+												<a href={`/user-detail/${comment.userId}`}>
+													<img
+														src={comment.user.avatar}
+														alt="image 1"
+														className="h-14 w-14 rounded-full object-cover"
+													></img>
+												</a>
 												<div>
 													<div className="flex flex-col gap-1">
 														<div className="Rating">
@@ -434,11 +438,9 @@ const FoodDetails = () => {
 														{comment.content}
 													</Typography>
 													<div>
-														<img 
-														src={comment.images[0].url}
-															width={150}
-														/>
-													</div>
+
+														<img src={comment.images[0]?.url} width={150} />
+						</div>
 													<div className="flex gap-2">
 														<Typography
 															variant="small"

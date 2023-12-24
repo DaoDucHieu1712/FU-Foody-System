@@ -19,6 +19,8 @@ import User from "../../shared/components/icon/User";
 import AccessDenied from "../(public)/AccessDenied";
 import { cartActions } from "../(auth)/shared/cartSlice";
 import { comboActions } from "../(auth)/shared/comboSlice";
+import LogoutIcon from "../../shared/components/icon/LogoutIcon";
+import ChangePasswordIcon from "../../shared/components/icon/ChangePasswordIcon";
 
 const navigations = [
 	{ href: "/store/edit", name: "Cập nhật thông tin", icon: <User /> },
@@ -33,6 +35,11 @@ const navigations = [
 		icon: <FlashSale />,
 	},
 	{ href: "/store/order", name: "Đơn hàng", icon: <OrderIcon /> },
+	{
+		href: "/store/change-password",
+		name: "Đổi mật khẩu",
+		icon: <ChangePasswordIcon />,
+	},
 ];
 
 const StoreLayout = () => {
