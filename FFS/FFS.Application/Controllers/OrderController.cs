@@ -29,18 +29,19 @@ namespace FFS.Application.Controllers
 		private readonly IStoreRepository _storeRepository;
 		private readonly IMapper _mapper;
 		private readonly IHubContext<NotificationHub> _hubContext;
+		private readonly IHubContext<OrderIdelHub> _orderHubContext;
 		private readonly INotificationRepository _notifyRepository;
 		private readonly IInventoryRepository _inventoryRepository;
 		private ILoggerManager _logger;
 
-
-		public OrderController(IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IStoreRepository storeRepository, IMapper mapper, IHubContext<NotificationHub> hubContext, INotificationRepository notifyRepository, IInventoryRepository inventoryRepository, ILoggerManager logger)
+		public OrderController(IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IStoreRepository storeRepository, IMapper mapper, IHubContext<NotificationHub> hubContext, IHubContext<OrderIdelHub> orderHubContext, INotificationRepository notifyRepository, IInventoryRepository inventoryRepository, ILoggerManager logger)
 		{
 			_orderRepository = orderRepository;
 			_orderDetailRepository = orderDetailRepository;
 			_storeRepository = storeRepository;
 			_mapper = mapper;
 			_hubContext = hubContext;
+			_orderHubContext = orderHubContext;
 			_notifyRepository = notifyRepository;
 			_inventoryRepository = inventoryRepository;
 			_logger = logger;
@@ -143,14 +144,16 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
-				_logger.LogInfo($"Finding order by ID: {id}");
-				return Ok(_mapper.Map<OrderResponseDTO>(
-					await _orderRepository.FindAll(x => x.Id == id, x => x.Customer, x => x.Shipper, x => x.Payment)
+
+				var _od = await _orderRepository.FindAll(x => x.Id == id, x => x.Customer, x => x.Shipper, x => x.Payment)
 					.Include(x => x.OrderDetails).ThenInclude(x => x.Store)
 					.Include(x => x.OrderDetails).ThenInclude(x => x.Food)
 					.Include(x => x.OrderDetails).ThenInclude(x => x.Combo)
-					.FirstOrDefaultAsync()
-					));
+					.FirstOrDefaultAsync();
+				if (_od == null) return NotFound();
+				var _order = _mapper.Map<OrderResponseDTO>(_od);
+				_logger.LogInfo($"Finding order by ID: {id}");
+				return Ok(_order);
 			}
 			catch (Exception ex)
 			{
@@ -376,6 +379,8 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				var order = await _orderRepository.FindSingle(x => x.Id == id);
+				if (order == null) return NotFound();
 				_logger.LogInfo($"Attempting to get order details for order ID {id}...");
 				var orderItems = await _orderDetailRepository.FindAll(x => x.OrderId == id, x => x.Food, x => x.Store, x => x.Combo).ToListAsync();
 				_logger.LogInfo($"Successfully retrieved order details for order ID {id}.");

@@ -94,7 +94,7 @@ const DetailPost = () => {
 								isLike: true,
 							},
 					  ];
-					  console.log(prevPost.reactPosts);
+				console.log(prevPost.reactPosts);
 
 				return {
 					...prevPost,
@@ -193,6 +193,7 @@ const DetailPost = () => {
 										/>
 										<span className="font-medium">{post.username}</span>
 									</div>
+
 									<div className="flex items-center space-x-2">
 										<Menu>
 											<MenuHandler>
@@ -304,11 +305,13 @@ const DetailPost = () => {
 												key={comment.commentDate}
 												className="flex justify-start gap-2 mb-4"
 											>
-												<img
-													src={comment.avartar}
-													alt="image 1"
-													className="h-14 w-14 rounded-full object-cover"
-												></img>
+												<a href={`/user-detail/${comment.userId}`}>
+													<img
+														src={comment.avartar}
+														alt="image 1"
+														className="h-14 w-14 rounded-full object-cover"
+													/>
+												</a>
 												<div>
 													<div className="flex gap-1">
 														<Typography variant="small" className="font-bold">

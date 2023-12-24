@@ -91,8 +91,6 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-
-
 		[Authorize]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetStoreInformation(int id)
@@ -385,7 +383,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		//[Authorize(Roles = "StoreOwner")]
+		[Authorize(Roles = "StoreOwner")]
 		[HttpGet("{storeId}")]
 		public IActionResult ExportOrder(int storeId)
 		{
