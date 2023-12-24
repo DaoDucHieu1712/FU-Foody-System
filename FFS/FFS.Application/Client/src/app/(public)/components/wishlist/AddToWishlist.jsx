@@ -7,7 +7,6 @@ import {
 import axios from "../../../../shared/api/axiosConfig";
 import { toast } from "react-toastify";
 import CookieService from "../../../../shared/helper/cookieConfig";
-import CheckLogin from "../CheckLogin";
 
 const AddToWishlist = ({ foodId }) => {
   const userId = CookieService.getToken("fu_foody_id");

@@ -1,9 +1,16 @@
 ﻿using AutoMapper;
 using FFS.Application.Controllers;
+using FFS.Application.DTOs.Common;
+using FFS.Application.DTOs.Inventory;
+using FFS.Application.DTOs.QueryParametter;
+using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
-
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Logging;
 using Moq;
+using System.Linq.Expressions;
 
 namespace Test
 {
@@ -13,7 +20,6 @@ namespace Test
         private readonly Mock<IInventoryRepository> mockInventoryRepository;
         private readonly Mock<IMapper> mockMapper;
         private readonly Mock<ILoggerManager> logger;
-
         private readonly InventoryController controller;
 
         public InventoryControllerTest()
@@ -22,133 +28,344 @@ namespace Test
             mockMapper = new Mock<IMapper>();
             logger = new Mock<ILoggerManager>();
 
-            //controller = new InventoryController(
-            //    mockInventoryRepository.Object,
-            //    mockMapper.Object);
+            controller = new InventoryController(
+                mockInventoryRepository.Object,
+                mockMapper.Object,
+                logger.Object);
         }
 
         #region Get inventories
-        //[Fact]
-        //public async Task GetInventories_ReturnsOkResultWithData()
-        //{
-        //    // Arrange
-        //    var inventoryParameters = InventoryParameters();
-        //    var inventories = PagedList<Inventory>();
+        [Fact]
+        public void GetInventories_ReturnsOkResultWithInventories()
+        {
+            // Arrange
+            var inventoryParameters = new InventoryParameters
+            {
+                StoreId = 4
+            };
 
-        //    mockInventoryRepository.Setup(repo => repo.GetInventories(inventoryParameters))
-        //        .Returns(inventories);
+            var inventories = new List<Inventory>
+            {
+                new Inventory { StoreId = 4, FoodId = 2 },
+                new Inventory { StoreId = 4, FoodId = 3 },
+                new Inventory { StoreId = 4, FoodId = 4 },
+            };
 
-        //    var metadata = new
-        //    {
-        //        inventories.TotalCount,
-        //        inventories.PageSize,
-        //        inventories.CurrentPage,
-        //        inventories.TotalPages,
-        //        inventories.HasNext,
-        //        inventories.HasPrevious
-        //    };
+            var inventoryDtos = new List<InventoryDTO>
+            {
+                new InventoryDTO{FoodId = 2},
+                new InventoryDTO{FoodId = 3},
+                new InventoryDTO{FoodId = 4}
+            };
 
-        //    var entityInventory = List<InventoryDTO>();
+            mockInventoryRepository.Setup(repo => repo.GetInventories(It.IsAny<InventoryParameters>()))
+       .Returns(new PagedList<Inventory>(inventories, inventories.Count, 1, inventories.Count));
 
-        //    mockMapper.Setup(mapper => mapper.Map<List<InventoryDTO>>(inventories))
-        //        .Returns(entityInventory);
+            mockMapper.Setup(mapper => mapper.Map<List<InventoryDTO>>(It.IsAny<PagedList<Inventory>>()))
+                .Returns(inventoryDtos);
 
-        //    // Act
-        //    var result =  controller.GetInventories(inventoryParameters);
+            // Act
+            var result = controller.GetInventories(inventoryParameters);
 
-        //    // Assert
-        //    var okResult = Assert.IsType<OkObjectResult>(result);
-        //    var model = Assert.IsAssignableFrom<Dictionary<string, object>>(okResult.Value);
-        //    Assert.Equal(entityInventory, model["entityInventory"]);
-        //    // Add more assertions as nee"metadata"ed
-        //}
+            // Assert
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+        }
 
-        //[Fact]
-        //public async Task GetInventories_ReturnsOkResultWithNoData()
-        //{
-        //    // Arrange
-        //    var inventoryParameters = new InventoryParameters { /* set valid parameters */ };
-        //    var emptyInventories = new PagedList<Inventory>(new List<Inventory>(), 0, 0, 0);
+        [Fact]
+        public void GetInventories_ReturnsBadRequestOnError()
+        {
+            // Arrange
+            var inventoryParameters = new InventoryParameters
+            {
+                StoreId = 4
+            };
 
-        //    mockInventoryRepository.Setup(repo => repo.GetInventories(inventoryParameters))
-        //        .Returns(emptyInventories);
+            mockInventoryRepository.Setup(repo => repo.GetInventories(It.IsAny<InventoryParameters>()))
+                .Throws(new Exception("Test error"));
 
-        //    var metadata = new
-        //    {
-        //        emptyInventories.TotalCount,
-        //        emptyInventories.PageSize,
-        //        emptyInventories.CurrentPage,
-        //        emptyInventories.TotalPages,
-        //        emptyInventories.HasNext,
-        //        emptyInventories.HasPrevious
-        //    };
+            // Act
+            var result = controller.GetInventories(inventoryParameters);
 
-        //    var entityInventory = new List<InventoryDTO>();
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, badRequestResult.StatusCode);
+            Assert.Equal("Test error", badRequestResult.Value);
+        }
+        #endregion
 
-        //    mockMapper.Setup(mapper => mapper.Map<List<InventoryDTO>>(emptyInventories))
-        //        .Returns(entityInventory);
+        #region GetInventory
+        [Fact]
+        public async Task GetInventory_Authorized_ReturnsOkResult()
+        {
+            // Arrange
+            var fid = 1;
+            var inventory = new Inventory { FoodId = fid };
+            var inventoryDto = new InventoryDTO { FoodId = fid };
 
-        //    // Act
-        //    var result =  controller.GetInventories(inventoryParameters);
+            mockInventoryRepository.Setup(repo => repo.FindSingle(
+          It.IsAny<Expression<Func<Inventory, bool>>>(),
+          It.IsAny<Expression<Func<Inventory, object>>[]>()
+      ))
+      .ReturnsAsync(inventory);
 
-        //    // Assert
-        //    var okResult = Assert.IsType<OkObjectResult>(result);
-        //    var model = Assert.IsAssignableFrom<Dictionary<string, object>>(okResult.Value);
-        //    Assert.Empty((List<InventoryDTO>)model["entityInventory"]);
-        //    Assert.Equal(metadata, model["metadata"]);
-        //    // Add more assertions as needed
-        //}
+            mockMapper.Setup(mapper => mapper.Map<InventoryDTO>(It.IsAny<Inventory>()))
+                .Returns(inventoryDto);
 
-        //[Fact]
-        //public async Task GetInventories_InvalidParameters_ReturnsBadRequest()
-        //{
-        //    // Arrange
-        //    var invalidInventoryParameters = new InventoryParameters { /* set invalid parameters */ };
+            // Act
+            var result = await controller.GetInventory(fid);
 
-        //    // Act
-        //    var result =  controller.GetInventories(invalidInventoryParameters);
+            // Assert
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, okObjectResult.StatusCode);
+            Assert.NotNull(okObjectResult.Value);
 
-        //    // Assert
-        //    var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        //    Assert.Equal("Your expected error message", badRequestResult.Value);
-        //    // Add more assertions as needed
-        //}
+            var resultObject = okObjectResult.Value as InventoryDTO;
+            Assert.NotNull(resultObject);
+            Assert.Equal(fid, resultObject.FoodId);
+        }
 
-        //[Fact]
-        //public async Task GetInventories_ExceptionThrown_ReturnsBadRequest()
-        //{
-        //    // Arrange
-        //    var inventoryParameters = new InventoryParameters { /* set valid parameters */ };
+        [Fact]
+        public async Task GetInventory_Unauthorized_ReturnsUnauthorizedResult()
+        {
+            // Arrange
+            var fid = 2;
+            var exceptionMessage = "An error occurred.";
+            mockInventoryRepository.Setup(repo => repo.FindSingle(
+         It.IsAny<Expression<Func<Inventory, bool>>>(),
+         It.IsAny<Expression<Func<Inventory, object>>[]>()
+     ))
+                 .Throws(new Exception(exceptionMessage));
 
-        //    mockInventoryRepository.Setup(repo => repo.GetInventories(inventoryParameters))
-        //        .Throws(new Exception("Your expected exception message"));
+            // Act
+            var result = await controller.GetInventory(fid);
 
-        //    // Act
-        //    var result =  controller.GetInventories(inventoryParameters);
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, badRequestResult.StatusCode);
+            Assert.Equal(exceptionMessage, badRequestResult.Value);
 
-        //    // Assert
-        //    var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        //     Assert.Equal("Your expected exception message", badRequestResult.Value);
-        //    // Add more assertions as needed
-        //}
+        }
+        #endregion
 
-        //[Fact]
-        //public async Task GetInventories_ValidParameters_ReturnsBadRequest()
-        //{
-        //    // Arrange
-        //    var inventoryParameters = new InventoryParameters { /* set valid parameters */ };
+        #region CreateInventory
 
-        //    mockInventoryRepository.Setup(repo => repo.GetInventories(inventoryParameters))
-        //        .Returns((PagedList<Inventory>)null); // Simulate unexpected null from the repository
+        [Fact]
+        public async Task CreateInventory_WithValidInput_ReturnsOkResult()
+        {
+            var inventoryDto = new CreateInventoryDTO
+            {
+                FoodId = 1,
+                quantity = 3,
+                StoreId = 1
+            };
 
-        //    // Act
-        //    var result =  controller.GetInventories(inventoryParameters);
+            mockInventoryRepository.Setup(repo => repo.GetInventoryByFoodAndStore(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync((Inventory)null); // No existing inventory
 
-        //    // Assert
-        //    var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        //    Assert.Equal("Unexpected null from the repository", badRequestResult.Value);
-        //    // Add more assertions as needed
-        //}
+            // Act
+            var result = await controller.CreateInventory(inventoryDto);
+
+            // Assert
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task CreateInventory_WithDuplicateInventory_ReturnsBadRequest()
+        {
+            // Arrange
+            var inventoryDto = new CreateInventoryDTO
+            {
+                FoodId = 1,
+                quantity = 3,
+                StoreId = 1
+            };
+
+
+            mockInventoryRepository.Setup(repo => repo.GetInventoryByFoodAndStore(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new Inventory()); // Simulate existing inventory
+
+            // Act
+            var result = await controller.CreateInventory(inventoryDto);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task CreateInventory_WithException_ReturnsBadRequest()
+        {
+            // Arrange
+            var inventoryDto = new CreateInventoryDTO
+            {
+                FoodId = 1,
+                quantity = 3,
+                StoreId = 1
+            };
+
+            mockInventoryRepository.Setup(repo => repo.GetInventoryByFoodAndStore(It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Simulated exception")); // Simulate an exception
+
+            // Act
+            var result = await controller.CreateInventory(inventoryDto);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+        #endregion
+
+        #region ImportInventory
+        [Fact]
+        public async Task ImportInventory_WithValidInput_ReturnsOkResult()
+        {
+            var storeId = 1;
+            var foodId = 2;
+            var quantity = 10;
+
+            // Act
+            var result = await controller.ImportInventory(storeId, foodId, quantity);
+
+            // Assert
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task ImportInventory_WithException_ReturnsBadRequest()
+        {
+            // Arrange
+            var storeId = 1;
+            var foodId = 2;
+            var quantity = 10;
+
+            mockInventoryRepository.Setup(repo => repo.ImportInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await controller.ImportInventory(storeId, foodId, quantity);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+        #endregion
+
+        #region ExportInventory
+        [Fact]
+        public async Task ExportInventory_WithValidInput_ReturnsOkResult()
+        {
+            // Arrange
+            var storeId = 1;
+            var foodId = 2;
+            var quantity = 10;
+
+            // Act
+            var result = await controller.ExportInventory(storeId, foodId, quantity);
+
+            // Assert
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task ExportInventory_WithException_ReturnsBadRequest()
+        {
+            // Arrange
+            var storeId = 1;
+            var foodId = 2;
+            var quantity = 10;
+
+            mockInventoryRepository.Setup(repo => repo.ExportInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await controller.ExportInventory(storeId, foodId, quantity);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+        #endregion
+
+        #region DeleteInventoryByInventoryId
+        [Fact]
+        public async Task DeleteInventoryByInventoryId_WithValidId_ReturnsOkResult()
+        {
+            // Arrange
+            var inventoryId = 1;
+
+            // Act
+            var result = await controller.DeleteInventoryByInventoryId(inventoryId);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+            Assert.Equal("Inventory deleted successfully", (result as OkObjectResult).Value);
+        }
+
+        [Fact]
+        public async Task DeleteInventoryByInventoryId_WithException_ReturnsBadRequest()
+        {
+            // Arrange
+            var inventoryId = 1;
+
+            mockInventoryRepository.Setup(repo => repo.DeleteInventoryByInventoryId(It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await controller.DeleteInventoryByInventoryId(inventoryId);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Error deleting inventory: Simulated exception", (result as BadRequestObjectResult).Value);
+        }
+        #endregion
+
+        #region CheckExistingInventory
+        [Fact]
+        public async Task CheckExistingInventory_WithExistingInventory_ReturnsTrue()
+        {
+            // Arrange
+            var storeId = 1;
+            var foodId = 2;
+
+            mockInventoryRepository.Setup(repo => repo.GetInventoryByFoodAndStore(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new Inventory()); // Simulate existing inventory
+
+            // Act
+            var result = await controller.CheckExistingInventory(storeId, foodId);
+
+            // Assert
+            Assert.IsType<ActionResult<bool>>(result);
+        }
+
+        [Fact]
+        public async Task CheckExistingInventory_WithNonExistingInventory_ReturnsFalse()
+        {
+            // Arrange
+            var storeId = 1;
+            var foodId = 2;
+
+            mockInventoryRepository.Setup(repo => repo.GetInventoryByFoodAndStore(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync((Inventory)null); // Simulate non-existing inventory
+
+            // Act
+            var result = await controller.CheckExistingInventory(storeId, foodId);
+
+            // Assert
+            Assert.IsType<ActionResult<bool>>(result);
+        }
+
+        [Fact]
+        public async Task CheckExistingInventory_WithException_ReturnsBadRequest()
+        {
+            // Arrange
+            var storeId = 1;
+            var foodId = 2;
+
+            mockInventoryRepository.Setup(repo => repo.GetInventoryByFoodAndStore(It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new Exception("Simulated exception"));
+
+            // Act
+            var result = await controller.CheckExistingInventory(storeId, foodId);
+
+            // Assert
+            Assert.IsType<ActionResult<bool>>(result);
+        }
         #endregion
     }
 
