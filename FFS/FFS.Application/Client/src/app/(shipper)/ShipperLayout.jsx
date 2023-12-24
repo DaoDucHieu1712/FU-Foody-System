@@ -16,6 +16,7 @@ import { setAccessToken } from "../../redux/auth";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../(auth)/shared/cartSlice";
 import { comboActions } from "../(auth)/shared/comboSlice";
+import ChangePasswordIcon from "../../shared/components/icon/ChangePasswordIcon";
 
 const ShipperLayout = () => {
 	const userId = CookieService.getToken("fu_foody_id");
@@ -107,7 +108,13 @@ const ShipperLayout = () => {
 								<Revenue />
 								<span className="p-2">Thống kê</span>
 							</NavLink>
-
+							<NavLink
+								to="/shipper/change-password"
+								className="uppercase flex items-center"
+							>
+								<ChangePasswordIcon />
+								<span className="p-2">Đổi mật khẩu</span>
+							</NavLink>
 							<button
 								className="uppercase flex items-center"
 								onClick={handleLogout}
