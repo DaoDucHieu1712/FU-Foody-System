@@ -8,6 +8,7 @@ import {
 	selectNotifications,
 } from "./shared/notificationSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { Typography } from "@material-tailwind/react";
 
 const Notification = () => {
 	const dispatch = useDispatch();
@@ -50,16 +51,18 @@ const Notification = () => {
 
 		const url =
 			import.meta.env.VITE_FU_FOODY_PUBLIC_API_BASE_URL + "/notificationHub";
-		var connection = new HubConnectionBuilder().withUrl(url).build();
+		var connection = new HubConnectionBuilder().withUrl(url).withAutomaticReconnect().build();
 
 		connection
 			.start()
 			.then(() => {
 				console.log("SignalR Connected");
+				connection.invoke("JoinGroup", userId);
 			})
 			.catch((err) => console.error(err));
 
 		connection.on("ReceiveNotification", (message) => {
+			console.log("Notification received:", message);
 			dispatch(addNotification(message));
 		});
 		fetchNotifications();
@@ -68,7 +71,7 @@ const Notification = () => {
 			window.removeEventListener("click", handleClickOutside);
 		};
 		// Remove event click outside
-	}, [dispatch, userId]);
+	}, [dispatch], [userId]);
 	const reversedNotifications = [...notifications].reverse();
 
 	//css
@@ -79,17 +82,11 @@ const Notification = () => {
 		left: "-350%",
 		transform: "translateX(-50%)",
 		width: "380px",
-		padding: "10px",
 		backgroundColor: "#fff",
-		border: "0px solid #ccc",
-		borderRadius: "4px",
 		boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
 		zIndex: "1",
 		opacity: showTooltip ? "1" : "0",
-		transition: "opacity 0.2s ease-in-out",
-	 	maxHeight: "400px", 
-      overflowY: "auto",
-	  
+		transition: "opacity 0.2s ease-in-out", 
 	  
 	};
 
@@ -97,11 +94,12 @@ const Notification = () => {
 		content: "",
 		position: "absolute",
 		top: "-19px",
-		left: "85%",
+		left: "84.5%",
 		transform: "translateX(-50%)",
 		borderWidth: "10px",
 		borderStyle: "solid",
 		borderColor: `transparent transparent #fff transparent`,
+		
 	};
 	//
 
@@ -113,14 +111,25 @@ const Notification = () => {
 			{showTooltip && (
 				<div style={tooltipStyle}>
 					<div style={triangleStyle} />
-					<h3 className="text-base mb-2">Thông Báo Mới Nhận</h3>
-					<ul>
-						 {reversedNotifications.map((notification, index)  => (
-							<li key={index} className="mb-2 p-2 rounded-lg hover:bg-gray-100">
-								<div className="font-bold uppercase">{notification.title}</div>
+					
+					<ul >
+						<li className="header flex items-center justify-between border-b border-orange-900 p-4">
+							<Typography variant="h5" className="font-medium">Thông báo</Typography>
+							<div className="">
+								<a className="text-primary cursor-pointer">Đánh dấu đã đọc</a>
+							</div>
+						</li>
+						<li className="body"  style={{overflowY: "auto", maxHeight:"350px", overflowX: "hidden"}}>
+							<ul className="m-0 p-0">
+							{reversedNotifications.map((notification, index)  => (
+							<li key={index} className="px-4 py-3 hover:text-primary cursor-pointer" >
+								<div className="font-semibold">{notification.title}</div>
 								<div className="text-sm">{notification.content}</div>
 							</li>
 						))}
+							</ul>
+						</li>
+						 
 						 
 					</ul>
 				</div>
