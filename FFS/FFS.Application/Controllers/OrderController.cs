@@ -622,7 +622,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize(Roles = "Customer")]
+		[Authorize]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> CancelOrderWithCustomer(int id, string CancelReason)
 		{
