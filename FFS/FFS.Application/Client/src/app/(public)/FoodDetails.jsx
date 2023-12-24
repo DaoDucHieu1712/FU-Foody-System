@@ -225,18 +225,23 @@ const FoodDetails = () => {
 										<button
 											className="flex items-center space-x-2  text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-sm text-sm w-full px-5 py-2.5 text-center"
 											disabled={foodData.inventories[0].quantity <= 0}
-											onClick={() =>
-												dispatch(
-													cartActions.addToCart({
-														foodId: foodData.id,
-														foodName: foodData.foodName,
-														quantity: 1,
-														price: foodData.price,
-														img: foodData.imageURL,
-														storeId: foodData.storeId,
-													})
-												)
-											}
+											onClick={() => {
+												if (!CookieService.getToken("fu_foody_token")) {
+													window.location.href = "/login";
+													return;
+												} else {
+													dispatch(
+														cartActions.addToCart({
+															foodId: foodData.id,
+															foodName: foodData.foodName,
+															quantity: 1,
+															price: foodData.price,
+															img: foodData.imageURL,
+															storeId: foodData.storeId,
+														})
+													);
+												}
+											}}
 										>
 											THÊM VÀO GIỎ HÀNG
 											<svg
@@ -438,9 +443,8 @@ const FoodDetails = () => {
 														{comment.content}
 													</Typography>
 													<div>
-
 														<img src={comment.images[0]?.url} width={150} />
-						</div>
+													</div>
 													<div className="flex gap-2">
 														<Typography
 															variant="small"
