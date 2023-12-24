@@ -174,8 +174,7 @@ namespace FFS.Application.Controllers
 					Title = "Bài viết mới",
 					Content = $"Bài viết {post.Title} đang chờ được phê duyệt!"
 				};
-
-				await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+				await _hubContext.Clients.Group(post.UserId).SendAsync("ReceiveNotification", notification);
 				await _notifyRepository.Add(notification);
 				_logger.LogInfo($"Successfully created a new post for user with ID {post.UserId}.");
 				return Ok();
@@ -279,7 +278,7 @@ namespace FFS.Application.Controllers
 							Content = $"{reactingUser.firstName} {reactingUser.lastName} đã thích bài viết của bạn."
 						};
 
-						await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+						await _hubContext.Clients.Group(postAuthor).SendAsync("ReceiveNotification", notification);
 						await _notifyRepository.Add(notification);
 						_logger.LogInfo($"Notification sent to post author with ID {postAuthor} about the reaction.");
 					}

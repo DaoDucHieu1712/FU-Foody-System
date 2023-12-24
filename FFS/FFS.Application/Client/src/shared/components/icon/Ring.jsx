@@ -1,7 +1,7 @@
 const Ring = () => {
-  return (
-    <>
-      <svg
+	return (
+		<>
+			<svg
         width="33"
         height="33"
         viewBox="0 0 33 33"
@@ -34,13 +34,7 @@ const Ring = () => {
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <path
-          d="M4.3252 9.2625C5.39585 7.10584 7.03913 5.28526 9.0752 4"
-          stroke="#191C1F"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+       
         <path
           d="M24.0002 16.5673C28.1791 16.5673 31.5668 13.1796 31.5668 9.00065C31.5668 4.8217 28.1791 1.43398 24.0002 1.43398C19.8212 1.43398 16.4335 4.8217 16.4335 9.00065C16.4335 13.1796 19.8212 16.5673 24.0002 16.5673Z"
           fill="#EE5858"
@@ -48,8 +42,10 @@ const Ring = () => {
           strokeWidth="1.8"
         />
       </svg>
-    </>
-  );
+
+			
+		</>
+	);
 };
 
 export default Ring;

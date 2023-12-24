@@ -514,7 +514,7 @@ namespace FFS.Application.Controllers
 
 
 				await _orderRepository.Update(order);
-
+					
 
 
 				var storeId = await _orderRepository.GetStoreIdByOrderId(order.Id);
@@ -527,17 +527,20 @@ namespace FFS.Application.Controllers
 				}
 
 				var storeinfor = await _storeRepository.GetInformationStore(storeId.Value);
-				//var notification = new Notification
-				//{
-				//	CreatedAt = DateTime.Now,
-				//	UpdatedAt = DateTime.Now,
-				//	IsDelete = false,
-				//	UserId = storeinfor.UserId,
-				//	Title = "Cập nhật đơn hàng",
-				//	Content = $"Mã đơn hàng: #{order.Id} đã được shipper nhận giao."
-				//};
-				//await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
-				//await _notifyRepository.Add(notification);
+				var notification = new Notification
+				{
+					CreatedAt = DateTime.Now,
+					UpdatedAt = DateTime.Now,
+					IsDelete = false,
+					UserId = storeinfor.UserId,
+					Title = "Cập nhật đơn hàng",
+					Content = $"Mã đơn hàng #{order.Id} đã được shipper nhận giao."
+				};
+
+				await _hubContext.Clients.Group(storeinfor.UserId).SendAsync("ReceiveNotification", notification);
+
+				await _notifyRepository.Add(notification);
+
 				var customerNotification = new Notification
 				{
 					CreatedAt = DateTime.Now,
@@ -545,10 +548,10 @@ namespace FFS.Application.Controllers
 					IsDelete = false,
 					UserId = order.CustomerId,
 					Title = "Cập nhật đơn hàng",
-					Content = $"Đơn hàng của bạn đã được chấp nhận và đang trên đường giao. Mã đơn hàng: #{order.Id}"
+					Content = $"Đơn hàng của bạn đã được chấp nhận và đang trên đường giao. Mã đơn hàng #{order.Id}"
 				};
 
-				await _hubContext.Clients.All.SendAsync("ReceiveNotification", customerNotification);
+				await _hubContext.Clients.Group(order.CustomerId).SendAsync("ReceiveNotification", customerNotification);
 				await _notifyRepository.Add(customerNotification);
 
 				_logger.LogInfo($"Successfully received unbooked order with ID {idOrder} by Shipper ID {idShipper}.");
@@ -581,8 +584,35 @@ namespace FFS.Application.Controllers
 					Content = $"Đơn hàng của bạn #{order.Id} đã giao thành công"
 				};
 
-				await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+				//await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+				await _hubContext.Clients.Group(order.CustomerId).SendAsync("ReceiveNotification", notification);
 				await _notifyRepository.Add(notification);
+
+
+				var storeId = await _orderRepository.GetStoreIdByOrderId(order.Id);
+
+
+				if (!storeId.HasValue)
+				{
+					_logger.LogError($"Store information not found for orderId: {storeId}");
+					return NotFound($"Store not found for OrderId: {order.Id}");
+				}
+
+				var storeinfor = await _storeRepository.GetInformationStore(storeId.Value);
+
+				var storeNotification = new Notification
+				{
+					CreatedAt = DateTime.Now,
+					UpdatedAt = DateTime.Now,
+					IsDelete = false,
+					UserId = storeinfor.UserId,
+					Title = "Cập nhật đơn hàng",
+					Content = $"Mã đơn hàng #{order.Id} đã được shipper giao thành công."
+				};
+
+				await _hubContext.Clients.Group(storeinfor.UserId).SendAsync("ReceiveNotification", notification);
+
+				await _notifyRepository.Add(storeNotification);
 
 				return NoContent();
 			}
@@ -806,7 +836,8 @@ namespace FFS.Application.Controllers
 					Content = $"Bạn có đơn hàng mới mã #{order.Id}"
 				};
 
-				await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+				//await _hubContext.Clients.All.SendAsync("ReceiveNotification", notification);
+				await _hubContext.Clients.Group(storeinfor.UserId).SendAsync("ReceiveNotification", notification);
 				await _notifyRepository.Add(notification);
 
 				_logger.LogInfo($"Successfully created payment for order with ID {payment.OrderId}.");
