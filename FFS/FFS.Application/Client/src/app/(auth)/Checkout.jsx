@@ -106,10 +106,7 @@ const Checkout = () => {
 			location: checkoutSelector.info.location,
 			phoneNumber: checkoutSelector.info.phone,
 			note: checkoutSelector.info.note,
-			totalPrice:
-				cart.totalPrice +
-				comboSelector.totalPrice +
-				(checkoutSelector.info.feeShip ?? 0),
+			totalPrice: totalPrice,
 			shipFee: checkoutSelector.info.feeShip,
 			orderStatus: 1,
 			orderdetails: [...combos, ...foods],
