@@ -254,7 +254,7 @@ namespace FFS.Application.Controllers
 				if (user != null)
 				{
 					var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-					var resetPasswordLink = "http://127.0.0.1:5173/reset-password?token=" + HttpUtility.UrlEncode(token) + "&email=" + HttpUtility.UrlEncode(user.Email);
+					var resetPasswordLink = "http://ffs.io.vn/reset-password?token=" + HttpUtility.UrlEncode(token) + "&email=" + HttpUtility.UrlEncode(user.Email);
 					var emailModel = await GetEmailForResetPassword(email, resetPasswordLink);
 					try
 					{
