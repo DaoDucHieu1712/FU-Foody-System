@@ -311,8 +311,32 @@ namespace FFS.Application.Controllers
 			try
 			{
 				_logger.LogInfo($"Attempting to add a new comment for post with ID {comment.PostId}...");
+				//await _commentRepository.Add(comment);
+				
+	
 				await _commentRepository.Add(comment);
 				_logger.LogInfo($"Comment added successfully for post with ID {comment.PostId}.");
+				var commentuser = await _commentRepository
+	.FindSingle(x => x.Id == comment.Id, x => x.User);
+				var postAuthor = await _postRepository.GetUserIdByPostId((int)comment.PostId);
+				if (postAuthor != null && comment.UserId != postAuthor)
+				{
+
+					var postAuthorNotification = new Notification
+					{
+
+						CreatedAt = DateTime.Now,
+						UpdatedAt = DateTime.Now,
+						IsDelete = false,
+						UserId = postAuthor,
+						Title = "Hoạt động mới",
+						Content = $"{commentuser.User?.FirstName} {commentuser.User?.LastName} đã bình luận bài viết của bạn."
+
+
+					};
+					await _hubContext.Clients.Group(postAuthor).SendAsync("ReceiveNotification", postAuthorNotification);
+					await _notifyRepository.Add(postAuthorNotification);
+				}
 				return NoContent();
 			}
 			catch (Exception ex)
