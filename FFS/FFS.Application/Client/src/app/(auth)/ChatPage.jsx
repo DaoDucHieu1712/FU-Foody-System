@@ -92,13 +92,13 @@ const ChatPage = () => {
 				</div>
 				<div className="main grid grid-cols-6 gap-x-2">
 					<div className="chat-list col-span-2 border-r w-full h-full border-gray-500 p-1">
-						<div className="p-1">
+						{/* <div className="p-1">
 							<input
 								size="md"
 								placeholder="Tìm kiếm"
 								className="w-full border p-1 outline-none"
 							/>
-						</div>
+						</div> */}
 						<div className="h-[500px] flex flex-col gap-y-1 p-1 overflow-y-scroll">
 							{boxsQuery.data?.map((item) => {
 								return (

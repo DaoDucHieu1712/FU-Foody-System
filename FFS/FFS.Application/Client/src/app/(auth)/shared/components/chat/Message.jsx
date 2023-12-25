@@ -9,7 +9,7 @@ const Message = ({ content, IsCurrentUser, CreatedAt }) => {
 				} `}
 			>
 				<div className="flex flex-col gap-1 max-w-[70%]">
-					<span className="bg-green-200 max-w-[100%] text-sm bg-slate-200 p-2 rounded-lg text-black">
+					<span className="bg-green-200 max-w-[100%] text-sm bg-slate-200 p-2 rounded-lg text-black break-words">
 						{content}
 					</span>
 					<span className="text-sm text-gray-700">{CreatedAt}</span>

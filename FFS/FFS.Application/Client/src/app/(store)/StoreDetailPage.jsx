@@ -87,6 +87,7 @@ const StoreDetailPage = () => {
 				.get(`/api/Store/GetFoodByCategory/${id}/${idCategory}`)
 				.then((response) => {
 					setFoodList(response);
+					setComboList([]);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -153,6 +154,66 @@ const StoreDetailPage = () => {
 			window.location.href = "/login";
 		} else {
 			dispatch(comboActions.addToCart(combo));
+		}
+	};
+
+	const getFoodByName = (e) => {
+		var serachTxt = e?.target.value;
+		if (typeof serachTxt == "undefined") {
+			serachTxt = "";
+		}
+		setSearchFood(serachTxt);
+		const data = {
+			storeId: id,
+			name: serachTxt,
+		};
+		try {
+			axios
+				.post(`/api/Store/GetFoodByName`, data)
+				.then((response) => {
+					console.log(response);
+					setComboList([]);
+					setFoodList(response);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("An error occurred", error);
+		}
+	};
+
+	const getComboByName = (e) => {
+		var serachTxt = e?.target.value;
+		if (typeof serachTxt == "undefined") {
+			serachTxt = "";
+		}
+		setSearchFood(serachTxt);
+		const data = {
+			storeId: id,
+			name: serachTxt,
+		};
+		try {
+			axios
+				.post(`/api/Store/GetComboByName`, data)
+				.then((response) => {
+					console.log(response);
+					setComboList(response);
+					setFoodList([]);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("An error occurred", error);
+		}
+	};
+
+	const handleSearch = (e) => {
+		if (foodList.length > 0) {
+			getFoodByName(e);
+		} else if (comboList.length > 0) {
+			getComboByName(e);
 		}
 	};
 
@@ -257,7 +318,7 @@ const StoreDetailPage = () => {
 							<div className="border-solid border-l-[1px] border-gray-400">
 								<div className="p-3">
 									<Input
-										label="Tìm món"
+										label={comboList.length > 0 ? "Tìm combo" : "Tìm món"}
 										icon={
 											<svg
 												width="20"
@@ -284,7 +345,7 @@ const StoreDetailPage = () => {
 										}
 										disabled={foodList.length < 0 ? true : false}
 										defaultValue={searchFood}
-										onChange={handleSearchFood}
+										onChange={handleSearch}
 									/>
 								</div>
 								<div className="border-solid border-t-[1px] border-gray-400">

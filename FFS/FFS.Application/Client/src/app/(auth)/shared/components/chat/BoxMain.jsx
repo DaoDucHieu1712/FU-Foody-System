@@ -82,6 +82,11 @@ const BoxMain = ({ boxid }) => {
 						className="w-full outline-none"
 						onChange={(e) => setMsg(e.target.value)}
 						value={msg}
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								handleMsg();
+							}
+						}}
 					/>
 					<div className="cursor-pointer hover:opacity-80" onClick={handleMsg}>
 						<svg

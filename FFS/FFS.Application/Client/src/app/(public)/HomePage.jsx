@@ -229,20 +229,20 @@ const HomePage = () => {
 							Có thể bạn sẽ thích !!
 						</Typography>
 					</div>
-					<p
-						onClick={() => navigate(`/food-list`)}
-						className="flex gap-2 items-center font-medium text-blue-600 dark:text-blue-500 cursor-pointer hover:underline"
+					<a
+						href="/food-list"
+						className="flex gap-2 items-center font-medium text-orange-900 dark:text-blue-500 cursor-pointer hover:underline"
 					>
 						Xem tất cả
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							height="1em"
 							viewBox="0 0 512 512"
-							fill="rgb(30 136 229 / var(--tw-text-opacity))"
+							fill="rgb(230 81 0 / var(--tw-text-opacity)"
 						>
 							<path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128z" />
 						</svg>
-					</p>
+					</a>
 				</div>
 				<RecommendList />
 			</div>
@@ -291,21 +291,21 @@ const HomePage = () => {
 			<StoreSpecial></StoreSpecial>
 
 			{/* Flash Sale, Popular,... */}
-			<div className="grid py-4 gap-4 grid-flow-row-dense grid-cols-2 justify-stretch lg:flex lg:gap-2">
-				<div className="lg:w-1/4">
+			<div className="grid gap-4 grid-cols-4">
+				<div>
 					{/* Flash sale */}
 					<FlashSaleHome></FlashSaleHome>
 				</div>
 				{/* Best seller */}
-				<div className="lg:w-1/4">
+				<div>
 					<BestSellerHome></BestSellerHome>
 				</div>
 				{/* Most review */}
-				<div className="lg:w-1/4">
+				<div>
 					<BestRatingHome></BestRatingHome>
 				</div>
 				{/* New Food */}
-				<div className="lg:w-1/4">
+				<div>
 					<NewestFoodHome></NewestFoodHome>
 				</div>
 			</div>

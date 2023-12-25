@@ -312,7 +312,8 @@ namespace FFS.Application.Repositories.Impls
 				List<Food> foods = await _context.Foods.Where(x => x.StoreId == idShop && x.CategoryId == idCategory && x.IsDelete == false).Include(x => x.Inventories).Include(x => x.FlashSaleDetails).ThenInclude(x => x.FlashSale).ToListAsync();
 				if (foods.Count == 0)
 				{
-					throw new Exception();
+					List<FoodDTO> foodDTOs = _mapper.Map<List<FoodDTO>>(foods);
+					return foodDTOs;
 				}
 				else
 				{
@@ -382,8 +383,14 @@ namespace FFS.Application.Repositories.Impls
 						location.DistrictName = locationDTO.DistrictName;
 						location.ProvinceID = locationDTO.ProvinceID;
 						location.ProvinceName = locationDTO.ProvinceName;
-						location.WardCode = locationDTO.WardCode;
-						location.WardName = locationDTO.WardName;
+						if (locationDTO.WardCode != null)
+						{
+							location.WardCode = locationDTO.WardCode;
+						}
+						if (locationDTO.WardName != null)
+						{
+							location.WardName = locationDTO.WardName;
+						}
 						location.Address = locationDTO.Address;
 						location.Description = locationDTO.Description;
 						location.PhoneNumber = locationDTO.PhoneNumber;
