@@ -89,7 +89,22 @@ const CartPage = () => {
 					.catch((err) => {
 						toast.error(err.data);
 					});
+				await CartService.CalcTimeShip(
+					res.districtID,
+					res.wardCode,
+					location.districtID,
+					location.wardCode,
+					items
+				)
+					.then((res) => {
+						console.log(res.data);
+						// setTotalPrice(cart.totalPrice + res.data.data.total);
+					})
+					.catch((err) => {
+						toast.error(err.data);
+					});
 			})
+
 			.catch((err) => {
 				toast.error(err.data);
 			});

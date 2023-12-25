@@ -48,6 +48,30 @@ const CartService = {
 				console.error(error);
 			});
 	},
+	async CalcTimeShip(fromDistrictId, fromWardCode, toDistrictID, toWardCode) {
+		const headers = {
+			Token: "6c942378-8c0f-11ee-a6e6-e60958111f48",
+			ShopId: 190398,
+		};
+		const url =
+			"https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/leadtime";
+
+		const data = {
+			from_district_id: fromDistrictId,
+			from_ward_code: fromWardCode,
+			to_district_id: toDistrictID,
+			to_ward_code: toWardCode,
+			service_id: 53320,
+		};
+		return axios
+			.post(url, data, { headers: headers })
+			.then((response) => {
+				return response;
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+	},
 };
 
 export default CartService;

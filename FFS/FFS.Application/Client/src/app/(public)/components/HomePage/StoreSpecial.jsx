@@ -54,7 +54,7 @@ const StoreSpecial = () => {
 							storeList.map((store) => (
 								<div
 									key={store.id}
-									className=" rounded border relative hover:scale-80 hover:shadow-lg"
+									className="border relative hover:scale-110 hover:shadow-lg hover:text-orange-600 transition duration-500 ease-in-out"
 								>
 									<a href={`/store/detail/${store.id}`}>
 										<img
@@ -76,7 +76,7 @@ const StoreSpecial = () => {
 									<div className="px-2 py-2">
 										<a
 											href={`/store/detail/${store.id}`}
-											className="font-semibold text-base inline-block hover:text-orange-600 transition duration-500 ease-in-out"
+											className="font-semibold text-base inline-block"
 											style={{
 												display: "-webkit-box",
 												WebkitLineClamp: 1,

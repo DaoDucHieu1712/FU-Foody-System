@@ -187,6 +187,18 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				string timeStart = storeInforDTO.TimeStart;
+				string timeEnd = storeInforDTO.TimeEnd;
+
+				TimeSpan startTime = TimeSpan.Parse(timeStart);
+				TimeSpan endTime = TimeSpan.Parse(timeEnd);
+
+				// Compare the TimeSpan objects
+				if (startTime > endTime)
+				{
+					throw new Exception("Thời gian mở cửa phải trước thời gian đóng cửa!");
+				}
+
 				_logger.LogInfo($"Attempting to update information for Store ID: {id}");
 				StoreInforDTO inforDTO = await _storeRepository.UpdateStore(id, storeInforDTO);
 				_logger.LogInfo($"Updated store information for Store ID: {id} successfully.");
@@ -298,6 +310,72 @@ namespace FFS.Application.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
+
+		public class param
+		{
+			public int storeId { get; set; }
+			public string name { get; set; }
+
+		}
+
+		[HttpPost]
+		public IActionResult GetFoodByName([FromBody] param param)
+		{
+			try
+			{
+				List<Food> foods;
+
+				if (string.IsNullOrEmpty(param.name))
+				{
+					// If the name is empty or null, return all items.
+					foods = _foodRepository.FindAll().ToList();
+				}
+				else
+				{
+					// If the name is not empty, perform the search.
+					foods = _foodRepository.FindAll(i => i.FoodName.Contains(param.name) && i.StoreId == param.storeId).ToList();
+				}
+				List<FoodDTO> foodDTOs = _mapper.Map<List<FoodDTO>>(foods);
+				_logger.LogInfo($"Retrieved {foodDTOs.Count} food items matching the search criteria.");
+				return Ok(foodDTOs);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError($"An error occurred while retrieving food by name {param.name}: {ex.Message}");
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> GetComboByNameAsync([FromBody] param param)
+		{
+			try
+			{
+				_logger.LogInfo($"Retrieving list of combos for store with ID: {param.storeId}");
+
+				List<dynamic> res = new List<dynamic>();
+				List<Combo> combos = await _comboRepository.GetList(x => x.StoreId == param.storeId && x.IsDelete == false && x.Name.Contains(param.name));
+				foreach (Combo combo in combos)
+				{
+					var c = new
+					{
+						combo = combo,
+						detail = await _comboRepository.GetDetail(combo.Id),
+					};
+					res.Add(c);
+				}
+				_logger.LogInfo($"List of combos for store with ID {param.storeId} retrieved successfully");
+				return Ok(res);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+
+
+
+
 
 		[HttpPost]
 		public async Task<IActionResult> RatingStore([FromBody] StoreRatingDTO storeRatingDTO)

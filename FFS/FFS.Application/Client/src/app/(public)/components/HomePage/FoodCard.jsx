@@ -13,12 +13,12 @@ const FoodCard = ({ item }) => {
 
 	return (
 		<>
-			<div className="px-1 pt-1 pb-2 shadow-lg">
+			<div className="mb-2 shadow-lg">
 				<div className="group relative flex lg:flex-none">
 					<img
 						src={item.imageURL}
 						alt="image 1"
-						className="h-36 w-60 object-cover group-hover:opacity-40"
+						className="h-36 w-full object-cover group-hover:opacity-40"
 					/>
 					<div className="absolute top-0 left-0 h-6 w-fit px-2 bg-primary rounded-sm group-hover:opacity-40">
 						<Typography className="text-white font-semibold">HOT</Typography>
@@ -43,8 +43,12 @@ const FoodCard = ({ item }) => {
 						</Tooltip>
 					</div>
 				</div>
-				<div>
-					<Typography variant="h6" className="w-36 pointer-events-none">
+
+				<div
+					className="px-2 cursor-pointer"
+					onClick={() => navigate(`/food-details/${item.id}`)}
+				>
+					<Typography variant="h6" className="w-36">
 						{item.foodName}
 					</Typography>
 					<Typography
