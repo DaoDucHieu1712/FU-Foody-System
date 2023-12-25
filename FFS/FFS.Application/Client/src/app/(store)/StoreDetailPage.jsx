@@ -180,7 +180,7 @@ const StoreDetailPage = () => {
 								{storeData.storeName}
 							</Typography>
 							<span className="text-base">
-								<i className="fas fa-map mr-1"></i>
+								<i className="fas fa-map-marker-alt mr-1" aria-hidden="true"></i>
 								{storeData.address}
 							</span>
 							<span className="text-base">

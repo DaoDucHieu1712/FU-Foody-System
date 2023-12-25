@@ -11,6 +11,7 @@ const Cart = () => {
 			<Badge
 				content={cart?.list?.length + comboSelector?.list?.length}
 				color="white"
+				className="top-[24%] right-[24%] min-w-[20px] min-h-[20px] py-0"
 			>
 				<svg
 					width="38"
