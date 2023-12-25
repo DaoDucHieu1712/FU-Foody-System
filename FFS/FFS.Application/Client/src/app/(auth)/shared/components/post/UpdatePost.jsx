@@ -110,7 +110,7 @@ const UpdatePost = forwardRef(({ post, reloadPost }, ref) => {
 								type="text"
 								defaultValue={post.title}
 								{...register("title")}
-								className="rounded-none"
+								// className="rounded-none"
 							/>
 							{errors.title && (
 								<ErrorText text={errors.title.message}></ErrorText>

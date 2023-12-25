@@ -2,6 +2,7 @@ import axios from "../../../../shared/api/axiosConfig";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Typography } from "@material-tailwind/react";
+import isStoreOpen from "../../../../shared/components/format/FormatStore";
 
 const StoreSpecial = () => {
 	const [storeList, setStoreList] = useState([]);
@@ -64,8 +65,12 @@ const StoreSpecial = () => {
 									</a>
 
 									<div
-										className="text-sm absolute bg-green-600 text-white rounded-full h-4 w-4 border border-white"
-										style={{ top: "-6px", left: "-6px" }}
+										className={`text-sm absolute rounded-full h-4 w-4  border border-white ${
+											isStoreOpen(store.timeStart, store.timeEnd)
+												? "bg-green-600"
+												: "bg-red-600"
+										} text-white`}
+										style={{ top: "-6px", left: "-6px", position: "absolute" }}
 									></div>
 
 									<div className="px-2 py-2">
