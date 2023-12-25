@@ -36,11 +36,15 @@ const Checkout = () => {
 	);
 
 	useEffect(() => {
+		setTotalPrice(
+			cart.totalPrice + comboSelector.totalPrice + checkoutSelector.info.feeShip
+		);
 		dispatch(cartActions.getCartTotal());
 		dispatch(comboActions.getCartTotal());
 		var items = cart.list.map((item) => {
 			return Number(item.storeId);
 		});
+
 		console.log(items);
 		if (cart.list.length === 0 && comboSelector.list.length === 0) {
 			toast.error("Giỏ hàng trống nên không thể thanh toán");
@@ -293,14 +297,7 @@ const Checkout = () => {
 						</div>
 						<div className="p-3 flex justify-between">
 							<p className="font-medium text-lg ">Tổng</p>
-							<span>
-								{FormatPriceHelper(
-									cart.totalPrice +
-										comboSelector.totalPrice +
-										checkoutSelector.info.feeShip
-								)}{" "}
-								đ
-							</span>
+							<span>{FormatPriceHelper(totalPrice)} đ</span>
 						</div>
 						<div className="p-3 w-full">
 							<div>
