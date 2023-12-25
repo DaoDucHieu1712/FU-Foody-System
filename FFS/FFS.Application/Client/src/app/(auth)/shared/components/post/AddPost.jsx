@@ -105,7 +105,7 @@ const AddPost = ({ reloadPost }) => {
 								label="Tiêu đề của bạn"
 								type="text"
 								{...register("title")}
-								className="rounded-none"
+								className=""
 							/>
 							{errors.title && (
 								<ErrorText text={errors.title.message}></ErrorText>

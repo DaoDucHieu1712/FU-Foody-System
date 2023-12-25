@@ -102,7 +102,7 @@ namespace FFS.Application.Repositories.Impls
         {
             try
             {
-                var post = await _context.Posts.Include(x=>x.User).Include(x=>x.Comments).ThenInclude(x=>x.User).Include(x=>x.ReactPosts).ThenInclude(x=>x.User).FirstOrDefaultAsync(x=>x.Id == postId);
+                var post = await _context.Posts.Include(x=>x.User).Include(x=>x.Comments).ThenInclude(x=>x.User).Include(x=>x.ReactPosts).ThenInclude(x=>x.User).FirstOrDefaultAsync(x=>x.Id == postId && x.Status == StatusPost.Accept);
                 return post;
             }
             catch (Exception ex)
