@@ -143,6 +143,7 @@ const StoreEditPage = () => {
 			.then((res) => {
 				console.log(res);
 				toast.success("Tài khoản của bạn đã cập nhật thành công");
+				window.location.reload();
 			})
 			.catch((err) => {
 				toast.error(err.response.data);
@@ -214,6 +215,9 @@ const StoreEditPage = () => {
 									)}
 								</div>
 								<div className="inline-block relative mb-4">
+									<p className="mb-3">
+										Xã : <span>{selectedWard.WardName}</span>
+									</p>
 									<Select
 										// selected={(element) =>
 										// 	element &&
@@ -272,7 +276,7 @@ const StoreEditPage = () => {
 										type="time"
 										label="Thời gian đóng cửa"
 										value={timeE}
-										onInput={(e) => setTimeS(e.target.value)}
+										onInput={(e) => setTimeE(e.target.value)}
 										{...register("timeEnd")}
 									/>
 									{errors.timeEnd && (
