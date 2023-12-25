@@ -45,12 +45,14 @@ const ReviewFood = ({ idUser, idFood }) => {
                 foodId: idFood,
                 rate: star,
                 content: data.reviewfood,
-                images: [
+                images: data.imageURL
+                ? [
                     {
-                        url: data.imageURL,
-                        commentId: 0
-                    }
-                ]
+                      url: data.imageURL,
+                      commentId: 0,
+                    },
+                  ]
+                : null
             };
             axios
                 .post(`/api/Food/RatingFood`, newRating)
