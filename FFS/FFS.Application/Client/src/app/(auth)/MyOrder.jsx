@@ -60,7 +60,10 @@ const MyOrder = () => {
 								color="blue"
 								label="Mã đơn hàng"
 								type="text"
-								onChange={(e) => setOrderId(e.target.value)}
+								onChange={(e) => {
+									setPage(1);
+									setOrderId(e.target.value);
+								}}
 							/>
 						</div>
 						<div className="form-group">
@@ -68,7 +71,10 @@ const MyOrder = () => {
 								color="blue"
 								label="Ngày đặt bắt đầu"
 								type="date"
-								onChange={(e) => setStartDate(e.target.value)}
+								onChange={(e) => {
+									setPage(1);
+									setStartDate(e.target.value);
+								}}
 							/>
 						</div>
 						<div className="form-group">
@@ -76,7 +82,10 @@ const MyOrder = () => {
 								color="blue"
 								label="Ngày đặt kết thúc"
 								type="date"
-								onChange={(e) => setEndDate(e.target.value)}
+								onChange={(e) => {
+									setPage(1);
+									setEndDate(e.target.value);
+								}}
 							/>
 						</div>
 
@@ -84,7 +93,10 @@ const MyOrder = () => {
 							<Select
 								label="Trạng thái"
 								color="blue"
-								onChange={(e) => setStatus(e)}
+								onChange={(e) => {
+									setPage(1);
+									setStatus(e);
+								}}
 							>
 								<Option value="">Tất cả</Option>
 								<Option value="1">Đang chờ</Option>
@@ -98,7 +110,10 @@ const MyOrder = () => {
 							<Select
 								label="Sắp xếp"
 								color="blue"
-								onChange={(e) => setSortType(e)}
+								onChange={(e) => {
+									setSortType(e);
+									setPage(1);
+								}}
 							>
 								<Option value="">Mặc định</Option>
 								<Option value="date-asc">Ngày giao - mới nhất</Option>

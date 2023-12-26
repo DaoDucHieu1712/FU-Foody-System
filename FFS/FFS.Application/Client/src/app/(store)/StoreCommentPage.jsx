@@ -239,8 +239,7 @@ const StoreCommentPage = () => {
 									<i className="fal fa-clock mr-2"></i>Thời gian hoạt động:
 								</span>
 								<span>
-									{storeData.timeStart.slice(11, 16)} -{" "}
-									{storeData.timeEnd.slice(11, 16)}
+									{storeData.timeStart} -{storeData.timeEnd}
 								</span>
 							</div>
 							<div className="">

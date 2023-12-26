@@ -157,7 +157,7 @@ const StoreDetailPage = () => {
 	};
 
 	const handleAddToCartCombo = async (combo) => {
-		if (cookies.get("fu_foody_token")) {
+		if (!cookies.get("fu_foody_token")) {
 			window.location.href = "/login";
 		} else {
 			dispatch(comboActions.addToCart(combo));
