@@ -105,7 +105,10 @@ const OrderList = () => {
 								color="blue"
 								label="Ngày đặt bắt đầu"
 								type="date"
-								onChange={(e) => setStartDate(e.target.value)}
+								onChange={(e) => {
+									setStartDate(e.target.value);
+									setPage(1);
+								}}
 							/>
 						</div>
 						<div className="form-group">
@@ -113,7 +116,10 @@ const OrderList = () => {
 								color="blue"
 								label="Ngày đặt kết thúc"
 								type="date"
-								onChange={(e) => setEndDate(e.target.value)}
+								onChange={(e) => {
+									setPage(1);
+									setEndDate(e.target.value);
+								}}
 							/>
 						</div>
 
@@ -122,7 +128,10 @@ const OrderList = () => {
 								color="blue"
 								label="Giá từ"
 								type="number"
-								onChange={(e) => setToPrice(e.target.value)}
+								onChange={(e) => {
+									setToPrice(e.target.value);
+									setPage(1);
+								}}
 							/>
 						</div>
 
@@ -131,7 +140,10 @@ const OrderList = () => {
 								color="blue"
 								label="Giá đến"
 								type="number"
-								onChange={(e) => setFromPrice(e.target.value)}
+								onChange={(e) => {
+									setFromPrice(e.target.value);
+									setPage(1);
+								}}
 							/>
 						</div>
 
@@ -139,7 +151,10 @@ const OrderList = () => {
 							<Select
 								label="Trạng thái"
 								color="blue"
-								onChange={(e) => setStatus(e)}
+								onChange={(e) => {
+									setPage(1);
+									setStatus(e);
+								}}
 							>
 								<Option value="">Tất cả</Option>
 								<Option value="1">Đang chờ</Option>
@@ -153,7 +168,10 @@ const OrderList = () => {
 							<Select
 								label="Sắp xếp"
 								color="blue"
-								onChange={(e) => setSortType(e)}
+								onChange={(e) => {
+									setPage(1);
+									setSortType(e);
+								}}
 							>
 								<Option value="">Mặc định</Option>
 								<Option value="date-asc">Ngày giao - a to z </Option>
