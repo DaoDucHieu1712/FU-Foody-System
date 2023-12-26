@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import axios from "../../../../shared/api/axiosConfig";
 import AddToWishlist from "../wishlist/AddToWishlist";
 import FoodCart from "../HomePage/FoodCart";
+import FormatPriceHelper from "../../../../shared/components/format/FormatPriceHelper";
 
 const FlashSalePost = () => {
 	const navigate = useNavigate();
@@ -82,7 +83,7 @@ const FlashSalePost = () => {
 									color="blue"
 									className="pb-2 relative w-fit pointer-events-none"
 								>
-									{flashSaleItem.price}.000
+									{FormatPriceHelper(flashSaleItem.price)}
 									<span className="absolute font-normal top-0 -right-2 text-xs">
 										đ
 									</span>
