@@ -383,11 +383,11 @@ namespace FFS.Application.Repositories.Impls
 						location.DistrictName = locationDTO.DistrictName;
 						location.ProvinceID = locationDTO.ProvinceID;
 						location.ProvinceName = locationDTO.ProvinceName;
-						if (locationDTO.WardCode != null)
+						if (locationDTO.WardCode != null && locationDTO.WardCode.Length  > 0)
 						{
 							location.WardCode = locationDTO.WardCode;
 						}
-						if (locationDTO.WardName != null)
+						if (locationDTO.WardName != null && locationDTO.WardName.Length > 0)
 						{
 							location.WardName = locationDTO.WardName;
 						}
@@ -395,7 +395,7 @@ namespace FFS.Application.Repositories.Impls
 						location.Description = locationDTO.Description;
 						location.PhoneNumber = locationDTO.PhoneNumber;
 
-						store.Address = $"{locationDTO.Address}, {locationDTO.WardName}, {locationDTO.DistrictName}, {locationDTO.ProvinceName}";
+						store.Address = $"{location.Address}, {location.WardName}, {location.DistrictName}, {location.ProvinceName}";
 					}
 
 

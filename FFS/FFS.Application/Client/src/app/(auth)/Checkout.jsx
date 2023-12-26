@@ -112,7 +112,7 @@ const Checkout = () => {
 			timeShip: checkoutSelector.info.timeShip,
 			orderStatus: 1,
 			orderdetails: [...combos, ...foods],
-		}).then((res) => {
+		}).then(async (res) => {
 			console.log(res);
 			var orderId = res.id;
 			if (selectedType == "Chuyển khoản") {
@@ -121,15 +121,17 @@ const Checkout = () => {
 					OrderId: orderId,
 					Status: 1,
 				};
-				axiosConfig
+				await axiosConfig
 					.post("/api/Order/CreatePayment", data)
-					.then((res) => {
+					.then(async (res) => {
 						console.log(res);
 						toast.success("Đặt hàng thành công");
-						axiosConfig
+						await axiosConfig
 							.get("/api/Order/GetUrlPayment/" + orderId)
 							.then((res) => {
 								console.log(res);
+								dispatch(comboActions.clearCart());
+								dispatch(cartActions.clearCart());
 								window.open(res, "_blank");
 							})
 							.catch((err) => {
@@ -150,6 +152,7 @@ const Checkout = () => {
 					.then((res) => {
 						console.log(res);
 						toast.success("Đặt hàng thành công");
+						dispatch(comboActions.clearCart());
 						dispatch(cartActions.clearCart());
 						navigate("/");
 					})
@@ -157,8 +160,6 @@ const Checkout = () => {
 						toast.error(err);
 					});
 			}
-			dispatch(comboActions.clearCart());
-			dispatch(cartActions.clearCart());
 		});
 	};
 
