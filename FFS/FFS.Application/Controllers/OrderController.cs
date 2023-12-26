@@ -164,7 +164,7 @@ namespace FFS.Application.Controllers
 
 		[Authorize]
 		[HttpGet("{id}")]
-		public async Task<IActionResult> MyOrder(string id, [FromQuery] OrderFilterDTO orderFilterDTO)
+		public Task<IActionResult> MyOrder(string id, [FromQuery] OrderFilterDTO orderFilterDTO)
 		{
 			try
 			{
@@ -227,24 +227,24 @@ namespace FFS.Application.Controllers
 				List<Order> orders = PagedList<Order>.ToPagedList(queryOrders, orderFilterDTO.PageIndex ?? 1, pageSize);
 				var TotalPages = (int)Math.Ceiling(queryOrders.Count() / (double)pageSize);
 				_logger.LogInfo($"Orders retrieved successfully for customer ID: {id}");
-				return Ok(new EntityFilter<OrderResponseDTO>()
+				return Task.FromResult<IActionResult>(Ok(new EntityFilter<OrderResponseDTO>()
 				{
 					List = _mapper.Map<List<OrderResponseDTO>>(orders),
 					PageIndex = orderFilterDTO.PageIndex ?? 1,
 					Total = TotalPages,
-				});
+				}));
 
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError($"An error occurred while retrieving orders for customer ID: {id}: {ex.Message}");
-				return StatusCode(500, ex.Message);
+				return Task.FromResult<IActionResult>(StatusCode(500, ex.Message));
 			}
 		}
 
 		[Authorize(Roles = "StoreOwner")]
 		[HttpGet("{id}")]
-		public async Task<IActionResult> GetOrderWithStore(int id, [FromQuery] OrderFilterDTO orderFilterDTO)
+		public Task<IActionResult> GetOrderWithStore(int id, [FromQuery] OrderFilterDTO orderFilterDTO)
 		{
 			try
 			{
@@ -359,17 +359,17 @@ namespace FFS.Application.Controllers
 				List<OrderResponseDTO> orders = PagedList<OrderResponseDTO>.ToPagedList(queryOrders, orderFilterDTO.PageIndex ?? 1, pageSize);
 				var TotalPages = (int)Math.Ceiling(queryOrders.Count() / (double)pageSize);
 				_logger.LogInfo($"Orders retrieved successfully for store ID: {id}");
-				return Ok(new EntityFilter<OrderResponseDTO>()
+				return Task.FromResult<IActionResult>(Ok(new EntityFilter<OrderResponseDTO>()
 				{
 					List = orders,
 					PageIndex = orderFilterDTO.PageIndex ?? 1,
 					Total = TotalPages,
-				});
+				}));
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError($"An error occurred while retrieving orders for store ID: {id}: {ex.Message}");
-				return StatusCode(500, ex.Message);
+				return Task.FromResult<IActionResult>(StatusCode(500, ex.Message));
 			}
 		}
 
@@ -393,7 +393,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize(Roles ="Shipper")]
+		[Authorize(Roles = "Shipper")]
 		[HttpPost]
 		public async Task<IActionResult> GetOrderUnBook(DTOs.QueryParametter.Parameters parameters)
 		{
@@ -514,7 +514,7 @@ namespace FFS.Application.Controllers
 
 
 				await _orderRepository.Update(order);
-					
+
 
 
 				var storeId = await _orderRepository.GetStoreIdByOrderId(order.Id);

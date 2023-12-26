@@ -82,7 +82,10 @@ const UserNav = () => {
 
 	return (
 		<>
-			<div className="relative inline-block text-left" ref={tooltipRef}>
+			<div
+				className="relative inline-block text-left cursor-pointer"
+				ref={tooltipRef}
+			>
 				<div onClick={toggleTooltip}>
 					{/* <User className="text-xl cursor-pointer" /> */}
 
@@ -100,7 +103,14 @@ const UserNav = () => {
 						className="divide-y divide-gray-100 rounded-lg shadow"
 					>
 						<div style={triangleStyle} />
-						<div className="px-4 py-2 text-sm text-gray-900 dark:text-white">
+						<div
+							onClick={() =>
+								navigate(
+									`/user-detail/${CookieService.getToken("fu_foody_id")}`
+								)
+							}
+							className="cursor-pointer px-4 py-2 text-sm text-gray-900 dark:text-white"
+						>
 							<div>
 								{userInfo.firstName} {userInfo.lastName}
 							</div>
@@ -126,7 +136,7 @@ const UserNav = () => {
 							<li>
 								<a
 									onClick={handleMyOrderClick}
-									className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+									className="cursor-pointer block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
 								>
 									Đơn Mua
 								</a>

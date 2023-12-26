@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import isStoreOpen from "../../shared/components/format/FormatStore";
 
-
 const filter = [
 	{ id: "", name: "Tất cả" },
 	{ id: 1, name: "Tên A-Z" },
@@ -27,12 +26,10 @@ const StoreList = () => {
 	const [storeNameFilter, setStoreNameFilter] = useState("");
 	const [storeFilter, setStoreFilter] = useState("");
 	const [pageNumber, setPageNumber] = useState(1);
-	const pageSize = 8;
+	const pageSize = 12;
 	const [totalPages, setTotalPages] = useState(0);
 	const [category, setCategory] = useState([]);
 	const [selectedCategory, setSelectedCategory] = useState("");
-
-	
 
 	const GetListCategory = async () => {
 		try {

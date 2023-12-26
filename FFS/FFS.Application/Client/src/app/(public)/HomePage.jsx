@@ -6,9 +6,32 @@ import FlashSaleHome from "./components/HomePage/FlashSaleHome";
 import NewestFoodHome from "./components/HomePage/NewestFoodHome";
 import RecommendList from "./components/HomePage/RecommendList";
 import StoreSpecial from "./components/HomePage/StoreSpecial";
+import axios from "../../shared/api/axiosConfig";
+import { useEffect, useState } from "react";
+import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 
 const HomePage = () => {
 	const navigate = useNavigate();
+	const [randomFood, setRandomFood] = useState(null);
+
+	const getRandomFood = () => {
+		try {
+			axios
+				.get("/api/Food/GetRandomFood")
+				.then((response) => {
+					setRandomFood(response);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("Category: " + error);
+		}
+	};
+
+	useEffect(() => {
+		getRandomFood();
+	}, [navigate]);
 
 	return (
 		<div>
@@ -179,44 +202,48 @@ const HomePage = () => {
 					</div>
 				</div>
 				<div className="bg-gray-50">
-					<div className="flex justify-around">
-						<div className="pointer-events-none">
-							<img
-								src="https://images.foody.vn/res/g92/914115/prof/s640x400/foody-upload-api-foody-mobile-seatalk_img_15845918-200319114117.jpg"
-								alt="image 1"
-								className="h-32 w-48 py-1 object-fill"
-							/>
-						</div>
-						<div>
-							<Typography variant="h6" className="w-36 pointer-events-none">
-								Trà TMORE{" "}
-							</Typography>
-							<Typography
-								color="blue"
-								className="pb-2 relative w-fit pointer-events-none"
-							>
-								25.000
-								<span className="absolute font-normal top-0 -right-2 text-xs">
-									đ
-								</span>
-							</Typography>
-							<Button
-								size="sm"
-								className="flex items-center gap-1 text-white text-center font-bold rounded-sm bg-primary cursor-pointer hover:bg-orange-900 "
-								onClick={() => navigate(`/food-list`)}
-							>
-								Mua ngay
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									height="1.5em"
-									viewBox="0 0 512 512"
-									fill="white"
+					{randomFood == null ? (
+						<></>
+					) : (
+						<div className="flex justify-around">
+							<div className="pointer-events-none">
+								<img
+									src={randomFood.ImageURL}
+									alt={randomFood.FoodName}
+									className="h-32 w-48 py-1 object-fill"
+								/>
+							</div>
+							<div>
+								<Typography variant="h6" className="w-36 pointer-events-none">
+									{randomFood.FoodName}
+								</Typography>
+								<Typography
+									color="blue"
+									className="pb-2 relative w-fit pointer-events-none"
 								>
-									<path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128z" />
-								</svg>
-							</Button>
+									{FormatPriceHelper(randomFood.Price)}
+									<span className="absolute font-normal top-0 -right-2 text-xs">
+										đ
+									</span>
+								</Typography>
+								<Button
+									size="sm"
+									className="flex items-center gap-1 text-white text-center font-bold rounded-sm bg-primary cursor-pointer hover:bg-orange-900 "
+									onClick={() => navigate(`/food-details/${randomFood.Id}`)}
+								>
+									Mua ngay
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										height="1.5em"
+										viewBox="0 0 512 512"
+										fill="white"
+									>
+										<path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128z" />
+									</svg>
+								</Button>
+							</div>
 						</div>
-					</div>
+					)}
 				</div>
 			</div>
 			{/* End Carousel */}
