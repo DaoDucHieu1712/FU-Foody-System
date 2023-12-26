@@ -67,8 +67,7 @@ const CartPage = () => {
 		// 	quantity: quantity,
 		// }));
 
-		var storeId = cart.list[0].storeId;
-		console.log(cart.list[0]);
+		var storeId = cart.list[0].storeId || comboSelector.list[0].storeId;
 		await getLocationByUserId(storeId)
 			.then(async (res) => {
 				const addressStore = `${res.address}, ${res.wardName}, ${res.districtName}, ${res.provinceName}`;
