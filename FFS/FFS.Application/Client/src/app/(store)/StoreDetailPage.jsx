@@ -6,7 +6,7 @@ import {
 	IconButton,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { cartActions } from "../(auth)/shared/cartSlice";
@@ -21,6 +21,7 @@ import AddToWishlist from "../(public)/components/wishlist/AddToWishlist";
 import { useNavigate } from "react-router-dom";
 import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
 import DiscountProfileStore from "./components/Discount/DiscountProfileStore";
+import { toast } from "react-toastify";
 
 const cookies = new Cookies();
 const uId = cookies.get("fu_foody_id");
@@ -29,6 +30,7 @@ const backgroundColors = ["bg-gray-50", "bg-gray-200"];
 const StoreDetailPage = () => {
 	const navigate = useNavigate();
 	const { id } = useParams();
+	const cart = useSelector((state) => state.cart);
 	const [storeData, setStoreData] = useState();
 	const [foodList, setFoodList] = useState([]);
 	const [comboList, setComboList] = useState([]);
@@ -39,11 +41,16 @@ const StoreDetailPage = () => {
 	const dispatch = useDispatch();
 
 	const handleAddToCart = (cartItem) => {
+		var itemC = cart.list.filter((x) => x.foodId === cartItem.id)[0];
+		if (itemC) {
+			if (itemC.quantity >= cartItem.inventories[0].quantity) {
+				toast.error("Không được mua quá số lượng !!");
+				return;
+			}
+		}
 		if (!cookies.get("fu_foody_token")) {
 			window.location.href = "/login";
 		} else {
-			console.log(cartItem);
-			console.log("ok");
 			const item = {
 				foodId: cartItem.id,
 				foodName: cartItem.foodName,

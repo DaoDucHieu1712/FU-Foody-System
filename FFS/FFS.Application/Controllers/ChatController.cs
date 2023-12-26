@@ -65,6 +65,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+
 		[Authorize]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> FindById(int id)

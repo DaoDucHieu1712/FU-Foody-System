@@ -26,6 +26,7 @@ namespace FFS.Application.Controllers
 			_mapper = mapper;
 			_logger = logger;
 		}
+
 		[HttpGet]
 		public async Task<IActionResult> ListCategoryByStoreId([FromQuery] CategoryParameters categoryParameters)
 		{

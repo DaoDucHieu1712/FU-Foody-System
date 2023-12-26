@@ -14,12 +14,14 @@ import AddToWishlist from "./components/wishlist/AddToWishlist";
 import WishlistDetails from "./components/wishlist/WishlistDetails";
 import moment from "moment";
 import CookieService from "../../shared/helper/cookieConfig";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../(auth)/shared/cartSlice";
 import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
+import { toast } from "react-toastify";
 
 const FoodDetails = () => {
 	const userId = CookieService.getToken("fu_foody_id");
+	const cart = useSelector((state) => state.cart);
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -226,6 +228,17 @@ const FoodDetails = () => {
 											className="flex items-center space-x-2  text-white bg-primary hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-sm text-sm w-full px-5 py-2.5 text-center"
 											disabled={foodData.inventories[0].quantity <= 0}
 											onClick={() => {
+												var itemC = cart.list.filter(
+													(x) => x.foodId === foodData.id
+												)[0];
+												if (itemC) {
+													if (
+														itemC.quantity >= foodData.inventories[0].quantity
+													) {
+														toast.error("Không được mua quá số lượng !!");
+														return;
+													}
+												}
 												if (!CookieService.getToken("fu_foody_token")) {
 													window.location.href = "/login";
 													return;

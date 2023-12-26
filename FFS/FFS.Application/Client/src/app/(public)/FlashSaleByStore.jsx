@@ -10,12 +10,13 @@ import propTypes from "prop-types";
 import FormatDateTimeString from "../../shared/components/format/FormatDateTime";
 import CookieService from "../../shared/helper/cookieConfig";
 import { cartActions } from "../(auth)/shared/cartSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const FlashSaleByStore = ({ storeId }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const [flashSale, setFlashSale] = useState([]);
+	const cart = useSelector((state) => state.cart);
 
 	const GetListFilterFood = async () => {
 		try {
@@ -126,6 +127,15 @@ const FlashSaleByStore = ({ storeId }) => {
 												<div
 													className=""
 													onClick={() => {
+														var itemC = cart.list.filter(
+															(x) => x.foodId === detailItem.foodId
+														)[0];
+														if (itemC) {
+															if (itemC.quantity >= detailItem.quantity) {
+																toast.error("Không được mua quá số lượng !!");
+																return;
+															}
+														}
 														if (!CookieService.getToken("fu_foody_token")) {
 															window.location.href = "/login";
 															return;
@@ -135,12 +145,11 @@ const FlashSaleByStore = ({ storeId }) => {
 																	foodId: detailItem.foodId,
 																	foodName: detailItem.foodName,
 																	quantity: 1,
-																	price: FormatPriceHelper(
+																	price:
 																		detailItem.price -
-																			(detailItem.price *
-																				detailItem.salePercent) /
-																				100
-																	),
+																		(detailItem.price *
+																			detailItem.salePercent) /
+																			100,
 																	img: detailItem.imageURL,
 																	storeId: detailItem.storeId,
 																})
