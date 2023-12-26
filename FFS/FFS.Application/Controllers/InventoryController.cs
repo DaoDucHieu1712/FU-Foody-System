@@ -1,68 +1,64 @@
 ﻿using AutoMapper;
-using FFS.Application.DTOs.Common;
 using FFS.Application.DTOs.Inventory;
 using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace FFS.Application.Controllers
 {
-    [Route("api/[controller]/[action]")]
-    [ApiController]
-    public class InventoryController : ControllerBase
-    {
-        private readonly IInventoryRepository _inventoryRepository;
-        private readonly IMapper _mapper;
+	[Route("api/[controller]/[action]")]
+	[ApiController]
+	public class InventoryController : ControllerBase
+	{
+		private readonly IInventoryRepository _inventoryRepository;
+		private readonly IMapper _mapper;
 		private ILoggerManager _logger;
 
 		public InventoryController(IInventoryRepository inventoryRepository, IMapper mapper, ILoggerManager logger)
-        {
-            _inventoryRepository = inventoryRepository;
-            _mapper = mapper;
+		{
+			_inventoryRepository = inventoryRepository;
+			_mapper = mapper;
 			_logger = logger;
-        }
+		}
 
 
 		[Authorize]
-        [HttpGet()]
-        public IActionResult GetInventories([FromQuery] InventoryParameters inventoryParameters)
-        {
-            try
-            {
+		[HttpGet()]
+		public IActionResult GetInventories([FromQuery] InventoryParameters inventoryParameters)
+		{
+			try
+			{
 				_logger.LogInfo("Retrieving inventories");
 				var Inventories = _inventoryRepository.GetInventories(inventoryParameters);
 
-                var metadata = new
-                {
-                    Inventories.TotalCount,
-                    Inventories.PageSize,
-                    Inventories.CurrentPage,
-                    Inventories.TotalPages,
-                    Inventories.HasNext,
-                    Inventories.HasPrevious
-                };
-               
-                var entityInventory = _mapper.Map<List<InventoryDTO>>(Inventories);
+				var metadata = new
+				{
+					Inventories.TotalCount,
+					Inventories.PageSize,
+					Inventories.CurrentPage,
+					Inventories.TotalPages,
+					Inventories.HasNext,
+					Inventories.HasPrevious
+				};
+
+				var entityInventory = _mapper.Map<List<InventoryDTO>>(Inventories);
 				_logger.LogInfo("Inventories retrieved successfully");
 				return Ok(
-                new
-                {
-                    entityInventory,
-                    metadata
-                });
-            }
-            catch (Exception ex)
-            {
+				new
+				{
+					entityInventory,
+					metadata
+				});
+			}
+			catch (Exception ex)
+			{
 				_logger.LogError($"An error occurred while retrieving inventories: {ex.Message}");
 				return BadRequest(ex.Message);
-            }
-        }
+			}
+		}
 
 		[Authorize]
 		[HttpGet("{fid}")]
@@ -71,7 +67,7 @@ namespace FFS.Application.Controllers
 			try
 			{
 				_logger.LogInfo($"Retrieving inventory for food with ID: {fid}");
-				var inventory = await _inventoryRepository.FindSingle(x => x.FoodId == fid, x=>x.Food);
+				var inventory = await _inventoryRepository.FindSingle(x => x.FoodId == fid, x => x.Food);
 				_logger.LogInfo($"Inventory for food with ID {fid} retrieved successfully");
 				return Ok(_mapper.Map<InventoryDTO>(inventory));
 			}
@@ -83,30 +79,30 @@ namespace FFS.Application.Controllers
 		}
 
 
-		[Authorize(Roles ="StoreOwner")]
+		[Authorize(Roles = "StoreOwner")]
 		[HttpPost]
-        public async Task<IActionResult> CreateInventory([FromBody]  CreateInventoryDTO inventory)
-        {
-            try
-            {
+		public async Task<IActionResult> CreateInventory([FromBody] CreateInventoryDTO inventory)
+		{
+			try
+			{
 				_logger.LogInfo("Creating inventory");
 				var existingInventory = await _inventoryRepository.GetInventoryByFoodAndStore(inventory.StoreId, inventory.FoodId);
 
-                if (existingInventory != null)
-                {
+				if (existingInventory != null)
+				{
 					_logger.LogInfo("Inventory creation failed: Duplicate inventory found");
 					return BadRequest("Món ăn này đã có trong tồn kho !");
-                }
-                await _inventoryRepository.CreateInventory(_mapper.Map<Inventory>(inventory));
+				}
+				await _inventoryRepository.CreateInventory(_mapper.Map<Inventory>(inventory));
 				_logger.LogInfo("Inventory created successfully");
 				return Ok();
-            }
-            catch (Exception ex)
-            {
+			}
+			catch (Exception ex)
+			{
 				_logger.LogError($"An error occurred while creating inventory: {ex.Message}");
 				return BadRequest(ex.Message);
-            }
-        }
+			}
+		}
 
 		[Authorize(Roles = "StoreOwner")]
 		[HttpPut("{storeId}/{foodId}/{quantity}")]
@@ -148,39 +144,39 @@ namespace FFS.Application.Controllers
 
 		[Authorize(Roles = "StoreOwner")]
 		[HttpDelete("{inventoryId}")]
-        public async Task<IActionResult> DeleteInventoryByInventoryId(int inventoryId)
-        {
-            try
-            {
+		public async Task<IActionResult> DeleteInventoryByInventoryId(int inventoryId)
+		{
+			try
+			{
 				_logger.LogInfo($"Deleting inventory with ID: {inventoryId}");
 				// Call the repository method to delete the inventory
 				await _inventoryRepository.DeleteInventoryByInventoryId(inventoryId);
 				_logger.LogInfo("Inventory deleted successfully");
 				return Ok("Inventory deleted successfully");
-            }
-            catch (Exception ex)
-            {
+			}
+			catch (Exception ex)
+			{
 				_logger.LogError($"An error occurred while deleting inventory: {ex.Message}");
 				// Handle any errors and return an error response
 				return BadRequest($"Error deleting inventory: {ex.Message}");
-            }
-        }
+			}
+		}
 
 		[HttpGet("{storeId}/{foodId}")]
-        public async Task<ActionResult<bool>> CheckExistingInventory(int storeId, int foodId)
-        {
-            try
-            {
+		public async Task<ActionResult<bool>> CheckExistingInventory(int storeId, int foodId)
+		{
+			try
+			{
 				_logger.LogInfo($"Checking existing inventory for Store ID: {storeId}, Food ID: {foodId}");
 				var existingInventory = await _inventoryRepository.GetInventoryByFoodAndStore(storeId, foodId);
 				_logger.LogInfo($"Existing inventory check result for Store ID: {storeId}, Food ID: {foodId}: {existingInventory != null}");
 				return existingInventory != null;
-            }
-            catch (Exception ex)
-            {
+			}
+			catch (Exception ex)
+			{
 				_logger.LogError($"An error occurred while checking existing inventory: {ex.Message}");
 				return BadRequest(ex.Message);
-            }
-        }
-    }
+			}
+		}
+	}
 }

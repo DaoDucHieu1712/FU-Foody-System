@@ -241,7 +241,10 @@ const StoreDetailPage = () => {
 								{storeData.storeName}
 							</Typography>
 							<span className="text-base">
-								<i className="fas fa-map-marker-alt mr-1" aria-hidden="true"></i>
+								<i
+									className="fas fa-map-marker-alt mr-1"
+									aria-hidden="true"
+								></i>
 								{storeData.address}
 							</span>
 							<span className="text-base">
@@ -406,8 +409,8 @@ const StoreDetailPage = () => {
 																variant="paragraph"
 																className="py-2 text-red-500"
 															>
-																{item.inventories[0]?.quantity}
-																hết hàng
+																{/* {item.inventories[0]?.quantity} */}
+																sản phẩm tạm hết hàng
 															</Typography>
 														)}
 													</div>

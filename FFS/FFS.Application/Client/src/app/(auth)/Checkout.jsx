@@ -108,6 +108,8 @@ const Checkout = () => {
 			note: checkoutSelector.info.note,
 			totalPrice: totalPrice,
 			shipFee: checkoutSelector.info.feeShip,
+			distance: checkoutSelector.info.distance,
+			timeShip: checkoutSelector.info.timeShip,
 			orderStatus: 1,
 			orderdetails: [...combos, ...foods],
 		}).then((res) => {
@@ -279,6 +281,24 @@ const Checkout = () => {
 									<span>
 										{FormatPriceHelper(checkoutSelector.info.feeShip)} đ
 									</span>
+								) : (
+									<span>Chưa có thông tin</span>
+								)}
+							</div>
+							<div className="flex justify-between">
+								<p className="font-medium text-lg text-gray-500">Khoảng cách</p>
+								{checkoutSelector.info.distance ? (
+									<span>{checkoutSelector.info.distance}</span>
+								) : (
+									<span>Chưa có thông tin</span>
+								)}
+							</div>
+							<div className="flex justify-between">
+								<p className="font-medium text-lg text-gray-500">
+									Dự tính thời gian ship
+								</p>
+								{checkoutSelector.info.timeShip ? (
+									<span>{checkoutSelector.info.timeShip}</span>
 								) : (
 									<span>Chưa có thông tin</span>
 								)}

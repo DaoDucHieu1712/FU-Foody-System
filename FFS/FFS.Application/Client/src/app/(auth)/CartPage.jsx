@@ -36,6 +36,8 @@ const CartPage = () => {
 	const [phone, setPhone] = useState("");
 	const [note, setNote] = useState("");
 	const [feeShip, setFeeShip] = useState();
+	const [distance, setDistance] = useState();
+	const [timeShip, setTimeShip] = useState();
 
 	const getLocations = async () => {
 		const email = cookies.get("fu_foody_email");
@@ -60,44 +62,27 @@ const CartPage = () => {
 		setLocation(
 			`${location.address}, ${location.wardName}, ${location.districtName}, ${location.provinceName}`
 		);
-		const items = cart.list.map(({ foodName, quantity }) => ({
-			name: foodName,
-			quantity: quantity,
-		}));
+		// const items = cart.list.map(({ foodName, quantity }) => ({
+		// 	name: foodName,
+		// 	quantity: quantity,
+		// }));
 
 		var storeId = cart.list[0].storeId;
 		console.log(cart.list[0]);
 		await getLocationByUserId(storeId)
 			.then(async (res) => {
-				console.log(res);
-				await CartService.CalcFeeShip(
-					res.districtID,
-					location.districtID,
-					location.wardCode,
-					items
-				)
+				const addressStore = `${res.address}, ${res.wardName}, ${res.districtName}, ${res.provinceName}`;
+				const addressUser = `${location.address}, ${location.wardName}, ${location.districtName}, ${location.provinceName}`;
+
+				await CartService.CalcFeeShip(addressStore, addressUser)
 					.then((res) => {
-						console.log(res.data.data.total);
-						setFeeShip(res.data.data.total);
+						console.log(res);
+						setFeeShip(res.shippingFee);
+						setDistance(res.distance);
+						setTimeShip(res.time);
 						dispatch(
-							cartActions.updateTotalPrice(
-								cart.totalPrice + res.data.data.total
-							)
+							cartActions.updateTotalPrice(cart.totalPrice + res.shippingFee)
 						);
-						// setTotalPrice(cart.totalPrice + res.data.data.total);
-					})
-					.catch((err) => {
-						toast.error(err.data);
-					});
-				await CartService.CalcTimeShip(
-					res.districtID,
-					res.wardCode,
-					location.districtID,
-					location.wardCode,
-					items
-				)
-					.then((res) => {
-						console.log(res.data);
 						// setTotalPrice(cart.totalPrice + res.data.data.total);
 					})
 					.catch((err) => {
@@ -119,7 +104,16 @@ const CartPage = () => {
 	}
 
 	const handleCheckOut = async () => {
-		dispatch(checkoutActions.SetInfo({ location, note, phone, feeShip }));
+		dispatch(
+			checkoutActions.SetInfo({
+				location,
+				note,
+				phone,
+				feeShip,
+				timeShip,
+				distance,
+			})
+		);
 		window.location.href = "/checkout";
 	};
 
@@ -222,6 +216,24 @@ const CartPage = () => {
 								<p className="font-medium text-lg text-gray-500">Phí ship</p>
 								{feeShip ? (
 									<span>{FormatPriceHelper(feeShip)} đ</span>
+								) : (
+									<span>Chưa có thông tin</span>
+								)}
+							</div>
+							<div className="flex justify-between">
+								<p className="font-medium text-lg text-gray-500">Khoảng cách</p>
+								{distance ? (
+									<span>{distance}</span>
+								) : (
+									<span>Chưa có thông tin</span>
+								)}
+							</div>
+							<div className="flex justify-between">
+								<p className="font-medium text-lg text-gray-500">
+									Dự tính thời gian ship
+								</p>
+								{timeShip ? (
+									<span>{timeShip}</span>
 								) : (
 									<span>Chưa có thông tin</span>
 								)}

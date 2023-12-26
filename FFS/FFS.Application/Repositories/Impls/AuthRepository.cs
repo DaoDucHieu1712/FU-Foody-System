@@ -4,7 +4,6 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Dapper;
-using DocumentFormat.OpenXml.Spreadsheet;
 using FFS.Application.Constant;
 using FFS.Application.Data;
 using FFS.Application.DTOs.Auth;
@@ -130,6 +129,7 @@ namespace FFS.Application.Repositories.Impls
 					Gender = storeRegisterDTO.Gender,
 					BirthDay = storeRegisterDTO.BirthDay,
 					UserName = CommonService.ExtractUsername(storeRegisterDTO.Email),
+					PhoneNumber = storeRegisterDTO.PhoneNumber,
 					Email = storeRegisterDTO.Email,
 					Status = StatusUser.Pending,
 				};
@@ -152,7 +152,7 @@ namespace FFS.Application.Repositories.Impls
 					UserId = _newuser.Id,
 					StoreName = storeRegisterDTO.StoreName,
 					AvatarURL = storeRegisterDTO.AvatarURL,
-					Address  = $"{locationDTO.Address}, {locationDTO.WardName}, {locationDTO.DistrictName}, {locationDTO.ProvinceName}",
+					Address = $"{locationDTO.Address}, {locationDTO.WardName}, {locationDTO.DistrictName}, {locationDTO.ProvinceName}",
 					Description = storeRegisterDTO.Description,
 					TimeStart = storeRegisterDTO.TimeStart,
 					TimeEnd = storeRegisterDTO.TimeEnd,
@@ -406,7 +406,7 @@ namespace FFS.Application.Repositories.Impls
 				_context.Entry(_user).State = EntityState.Modified;
 				_ = await _userManager.UpdateAsync(_user);
 				// Save changes to the database
-				_ =await _context.SaveChangesAsync();
+				_ = await _context.SaveChangesAsync();
 
 				// Commit the transaction
 				await transaction.CommitAsync();
