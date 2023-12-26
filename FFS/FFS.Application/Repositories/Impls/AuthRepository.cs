@@ -130,6 +130,7 @@ namespace FFS.Application.Repositories.Impls
 					Gender = storeRegisterDTO.Gender,
 					BirthDay = storeRegisterDTO.BirthDay,
 					UserName = CommonService.ExtractUsername(storeRegisterDTO.Email),
+					PhoneNumber = storeRegisterDTO.PhoneNumber,
 					Email = storeRegisterDTO.Email,
 					Status = StatusUser.Pending,
 				};
@@ -152,7 +153,7 @@ namespace FFS.Application.Repositories.Impls
 					UserId = _newuser.Id,
 					StoreName = storeRegisterDTO.StoreName,
 					AvatarURL = storeRegisterDTO.AvatarURL,
-					Address  = $"{locationDTO.Address}, {locationDTO.WardName}, {locationDTO.DistrictName}, {locationDTO.ProvinceName}",
+					Address = $"{locationDTO.Address}, {locationDTO.WardName}, {locationDTO.DistrictName}, {locationDTO.ProvinceName}",
 					Description = storeRegisterDTO.Description,
 					TimeStart = storeRegisterDTO.TimeStart,
 					TimeEnd = storeRegisterDTO.TimeEnd,
@@ -396,21 +397,52 @@ namespace FFS.Application.Repositories.Impls
 			{
 				ApplicationUser _user = await _userManager.FindByEmailAsync(email);
 				if (_user == null) throw new Exception("Đã có lỗi bất định xảy ra !");
+
+				// Update the user entity with the new values
 				_user.BirthDay = userCommandDTO.BirthDay;
 				_user.FirstName = userCommandDTO.FirstName;
 				_user.LastName = userCommandDTO.LastName;
 				_user.Gender = userCommandDTO.Gender;
 				_user.Avatar = userCommandDTO.Avatar;
-				//_ = await _userManager.UpdateAsync(_user);
-				//_ = await _context.SaveChangesAsync();
+
+				// Mark the user entity as modified
 				_context.Entry(_user).State = EntityState.Modified;
-				_ = await _userManager.UpdateAsync(_user);
-				// Save changes to the database
-				_ =await _context.SaveChangesAsync();
+
+				try
+				{
+					// Save changes to the database
+					await _context.SaveChangesAsync();
+				}
+				catch (DbUpdateConcurrencyException ex)
+				{
+					// Handle concurrency conflicts
+					foreach (var entry in ex.Entries)
+					{
+						if (entry.Entity is ApplicationUser)
+						{
+							var databaseValues = await entry.GetDatabaseValuesAsync();
+							if (databaseValues == null)
+							{
+								// The entity has been deleted by another process
+								throw new Exception("The entity has been deleted by another process.");
+							}
+
+							// Refresh the user entity with the current database values
+							entry.OriginalValues.SetValues(databaseValues);
+						}
+						else
+						{
+							throw new NotSupportedException(
+								"Concurrency conflicts not supported for entity type " + entry.Entity.GetType().Name);
+						}
+					}
+
+					// Retry saving changes
+					await _context.SaveChangesAsync();
+				}
 
 				// Commit the transaction
 				await transaction.CommitAsync();
-
 			}
 			catch (Exception ex)
 			{
@@ -418,6 +450,35 @@ namespace FFS.Application.Repositories.Impls
 				throw new Exception(ex.Message);
 			}
 		}
+
+		//public async Task ProfileEdit(string email, UserCommandDTO userCommandDTO)
+		//{
+		//	using var transaction = await _context.Database.BeginTransactionAsync();
+		//	try
+		//	{
+		//		ApplicationUser _user = await _userManager.FindByEmailAsync(email);
+		//		if (_user == null) throw new Exception("Đã có lỗi bất định xảy ra !");
+		//		_user.BirthDay = userCommandDTO.BirthDay;
+		//		_user.FirstName = userCommandDTO.FirstName;
+		//		_user.LastName = userCommandDTO.LastName;
+		//		_user.Gender = userCommandDTO.Gender;
+		//		_user.Avatar = userCommandDTO.Avatar;
+		//		// = await _userManager.UpdateAsync(user);
+		//		// = await _context.SaveChangesAsync();
+		//		_context.Entry(_user).State = EntityState.Modified;
+		//		_ = await _userManager.UpdateAsync(_user);
+		//		// Save changes to the database
+		//		_ = await _context.SaveChangesAsync();
+
+		//		await transaction.CommitAsync();
+
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		await transaction.RollbackAsync();
+		//		throw new Exception(ex.Message);
+		//	}
+		//}
 		public async Task<ApplicationUser> GetShipperById(string userId)
 		{
 			try

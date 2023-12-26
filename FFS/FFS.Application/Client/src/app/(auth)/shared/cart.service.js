@@ -24,23 +24,14 @@ const CartService = {
 		return axiosConfig.get(url);
 	},
 
-	async CalcFeeShip(fromDistrictId, toDistrictID, toWardCode, item) {
-		const headers = {
-			Token: "6c942378-8c0f-11ee-a6e6-e60958111f48",
-			ShopId: 190398,
-		};
-		const url =
-			"https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee";
+	async CalcFeeShip(addressStore, addressUser) {
 		const data = {
-			service_id: 53320,
-			from_district_id: fromDistrictId,
-			to_district_id: toDistrictID,
-			to_ward_code: toWardCode,
-			weight: 10,
-			items: item,
+			addressStore: addressStore,
+			addressUser: addressUser,
 		};
-		return axios
-			.post(url, data, { headers: headers })
+		const url = "/api/Store/CalcFeeship";
+		return axiosConfig
+			.post(url, data)
 			.then((response) => {
 				return response;
 			})

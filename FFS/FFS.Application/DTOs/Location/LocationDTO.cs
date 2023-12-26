@@ -6,8 +6,8 @@
 		public string ProvinceName { get; set; }
 		public int DistrictID { get; set; }
 		public string DistrictName { get; set; }
-		public string WardCode { get; set; }
-		public string WardName { get; set; }
+		public string? WardCode { get; set; }
+		public string? WardName { get; set; }
 		public string Address { get; set; }
 		public bool? IsDefault { get; set; } = false;
 		public string? Description { get; set; }

@@ -5,11 +5,7 @@ using FFS.Application.DTOs.QueryParametter;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
-
-
-using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -101,8 +97,8 @@ namespace FFS.Application.Controllers
 				_logger.LogError($"An error occurred while retrieving food items for category with ID {cateId}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 
-            }
-        }
+			}
+		}
 
 		[Authorize(Roles = "StoreOwner")]
 		[HttpPost]
@@ -139,8 +135,8 @@ namespace FFS.Application.Controllers
 				_logger.LogError($"An error occurred while adding a new food item: {ex.Message}");
 				return StatusCode(500, ex.Message);
 
-            }
-        }
+			}
+		}
 
 		[Authorize(Roles = "StoreOwner")]
 		[HttpPut("{id}")]
@@ -178,8 +174,8 @@ namespace FFS.Application.Controllers
 				_logger.LogError($"An error occurred while updating food item with ID {id}: {ex.Message}");
 				return StatusCode(500, ex.Message);
 
-            }
-        }
+			}
+		}
 
 		[Authorize(Roles = "StoreOwner")]
 		[HttpDelete("{id}")]
@@ -251,8 +247,8 @@ namespace FFS.Application.Controllers
 				_logger.LogError($"An error occurred while retrieving details of combo with ID {id}: {ex.Message}");
 				throw new Exception(ex.Message);
 
-            }
-        }
+			}
+		}
 
 		[Authorize(Roles = "StoreOwner")]
 		[HttpPost]
@@ -282,8 +278,8 @@ namespace FFS.Application.Controllers
 				_logger.LogError($"An error occurred while creating a new combo: {ex.Message}");
 				throw new Exception(ex.Message);
 
-            }
-        }
+			}
+		}
 
 		[Authorize(Roles = "StoreOwner")]
 		[HttpPut("{id}")]
@@ -314,8 +310,8 @@ namespace FFS.Application.Controllers
 				_logger.LogError($"An error occurred while updating combo with ID {id}: {ex.Message}");
 				throw new Exception(ex.Message);
 
-            }
-        }
+			}
+		}
 
 		[Authorize(Roles = "StoreOwner")]
 		[HttpDelete("{id}")]
@@ -376,8 +372,8 @@ namespace FFS.Application.Controllers
 				_logger.LogError($"An error occurred while retrieving food items for store with ID {storeId}: {ex.Message}");
 				return BadRequest($"Error: {ex.Message}");
 
-            }
-        }
+			}
+		}
 
 		//    [HttpGet]
 		//    public async Task<IActionResult> IsCanRate(string Uid, int foodId)
@@ -397,7 +393,7 @@ namespace FFS.Application.Controllers
 		//    }
 
 
-		[Authorize] 
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> RatingFood([FromBody] FoodRatingDTO foodRatingDTO)
 		{
@@ -482,6 +478,23 @@ namespace FFS.Application.Controllers
 				await _commentRepository.Add(comment);
 				_logger.LogInfo("Comment added successfully");
 				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError($"An error occurred while adding comment for food: {ex.Message}");
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> GetRandomFood()
+		{
+			try
+			{
+				_logger.LogInfo("Adding comment for food");
+				var data = await _foodRepo.GetRandomFood();
+				_logger.LogInfo("Comment added successfully");
+				return Ok(data);
 			}
 			catch (Exception ex)
 			{

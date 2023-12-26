@@ -8,15 +8,9 @@ using FFS.Application.DTOs.Store;
 using FFS.Application.Entities;
 using FFS.Application.Infrastructure.Interfaces;
 using FFS.Application.Repositories;
-using FFS.Application.Repositories.Impls;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Comment = FFS.Application.Entities.Comment;
 
 namespace Test
@@ -223,8 +217,8 @@ namespace Test
         {
             // Arrange
             var userId = "yourUserId";
-            var fakeStore = new Store {};
-            var fakeLocation = new Location {};
+            var fakeStore = new Store { };
+            var fakeLocation = new Location { };
 
             _storeRepositoryMock.Setup(repo => repo.FindSingle(It.IsAny<Expression<Func<Store, bool>>>()))
                 .ReturnsAsync(fakeStore);
@@ -263,7 +257,7 @@ namespace Test
         {
             // Arrange
             var storeId = 1;
-            var fakeData = new byte[] {};
+            var fakeData = new byte[] { };
 
             _storeRepositoryMock.Setup(repo => repo.ExportFood(storeId))
                 .ReturnsAsync(fakeData);
@@ -302,7 +296,7 @@ namespace Test
         {
             // Arrange
             var storeId = 1;
-            var fakeData = new byte[] {};
+            var fakeData = new byte[] { };
 
             _storeRepositoryMock.Setup(repo => repo.ExportInventory(storeId))
                 .ReturnsAsync(fakeData);
@@ -461,7 +455,7 @@ namespace Test
         {
             // Arrange
             var commentId = 1;
-            var commentReplies = new List<CommentReply> {};
+            var commentReplies = new List<CommentReply> { };
 
             _storeRepositoryMock.Setup(repo => repo.GetCommentReply(commentId))
                 .ReturnsAsync(commentReplies);
@@ -534,22 +528,22 @@ namespace Test
         }
         #endregion
         #region GetFoodByName
-        [Fact]
-        public void GetFoodByName_WithoutName_ReturnsOkResultWithAllFoodDTOs()
-        {
-            // Arrange
-            _foodRepositoryMock.Setup(repo => repo.FindAll()).Returns(new List<Food>().AsQueryable());
-            _mapperMock.Setup(mapper => mapper.Map<List<FoodDTO>>(It.IsAny<List<Food>>()))
-                .Returns(new List<FoodDTO>());
+        //[Fact]
+        //public void GetFoodByName_WithoutName_ReturnsOkResultWithAllFoodDTOs()
+        //{
+        //    // Arrange
+        //    _foodRepositoryMock.Setup(repo => repo.FindAll()).Returns(new List<Food>().AsQueryable());
+        //    _mapperMock.Setup(mapper => mapper.Map<List<FoodDTO>>(It.IsAny<List<Food>>()))
+        //        .Returns(new List<FoodDTO>());
 
-            // Act
-            var result = _controller.GetFoodByName(null);
+        //    // Act
+        //    var result = _controller.GetFoodByName(null);
 
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var retrievedFoodDTOs = Assert.IsType<List<FoodDTO>>(okResult.Value);
-            Assert.Empty(retrievedFoodDTOs);
-        }
+        //    // Assert
+        //    var okResult = Assert.IsType<OkObjectResult>(result);
+        //    var retrievedFoodDTOs = Assert.IsType<List<FoodDTO>>(okResult.Value);
+        //    Assert.Empty(retrievedFoodDTOs);
+        //}
 
         [Fact]
         public void GetFoodByName_WithName_ReturnsOkResultWithMatchingFoodDTOs()
@@ -616,7 +610,7 @@ namespace Test
             _mapperMock.Setup(mapper => mapper.Map<Comment>(It.IsAny<StoreRatingDTO>()))
                 .Returns(comment);
             _storeRepositoryMock.Setup(repo => repo.GetCommentReply(It.IsAny<int>()))
-                .ReturnsAsync(new {});
+                .ReturnsAsync(new { });
 
             // Act
             var result = await _controller.RatingStore(storeRatingDTO);

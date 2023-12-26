@@ -15,12 +15,13 @@ import AuthServices from "../(public)/shared/auth.service";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axioss from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "../../shared/api/axiosConfig";
 import { useSelector } from "react-redux";
 import Loading from "../../shared/components/Loading";
 import UpdateImage from "../../shared/components/form/UpdateImage";
 import Cookies from "universal-cookie";
+import { element } from "prop-types";
 
 const schema = yup.object({
 	storeName: yup
@@ -30,8 +31,8 @@ const schema = yup.object({
 	description: yup.string().required("Mô tả không thể để trống !"),
 	address: yup.string().required("Địa chỉ không thể để trống !"),
 	phoneNumber: yup.string().required("Số điện thoại không thể để trống !"),
-	timeStart: yup.date().required("Hãy chọn thời gian mở cửa !"),
-	timeEnd: yup.date().required("Hãy chọn thời gian đóng cửa !"),
+	timeStart: yup.string().required("Hãy chọn thời gian mở cửa !"),
+	timeEnd: yup.string().required("Hãy chọn thời gian đóng cửa !"),
 });
 
 const cookie = new Cookies();
@@ -41,7 +42,10 @@ const StoreEditPage = () => {
 	const [listProvince, setListProvince] = useState([]);
 	const [listDistrict, setListDistrict] = useState([]);
 	const [listWard, setListWard] = useState([]);
+	const [selectedWard, setSelectedWard] = useState({});
 	const [storeInfor, setStoreInfor] = useState();
+	const [timeS, setTimeS] = useState("");
+	const [timeE, setTimeE] = useState("");
 
 	const defaultProvince = {
 		ProvinceID: 201,
@@ -95,16 +99,16 @@ const StoreEditPage = () => {
 				toast.error("Lấy danh sách quận, huyện thất bại");
 			});
 	};
-	const getWard = () => {
-		axioss
+	const getWard = async () => {
+		return axioss
 			.get(
 				"https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=" +
 					district.DistrictID,
 				{ headers }
 			)
-			.then((res) => {
-				console.log(res);
+			.then(async (res) => {
 				setListWard(res.data.data);
+				return res.data.data;
 			})
 			.catch((err) => {
 				toast.error("Lấy danh sách tỉnh thất bại");
@@ -139,6 +143,7 @@ const StoreEditPage = () => {
 			.then((res) => {
 				console.log(res);
 				toast.success("Tài khoản của bạn đã cập nhật thành công");
+				window.location.reload();
 			})
 			.catch((err) => {
 				toast.error(err.response.data);
@@ -149,6 +154,13 @@ const StoreEditPage = () => {
 		try {
 			const res = await axios.get("/api/Store/GetStore/" + user.id);
 			setStoreInfor(res); // Assuming the data you need is in res.data
+			setTimeE(res.store.timeEnd);
+			setTimeS(
+				res.store.timeStart.length == 4
+					? "0" + res.store.timeStart
+					: res.store.timeStart
+			);
+
 			return res;
 		} catch (error) {
 			// Handle errors
@@ -158,7 +170,14 @@ const StoreEditPage = () => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			await GetStore();
+			await GetStore().then(async (infor) => {
+				await getWard().then((res) => {
+					const ward1 = res.find((ward) => {
+						return ward.WardCode === infor.location.wardCode;
+					});
+					setSelectedWard(ward1);
+				});
+			});
 		};
 
 		fetchData();
@@ -196,7 +215,18 @@ const StoreEditPage = () => {
 									)}
 								</div>
 								<div className="inline-block relative mb-4">
+									<p className="mb-3">
+										Xã : <span>{selectedWard.WardName}</span>
+									</p>
 									<Select
+										// selected={(element) =>
+										// 	element &&
+										// 	React.cloneElement(element, {
+										// 		disabled: true,
+										// 		className:
+										// 			"flex items-center opacity-100 px-0 gap-2 pointer-events-none",
+										// 	})
+										// }
 										className="block appearance-none w-full bg-white px-4 py-2 pr-8 shadow leading-tight focus:outline-none focus:shadow-outline"
 										onChange={(value) =>
 											setWard({
@@ -205,7 +235,6 @@ const StoreEditPage = () => {
 											})
 										}
 										label="Chọn xã"
-										onClick={getWard}
 									>
 										{listWard.map((ward) => (
 											<Option key={ward.WardCode} value={ward}>
@@ -231,20 +260,23 @@ const StoreEditPage = () => {
 								</div>
 								<div className="w-full">
 									<Input
-										type="datetime-local"
+										type="time"
 										label="Thời gian mở cửa"
-										defaultValue={storeInfor.store.timeStart}
+										value={timeS}
+										onInput={(e) => setTimeS(e.target.value)}
 										{...register("timeStart")}
 									/>
+
 									{errors.timeStart && (
 										<ErrorText text={errors.timeStart.message} />
 									)}
 								</div>
 								<div className="w-full">
 									<Input
-										type="datetime-local"
+										type="time"
 										label="Thời gian đóng cửa"
-										defaultValue={storeInfor.store.timeEnd}
+										value={timeE}
+										onInput={(e) => setTimeE(e.target.value)}
 										{...register("timeEnd")}
 									/>
 									{errors.timeEnd && (

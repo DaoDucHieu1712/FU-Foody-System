@@ -9,6 +9,7 @@ using FFS.Application.Repositories;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace FFS.Application.Controllers
 {
@@ -187,6 +188,18 @@ namespace FFS.Application.Controllers
 		{
 			try
 			{
+				string timeStart = storeInforDTO.TimeStart;
+				string timeEnd = storeInforDTO.TimeEnd;
+
+				TimeSpan startTime = TimeSpan.Parse(timeStart);
+				TimeSpan endTime = TimeSpan.Parse(timeEnd);
+
+				// Compare the TimeSpan objects
+				if (startTime > endTime)
+				{
+					throw new Exception("Thời gian mở cửa phải trước thời gian đóng cửa!");
+				}
+
 				_logger.LogInfo($"Attempting to update information for Store ID: {id}");
 				StoreInforDTO inforDTO = await _storeRepository.UpdateStore(id, storeInforDTO);
 				_logger.LogInfo($"Updated store information for Store ID: {id} successfully.");
@@ -299,6 +312,68 @@ namespace FFS.Application.Controllers
 			}
 		}
 
+		public class param
+		{
+			public int storeId { get; set; }
+			public string name { get; set; }
+
+		}
+
+		[HttpPost]
+		public IActionResult GetFoodByName([FromBody] param param)
+		{
+			try
+			{
+				List<Food> foods;
+
+				if (string.IsNullOrEmpty(param.name))
+				{
+					// If the name is empty or null, return all items.
+					foods = _foodRepository.FindAll().ToList();
+				}
+				else
+				{
+					// If the name is not empty, perform the search.
+					foods = _foodRepository.FindAll(i => i.FoodName.Contains(param.name) && i.StoreId == param.storeId).ToList();
+				}
+				List<FoodDTO> foodDTOs = _mapper.Map<List<FoodDTO>>(foods);
+				_logger.LogInfo($"Retrieved {foodDTOs.Count} food items matching the search criteria.");
+				return Ok(foodDTOs);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError($"An error occurred while retrieving food by name {param.name}: {ex.Message}");
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> GetComboByNameAsync([FromBody] param param)
+		{
+			try
+			{
+				_logger.LogInfo($"Retrieving list of combos for store with ID: {param.storeId}");
+
+				List<dynamic> res = new List<dynamic>();
+				List<Combo> combos = await _comboRepository.GetList(x => x.StoreId == param.storeId && x.IsDelete == false && x.Name.Contains(param.name));
+				foreach (Combo combo in combos)
+				{
+					var c = new
+					{
+						combo = combo,
+						detail = await _comboRepository.GetDetail(combo.Id),
+					};
+					res.Add(c);
+				}
+				_logger.LogInfo($"List of combos for store with ID {param.storeId} retrieved successfully");
+				return Ok(res);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> RatingStore([FromBody] StoreRatingDTO storeRatingDTO)
 		{
@@ -400,6 +475,113 @@ namespace FFS.Application.Controllers
 			{
 				_logger.LogError($"An error occurred while retrieving food detail statistics for store with ID {storeId}: {ex.Message}");
 				return StatusCode(500, "Internal Server Error");
+			}
+		}
+
+		public class Address
+		{
+			public string AddressStore { get; set; }
+			public string AddressUser { get; set; }
+
+		}
+		private class GoogleMapsApiResponse
+		{
+			public string Status { get; set; }
+			public string[] DestinationAddresses { get; set; }
+			public string[] OriginAddresses { get; set; }
+			public Row[] Rows { get; set; }
+
+			public class Row
+			{
+				public Element[] Elements { get; set; }
+
+				public class Element
+				{
+					public Distancee Distance { get; set; }
+					public Durationn Duration { get; set; }
+					public string Status { get; set; }
+
+					public class Distancee
+					{
+						public string Text { get; set; }
+						public int Value { get; set; }
+					}
+
+					public class Durationn
+					{
+						public string Text { get; set; }
+						public int Value { get; set; }
+					}
+				}
+			}
+		}
+
+		[HttpPost]
+		public async Task<dynamic> CalcFeeshipAsync(Address address)
+		{
+			string GoogleMapsApiKey = "AIzaSyA0hgbGvJaWVkaPcFjy7n4UgRPJ8ouMyeY";
+			HttpClient _httpClient = new HttpClient();
+			try
+			{
+				string url = $"https://maps.googleapis.com/maps/api/distancematrix/json?origins={address.AddressStore}&destinations={address.AddressUser}&key={GoogleMapsApiKey}";
+
+				HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+				if (response.IsSuccessStatusCode)
+				{
+					string result = await response.Content.ReadAsStringAsync();
+					GoogleMapsApiResponse responseObject = JsonConvert.DeserializeObject<GoogleMapsApiResponse>(result);
+
+					if (responseObject != null && responseObject.Status == "OK" &&
+						responseObject.Rows != null && responseObject.Rows.Count() > 0 &&
+						responseObject.Rows[0].Elements != null && responseObject.Rows[0].Elements.Count() > 0 &&
+						responseObject.Rows[0].Elements[0].Status == "OK")
+					{
+						string distanceText = responseObject.Rows[0].Elements[0].Distance.Text;
+						int durationInSeconds = responseObject.Rows[0].Elements[0].Duration.Value;
+
+						// Convert duration to a human-readable format
+						string formattedDuration = FormatDuration(durationInSeconds);
+
+
+						int distanceInMeters = responseObject.Rows[0].Elements[0].Distance.Value;
+						decimal distanceInKilometers = (decimal)distanceInMeters / 1000;
+
+
+						decimal shippingFee = distanceInKilometers * Convert.ToDecimal(5000);
+
+						return new { shippingFee, time = formattedDuration, distance = distanceText };
+					}
+				}
+				else
+				{
+					Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+				}
+				return null;
+
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Exception: {ex.Message}");
+				return null;
+			}
+		}
+
+		private string FormatDuration(int durationInSeconds)
+		{
+			TimeSpan duration = TimeSpan.FromSeconds(durationInSeconds);
+
+			if (duration.TotalHours >= 1)
+			{
+				return $"{(int)duration.TotalHours} giờ {(int)duration.Minutes} phút {(int)duration.Seconds} giây";
+			}
+			else if (duration.TotalMinutes >= 1)
+			{
+				return $"{(int)duration.TotalMinutes} phút {(int)duration.Seconds} giây";
+			}
+			else
+			{
+				return $"{(int)duration.Seconds} giây";
 			}
 		}
 	}

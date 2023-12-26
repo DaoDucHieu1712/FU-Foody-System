@@ -311,9 +311,6 @@ namespace FFS.Application.Controllers
 			try
 			{
 				_logger.LogInfo($"Attempting to add a new comment for post with ID {comment.PostId}...");
-				//await _commentRepository.Add(comment);
-				
-	
 				await _commentRepository.Add(comment);
 				_logger.LogInfo($"Comment added successfully for post with ID {comment.PostId}.");
 				var commentuser = await _commentRepository

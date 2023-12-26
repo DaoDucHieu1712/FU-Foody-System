@@ -105,7 +105,7 @@ const StoreOwnderApplication = () => {
 					<div className="text-medium text-xl">
 						<p>
 							<span>Giờ mở cửa: </span>
-							{store?.timeStart.slice(14, 20)} - {store?.timeEnd.slice(14, 20)}
+							{store?.timeStart} - {store?.timeEnd}
 						</p>
 					</div>
 					<div className="flex gap-x-3">

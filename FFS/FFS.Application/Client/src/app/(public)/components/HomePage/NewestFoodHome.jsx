@@ -43,7 +43,7 @@ const NewestFoodHome = () => {
 				newFood.map((newFoodItem) => (
 					<div
 						key={newFoodItem.id}
-						className="flex p-1 my-1 justify-between items-center border-r-2 border-solid border-blue-gray-100 shadow-lg"
+						className="flex p-1 my-1 justify-between items-center border-r-2 border-solid border-primary shadow-lg"
 					>
 						<div className="group relative flex">
 							<img
@@ -78,8 +78,11 @@ const NewestFoodHome = () => {
 								</Tooltip>
 							</div>
 						</div>
-						<div className="w-2/5">
-							<Typography variant="h6" className="pointer-events-none">
+						<div
+							className="w-2/5 cursor-pointer"
+							onClick={() => navigate(`/food-details/${newFoodItem.id}`)}
+						>
+							<Typography variant="h6" className="hover:text-primary">
 								{newFoodItem.foodName}
 							</Typography>
 							{newFoodItem.priceAfterSale <= 0 &&

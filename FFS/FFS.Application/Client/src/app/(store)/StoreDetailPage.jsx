@@ -39,17 +39,21 @@ const StoreDetailPage = () => {
 	const dispatch = useDispatch();
 
 	const handleAddToCart = (cartItem) => {
-		console.log(cartItem);
-		console.log("ok");
-		const item = {
-			foodId: cartItem.id,
-			foodName: cartItem.foodName,
-			storeId: id,
-			img: cartItem.imageURL,
-			price: cartItem.price,
-			quantity: 1,
-		};
-		dispatch(cartActions.addToCart(item));
+		if (!cookies.get("fu_foody_token")) {
+			window.location.href = "/login";
+		} else {
+			console.log(cartItem);
+			console.log("ok");
+			const item = {
+				foodId: cartItem.id,
+				foodName: cartItem.foodName,
+				storeId: id,
+				img: cartItem.imageURL,
+				price: cartItem.price,
+				quantity: 1,
+			};
+			dispatch(cartActions.addToCart(item));
+		}
 	};
 
 	const GetStoreInformation = async () => {
@@ -83,6 +87,7 @@ const StoreDetailPage = () => {
 				.get(`/api/Store/GetFoodByCategory/${id}/${idCategory}`)
 				.then((response) => {
 					setFoodList(response);
+					setComboList([]);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -145,7 +150,71 @@ const StoreDetailPage = () => {
 	};
 
 	const handleAddToCartCombo = async (combo) => {
-		dispatch(comboActions.addToCart(combo));
+		if (cookies.get("fu_foody_token")) {
+			window.location.href = "/login";
+		} else {
+			dispatch(comboActions.addToCart(combo));
+		}
+	};
+
+	const getFoodByName = (e) => {
+		var serachTxt = e?.target.value;
+		if (typeof serachTxt == "undefined") {
+			serachTxt = "";
+		}
+		setSearchFood(serachTxt);
+		const data = {
+			storeId: id,
+			name: serachTxt,
+		};
+		try {
+			axios
+				.post(`/api/Store/GetFoodByName`, data)
+				.then((response) => {
+					console.log(response);
+					setComboList([]);
+					setFoodList(response);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("An error occurred", error);
+		}
+	};
+
+	const getComboByName = (e) => {
+		var serachTxt = e?.target.value;
+		if (typeof serachTxt == "undefined") {
+			serachTxt = "";
+		}
+		setSearchFood(serachTxt);
+		const data = {
+			storeId: id,
+			name: serachTxt,
+		};
+		try {
+			axios
+				.post(`/api/Store/GetComboByName`, data)
+				.then((response) => {
+					console.log(response);
+					setComboList(response);
+					setFoodList([]);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} catch (error) {
+			console.error("An error occurred", error);
+		}
+	};
+
+	const handleSearch = (e) => {
+		if (foodList.length > 0) {
+			getFoodByName(e);
+		} else if (comboList.length > 0) {
+			getComboByName(e);
+		}
 	};
 
 	return (
@@ -172,7 +241,10 @@ const StoreDetailPage = () => {
 								{storeData.storeName}
 							</Typography>
 							<span className="text-base">
-								<i className="fas fa-map-marker-alt mr-1" aria-hidden="true"></i>
+								<i
+									className="fas fa-map-marker-alt mr-1"
+									aria-hidden="true"
+								></i>
 								{storeData.address}
 							</span>
 							<span className="text-base">
@@ -205,7 +277,9 @@ const StoreDetailPage = () => {
 						</div>
 					</div>
 					<hr className="h-px my-4 bg-gray-400 border-0 dark:bg-gray-700"></hr>
-					<DiscountProfileStore discountList={discountList}></DiscountProfileStore>
+					<DiscountProfileStore
+						discountList={discountList}
+					></DiscountProfileStore>
 					<hr className="h-px my-4 bg-gray-400 border-0 dark:bg-gray-700"></hr>
 					<div className="grid grid-cols-6">
 						<div className="col-span-1">
@@ -247,7 +321,7 @@ const StoreDetailPage = () => {
 							<div className="border-solid border-l-[1px] border-gray-400">
 								<div className="p-3">
 									<Input
-										label="Tìm món"
+										label={comboList.length > 0 ? "Tìm combo" : "Tìm món"}
 										icon={
 											<svg
 												width="20"
@@ -274,15 +348,16 @@ const StoreDetailPage = () => {
 										}
 										disabled={foodList.length < 0 ? true : false}
 										defaultValue={searchFood}
-										onChange={handleSearchFood}
+										onChange={handleSearch}
 									/>
 								</div>
 								<div className="border-solid border-t-[1px] border-gray-400">
 									<ul>
 										{foodList.map((item, index) => (
 											<li
-												className={`p-2 ${backgroundColors[index % backgroundColors.length]
-													}`}
+												className={`p-2 ${
+													backgroundColors[index % backgroundColors.length]
+												}`}
 												key={item.id}
 											>
 												<div className="border-collapse grid grid-cols-6 gap-5">
@@ -322,7 +397,7 @@ const StoreDetailPage = () => {
 														</Typography>
 
 														{item.inventories.length > 0 &&
-															item.inventories[0]?.quantity != 0 ? (
+														item.inventories[0]?.quantity != 0 ? (
 															<Typography
 																variant="paragraph"
 																className="py-2 text-green-500"
@@ -334,8 +409,8 @@ const StoreDetailPage = () => {
 																variant="paragraph"
 																className="py-2 text-red-500"
 															>
-																{item.inventories[0]?.quantity}
-																hết hàng
+																{/* {item.inventories[0]?.quantity} */}
+																sản phẩm tạm hết hàng
 															</Typography>
 														)}
 													</div>
@@ -350,7 +425,7 @@ const StoreDetailPage = () => {
 															</span>
 														</Typography>
 														{item.inventories.length > 0 &&
-															item.inventories[0]?.quantity != 0 ? (
+														item.inventories[0]?.quantity != 0 ? (
 															<Button
 																size="sm"
 																className="bg-primary"
@@ -369,8 +444,9 @@ const StoreDetailPage = () => {
 									<ul>
 										{comboList.map((item, index) => (
 											<li
-												className={`p-2 ${backgroundColors[index % backgroundColors.length]
-													}`}
+												className={`p-2 ${
+													backgroundColors[index % backgroundColors.length]
+												}`}
 												key={item.combo.id}
 											>
 												<div className="border-collapse grid grid-cols-6 gap-5">
