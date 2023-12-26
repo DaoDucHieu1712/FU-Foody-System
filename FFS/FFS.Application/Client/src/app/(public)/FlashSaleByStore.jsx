@@ -127,15 +127,6 @@ const FlashSaleByStore = ({ storeId }) => {
 												<div
 													className=""
 													onClick={() => {
-														var itemC = cart.list.filter(
-															(x) => x.foodId === detailItem.foodId
-														)[0];
-														if (itemC) {
-															if (itemC.quantity >= detailItem.quantity) {
-																toast.error("Không được mua quá số lượng !!");
-																return;
-															}
-														}
 														if (!CookieService.getToken("fu_foody_token")) {
 															window.location.href = "/login";
 															return;
@@ -145,13 +136,9 @@ const FlashSaleByStore = ({ storeId }) => {
 																	foodId: detailItem.foodId,
 																	foodName: detailItem.foodName,
 																	quantity: 1,
-																	price:
-																		detailItem.price -
-																		(detailItem.price *
-																			detailItem.salePercent) /
-																			100,
+																	price: detailItem.priceAfterSale,
 																	img: detailItem.imageURL,
-																	storeId: detailItem.storeId,
+																	storeId: storeId,
 																})
 															);
 														}
