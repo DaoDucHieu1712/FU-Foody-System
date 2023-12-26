@@ -18,7 +18,7 @@ services:
         - VITE_FU_FOODY_PUBLIC_API_BASE_URL:${VITE_FU_FOODY_PUBLIC_API_BASE_URL}
         - VITE_FU_FOODY_PUBLIC_API_BASE_URL_UPLOAD_IMAGE:${VITE_FU_FOODY_PUBLIC_API_BASE_URL_UPLOAD_IMAGE}
     ports:
-      - "3000:80"
+      - "80:80"
   # Map the host port 3000 to container port 80 for the React app
   # # build app and and use like it, dont need docker file in FE
   # nginx:
