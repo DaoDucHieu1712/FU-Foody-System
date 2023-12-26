@@ -101,6 +101,7 @@ function App() {
 						element={<ChangePasswordPage />}
 					/>
 					<Route path="/shipper/profile" element={<ShipperProfile />} />
+					
 					<Route
 						path="/shipper/order-available"
 						element={<OrderAvailablePage />}

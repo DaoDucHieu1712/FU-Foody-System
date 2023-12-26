@@ -14,12 +14,19 @@ import RemoveWishlist from "./components/wishlist/RemoveWishlist";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../(auth)/shared/cartSlice";
 import FormatPriceHelper from "../../shared/components/format/FormatPriceHelper";
+import { useNavigate } from "react-router-dom";
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
   
   const userId = CookieService.getToken("fu_foody_id");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleImageClick = (foodId) => {
+    // Navigate to the food details route
+    navigate(`/food-details/${foodId}`);
+  };
 
   const fetchWishlist = async () => {
     try {
@@ -91,6 +98,7 @@ const Wishlist = () => {
                           src={item.imageURL}
                           alt="ui/ux review check "
                           style={{ height: "216px", width:"100%" }}
+                          onClick={() => handleImageClick(item.foodId)}
                         />
                       </CardHeader>
                       <CardBody className="px-0 py-3">
