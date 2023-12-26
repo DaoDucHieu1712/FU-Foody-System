@@ -748,7 +748,7 @@ namespace FFS.Application.Controllers
 					{ "vnp_Locale", vnpLocal },
 					{ "vnp_OrderInfo", vnpOrderInfo },
 					{ "vnp_OrderType", vnpOrderType },
-					{ "vnp_ReturnUrl", "http://localhost:5173/confirm-payment" },
+					{ "vnp_ReturnUrl", "http://ffs.io.vn/confirm-payment" },
 					{ "vnp_TmnCode", vnpTmnCode },
 					{ "vnp_TxnRef", vnpTxnRef },
 					{ "vnp_Version", "2.1.0" },
