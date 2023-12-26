@@ -156,7 +156,7 @@ const FoodDetails = () => {
 								<p className="flex gap-1 text-base">
 									Tình trạng:{" "}
 									{foodData?.inventories[0] !== null &&
-									foodData?.inventories[0]?.quantity > 0 ? (
+										foodData?.inventories[0]?.quantity > 0 ? (
 										<p className="text-green-800 font-bold">còn hàng</p>
 									) : (
 										<p className="text-red-800 font-bold">hết hàng</p>
@@ -293,7 +293,7 @@ const FoodDetails = () => {
 						<Typography variant="h4">Đồ ăn liên quan</Typography>
 						<div className="grid py-3 grid-flow-row-dense grid-cols-3 xl:grid-cols-6">
 							{foodList &&
-							foodList.filter((food) => food.id !== foodData.id).length > 0 ? (
+								foodList.filter((food) => food.id !== foodData.id).length > 0 ? (
 								foodList
 									.filter((food) => food.id !== foodData.id)
 									.splice(0, 6)
@@ -350,7 +350,7 @@ const FoodDetails = () => {
 															variant="text"
 															className="bg-white rounded-full"
 															onClick={() =>
-																navigate(`/food-details/${food.id}`)
+																window.location.href = `/food-details/${food.id}`
 															}
 														>
 															<svg
