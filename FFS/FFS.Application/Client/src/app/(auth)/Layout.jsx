@@ -95,9 +95,10 @@ const Layout = () => {
 							</div>
 						</div>
 						<div className="flex items-center gap-3">
+						<BlogIcon></BlogIcon>
 							{accesstoken ? (
 								<>
-									<BlogIcon></BlogIcon>
+									
 									<Cart></Cart>
 									<Heart></Heart>
 									<Notification></Notification>

@@ -226,7 +226,7 @@ const StoreDetailPage = () => {
 					<div className="grid grid-cols-5 gap-10">
 						<div className="col-span-2">
 							<img
-								className="w-full h-64 object-fill object-center"
+								className="h-64 w-full object-cover object-center"
 								src={storeData.avatarURL}
 								alt="nature image"
 							/>

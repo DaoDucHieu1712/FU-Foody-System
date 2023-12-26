@@ -22,6 +22,7 @@ import Loading from "../../shared/components/Loading";
 import UpdateImage from "../../shared/components/form/UpdateImage";
 import Cookies from "universal-cookie";
 import { element } from "prop-types";
+import UpdateImagev2 from "../../shared/components/form/UpdateImagev2";
 
 const schema = yup.object({
 	storeName: yup
@@ -186,7 +187,7 @@ const StoreEditPage = () => {
 		<>
 			{storeInfor ? (
 				<div className="container mx-auto shadow-sm mb-16">
-					<div className="heading mb-10 mt-10">
+					<div className="heading mb-10 mt-3">
 						<h1 className="font-bold uppercase">
 							Cùng trở thành Người bán Hàng cùng FU
 						</h1>
@@ -205,7 +206,7 @@ const StoreEditPage = () => {
 									)}
 								</div>
 								<div className="w-full">
-									<UpdateImage
+									<UpdateImagev2
 										url={storeInfor.store.avatarURL}
 										name="avatarURL"
 										onChange={setValue}
