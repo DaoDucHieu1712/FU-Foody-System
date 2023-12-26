@@ -362,9 +362,8 @@ const StoreDetailPage = () => {
 									<ul>
 										{foodList.map((item, index) => (
 											<li
-												className={`p-2 ${
-													backgroundColors[index % backgroundColors.length]
-												}`}
+												className={`p-2 ${backgroundColors[index % backgroundColors.length]
+													}`}
 												key={item.id}
 											>
 												<div className="border-collapse grid grid-cols-6 gap-5">
@@ -404,7 +403,7 @@ const StoreDetailPage = () => {
 														</Typography>
 
 														{item.inventories.length > 0 &&
-														item.inventories[0]?.quantity != 0 ? (
+															item.inventories[0]?.quantity != 0 ? (
 															<Typography
 																variant="paragraph"
 																className="py-2 text-green-500"
@@ -432,7 +431,7 @@ const StoreDetailPage = () => {
 															</span>
 														</Typography>
 														{item.inventories.length > 0 &&
-														item.inventories[0]?.quantity != 0 ? (
+															item.inventories[0]?.quantity != 0 ? (
 															<Button
 																size="sm"
 																className="bg-primary"
@@ -451,9 +450,8 @@ const StoreDetailPage = () => {
 									<ul>
 										{comboList.map((item, index) => (
 											<li
-												className={`p-2 ${
-													backgroundColors[index % backgroundColors.length]
-												}`}
+												className={`p-2 ${backgroundColors[index % backgroundColors.length]
+													}`}
 												key={item.combo.id}
 											>
 												<div className="border-collapse grid grid-cols-6 gap-5">
@@ -481,21 +479,21 @@ const StoreDetailPage = () => {
 															variant="paragraph"
 															className="relative w-fit line-through"
 														>
-															{item.detail.reduce(
+															{FormatPriceHelper(item.detail.reduce(
 																(accum, item) => accum + item.Price,
 																0
-															)}{" "}
+															))}{" "}
 															đ
 														</Typography>
 														<Typography
 															variant="paragraph"
 															className="relative w-fit text-red-500"
 														>
-															{item.detail.reduce(
+															{FormatPriceHelper(item.detail.reduce(
 																(accum, item) =>
 																	accum + item.PriceAfterDiscount,
 																0
-															)}{" "}
+															))}{" "}
 															đ
 														</Typography>
 														<Button
