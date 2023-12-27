@@ -361,7 +361,6 @@ namespace FFS.Application.Repositories.Impls
 				{
 					var user = await _context.ApplicationUsers.FirstOrDefaultAsync(x => x.Id == storeInforDTO.UserId);
 					user.Avatar = storeInforDTO.AvatarURL;
-					user.UserName = storeInforDTO.StoreName;
 					_ = await _context.SaveChangesAsync();
 
 					store.StoreName = storeInforDTO.StoreName;
