@@ -144,7 +144,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize(Roles = "StoreOwner")]
+		//[Authorize(Roles = "StoreOwner")]
 		[HttpGet("exportfood")]
 		public async Task<IActionResult> ExportFood(int id)
 		{
@@ -163,7 +163,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize(Roles = "StoreOwner")]
+		//[Authorize(Roles = "StoreOwner")]
 		[HttpGet("exportinventory")]
 		public async Task<IActionResult> ExportInventory(int id)
 		{
@@ -458,7 +458,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize(Roles = "StoreOwner")]
+		//[Authorize(Roles = "StoreOwner")]
 		[HttpGet("{storeId}")]
 		public IActionResult ExportOrder(int storeId)
 		{

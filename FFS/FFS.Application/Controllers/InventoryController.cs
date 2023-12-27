@@ -124,7 +124,7 @@ namespace FFS.Application.Controllers
 		}
 
 
-		[Authorize(Roles = "StoreOwner")]
+		//[Authorize(Roles = "StoreOwner")]
 		[HttpPut("{storeId}/{foodId}/{quantity}")]
 		public async Task<IActionResult> ExportInventory(int storeId, int foodId, int quantity)
 		{
