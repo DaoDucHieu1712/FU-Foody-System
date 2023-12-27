@@ -205,7 +205,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize(Roles = "Admin")]
+		//[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<IActionResult> ExportReport()
 		{
@@ -222,7 +222,7 @@ namespace FFS.Application.Controllers
 			}
 		}
 
-		[Authorize(Roles = "Admin")]
+		//[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<IActionResult> ExportUser()
 		{
