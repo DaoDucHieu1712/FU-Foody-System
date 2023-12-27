@@ -38,7 +38,9 @@ const OrderItem = ({ item }) => {
 					</div>
 				</div>
 				<div className="flex items-center justify-center">
-					{role !== "StoreOwner" && orderQuery.data?.orderStatus === 3 ? (
+					{role !== "StoreOwner" &&
+					orderQuery.data?.orderStatus === 3 &&
+					item.foodId !== null ? (
 						<ReviewFood idUser={uid} idFood={item.foodId}></ReviewFood>
 					) : (
 						<></>
